@@ -20,14 +20,14 @@ Step 2. Install your favorite text editor/IDE to develop (or you can just use xC
 Step 3. Set up Source Tree and connect to repo link 
 Download source-tree here: https://www.sourcetreeapp.com 
 Open the application, 
-Click on Source Tree >> Preference >> Accounts >> Add
+Click on Source Tree > Preference > Accounts > Add
 Fill in: 
->> Host: GitHub
->> Auth Type: OAuth
+> Host: GitHub
+> Auth Type: OAuth
 Username: your github 
-Protocol: SSH >> "Create" >> "bitbucket"
+Protocol: SSH > "Create" > "bitbucket"
 Click "Save" 
 
 Set your github account as "Default" 
 
-Go back to the source tree homepage and click "New" >> Clone from URL >> link git repo link
+Go back to the source tree homepage and click "New" > Clone from URL > link git repo link
