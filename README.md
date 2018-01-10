@@ -17,4 +17,17 @@ Step 2. Install your favorite text editor/IDE to develop (or you can just use xC
 - Visual studio code (iOS)
 - Android Studios (must have for Android)
 
-Step 3. Set up Source Tree and connect to repo link (fill out later)
+Step 3. Set up Source Tree and connect to repo link 
+Download source-tree here: https://www.sourcetreeapp.com 
+Open the application, 
+Click on Source Tree >> Preference >> Accounts >> Add
+Fill in: 
+>> Host: GitHub
+>> Auth Type: OAuth
+Username: your github 
+Protocol: SSH >> "Create" >> "bitbucket"
+Click "Save" 
+
+Set your github account as "Default" 
+
+Go back to the source tree homepage and click "New" >> Clone from URL >> link git repo link
