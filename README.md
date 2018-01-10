@@ -22,10 +22,15 @@ Download source-tree here: https://www.sourcetreeapp.com
 Open the application, 
 Click on Source Tree > Preference > Accounts > Add
 Fill in: 
-> Host: GitHub
-> Auth Type: OAuth
+
+Host: GitHub
+
+Auth Type: OAuth
+
 Username: your github 
+
 Protocol: SSH > "Create" > "bitbucket"
+
 Click "Save" 
 
 Set your github account as "Default" 
