@@ -8,7 +8,8 @@ const initialState = {
     enable_voting: '', 
     enable_comment: '', 
     ravel_concept: '', 
-    ravel_status: ''
+    ravel_status: '',
+    ravel_time_created:''
 
 
 };
@@ -26,7 +27,8 @@ export default (state = initialState, action) => {
                 enable_voting: action.payload.enable_voting, 
                 enable_comment: action.payload.enable_comment, 
                 ravel_concept: action.payload.ravel_concept, 
-                ravel_status: action.payload.ravel_status
+                ravel_status: action.payload.ravel_status,
+                ravel_time_created: action.payload.ravel_time_created
             };
 
         default:

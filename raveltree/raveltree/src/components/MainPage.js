@@ -135,6 +135,7 @@ class MainPage extends Component {
          this.props.updateUserProfile({ first_name, last_name, bio, photoURL });
          console.log(getCurrentLoggedInUserUid());
          this.props.getUserProfile(getCurrentLoggedInUserUid());
+         
 
         
     }

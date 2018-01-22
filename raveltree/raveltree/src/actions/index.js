@@ -49,6 +49,18 @@ export const userLogOff = () => {
       });
 };
 
+// Params: Takes an exisiting user's email 
+// Action: Resets password
+export const userResetPassword = (email) => {
+    var auth = firebase.auth();
+
+    auth.sendPasswordResetEmail(email).then(function() {
+
+    }).catch(function(error) {
+        console.log("Cannot send email");
+    });
+}
+
 // Params: Takes a user's email and password 
 // Action: Signs in the user if auth was successful
 export const signInWithEmail = (email, password) => {
@@ -142,6 +154,7 @@ export const updateUserRavelPoint = (ravel_points) => {
     };
 };
 
+
 // Params: Takes meta-date from the ravel. This starts a ravel creation. 
 // Action: Writes the the db the meta-data and sets the current user logged in 
 // as the creator. ravel_status: 
@@ -152,17 +165,18 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
     const { currentUser } = firebase.auth();
     var user_created = currentUser.uid;
     var ravel_status = false;
+    var ravel_create_time = new Date().toLocaleTimeString();;
 
     return (dispatch) => {
         firebase.database().ref(`/ravels`)
             .push({ user_created, ravel_title, ravel_category, passage_length,
-                visibility, enable_voting, enable_comment, ravel_concept, ravel_status
+                visibility, enable_voting, enable_comment, ravel_concept, ravel_status,ravel_create_time
                 })
             .then(() => {
                 console.log('Success');
                 dispatch({ type: 'CREATE_RAVEL',
                            payload: {user_created, ravel_title, ravel_category, passage_length,
-                            visibility, enable_voting, enable_comment, ravel_concept, ravel_status
+                            visibility, enable_voting, enable_comment, ravel_concept, ravel_status,ravel_create_time
                             }});
             })
             .catch((error) => {
