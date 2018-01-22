@@ -56,6 +56,15 @@ export default (state = initialState, action) => {
                 ...state,
                 ravel_points: action.payload.ravel_points,
             };
+        case 'ON_AUTH_SUCCESS':
+            return {
+                loading: action.payload.loading,
+            };
+        case 'CREATE_NEW_USER':
+            return {
+                loading: action.payload.loading,
+            };
+        
     
         default:
             return state;

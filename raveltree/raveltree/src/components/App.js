@@ -16,14 +16,6 @@ import reducers from '../reducers/UserReducer';
 import Thunk from 'redux-thunk';
 import UserModel from '../models/UserModel';
 
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
 const store = createStore(reducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), applyMiddleware(Thunk));
 export default class App extends Component { 
 

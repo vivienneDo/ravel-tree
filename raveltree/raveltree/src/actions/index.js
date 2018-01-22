@@ -49,6 +49,41 @@ export const userLogOff = () => {
       });
 };
 
+// Params: Takes a user's email and password 
+// Action: Signs in the user if auth was successful
+export const signInWithEmail = (email, password) => {
+    var loading = false;
+
+    return (dispatch) => {
+        firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(() => {
+            dispatch({ type: 'ON_AUTH_SUCCESS',
+                        payload: { loading }});
+        })
+        .catch((error) => {
+            console.log("Authenticiation Failed");
+        });
+    };
+};
+
+// Params: Takes a user's email and password
+// Actions: Creates a new user with the email and password 
+export const signUpWithEmail = (email, password) => {
+    var loading = false;
+
+    return (dispatch) => {
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(() => {
+            dispatch({ type: 'CREATE_NEW_USER',
+                        payload: { loading }});
+        })
+        .catch((error) => {
+            console.log("Cannot create user");
+        });
+    };
+};
+
+
 // Helper Functions 
 
 // Actions: Will calculate the user's stats 
@@ -107,29 +142,36 @@ export const updateUserRavelPoint = (ravel_points) => {
     };
 };
 
-// Start of Ravel creation
+// Params: Takes meta-date from the ravel. This starts a ravel creation. 
+// Action: Writes the the db the meta-data and sets the current user logged in 
+// as the creator. ravel_status: 
 
-// export const createStartRavel = ({ ravel_title, ravel_category, passage_length, visibility,enable_voting,enable_comment, ravel_concept,ravel_status }) => {
+export const createStartRavel = ({ ravel_title, ravel_category, passage_length, visibility,enable_voting,enable_comment, ravel_concept }) => {
 
-//     const { currentUser } = firebase.auth();
-//     var user_created = currentUser.uid;
+    console.log('creating ravel');
+    const { currentUser } = firebase.auth();
+    var user_created = currentUser.uid;
+    var ravel_status = false;
 
-//     return (dispatch) => {
-//         firebase.database().ref(`/ravels`)
-//             .set({ user_created, ravel_title, ravel_category, passage_length,
-//                 visibility, enable_voting, enable_comment, ravel_concept, ravel_status
-//                 })
-//             .then(() => {
-//                 console.log('Success');
-//                 dispatch({ type: 'CREATE_RAVEL',
-//                            payload: {user_created, ravel_title, ravel_category, passage_length,
-//                             visibility, enable_voting, enable_comment, ravel_concept, ravel_status
-//                             }});
-//             })
-//             .catch((error) => {
-//                 console.log(error);
-//             });
-//     };
+    return (dispatch) => {
+        firebase.database().ref(`/ravels`)
+            .push({ user_created, ravel_title, ravel_category, passage_length,
+                visibility, enable_voting, enable_comment, ravel_concept, ravel_status
+                })
+            .then(() => {
+                console.log('Success');
+                dispatch({ type: 'CREATE_RAVEL',
+                           payload: {user_created, ravel_title, ravel_category, passage_length,
+                            visibility, enable_voting, enable_comment, ravel_concept, ravel_status
+                            }});
+            })
+            .catch((error) => {
+                console.log('failed creating ravel');
+            });
+    };
 
-// };
+};
+
+
+
 

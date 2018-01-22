@@ -11,7 +11,7 @@ import {MKTextField, MKColor, MKButton} from 'react-native-material-kit';
 //import { getUserName } from '../models/UserModel';
 import { getUserName } from '../models/UserModel';
 import * as actions from '../actions';
-import { updateUserProfile, getUserProfile, getCurrentLoggedInUserUid } from '../actions';
+import { updateUserProfile, getUserProfile, getCurrentLoggedInUserUid, startCreateRavel } from '../actions';
 import { connect} from 'react-redux';
 import _ from 'lodash';
 
@@ -116,23 +116,23 @@ class MainPage extends Component {
     componentWillMount() {
         
 
-        // ravel_title= 'ravel title', 
-        // ravel_category= 'game mode', 
-        // passage_length= 'passage',              
-        // visibility= 'true', 
-        // enable_voting= 'true', 
-        // enable_comment= 'true', 
-        // ravel_concept= 'concept blah', 
-        // ravel_status= 'true'
-        // this.props.createStartRavel({ravel_title, ravel_category, passage_length,
-        // visibility, enable_voting, enable_comment, ravel_concept, ravel_status});
+        ravel_title= 'ravel title', 
+        ravel_category= 'game mode', 
+        passage_length= 'passage',              
+        visibility= 'true', 
+        enable_voting= 'true', 
+        enable_comment= 'true', 
+        ravel_concept= 'concept blah', 
+        ravel_status= 'true'
+        this.props.createStartRavel({ravel_title, ravel_category, passage_length,
+        visibility, enable_voting, enable_comment, ravel_concept, ravel_status});
 
-        //  this.props.getUserProfile(getCurrentLoggedInUserUid());
-        //  first_name = 'Chris the builder';
-        //  last_name = 'Donut';
-        //  photoURL = 'Blah.com';
-        //  bio = 'This is a bio';
-        //  this.props.updateUserProfile({ first_name, last_name, bio, photoURL });
+
+         first_name = 'Chris the builder';
+         last_name = 'Donut';
+         photoURL = 'Blah.com';
+         bio = 'This is a bio';
+         this.props.updateUserProfile({ first_name, last_name, bio, photoURL });
          console.log(getCurrentLoggedInUserUid());
          this.props.getUserProfile(getCurrentLoggedInUserUid());
 
