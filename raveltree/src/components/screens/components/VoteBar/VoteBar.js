@@ -46,44 +46,61 @@ export default class VoteBar extends Component<{}> {
                     onPress={this.onPress}>
                     </TouchableOpacity>
 
+                    <Text style={styles.numStyle}>
+                        {spacing}
+                        {this.state.count !== 0 ? this.state.count: null}
+                        {spacing}
+                    </Text>
+
                     <TouchableOpacity 
                     style = {styles.downVote}
                     onPress={this.onPressDown}>
                     </TouchableOpacity>
+
+                    <Text style={styles.numStyle}>
+                        {spacing}
+                        {this.state.countDown !== 0 ? this.state.countDown: null}
+                        {spacing}
+                    </Text>
                 </View>
 
+                {/* 
+                count # of upvotes 
                 <Text 
                 style = {styles.numStyle}>
-                {/* count # of upvotes */}
                     {this.state.count - this.state.countDown}
                 </Text>
+                */}
+
             </View>
         ); 
     }
 }
 
+var spacing = " ";
+
 const styles = StyleSheet.create({
     upVote: {
         backgroundColor: 'transparent',
         borderStyle: 'solid',
-        borderLeftWidth: 15,
-        borderRightWidth: 15,
-        borderBottomWidth: 30,
+        borderLeftWidth: 10,
+        borderRightWidth: 10,
+        borderBottomWidth: 20,
         borderLeftColor: 'transparent',
         borderRightColor: 'transparent',
         borderBottomColor: '#939393'
     },
     numStyle: {
         color: '#939393',
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: 'bold'
     },
-    downVote : {
+    downVote: {
         backgroundColor: 'transparent',
         borderStyle: 'solid',
-        borderLeftWidth: 15,
-        borderRightWidth: 15,
-        borderTopWidth: 30,
+        borderLeftWidth: 10,
+        borderRightWidth: 10,
+        borderTopWidth: 20,
         borderLeftColor: 'transparent',
         borderRightColor: 'transparent',
         borderTopColor: '#939393'

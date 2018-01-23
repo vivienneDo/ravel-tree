@@ -1,4 +1,4 @@
 dependencies: \
-  /Users/SunDrop/Desktop/SDProject/ravel-tree/raveltree/node_modules/react-native/third-party/double-conversion-1.1.5/src/bignum.cc \
-  /Users/SunDrop/Desktop/SDProject/ravel-tree/raveltree/node_modules/react-native/third-party/double-conversion-1.1.5/src/bignum.h \
-  /Users/SunDrop/Desktop/SDProject/ravel-tree/raveltree/node_modules/react-native/third-party/double-conversion-1.1.5/src/utils.h
+  /Users/SunDrop/Desktop/SD\ Project/ravel-tree/raveltree/node_modules/react-native/third-party/double-conversion-1.1.5/src/bignum.cc \
+  /Users/SunDrop/Desktop/SD\ Project/ravel-tree/raveltree/node_modules/react-native/third-party/double-conversion-1.1.5/src/bignum.h \
+  /Users/SunDrop/Desktop/SD\ Project/ravel-tree/raveltree/node_modules/react-native/third-party/double-conversion-1.1.5/src/utils.h

@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 
 import UserImage from './screens/components/UserImage/UserImage';
+import VoteBar from './screens/components/VoteBar/VoteBar';
 
 /* moved backend work to Backend.js
   using this file to test frontend components
@@ -16,7 +17,7 @@ export default class App extends Component {
   render() {
     return (
       <View style = {styles.testStyle}>
-        <UserImage/>
+        <VoteBar/>
       </View>
     );
   }
