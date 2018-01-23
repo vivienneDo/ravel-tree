@@ -11,7 +11,7 @@ import { connect} from 'react-redux';
 import * as actions from '../actions';
 import UserModel from '../models/UserModel';
 import MainPage from './MainPage';
-import {userResetPassword} from '../actions';
+import {userResetPassword, signInWithEmail, createUserWithEmail} from '../actions';
 
 
 const FBSDK = require('react-native-fbsdk');
@@ -73,28 +73,27 @@ export default class Login extends Component {
   };
 
   onButtonPress() {
-      const {email, password} = this.state;
-      this.setState({error: '', loading: true });
-
-      firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(this.onAuthSuccess.bind(this))
-        .catch(() => {
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then(this.onAuthSuccess.bind(this))
-                .catch(this.onAuthFailed.bind(this));
-        });
-
-  }
-
-onGButtonPress() {
     const {email, password} = this.state;
     this.setState({error: '', loading: true });
 
-    userResetPassword(email);
+    signInWithEmail(email,password);
+    this.onAuthSuccess.bind(this);
+    this.onAuthFailed.bind(this);
 
-      
+  };
 
-}
+onGButtonPress() {
+
+    const {email, password} = this.state;
+    this.setState({error: '', loading: true });
+
+    createUserWithEmail(email,password);
+
+    this.onAuthSuccess.bind(this);
+    this.onAuthFailed.bind(this);
+    
+
+};
 
   onAuthSuccess() {
       this.setState({

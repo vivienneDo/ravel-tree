@@ -64,35 +64,40 @@ export const userResetPassword = (email) => {
 // Params: Takes a user's email and password 
 // Action: Signs in the user if auth was successful
 export const signInWithEmail = (email, password) => {
-    var loading = false;
 
-    return (dispatch) => {
-        firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(() => {
-            dispatch({ type: 'ON_AUTH_SUCCESS',
-                        payload: { loading }});
-        })
-        .catch((error) => {
-            console.log("Authenticiation Failed");
-        });
-    };
+    firebase.auth().signInWithEmailAndPassword(email, password)
+    .catch(function(error) {
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    if (errorCode === 'auth/wrong-password') {
+      alert('Wrong password.');
+    } else if (errorCode === 'auth/user-not-found') {
+        alert('there is no user corresponding to the given email');
+    } else {
+      alert(errorMessage);
+    }
+        console.log(error);
+    });
 };
 
 // Params: Takes a user's email and password
 // Actions: Creates a new user with the email and password 
-export const signUpWithEmail = (email, password) => {
-    var loading = false;
+export const createUserWithEmail = (email, password) => {
 
-    return (dispatch) => {
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then(() => {
-            dispatch({ type: 'CREATE_NEW_USER',
-                        payload: { loading }});
-        })
-        .catch((error) => {
-            console.log("Cannot create user");
-        });
-    };
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+    .catch(function(error) {
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    if (errorCode == 'auth/weak-password') {
+        alert('The password is too weak.');
+    } else if (errorCode === 'auth/email-already-in-use') {
+        alert('There already exists an account with the given email address');
+    } else {
+        alert(errorMessage);
+    }
+         console.log(error);
+    });
+
 };
 
 
