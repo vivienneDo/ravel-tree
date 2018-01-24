@@ -9,6 +9,10 @@ import {
 import UserImage from './screens/components/UserImage/UserImage';
 import VoteBar from './screens/components/VoteBar/VoteBar';
 import Tags from './screens/components/Tags/Tags';
+import InputForm from './screens/components/InputForm/InputForm';
+import InputSearch from './screens/components/InputSearch/InputSearch';
+import InputText from './screens/components/InputText/InputText';
+import TextHeader from './screens/components/TextHeader/TextHeader';
 
 /* moved backend work to Backend.js
   using this file to test frontend components
@@ -18,7 +22,7 @@ export default class App extends Component {
   render() {
     return (
       <View style = {styles.testStyle}>
-        <Tags/>
+        <UserImage/>
       </View>
     );
   }

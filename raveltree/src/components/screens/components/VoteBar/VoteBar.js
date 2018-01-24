@@ -4,10 +4,7 @@ import {
   StyleSheet, 
   Text, 
   View,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  Button
+  TouchableOpacity
 } from 'react-native';
 
 // 1-20-18
@@ -40,44 +37,41 @@ export default class VoteBar extends Component<{}> {
     render() {
         return (
             <View>
+            
                 <View style = {styles.barStyle}>
+                {/* style for the upVote triangle */} 
                     <TouchableOpacity 
                     style = {styles.upVote}
                     onPress={this.onPress}>
                     </TouchableOpacity>
 
+                    {/* display the total # of votes next to the upVote button
+                        with proper spacing */} 
                     <Text style={styles.numStyle}>
                         {spacing}
-                        {this.state.count !== 0 ? this.state.count: null}
+                        {this.state.count - this.state.countDown}
+                        {tabbing}
+                        {spacing}
+                        {spacing}
                         {spacing}
                     </Text>
 
+                    {/* style for the downVote triangle */} 
                     <TouchableOpacity 
                     style = {styles.downVote}
                     onPress={this.onPressDown}>
                     </TouchableOpacity>
 
-                    <Text style={styles.numStyle}>
-                        {spacing}
-                        {this.state.countDown !== 0 ? this.state.countDown: null}
-                        {spacing}
-                    </Text>
                 </View>
-
-                {/* 
-                count # of upvotes 
-                <Text 
-                style = {styles.numStyle}>
-                    {this.state.count - this.state.countDown}
-                </Text>
-                */}
 
             </View>
         ); 
     }
 }
 
+// used for proper spacing in the vote bars
 var spacing = " ";
+var tabbing = "\t";
 
 const styles = StyleSheet.create({
     upVote: {

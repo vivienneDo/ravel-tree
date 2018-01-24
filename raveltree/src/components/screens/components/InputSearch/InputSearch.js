@@ -15,8 +15,13 @@ export default class InputSearch extends Component<{}> {
   render() {
     return (
       <View>
+        {/* used for proper spacing */}
           <Text></Text>
-         <TextInput style = {styles.inputStyle} placeholder = {inputTxt} placeholderTextColor = '#95989A'/> 
+          
+         <TextInput 
+         style = {styles.inputStyle} 
+         placeholder = {inputTxt} 
+         placeholderTextColor = '#95989A'/> 
       </View>
     );
   }

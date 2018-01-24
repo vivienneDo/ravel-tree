@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {
   AppRegistry, 
-  Platform,
   StyleSheet, 
   Text, 
   View,
@@ -15,8 +14,13 @@ export default class InputForm extends Component<{}> {
   render() {
     return (
       <View>
+        {/* used for proper spacing */}
           <Text></Text>
-         <TextInput style = {styles.inputStyle} placeholder = {inputTxt} placeholderTextColor = '#939393'/> 
+
+         <TextInput 
+         style = {styles.inputStyle} 
+         placeholder = {inputTxt} 
+         placeholderTextColor = '#939393'/> 
       </View>
     );
   }

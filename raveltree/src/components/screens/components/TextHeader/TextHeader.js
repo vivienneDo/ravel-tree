@@ -15,7 +15,10 @@ export default class TextHeader extends Component<{}> {
   render() {
     return (
       <View>
-         <Text style = {styles.textStyle}> YOUR RAVELS </Text>
+         <Text 
+         style = {styles.textStyle}> 
+         YOUR RAVELS 
+         </Text>
       </View>
     );
   }
@@ -27,7 +30,7 @@ const styles = StyleSheet.create({
       color: '#151515',
       textAlign: 'center',
       fontSize: 12,
-      letterSpacing: 1,
+      letterSpacing: 1, // only for iOS
       /*fontFamily: 'Montserrat',*/
     },
 });
