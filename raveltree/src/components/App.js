@@ -13,6 +13,7 @@ import InputForm from './screens/components/InputForm/InputForm';
 import InputSearch from './screens/components/InputSearch/InputSearch';
 import InputText from './screens/components/InputText/InputText';
 import TextHeader from './screens/components/TextHeader/TextHeader';
+import Splash from './screens/Splash';
 
 /* moved backend work to Backend.js
   using this file to test frontend components
@@ -21,8 +22,9 @@ import TextHeader from './screens/components/TextHeader/TextHeader';
 export default class App extends Component { 
   render() {
     return (
-      <View style = {styles.testStyle}>
-        <UserImage/>
+    //  <View style = {styles.testStyle}>
+      <View>
+        <Splash/>
       </View>
     );
   }
