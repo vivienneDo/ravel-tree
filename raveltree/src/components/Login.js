@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     },
 
     fieldStyles: {
-        height: 40, 
+        height: 40,
         color: MKColor.Orange,
         width: 200,
     },
@@ -55,19 +55,24 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5FCFF',
       },
     errorMessage: {
-        marginTop: 15, 
-        fontSize: 15, 
-        color: 'red', 
+        marginTop: 15,
+        fontSize: 15,
+        color: 'red',
         alignSelf: 'center',
-    }, 
+    },
+    fontTest: {
+        fontFamily: 'Montserrat',
+        fontWeight: 'normal',
+        fontStyle: 'normal',
+    },
 });
 
-export default class Login extends Component { 
+export default class Login extends Component {
   state = {
       email :  '',
-      password: '',  
+      password: '',
       error: '',
-      loading: false,    
+      loading: false,
   };
 
   onButtonPress() {
@@ -96,7 +101,7 @@ onGButtonPress() {
               .catch(this.onAuthFailed.bind(this));
       });
 
-      
+
 
 }
 
@@ -104,9 +109,9 @@ onGButtonPress() {
       this.setState({
 
         email :  '',
-        password: '',  
+        password: '',
         error: '',
-        loading: false, 
+        loading: false,
       });
   }
 
@@ -116,20 +121,20 @@ onGButtonPress() {
           error: 'Authenticiation Failed',
           loading: false,
       });
-        
+
   }
-  
+
   renderLoader() {
       if (this.state.loading) {
           return <Loader size="large"/>;
       } else {
           return (
-          <View style={styles.form}> 
-          <GeneralLoginButton onPress={this.onButtonPress.bind(this)} /> 
-          <GLoginButton onPress={this.onGButtonPress.bind(this)} /> 
-           </View> 
+          <View style={styles.form}>
+          <GeneralLoginButton onPress={this.onButtonPress.bind(this)} />
+          <GLoginButton onPress={this.onGButtonPress.bind(this)} />
+           </View>
           );
-          
+
       }
   }
 
@@ -193,7 +198,7 @@ onGButtonPress() {
                       console.log(error);
                   }
                 )
-                 
+
                 // Go to MainPage here
                 console.log("Lol");
 
@@ -209,9 +214,12 @@ onGButtonPress() {
         <View style={loginButtonArea}>
             {this.renderLoader()}
         </View>
-      </View>   
-    </ScrollView>   
+      </View>
+
+      <View>
+        <Text style={styles.fontTest}>Testing</Text>
+      </View>
+    </ScrollView>
     );
   }
 }
-
