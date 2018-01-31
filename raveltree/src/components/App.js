@@ -11,6 +11,7 @@ import { createStore, applyMiddleware } from 'redux';
 import Login from './Login';
 import Loader from './Loader';
 import MainPage from './MainPage';
+import Test from './Test';
 //import Navigation from './Navigation';
 import reducers from '../reducers/UserReducer';
 import Thunk from 'redux-thunk';
@@ -25,7 +26,7 @@ const instructions = Platform.select({
 });
 
 const store = createStore(reducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), applyMiddleware(Thunk));
-export default class App extends Component { 
+export default class App extends Component {
 
   state = { loggedIn: null};
 
@@ -51,11 +52,12 @@ export default class App extends Component {
 
   renderInitialView() {
     switch (this.state.loggedIn) {
-      case true: 
+      case true:
         console.log('Showing main page');
-        return <MainPage />; 
-      case false: 
-        return <Login />; 
+        return <MainPage />;
+      case false:
+        return <Test />;
+        //return <Login />;
       default:
         return <Loader size="large"/>;
     }

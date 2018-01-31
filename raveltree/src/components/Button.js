@@ -22,9 +22,10 @@ class Button extends React.Component <{
   radius?: ?number,
   color?: ?string,
   accessibilityLabel?: ?string,
-  disabled?: ?boolean
+  disabled?: ?boolean,
   testID?: ?string,
 }> {
+//class Button extends React.Component {
   static propTypes = {
 
     // Text to display inside the button
@@ -34,10 +35,10 @@ class Button extends React.Component <{
     onPress: PropTypes.func.isRequired,
 
     // Magnitude of curve radius for rounded rectangle
-    radius: PropTypes.number
+    radius: PropTypes.number,
 
     // Color of the button
-    color: PropTypes.string
+    color: PropTypes.string,
 
     // Text to display for blindness accessibility features
     accessibilityLabel: PropTypes.string,
