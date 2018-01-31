@@ -1,5 +1,4 @@
 const initialState = {
-    
     user_created:'',
     ravel_title: '', 
     ravel_category: '', 
@@ -8,10 +7,11 @@ const initialState = {
     enable_voting: '', 
     enable_comment: '', 
     ravel_concept: '', 
-    ravel_status: '',
-    ravel_time_created:''
-
-
+    ravel_status: false,
+    ravel_number_participants: '',
+    ravel_created_date: '',
+    ravel_participants: [],
+    ravel_tags: []
 };
 
 export default (state = initialState, action) => {
@@ -27,8 +27,32 @@ export default (state = initialState, action) => {
                 enable_voting: action.payload.enable_voting, 
                 enable_comment: action.payload.enable_comment, 
                 ravel_concept: action.payload.ravel_concept, 
-                ravel_status: action.payload.ravel_status,
-                ravel_time_created: action.payload.ravel_time_created
+                ravel_status: true,
+                ravel_number_participants: action.payload.ravel_number_participants,
+                ravel_created_date: action.payload.ravel_created_date,
+                ravel_participants: action.payload.ravel_participants
+            };
+        case 'INSERT_RAVEL_TAGS':
+            return {
+                ...state,
+                ravel_tags: action.payload.ravel_tags,
+            };
+
+        case 'GET_RAVEL_META_DATA': 
+            return {
+                ...state,
+                user_created: action.payload.user_created,
+                ravel_title: action.payload.ravel_title, 
+                ravel_category: action.payload.ravel_category, 
+                passage_length: action.payload.passage_length,              
+                visibility: action.payload.visibility, 
+                enable_voting: action.payload.enable_voting, 
+                enable_comment: action.payload.enable_comment, 
+                ravel_concept: action.payload.ravel_concept, 
+                ravel_status: true,
+                ravel_number_participants: action.payload.ravel_number_participants,
+                ravel_created_date: action.payload.ravel_created_date,
+                ravel_participants: action.payload.ravel_participants
             };
 
         default:

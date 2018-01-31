@@ -1,6 +1,9 @@
 import firebase from 'firebase';
 
+// When using these functions, you have to import the functions into your page
+// You also have to import the correct Reducer.js. 
 
+// START USER FUNCTIONS 
 // Will get the currently logged in user's uid 
 export const getCurrentLoggedInUserUid = () => {
 
@@ -22,7 +25,7 @@ export const getUserProfile = (uid) => {
 
 // Params: first name, last name, bio, photoURL 
 // Action: Updates the currently logged in user's first name, last name, bio and photo
-export const updateUserProfile = ({ first_name, last_name, bio, photoURL}) => {
+export const updateCurrentUserProfile = ({ first_name, last_name, bio, photoURL}) => {
 
     const { currentUser } = firebase.auth();
 
@@ -39,6 +42,22 @@ export const updateUserProfile = ({ first_name, last_name, bio, photoURL}) => {
             });
     }
 };
+
+// Wrapper method to set null values when creating a user
+export const updateUserProfile = (userProfile, {first_name, last_name, bio, photoURL}) => {
+    console.log("updating user profile");
+    console.log(userProfile.uid);
+    console.log("First name is:" + first_name);
+
+        firebase.database().ref(`/users/${userProfile.uid}/userProfile`)
+            .set({ first_name, last_name, bio, photoURL })
+            .then(() => {
+                console.log('Success');
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+}
 
 // Action: Logs the current user off
 export const userLogOff = () => { 
@@ -72,7 +91,7 @@ export const signInWithEmail = (email, password) => {
     if (errorCode === 'auth/wrong-password') {
       alert('Wrong password.');
     } else if (errorCode === 'auth/user-not-found') {
-        alert('there is no user corresponding to the given email');
+      alert('there is no user corresponding to the given email');
     } else {
       alert(errorMessage);
     }
@@ -81,10 +100,15 @@ export const signInWithEmail = (email, password) => {
 };
 
 // Params: Takes a user's email and password
-// Actions: Creates a new user with the email and password 
+// Actions: Creates a new user with the email and password and sets profile to empty
 export const createUserWithEmail = (email, password) => {
-
     firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then((user) => { 
+        console.log('i am here in create user with email'); 
+        console.log(user.uid);
+        updateUserProfile(user, {first_name:'',last_name:'',bio:'',photoURL:'', stat_ravel_led:'', stat_passage_written:'', stat_ravel_contributed:'', 
+                                upvotes:'', ravel_points:'' });
+    })
     .catch(function(error) {
     var errorCode = error.code;
     var errorMessage = error.message;
@@ -100,8 +124,35 @@ export const createUserWithEmail = (email, password) => {
 
 };
 
+// export const getImage = () => {
 
-// Helper Functions 
+//     ImagePicker.showImagePicker(options, (response) => {
+//       console.log('Response = ', response);
+
+//       if (response.didCancel) {
+//         console.log('User cancelled image picker');
+//       }
+//       else if (response.error) {
+//         console.log('ImagePicker Error: ', response.error);
+//       }
+//       else if (response.customButton) {
+//         console.log('User tapped custom button: ', response.customButton);
+//       }
+//       else {
+//         // let source = { uri: response.uri };
+//         // this.setState({image_uri: response.uri})
+
+//         // You can also display the image using data:
+//         // let image_uri = { uri: 'data:image/jpeg;base64,' + response.data };
+
+//     //   this.uploadImage(response.uri)
+//     //     .then(url => { alert('uploaded'); this.setState({image_uri: url}) })
+//     //     .catch(error => console.log(error))
+
+//       }
+//     });
+
+//   };
 
 // Actions: Will calculate the user's stats 
 export const calculatesUserStat = ({ stat_ravel_led, stat_ravel_contributed, stat_passage_written }) => {
@@ -120,7 +171,7 @@ export const calculatesUserStat = ({ stat_ravel_led, stat_ravel_contributed, sta
     };
 };
 
-// This should be a get function 
+
 export const calculatesUserUpVote = (upvotes) => {
     const { currentUser } = firebase.auth();
 
@@ -138,11 +189,7 @@ export const calculatesUserUpVote = (upvotes) => {
     };
 };
 
-// export const getUserUpVote = (uid, upvotes) => {
-//     const { currentUser } = firebase.auth(uid);
-// }
-
-// Ask how to calculate this
+// TODO: Calculate ravelpoints with function 
 export const updateUserRavelPoint = (ravel_points) => {
     const { currentUser } = firebase.auth();
 
@@ -159,30 +206,37 @@ export const updateUserRavelPoint = (ravel_points) => {
     };
 };
 
+// END USER FUNCTIONS 
+
+// START RAVEL FUNCTIONS
 
 // Params: Takes meta-date from the ravel. This starts a ravel creation. 
 // Action: Writes the the db the meta-data and sets the current user logged in 
 // as the creator. ravel_status: 
 
-export const createStartRavel = ({ ravel_title, ravel_category, passage_length, visibility,enable_voting,enable_comment, ravel_concept }) => {
+export const createStartRavel = ({ ravel_title, ravel_category, passage_length, visibility, enable_voting, enable_comment,
+                                ravel_concept, ravel_number_participants, ravel_participants, ravel_tags }) => {
 
     console.log('creating ravel');
     const { currentUser } = firebase.auth();
     var user_created = currentUser.uid;
-    var ravel_status = false;
-    var ravel_create_time = new Date().toLocaleTimeString();;
+    var ravel_status = true;
+    var ravel_create_date = new Date().toLocaleTimeString();
+    var user_created_photoURL = '';
+    //var snapshot_URL = snapshot.val();
 
     return (dispatch) => {
         firebase.database().ref(`/ravels`)
-            .push({ user_created, ravel_title, ravel_category, passage_length,
-                visibility, enable_voting, enable_comment, ravel_concept, ravel_status,ravel_create_time
-                })
-            .then(() => {
-                console.log('Success');
+            .push({ user_created, user_created_photoURL, ravel_title, ravel_category, passage_length,
+                visibility, enable_voting, enable_comment, ravel_concept, ravel_status,ravel_number_participants,
+                ravel_participants, ravel_create_date })
+            .then(returnKey => {
+                
+                console.log("Ravel ID:" + returnKey.getKey());
                 dispatch({ type: 'CREATE_RAVEL',
-                           payload: {user_created, ravel_title, ravel_category, passage_length,
-                            visibility, enable_voting, enable_comment, ravel_concept, ravel_status,ravel_create_time
-                            }});
+                           payload: { user_created, user_created_photoURL, ravel_title, ravel_category, passage_length,
+                            visibility, enable_voting, enable_comment, ravel_concept, ravel_status,ravel_number_participants,
+                            ravel_participants, ravel_create_date }});
             })
             .catch((error) => {
                 console.log('failed creating ravel');
@@ -191,6 +245,8 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
 
 };
 
-
-
+// What you can upvote: a passage 
+// What you cannot upvote: a ravel, a comment
+// Formula to calculate ravel-point: Each user profile shall include a user score calculated using the formula 10P + U, 
+// where P = Number of passages written and U = Number of upvotes received.
 

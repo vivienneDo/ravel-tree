@@ -9,11 +9,12 @@ import Loader from './Loader';
 import firebase from 'firebase';
 import { connect} from 'react-redux';
 import * as actions from '../actions';
-import UserModel from '../models/UserModel';
 import MainPage from './MainPage';
+import RavelPage from './RavelPage';
 import {userResetPassword, signInWithEmail, createUserWithEmail} from '../actions';
 
 
+// import fbsdk and use LoginButton and AccessToken
 const FBSDK = require('react-native-fbsdk');
 const {
   LoginButton,
@@ -171,11 +172,11 @@ onGButtonPress() {
           onLoginFinished={
             (error, result) => {
               if (error) {
-                alert("login has error: " + result.error);
+                alert("facebook login has error: " + result.error);
               } else if (result.isCancelled) {
-                alert("login is cancelled.");
+                alert("facebook login is cancelled.");
               } else {
-                console.log("Attempting to log into firebase");
+                console.log("Attempting to log into firebase through facebook");
                 AccessToken.getCurrentAccessToken().then(
                   (data) => {
                        const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)

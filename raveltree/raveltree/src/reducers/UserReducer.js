@@ -29,6 +29,7 @@ export default (state = initialState, action) => {
             };
 
         case 'UPDATE_USER_PROFILE':
+            console.log('in update_user_profile');
             return {
                 ...state,
                 first_name: action.payload.first_name,
@@ -56,16 +57,7 @@ export default (state = initialState, action) => {
                 ...state,
                 ravel_points: action.payload.ravel_points,
             };
-        case 'ON_AUTH_SUCCESS':
-            return {
-                loading: action.payload.loading,
-            };
-        case 'CREATE_NEW_USER':
-            return {
-                loading: action.payload.loading,
-            };
-        
-    
+            
         default:
             return state;
     }
