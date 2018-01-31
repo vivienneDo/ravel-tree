@@ -8,6 +8,7 @@ import {
 import firebase from 'firebase';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
+import StatusBar from './StatusBar'
 import Login from './Login';
 import Loader from './Loader';
 import MainPage from './MainPage';
@@ -65,8 +66,13 @@ export default class App extends Component {
 
   render() {
     return (
+
       <Provider store={store}>
+        <View>
+
+          <StatusBar />
           {this.renderInitialView()}
+        </View>
       </Provider>
     );
   }
