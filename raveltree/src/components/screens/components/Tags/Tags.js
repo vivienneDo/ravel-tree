@@ -18,7 +18,9 @@ export default class Tags extends Component<{}> {
     constructor(props) {
         super(props);
         this.state = { pressStatus: false };
-      }
+     }
+
+    
 
     render() {
         return (

@@ -8,17 +8,14 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet, Image, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { getTheme } from 'react-native-material-kit';
 import {MKTextField, MKColor, MKButton} from 'react-native-material-kit';
-//import { getUserName } from '../models/UserModel';
-import { getUserName } from '../models/UserModel';
 import * as actions from '../actions';
-import { updateUserProfile } from '../actions';
+import { updateUserProfile, getUserProfile, getCurrentLoggedInUserUid, startCreateRavel} from '../actions';
 import { connect} from 'react-redux';
-
-
-//console.log(getUserName());
+import _ from 'lodash';
+//import RNFetchBlob from 'react-native-fetch-blob';
+//var ImagePicker = require('react-native-image-picker');
 
 const theme = getTheme();
-
 
 const styles = StyleSheet.create({
   container: {
@@ -113,13 +110,32 @@ const styles = StyleSheet.create({
 class MainPage extends Component {
 
     componentWillMount() {
+
         
-        first_name = 'Bob';
-        last_name = 'Do';
-        photoURL = 'Blah.com';
-        bio = 'This is a bio';
-        this.props.updateUserProfile({ first_name, last_name, bio, photoURL });
-    }
+        
+
+        // ravel_title= 'ravel title', 
+        // ravel_category= 'game mode', 
+        // passage_length= 'passage',              
+        // visibility= 'true', 
+        // enable_voting= 'true', 
+        // enable_comment= 'true', 
+        // ravel_concept= 'concept blah', 
+        // ravel_status= 'true'
+        // this.props.createStartRavel({ravel_title, ravel_category, passage_length,
+        // visibility, enable_voting, enable_comment, ravel_concept, ravel_status});
+
+
+         first_name = 'Chris the builder';
+         last_name = 'Donut';
+         photoURL = 'Blah.com';
+         bio = 'This is a bio';
+        //  this.props.updateCurrentUserProfile({ first_name, last_name, bio, photoURL });
+         console.log(getCurrentLoggedInUserUid());
+        //  this.props.getUserProfile(getCurrentLoggedInUserUid());
+    };
+
+
     
   render() {
     return (  
@@ -127,12 +143,17 @@ class MainPage extends Component {
 
       <View style={styles.container}>
 
-        <Text>{first_name}</Text>
-        <Text>{last_name}</Text>
-        <Text>{bio}</Text>
-        <Text>{photoURL}</Text>
+        <Text>{this.props.last_name}</Text>
+        <Text>{this.props.first_name}</Text>
+        <Text>{this.props.bio}</Text>
+        <Text>{this.props.photoURL}</Text>
+
+
         
       </View>
+      
+
+      
     );
   }
 }
@@ -140,8 +161,14 @@ class MainPage extends Component {
 const mapStateToProps = state => {
     const {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed, 
         stat_passage_written, upvotes, ravel_points} = state;
-    return { first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed, 
-        stat_passage_written, upvotes, ravel_points }
-   };
+
   
+    return {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed, 
+        stat_passage_written, upvotes, ravel_points };
+};
+  
+
+
+
   export default connect(mapStateToProps, actions) (MainPage);
+  //export default connect(mapStateToPropsUserProfile, {getUserProfile})(MainPage);
