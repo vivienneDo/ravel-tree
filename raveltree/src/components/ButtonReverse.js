@@ -77,7 +77,10 @@ export default class ButtonReverse extends React.Component <{
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     if (color)
+    {
       buttonStyles.push ({borderColor: color});
+      textStyles.push ({color: color})
+    }
     if (disabled) {
       buttonStyles.push (styles.buttonDisabled);
       textStyles.push (styles.textDisabled);
