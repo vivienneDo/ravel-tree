@@ -16,8 +16,10 @@ import RavelPage from './RavelPage';
 import reducers from '../reducers/UserReducer';
 //import reducers from '../reducers/UserReducer';
 import Thunk from 'redux-thunk';
+import LoginEmail from './LoginEmail';
 
 const store = createStore(reducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), applyMiddleware(Thunk));
+
 export default class Backend extends Component { 
 
   state = { loggedIn: null};
@@ -48,7 +50,7 @@ export default class Backend extends Component {
         console.log('Showing main page');
         return <MainPage />; 
       case false: 
-        return <Login />; 
+        return <LoginEmail />; 
       default:
         return <Loader size="large"/>;
     }

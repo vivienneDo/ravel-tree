@@ -123,35 +123,6 @@ onGButtonPress() {
         
     <Text></Text>
       <View >
-       
-    {/*
-        <MKTextField
-            text={this.state.email}
-            onTextChange={email => this.setState({email})}
-            textInputStyle={fieldStyles}
-            placeholder={'Email...'}
-            tintColor={MKColor.Teal}
-        />
-        <MKTextField
-            text={this.state.password}
-            onTextChange={password => this.setState({password})}
-            textInputStyle={fieldStyles}
-            placeholder={'Password...'}
-            tintColor={MKColor.Teal}
-            password={true}
-            paddingBottom = "50"
-        />
-
-        <MKTextField
-            text={this.state.password}
-            onTextChange={password => this.setState({password})}
-            textInputStyle={fieldStyles}
-            placeholder={'test'}
-            tintColor={MKColor.Teal}
-            password={true}
-            paddingBottom = "50"
-        />
-    */}
         
         <Text></Text>
 
@@ -224,7 +195,7 @@ onGButtonPress() {
         {/* the terms and privacy */}
         <TouchableOpacity 
         style = {{alignItems: 'center', paddingTop: 80}}>
-            <Text style = {{fontSize: 11, color: '#2e8af7', fontWeight: 'bold'}}>
+            <Text style = {{fontSize: 12, color: '#2e8af7'}}>
                 Terms and Privacy
             </Text>
         </TouchableOpacity>
