@@ -2,7 +2,7 @@
 // Created:   01/31/18
 // Modified:  01/31/18
 
-// Standard "button-sans" component for RavelTree. Based on the React Native Button
+// Standard "plus" button component for RavelTree. Based on the React Native Button
 // component (https://github.com/facebook/react-native/blob/master/Libraries/Components/Button.js)
 
 'use strict';
@@ -17,11 +17,10 @@ const TouchableNativeFeedback = require('TouchableNativeFeedback');
 const TouchableOpacity = require('TouchableOpacity');
 const View = require('View');
 
-export default class ButtonSans extends React.Component <{
-  title: string,
+export default class ButtonPlus extends React.Component <{
   onPress: () => any,
-  radius?: ?number,
   color?: ?string,
+  size?: ?number,
   width?: ?number,
   height?: ?number,
   accessibilityLabel?: ?string,
@@ -30,23 +29,14 @@ export default class ButtonSans extends React.Component <{
 }> {
   static propTypes = {
 
-    // Text to display inside the button
-    title: PropTypes.string.isRequired,
-
     // Handler to be called when the user taps the button
     onPress: PropTypes.func.isRequired,
-
-    // Magnitude of curve radius for rounded rectangle
-    radius: PropTypes.number,
 
     // Color of the button
     color: PropTypes.string,
 
-    // Width of the button
-    width: PropTypes.number,
-
-    // Height of the button (automatically modifies text line height)
-    height: PropTypes.number,
+    // Size of the button (applied to both width and height)
+    size: PropTypes.number,
 
     // Text to display for blindness accessibility features
     accessibilityLabel: PropTypes.string,
@@ -60,19 +50,16 @@ export default class ButtonSans extends React.Component <{
 
   render () {
     const {
-      title,
       onPress,
       radius,
       color,
-      width,
-      height,
+      size,
       accessibilityLabel,
       disabled,
       testID,
     } = this.props;
 
     const buttonStyles = [styles.button];
-    const textStyles = [styles.text];
     const accessibilityTraits = ['button'];
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
@@ -82,18 +69,12 @@ export default class ButtonSans extends React.Component <{
       buttonStyles.push ({backgroundColor: color});
     if (disabled) {
       buttonStyles.push (styles.buttonDisabled);
-      textStyles.push (styles.textDisabled);
       accessibilityTraits.push ('disabled');
     }
-    if (width)
+    if (size)
     {
-      layoutStyles.push ({width: width});
-      buttonStyles.push ({width: width});
-    }
-    if (height) {
-      layoutStyles.push ({height: height});
-      buttonStyles.push ({height: height});
-      textStyles.push ({lineHeight: height});
+      layoutStyles.push ({width: size, height: size});
+      buttonStyles.push ({width: size, height: size});
     }
 
 
@@ -107,7 +88,7 @@ export default class ButtonSans extends React.Component <{
         onPress={onPress}
         style={styles.layout}>
         <View style={buttonStyles}>
-          <Text style={textStyles} disabled={disabled}>{title}</Text>
+          <Text style={styles.text}>+</Text>
         </View>
       </Touchable>
     )
@@ -116,23 +97,22 @@ export default class ButtonSans extends React.Component <{
 
 const styles = StyleSheet.create ({
   layout: {
-    width: 120,
-    height: 30,
+    width: 21,
+    height: 21,
   },
   button: {
     backgroundColor: '#2E8AF7',
-    borderRadius: 10,
-    width: 120,
-    height: 30,
+    borderRadius: 100,
+    width: 21,
+    height: 21,
   },
   text: {
     color: '#FFFFFF',
     textAlign: 'center',
-    fontSize: 16,
-    fontFamily: 'Roboto',
-    // TODO: Hack together Android support for letter spacing.
-    letterSpacing: 1,
-    lineHeight: 30,
+    fontSize: 23,
+    fontFamily: 'EB Garamond',
+    fontWeight: 'bold',
+    lineHeight: 23,
   },
   buttonDisabled: {
     backgroundColor: '#969696',

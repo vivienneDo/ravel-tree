@@ -7,6 +7,7 @@ import {
 import Button from './Button';
 import ButtonReverse from './ButtonReverse';
 import ButtonSans from './ButtonSans'
+import ButtonPlus from './ButtonPlus'
 
 export default class Test extends Component {
   onPressTest () {
@@ -20,8 +21,11 @@ export default class Test extends Component {
           <Button title="Start a Ravel" onPress={this.onPressTest ()} />
           <ButtonReverse title="Explore" onPress={this.onPressTest ()} />
         </View>
-        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+        <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <ButtonSans title="Register" onPress={this.onPressTest ()} />
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <ButtonPlus onPress={this.onPressTest ()} />
         </View>
       </View>
     );
