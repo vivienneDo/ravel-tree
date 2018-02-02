@@ -4,13 +4,19 @@ import {
   Text,
   View, ScrollView
 } from 'react-native';
-import { Button } from './Button';
+import Button from './Button';
+import ButtonReverse from './ButtonReverse';
 
-export default class Login extends Component {
+export default class Test extends Component {
+  onPressTest () {
+
+  }
+
   render (){
     return (
-      <View>
-        <Text>Test</Text>
+      <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+        <Button title="Start a Ravel" onPress={this.onPressTest ()} />
+        <ButtonReverse title="Explore" onPress={this.onPressTest ()} />
       </View>
     );
   }

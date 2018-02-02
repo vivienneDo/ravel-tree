@@ -1,9 +1,9 @@
 // Author:    Frank Fusco (fr@nkfus.co)
-// Created:   01/31/18
-// Modified:  01/31/18
+// Created:   02/01/18
+// Modified:  02/01/18
 
-// Standard button component for RavelTree. Based on the React Native Button
-// component (https://github.com/facebook/react-native/blob/master/Libraries/Components/Button.js)
+// Standard "reverse" button component for RavelTree. Based on the React Native
+// Button component (https://github.com/facebook/react-native/blob/master/Libraries/Components/Button.js)
 
 'use strict';
 
@@ -17,7 +17,7 @@ const TouchableNativeFeedback = require('TouchableNativeFeedback');
 const TouchableOpacity = require('TouchableOpacity');
 const View = require('View');
 
-export default class Button extends React.Component <{
+export default class ButtonReverse extends React.Component <{
   title: string,
   onPress: () => any,
   radius?: ?number,
@@ -77,7 +77,7 @@ export default class Button extends React.Component <{
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     if (color)
-      buttonStyles.push ({backgroundColor: color});
+      buttonStyles.push ({borderColor: color});
     if (disabled) {
       buttonStyles.push (styles.buttonDisabled);
       textStyles.push (styles.textDisabled);
@@ -119,24 +119,26 @@ const styles = StyleSheet.create ({
     height: 36,
   },
   button: {
-    backgroundColor: '#3BB54A',
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#2E8AF7',
     width: 160,
     height: 36,
   },
   text: {
-    color: '#FFFFFF',
+    color: '#2E8AF7',
     textAlign: 'center',
     fontSize: 12,
     fontFamily: 'Montserrat',
     // TODO: Hack together Android support for letter spacing.
     letterSpacing: 1,
-    lineHeight: 36,
+    lineHeight: 34,
   },
   buttonDisabled: {
-    backgroundColor: '#969696',
+    borderColor: '#969696',
   },
   textDisabled: {
-    color: '#FFFFFF',
+    color: '#969696',
   },
 });

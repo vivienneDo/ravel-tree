@@ -66,10 +66,8 @@ export default class App extends Component {
 
   render() {
     return (
-
       <Provider store={store}>
         <View>
-
           <StatusBar />
           {this.renderInitialView()}
         </View>
