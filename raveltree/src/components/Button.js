@@ -76,6 +76,8 @@ export default class Button extends React.Component <{
     const accessibilityTraits = ['button'];
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
+    if (radius)
+      buttonStyles.push ({borderRadius: radius});
     if (color)
       buttonStyles.push ({backgroundColor: color});
     if (disabled) {
@@ -88,7 +90,6 @@ export default class Button extends React.Component <{
       layoutStyles.push ({width: width});
       buttonStyles.push ({width: width});
     }
-
     if (height) {
       layoutStyles.push ({height: height});
       buttonStyles.push ({height: height});

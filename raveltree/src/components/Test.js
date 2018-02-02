@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import Button from './Button';
 import ButtonReverse from './ButtonReverse';
+import ButtonSans from './ButtonSans'
 
 export default class Test extends Component {
   onPressTest () {
@@ -14,9 +15,14 @@ export default class Test extends Component {
 
   render (){
     return (
-      <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-        <Button title="Start a Ravel" onPress={this.onPressTest ()} />
-        <ButtonReverse title="Explore" onPress={this.onPressTest ()} />
+      <View style={{flexDirection: 'column'}}>
+        <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
+          <Button title="Start a Ravel" onPress={this.onPressTest ()} />
+          <ButtonReverse title="Explore" onPress={this.onPressTest ()} />
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <ButtonSans title="Register" onPress={this.onPressTest ()} />
+        </View>
       </View>
     );
   }

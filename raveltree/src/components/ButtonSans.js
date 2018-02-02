@@ -1,9 +1,9 @@
 // Author:    Frank Fusco (fr@nkfus.co)
-// Created:   02/01/18
-// Modified:  02/01/18
+// Created:   01/31/18
+// Modified:  01/31/18
 
-// Standard "reverse" button component for RavelTree. Based on the React Native
-// Button component (https://github.com/facebook/react-native/blob/master/Libraries/Components/Button.js)
+// Standard "button-sans" component for RavelTree. Based on the React Native Button
+// component (https://github.com/facebook/react-native/blob/master/Libraries/Components/Button.js)
 
 'use strict';
 
@@ -17,7 +17,7 @@ const TouchableNativeFeedback = require('TouchableNativeFeedback');
 const TouchableOpacity = require('TouchableOpacity');
 const View = require('View');
 
-export default class ButtonReverse extends React.Component <{
+export default class ButtonSans extends React.Component <{
   title: string,
   onPress: () => any,
   radius?: ?number,
@@ -79,10 +79,7 @@ export default class ButtonReverse extends React.Component <{
     if (radius)
       buttonStyles.push ({borderRadius: radius});
     if (color)
-    {
-      buttonStyles.push ({borderColor: color});
-      textStyles.push ({color: color})
-    }
+      buttonStyles.push ({backgroundColor: color});
     if (disabled) {
       buttonStyles.push (styles.buttonDisabled);
       textStyles.push (styles.textDisabled);
@@ -93,10 +90,11 @@ export default class ButtonReverse extends React.Component <{
       layoutStyles.push ({width: width});
       buttonStyles.push ({width: width});
     }
+
     if (height) {
       layoutStyles.push ({height: height});
       buttonStyles.push ({height: height});
-      textStyles.push ({lineHeight: height - 2}); // Offset to ensure centering
+      textStyles.push ({lineHeight: height});
     }
 
 
@@ -110,7 +108,7 @@ export default class ButtonReverse extends React.Component <{
         onPress={onPress}
         style={styles.layout}>
         <View style={buttonStyles}>
-          <Text style={textStyles} disabled={disabled}>{title.toUpperCase ()}</Text>
+          <Text style={textStyles} disabled={disabled}>{title}</Text>
         </View>
       </Touchable>
     )
@@ -119,30 +117,28 @@ export default class ButtonReverse extends React.Component <{
 
 const styles = StyleSheet.create ({
   layout: {
-    width: 160,
-    height: 36,
+    width: 120,
+    height: 30,
   },
   button: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#2E8AF7',
-    width: 160,
-    height: 36,
+    backgroundColor: '#2E8AF7',
+    borderRadius: 10,
+    width: 120,
+    height: 30,
   },
   text: {
-    color: '#2E8AF7',
+    color: '#FFFFFF',
     textAlign: 'center',
-    fontSize: 12,
-    fontFamily: 'Montserrat',
+    fontSize: 16,
+    fontFamily: 'Roboto',
     // TODO: Hack together Android support for letter spacing.
     letterSpacing: 1,
-    lineHeight: 34,
+    lineHeight: 30,
   },
   buttonDisabled: {
-    borderColor: '#969696',
+    backgroundColor: '#969696',
   },
   textDisabled: {
-    color: '#969696',
+    color: '#FFFFFF',
   },
 });
