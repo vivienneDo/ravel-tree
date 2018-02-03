@@ -9,6 +9,7 @@ import ButtonReverse from './ButtonReverse';
 import ButtonSans from './ButtonSans'
 import ButtonPlus from './ButtonPlus'
 import RadioItem from './RadioItem'
+import Toggle from './Toggle'
 
 export default class Test extends Component {
   onPressTest () {
@@ -30,6 +31,9 @@ export default class Test extends Component {
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <RadioItem title="By concept" />
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
+          <Toggle title="By concept" />
         </View>
       </View>
     );
