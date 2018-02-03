@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       fontSize: 12,
       letterSpacing: 1, // only for iOS
-      /*fontFamily: 'Montserrat',*/
+      fontFamily: 'Montserrat'
     },
 });
 

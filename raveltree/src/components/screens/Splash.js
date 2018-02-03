@@ -32,21 +32,21 @@ const styles = StyleSheet.create({
     headerBlue: {
         color: '#2e8af7',
         textAlign: 'center',
-        fontSize: 40,
-        //fontFamily: 'EB Garamond',
+        fontSize: 50,
+        fontFamily: 'EB Garamond',
     },
     headerGreen : {
         color: '#3bb54a',
         textAlign: 'center',
-        fontSize: 40,
-        //fontFamily: 'EB Garamond',
+        fontSize: 50,
+        fontFamily: 'EB Garamond',
     },
     viewStyle : {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
         paddingTop: '85%',
-        paddingBottom: '85%'
+        paddingBottom: '85%',
     }
 });
 

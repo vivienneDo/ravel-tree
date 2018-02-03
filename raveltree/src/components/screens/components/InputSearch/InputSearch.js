@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       fontSize: 20,
       borderColor: '#B7B7B7',
-      /*fontFamily: 'EB Garamond',*/
+      fontFamily: 'EB Garamond',
     }
 });
 

@@ -6,7 +6,11 @@
 	<dict>
 		<key>Base.lproj/LaunchScreen.nib</key>
 		<data>
-		jDeh1g+Rf/Z0dDCU2qVmTj+F7Ys=
+		a2nPD0RuqnVO/TnY7SlWqjLpxq4=
+		</data>
+		<key>EBGaramond-Regular.ttf</key>
+		<data>
+		lKnDoy8a2mhcw6BXaJ0ySpLZw8Y=
 		</data>
 		<key>Entypo.ttf</key>
 		<data>
@@ -71,7 +75,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		noJ8DDzpawI00tAyXMDGhr0iHpo=
+		omLVg0IDZzchOS87qEuLyp8Oxcw=
 		</data>
 		<key>Ionicons.ttf</key>
 		<data>
@@ -84,6 +88,14 @@
 		<key>MaterialIcons.ttf</key>
 		<data>
 		/AXeMSNOAJD33cKM4bI69AJssdo=
+		</data>
+		<key>Montserrat-Bold.ttf</key>
+		<data>
+		vyV/b5H2Ui7M6m1PKNV7sRjJhyk=
+		</data>
+		<key>Montserrat-Regular.ttf</key>
+		<data>
+		nKQgqkU+skMDeXDAwcGt/iifUQ8=
 		</data>
 		<key>Octicons.ttf</key>
 		<data>
@@ -103,15 +115,63 @@
 		</data>
 		<key>PlugIns/raveltreeTests.xctest/Info.plist</key>
 		<data>
-		VCGw7iAUhXrqFJlfyulfyZBuJXs=
+		1pc2AskLRjBSWARzmt5IMmKanKc=
 		</data>
 		<key>PlugIns/raveltreeTests.xctest/_CodeSignature/CodeResources</key>
 		<data>
-		bCfvd3Um22A8Ndl/WG/EAn32fyo=
+		Vcny9u1K1SCLRiZzzL8H1wBnbzw=
 		</data>
 		<key>PlugIns/raveltreeTests.xctest/raveltreeTests</key>
 		<data>
-		wOUvc1ZG9iOQCqDi4TPkn525t20=
+		YUp/eCPq7vvXprywCWdQLjRhA20=
+		</data>
+		<key>Roboto-Black.ttf</key>
+		<data>
+		Y3r0gL1lVtZYj2vf8xirybibCO0=
+		</data>
+		<key>Roboto-BlackItalic.ttf</key>
+		<data>
+		KRjRfRLevpSZ2F00RIMSWLL9378=
+		</data>
+		<key>Roboto-Bold.ttf</key>
+		<data>
+		RzJ98PNefNfIZFh0iXp0SWl1RK4=
+		</data>
+		<key>Roboto-BoldItalic.ttf</key>
+		<data>
+		AKAFeIIssCXZD2HICkT9M2DVD5s=
+		</data>
+		<key>Roboto-Italic.ttf</key>
+		<data>
+		ST509y+sXWHo38m7H/CieO5YR1A=
+		</data>
+		<key>Roboto-Light.ttf</key>
+		<data>
+		4yHBg+K3XuGYE4kre6yNfEEcuIo=
+		</data>
+		<key>Roboto-LightItalic.ttf</key>
+		<data>
+		vrDdGm3CEy/Y2bT7Nalgh7supbw=
+		</data>
+		<key>Roboto-Medium.ttf</key>
+		<data>
+		YGDKcmuXYLdvfDR9zp0vof5C7JI=
+		</data>
+		<key>Roboto-MediumItalic.ttf</key>
+		<data>
+		UiASYHfSyAqDnKiS0MOgy9vTW+U=
+		</data>
+		<key>Roboto-Regular.ttf</key>
+		<data>
+		gktUgMl3qBZuF35TV9ExZMzEX0c=
+		</data>
+		<key>Roboto-Thin.ttf</key>
+		<data>
+		Fz7WRSi00BCnbY043rHX5+7Vjto=
+		</data>
+		<key>Roboto-ThinItalic.ttf</key>
+		<data>
+		cYSzDzqomJ5LHi/fvp2CZd4wU8w=
 		</data>
 		<key>SimpleLineIcons.ttf</key>
 		<data>
@@ -128,11 +188,22 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			jDeh1g+Rf/Z0dDCU2qVmTj+F7Ys=
+			a2nPD0RuqnVO/TnY7SlWqjLpxq4=
 			</data>
 			<key>hash2</key>
 			<data>
-			veckPMqmqufUgDwrndhkaACtwQaEJh5JlFQLEmaANeU=
+			cFDvZweYQw27DyaMOtLrWMQfdZPpugdCZ87rNKWNgcg=
+			</data>
+		</dict>
+		<key>EBGaramond-Regular.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			lKnDoy8a2mhcw6BXaJ0ySpLZw8Y=
+			</data>
+			<key>hash2</key>
+			<data>
+			+K6jsOma0CIzwj6vO/32yX6eYMqMOPznDAKnMFQk70U=
 			</data>
 		</dict>
 		<key>Entypo.ttf</key>
@@ -324,6 +395,28 @@
 			t/Sjq1YgSPKN0fppFgG8QzY6YdD4dtFtgxbFLk8y1pY=
 			</data>
 		</dict>
+		<key>Montserrat-Bold.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			vyV/b5H2Ui7M6m1PKNV7sRjJhyk=
+			</data>
+			<key>hash2</key>
+			<data>
+			nLfcGO5hdauGvqAI63r/GZLqewaTOWTV4uhkCQIGwgo=
+			</data>
+		</dict>
+		<key>Montserrat-Regular.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			nKQgqkU+skMDeXDAwcGt/iifUQ8=
+			</data>
+			<key>hash2</key>
+			<data>
+			Mvm9xz7PMIoZwOkYtAfhLaErbNmmZ97Nwt3LdPRXg5o=
+			</data>
+		</dict>
 		<key>Octicons.ttf</key>
 		<dict>
 			<key>hash</key>
@@ -361,33 +454,165 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			VCGw7iAUhXrqFJlfyulfyZBuJXs=
+			1pc2AskLRjBSWARzmt5IMmKanKc=
 			</data>
 			<key>hash2</key>
 			<data>
-			/JYFYUEn6i9kBYEt2YHdS51LesudSCxZqc2PyZFe+Jo=
+			A8aYjF3ABywtg2M4NQjx3YeW8gwHwwUjcuj5FZ/VO2Y=
 			</data>
 		</dict>
 		<key>PlugIns/raveltreeTests.xctest/_CodeSignature/CodeResources</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			bCfvd3Um22A8Ndl/WG/EAn32fyo=
+			Vcny9u1K1SCLRiZzzL8H1wBnbzw=
 			</data>
 			<key>hash2</key>
 			<data>
-			jAaySP7CbBixZTE1s/dBqPD063HCqaT3WLONgtGI6Zg=
+			7TG9y4N+Y27l+7ZLXBi2CshBsgVSq6u/R3Po2omfY6U=
 			</data>
 		</dict>
 		<key>PlugIns/raveltreeTests.xctest/raveltreeTests</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			wOUvc1ZG9iOQCqDi4TPkn525t20=
+			YUp/eCPq7vvXprywCWdQLjRhA20=
 			</data>
 			<key>hash2</key>
 			<data>
-			vpx1YpheMfuXlTPba0lYddNtSw054ACXb0SWMPqQ6Ss=
+			2Oz7ARDeRaz/GDbIrbh1QFgb3s8YPqc4EXRwy7LYU2A=
+			</data>
+		</dict>
+		<key>Roboto-Black.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Y3r0gL1lVtZYj2vf8xirybibCO0=
+			</data>
+			<key>hash2</key>
+			<data>
+			fITVf7LFws5fNaxTNjgS6WyB9UNcKkmhPnIg1Rabi1M=
+			</data>
+		</dict>
+		<key>Roboto-BlackItalic.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			KRjRfRLevpSZ2F00RIMSWLL9378=
+			</data>
+			<key>hash2</key>
+			<data>
+			YPJKLdX1ZEzpVrVf+B3nCXzjApQTY2GTLyIpPJ+jbBs=
+			</data>
+		</dict>
+		<key>Roboto-Bold.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			RzJ98PNefNfIZFh0iXp0SWl1RK4=
+			</data>
+			<key>hash2</key>
+			<data>
+			WU10pJ4we+fMnh7l8QI2hOaCDPEbzJaL7lkDkeGtWlo=
+			</data>
+		</dict>
+		<key>Roboto-BoldItalic.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			AKAFeIIssCXZD2HICkT9M2DVD5s=
+			</data>
+			<key>hash2</key>
+			<data>
+			onMx7ciGGJ4hc8pGvRMRGp4y70ZZ7kbGbSC54okPROY=
+			</data>
+		</dict>
+		<key>Roboto-Italic.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ST509y+sXWHo38m7H/CieO5YR1A=
+			</data>
+			<key>hash2</key>
+			<data>
+			4sjnMIl4Vxl+XJegS1NKNqWWZe2r+3Nq71gQgssV7Bo=
+			</data>
+		</dict>
+		<key>Roboto-Light.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			4yHBg+K3XuGYE4kre6yNfEEcuIo=
+			</data>
+			<key>hash2</key>
+			<data>
+			7kNSBJYD5ZYFUPVURK1yDY1M4yLA3Loa/HfeeMQw0NU=
+			</data>
+		</dict>
+		<key>Roboto-LightItalic.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			vrDdGm3CEy/Y2bT7Nalgh7supbw=
+			</data>
+			<key>hash2</key>
+			<data>
+			qY00mYpyi3FKBJQPk2LUq6JCt9gFWAmjm5udQ/dmPSc=
+			</data>
+		</dict>
+		<key>Roboto-Medium.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			YGDKcmuXYLdvfDR9zp0vof5C7JI=
+			</data>
+			<key>hash2</key>
+			<data>
+			bi7FxfieTOMCu5O0bLfMM2I2UB3hc0jihIeJFMXg5yM=
+			</data>
+		</dict>
+		<key>Roboto-MediumItalic.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			UiASYHfSyAqDnKiS0MOgy9vTW+U=
+			</data>
+			<key>hash2</key>
+			<data>
+			Tqt2srXLBV7k2Md9Cy75w5z1Pfeyd5RtX1nn5cekMxg=
+			</data>
+		</dict>
+		<key>Roboto-Regular.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			gktUgMl3qBZuF35TV9ExZMzEX0c=
+			</data>
+			<key>hash2</key>
+			<data>
+			veihiON6qTaxZ67MXlo9pAJi9uUf1UxYTyzytrmdlso=
+			</data>
+		</dict>
+		<key>Roboto-Thin.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Fz7WRSi00BCnbY043rHX5+7Vjto=
+			</data>
+			<key>hash2</key>
+			<data>
+			2x1GQ0O/eVMHvJDag9Zbk8hB+yDzhmL5Lx5eLFodLsU=
+			</data>
+		</dict>
+		<key>Roboto-ThinItalic.ttf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			cYSzDzqomJ5LHi/fvp2CZd4wU8w=
+			</data>
+			<key>hash2</key>
+			<data>
+			p0fSJ0Cd6iJxk/wxoG2/SLc3s6Rs4GzZLT+eVBMiA8g=
 			</data>
 		</dict>
 		<key>SimpleLineIcons.ttf</key>

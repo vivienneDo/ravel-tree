@@ -19,7 +19,7 @@ export default class InputForm extends Component<{}> {
 
          <TextInput 
          style = {styles.inputStyle} 
-         placeholder = {inputTxt} 
+         placeholder = {inputTxt}
          placeholderTextColor = '#939393'/> 
       </View>
     );
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#F0F0F0',
       paddingTop: 8,
       paddingBottom: 8,
-      /*fontFamily: 'Roboto',*/
+      fontFamily: 'Roboto',
     }
 });
 

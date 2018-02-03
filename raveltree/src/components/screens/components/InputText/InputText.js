@@ -37,9 +37,8 @@ const styles = StyleSheet.create({
       borderColor: '#B7B7B7',
       borderWidth: 1,
       paddingTop: 8,
-      paddingBottom: 8
-      
-      /*fontFamily: 'Roboto',*/
+      paddingBottom: 8,
+      fontFamily: 'Roboto',
     }
 });
 
