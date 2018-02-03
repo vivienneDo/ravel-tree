@@ -8,6 +8,7 @@ import Button from './Button';
 import ButtonReverse from './ButtonReverse';
 import ButtonSans from './ButtonSans'
 import ButtonPlus from './ButtonPlus'
+import RadioItem from './RadioItem'
 
 export default class Test extends Component {
   onPressTest () {
@@ -24,8 +25,11 @@ export default class Test extends Component {
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <ButtonSans title="Register" onPress={this.onPressTest ()} />
         </View>
-        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+        <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <ButtonPlus onPress={this.onPressTest ()} />
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
+          <RadioItem title="By concept" />
         </View>
       </View>
     );
