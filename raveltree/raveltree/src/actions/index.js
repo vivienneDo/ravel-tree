@@ -44,13 +44,15 @@ export const updateCurrentUserProfile = ({ first_name, last_name, bio, photoURL}
 };
 
 // Wrapper method to set null values when creating a user
-export const updateUserProfile = (userProfile, {first_name, last_name, bio, photoURL}) => {
-    console.log("updating user profile");
-    console.log(userProfile.uid);
-    console.log("First name is:" + first_name);
+export const updateUserProfile = (userProfile, {first_name, last_name, bio, 
+                                photoURL, stat_ravel_led, stat_passage_written, 
+                                stat_ravel_contributed, upvotes, ravel_points}) => {
+        console.log("updating user profile");
+        var user_uid = userProfile.uid;
 
         firebase.database().ref(`/users/${userProfile.uid}/userProfile`)
-            .set({ first_name, last_name, bio, photoURL })
+            .set({ user_uid, first_name, last_name, bio, photoURL,stat_ravel_led, stat_passage_written, 
+                stat_ravel_contributed, upvotes, ravel_points })
             .then(() => {
                 console.log('Success');
             })
@@ -223,23 +225,23 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
     var ravel_status = true;
     var ravel_create_date = new Date().toLocaleTimeString();
     var user_created_photoURL = '';
-    //var snapshot_URL = snapshot.val();
 
     return (dispatch) => {
         firebase.database().ref(`/ravels`)
             .push({ user_created, user_created_photoURL, ravel_title, ravel_category, passage_length,
                 visibility, enable_voting, enable_comment, ravel_concept, ravel_status,ravel_number_participants,
-                ravel_participants, ravel_create_date })
+                ravel_participants, ravel_create_date, ravel_tags })
             .then(returnKey => {
-                
-                console.log("Ravel ID:" + returnKey.getKey());
+                var ravel_uid = returnKey.getKey();
+                firebase.database().ref(`/ravels/${ravel_uid}/ravel_uid`).set(ravel_uid);
+                console.log(ravel_uid);      
                 dispatch({ type: 'CREATE_RAVEL',
                            payload: { user_created, user_created_photoURL, ravel_title, ravel_category, passage_length,
                             visibility, enable_voting, enable_comment, ravel_concept, ravel_status,ravel_number_participants,
-                            ravel_participants, ravel_create_date }});
+                            ravel_participants, ravel_create_date, ravel_tags }});
             })
             .catch((error) => {
-                console.log('failed creating ravel');
+                console.log('Failed creating ravel');
             });
     };
 

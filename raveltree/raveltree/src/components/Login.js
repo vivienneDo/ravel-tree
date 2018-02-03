@@ -11,14 +11,16 @@ import { connect} from 'react-redux';
 import * as actions from '../actions';
 import MainPage from './MainPage';
 import RavelPage from './RavelPage';
-import {userResetPassword, signInWithEmail, createUserWithEmail} from '../actions';
+import {userResetPassword, signInWithEmail, createUserWithEmail, updateUserProfile} from '../actions';
 
 
 // import fbsdk and use LoginButton and AccessToken
 const FBSDK = require('react-native-fbsdk');
 const {
   LoginButton,
-  AccessToken
+  AccessToken,
+  GraphRequest,
+  GraphRequestManager
 } = FBSDK;
 
 
@@ -168,8 +170,8 @@ onGButtonPress() {
         />
 
         <View>
-        <LoginButton readPermissions={['public_profile','email']}
-          onLoginFinished={
+        <LoginButton readPermissions = {['public_profile','email']}
+          onLoginFinished = {
             (error, result) => {
               if (error) {
                 alert("facebook login has error: " + result.error);
@@ -178,21 +180,47 @@ onGButtonPress() {
               } else {
                 console.log("Attempting to log into firebase through facebook");
                 AccessToken.getCurrentAccessToken().then(
-                  (data) => {
-                       const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
-                       firebase.auth().signInWithCredential(credential)
-                        .then(this.onAuthSuccess.bind(this))
-                        .catch(this.onAuthFailed.bind(this));
+                    (data) => {
+                         const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
+                         firebase.auth().signInWithCredential(credential)
+                          .then((user) => {
+                            let accessToken = data.accessToken;
+                                const responseInfoCallback = (error, results) => {
+                        if (error) {
+                            console.log('Error fetching data from ' + error.toString());
+                        }
+                        else {
+                            console.log('Success fetching data' + result.toString());
+                            console.log(results['first_name']);  
+                            firebase.database().ref(`/users/${firebase.auth().currentUser.uid}/userProfile`)
+                            updateUserProfile(user, {first_name:results['first_name'],last_name:results['last_name'],bio:'',photoURL:'', stat_ravel_led:'', stat_passage_written:'', stat_ravel_contributed:'', 
+                                upvotes:'', ravel_points:'' });
+                        }
+                    }
+                    const infoRequest = new GraphRequest(
+                        '/me',
+                        {
+                            accessToken: accessToken,
+                            parameters: {
+                                fields: {
+                                    string: 'first_name, last_name'
+                                }
+                            }
+                        },
+                        responseInfoCallback
+                        
+                    );
 
-                    console.log('Attempting log in with facebook');
-                  }, (error) => {
-                      console.log(error);
-                  }
+                    new GraphRequestManager().addRequest(infoRequest).start();
+                          })
+                          .catch(this.onAuthFailed.bind(this));
+  
+                      console.log('Attempting log in with facebook');
+        
+                }, (error) => {
+                    console.log(error);
+                    }
                 )
-                 
-                // Go to MainPage here
-                console.log("Lol");
-
               }
             }
           }

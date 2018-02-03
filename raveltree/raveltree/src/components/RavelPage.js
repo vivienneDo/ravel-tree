@@ -10,7 +10,7 @@ import { getTheme } from 'react-native-material-kit';
 import {MKTextField, MKColor, MKButton} from 'react-native-material-kit';
 //import { getUserName } from '../models/UserModel';
 import * as actions from '../actions';
-import { updateUserProfile, getUserProfile, getCurrentLoggedInUserUid, startCreateRavel} from '../actions';
+import { updateUserProfile, getUserProfile, getCurrentLoggedInUserUid, startCreateRavel, userLogOff} from '../actions';
 import { connect} from 'react-redux';
 import _ from 'lodash';
 
@@ -131,6 +131,7 @@ class RavelPage extends Component {
         this.props.createStartRavel({ ravel_title, ravel_category, passage_length, visibility, enable_voting, enable_comment,
             ravel_concept, ravel_number_participants, ravel_participants, ravel_tags });
 
+           
         
     };
 
@@ -162,7 +163,7 @@ const mapStateToProps = state => {
     ravel_number_participants,
     ravel_created_date,
     ravel_participants,
-    ravel_tags } = state;
+    ravel_tags} = state;
 
   
     return { user_created,

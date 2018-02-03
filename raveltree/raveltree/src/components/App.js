@@ -13,7 +13,7 @@ import Loader from './Loader';
 import MainPage from './MainPage';
 import RavelPage from './RavelPage';
 //import Navigation from './Navigation';
-import reducers from '../reducers/UserReducer';
+import reducers from '../reducers/RavelReducer';
 //import reducers from '../reducers/UserReducer';
 import Thunk from 'redux-thunk';
 
@@ -46,7 +46,7 @@ export default class App extends Component {
     switch (this.state.loggedIn) {
       case true: 
         console.log('Showing main page');
-        return <MainPage />; 
+        return <RavelPage />; 
       case false: 
         return <Login />; 
       default:
