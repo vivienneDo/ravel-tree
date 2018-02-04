@@ -11,7 +11,8 @@ const initialState = {
     ravel_number_participants: '',
     ravel_created_date: '',
     ravel_participants: [],
-    ravel_tags: []
+    ravel_tags: [],
+    ravel_points: ''
 };
 
 export default (state = initialState, action) => {
@@ -30,7 +31,8 @@ export default (state = initialState, action) => {
                 ravel_status: true,
                 ravel_number_participants: action.payload.ravel_number_participants,
                 ravel_created_date: action.payload.ravel_created_date,
-                ravel_participants: action.payload.ravel_participants
+                ravel_participants: action.payload.ravel_participants,
+                ravel_points: action.payload.ravel_points
             };
         case 'INSERT_RAVEL_TAGS':
             return {
@@ -52,7 +54,8 @@ export default (state = initialState, action) => {
                 ravel_status: true,
                 ravel_number_participants: action.payload.ravel_number_participants,
                 ravel_created_date: action.payload.ravel_created_date,
-                ravel_participants: action.payload.ravel_participants
+                ravel_participants: action.payload.ravel_participants,
+                ravel_points: action.payload.ravel_points
             };
 
         default:

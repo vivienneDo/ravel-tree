@@ -163,7 +163,7 @@ const mapStateToProps = state => {
     ravel_number_participants,
     ravel_created_date,
     ravel_participants,
-    ravel_tags} = state;
+    ravel_tags, ravel_points} = state;
 
   
     return { user_created,
@@ -178,7 +178,7 @@ const mapStateToProps = state => {
         ravel_number_participants,
         ravel_created_date,
         ravel_participants,
-        ravel_tags };
+        ravel_tags, ravel_points };
 };
   
 export default connect(mapStateToProps, actions) (RavelPage);

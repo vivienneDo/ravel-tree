@@ -3,62 +3,31 @@ import firebase from 'firebase';
 // When using these functions, you have to import the functions into your page
 // You also have to import the correct Reducer.js. 
 
-// START USER FUNCTIONS 
+/* START USER FUNCTIONS */
+
 // Will get the currently logged in user's uid 
 export const getCurrentLoggedInUserUid = () => {
 
     return firebase.auth().currentUser.uid;
 }
 
-// Params: user uid 
-// Action: Gets the meta-data for a user profile 
-export const getUserProfile = (uid) => {
-
-    return (dispatch) => {
-        firebase.database().ref(`/users/${uid}/userProfile`)
-        .on('value', snapshot => {
-            dispatch({ type: 'GET_USER_PROFILE',
-                       payload: snapshot.val() });
-        });
-    };
-};
-
-// Params: first name, last name, bio, photoURL 
-// Action: Updates the currently logged in user's first name, last name, bio and photo
-export const updateCurrentUserProfile = ({ first_name, last_name, bio, photoURL}) => {
-
-    const { currentUser } = firebase.auth();
-
-    return (dispatch) => {
-        firebase.database().ref(`/users/${currentUser.uid}/userProfile`)
-            .set({ first_name, last_name, bio, photoURL })
-            .then(() => {
-                console.log('Success');
-                dispatch({ type: 'UPDATE_USER_PROFILE',
-                           payload: {first_name, last_name, bio, photoURL}});
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
-};
 
 // Wrapper method to set null values when creating a user
 export const updateUserProfile = (userProfile, {first_name, last_name, bio, 
-                                photoURL, stat_ravel_led, stat_passage_written, 
-                                stat_ravel_contributed, upvotes, ravel_points}) => {
-        console.log("updating user profile");
-        var user_uid = userProfile.uid;
+    photoURL, stat_ravel_led, stat_passage_written, 
+    stat_ravel_contributed, upvotes, ravel_points}) => {
+console.log("updating user profile");
+var user_uid = userProfile.uid;
 
-        firebase.database().ref(`/users/${userProfile.uid}/userProfile`)
-            .set({ user_uid, first_name, last_name, bio, photoURL,stat_ravel_led, stat_passage_written, 
-                stat_ravel_contributed, upvotes, ravel_points })
-            .then(() => {
-                console.log('Success');
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+firebase.database().ref(`/users/${userProfile.uid}/userProfile`)
+.set({ user_uid, first_name, last_name, bio, photoURL,stat_ravel_led, stat_passage_written, 
+stat_ravel_contributed, upvotes, ravel_points })
+.then(() => {
+console.log('Success');
+})
+.catch((error) => {
+console.log(error);
+});
 }
 
 // Action: Logs the current user off
@@ -69,6 +38,8 @@ export const userLogOff = () => {
             console.log('Logging off Failed');
       });
 };
+
+
 
 // Params: Takes an exisiting user's email 
 // Action: Resets password
@@ -125,6 +96,46 @@ export const createUserWithEmail = (email, password) => {
     });
 
 };
+
+
+/* END USER FUNCTIONS */
+
+/* START USER ACTIONS (will set props)*/
+
+// Params: user uid 
+// Action: Gets the meta-data for a user profile 
+export const getUserProfile = (uid) => {
+
+    return (dispatch) => {
+        firebase.database().ref(`/users/${uid}/userProfile`)
+        .on('value', snapshot => {
+            dispatch({ type: 'GET_USER_PROFILE',
+                       payload: snapshot.val() });
+        });
+    };
+};
+
+// Params: first name, last name, bio, photoURL 
+// Action: Updates the currently logged in user's first name, last name, bio and photo
+export const updateCurrentUserProfile = ({ first_name, last_name, bio, photoURL}) => {
+
+    const { currentUser } = firebase.auth();
+
+    return (dispatch) => {
+        firebase.database().ref(`/users/${currentUser.uid}/userProfile`)
+            .set({ first_name, last_name, bio, photoURL })
+            .then(() => {
+                console.log('Success');
+                dispatch({ type: 'UPDATE_USER_PROFILE',
+                           payload: {first_name, last_name, bio, photoURL}});
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+};
+
+
 
 // export const getImage = () => {
 
@@ -208,9 +219,13 @@ export const updateUserRavelPoint = (ravel_points) => {
     };
 };
 
-// END USER FUNCTIONS 
+/* END USER ACTIONS */
 
-// START RAVEL FUNCTIONS
+/* START RAVEL FUNCTIONS */
+
+/* END RAVEL FUNCTIONS */
+
+/* START RAVEL ACTIONS */
 
 // Params: Takes meta-date from the ravel. This starts a ravel creation. 
 // Action: Writes the the db the meta-data and sets the current user logged in 
@@ -225,25 +240,48 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
     var ravel_status = true;
     var ravel_create_date = new Date().toLocaleTimeString();
     var user_created_photoURL = '';
+    // TODO: Calculate ravel points dynamically 
+    var ravel_points = '';
 
     return (dispatch) => {
         firebase.database().ref(`/ravels`)
             .push({ user_created, user_created_photoURL, ravel_title, ravel_category, passage_length,
                 visibility, enable_voting, enable_comment, ravel_concept, ravel_status,ravel_number_participants,
-                ravel_participants, ravel_create_date, ravel_tags })
+                ravel_participants, ravel_create_date, ravel_tags, ravel_points })
             .then(returnKey => {
+                // Push to ravels node and to user's created ravel node 
+                // for Your Ravels card view 
                 var ravel_uid = returnKey.getKey();
                 firebase.database().ref(`/ravels/${ravel_uid}/ravel_uid`).set(ravel_uid);
-                console.log(ravel_uid);      
+                firebase.database().ref(`/users/${currentUser.uid}/ravel_created`).push({ravel_uid, user_created_photoURL, ravel_title, ravel_number_participants, ravel_points});     
                 dispatch({ type: 'CREATE_RAVEL',
                            payload: { user_created, user_created_photoURL, ravel_title, ravel_category, passage_length,
                             visibility, enable_voting, enable_comment, ravel_concept, ravel_status,ravel_number_participants,
-                            ravel_participants, ravel_create_date, ravel_tags }});
+                            ravel_participants, ravel_create_date, ravel_tags, ravel_points }});
             })
             .catch((error) => {
                 console.log('Failed creating ravel');
             });
+        
     };
+
+};
+
+export const getAllUserCreatedRavel = (user) => {
+    return (dispath) => {
+        firebase.database().ref(`/users/${user.uid}`)
+            .on('value', snapshot => {
+                var promises = [];
+                snapshots.forEach((key) => {
+                    promises.push(firebase.database().ref(`/ravel_created/${key.key}`).once('value'));
+                });
+                Promise.all(promises).then((snapshot) => {
+                    const all_user_ravel = snapshots.map(snapshot => snapshot.val);
+                    dispath({ type: GET_ALL_USER_RAVEL, payload: all_user_ravel});
+                });
+            });
+    };
+
 
 };
 
@@ -252,3 +290,4 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
 // Formula to calculate ravel-point: Each user profile shall include a user score calculated using the formula 10P + U, 
 // where P = Number of passages written and U = Number of upvotes received.
 
+/* END RAVEL ACTIONS */
