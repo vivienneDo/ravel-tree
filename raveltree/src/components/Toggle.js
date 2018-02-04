@@ -97,7 +97,7 @@ const styles = StyleSheet.create ({
     flexDirection: 'row',
   },
   background: {
-    borderRadius: 10,
+    borderRadius: 50,
     backgroundColor: '#B1B1B1',
     height: 22,
     width: 45,
