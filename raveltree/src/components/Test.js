@@ -10,6 +10,7 @@ import ButtonSans from './ButtonSans'
 import ButtonPlus from './ButtonPlus'
 import RadioItem from './RadioItem'
 import Toggle from './Toggle'
+import ModalContainer from './ModalContainer'
 
 export default class Test extends Component {
   onPressTest () {
@@ -19,6 +20,7 @@ export default class Test extends Component {
   render (){
     return (
       <View style={{flexDirection: 'column'}}>
+      {/*
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <Button title="Start a Ravel" onPress={this.onPressTest ()} />
           <ButtonReverse title="Explore" onPress={this.onPressTest ()} />
@@ -35,6 +37,41 @@ export default class Test extends Component {
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <Toggle title="By concept" />
         </View>
+        */}
+        <ModalContainer>
+          <ScrollView>
+            <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 100}}>
+              <Button title="Start a Ravel" onPress={this.onPressTest ()} />
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 100}}>
+              <Button title="Start a Ravel" onPress={this.onPressTest ()} />
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 100}}>
+              <Button title="Start a Ravel" onPress={this.onPressTest ()} />
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 100}}>
+              <Button title="Start a Ravel" onPress={this.onPressTest ()} />
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 100}}>
+              <Button title="Start a Ravel" onPress={this.onPressTest ()} />
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 100}}>
+              <Button title="Start a Ravel" onPress={this.onPressTest ()} />
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 100}}>
+              <Button title="Start a Ravel" onPress={this.onPressTest ()} />
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 100}}>
+              <Button title="Start a Ravel" onPress={this.onPressTest ()} />
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 100}}>
+              <Button title="Start a Ravel" onPress={this.onPressTest ()} />
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 100}}>
+              <Button title="Start a Ravel" onPress={this.onPressTest ()} />
+            </View>
+          </ScrollView>
+        </ModalContainer>
       </View>
     );
   }
