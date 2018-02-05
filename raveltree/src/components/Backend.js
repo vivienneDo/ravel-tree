@@ -50,7 +50,7 @@ export default class Backend extends Component {
         console.log('Showing main page');
         return <MainPage />; 
       case false: 
-        return <LoginEmail />; 
+        return <Login />; 
       default:
         return <Loader size="large"/>;
     }
