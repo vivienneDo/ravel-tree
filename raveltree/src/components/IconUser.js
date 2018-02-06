@@ -19,7 +19,7 @@ const StyleSheet = require('StyleSheet');
 const View = require('View');
 const Image = require('Image');
 
-const DEFAULT_SIZE = 25;
+const DEFAULT_SIZE = 20;
 
 export default class IconUser extends React.Component {
 
