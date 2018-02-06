@@ -14,12 +14,22 @@ const StyleSheet = require('StyleSheet');
 const Text = require('Text');
 const View = require('View');
 
-export default class RTLogoTextLarge extends React.Component {
+export default class RTLogoText extends React.Component {
 
   render () {
 
+    const {
+      size,
+    } = this.props;
+
+    const textStyles = [styles.ravel];
+
+    textStyles.push ([
+      this.props.size ? {fontSize: size} : {fontSize: 40},
+    ]);
+
     return (
-      <Text style={styles.ravel}>
+      <Text style={textStyles}>
         ravel
         <Text style={styles.tree}>
           tree
@@ -36,7 +46,6 @@ const styles = StyleSheet.create ({
   ravel: {
     color: '#2E8AF7',
     fontFamily: 'EB Garamond',
-    fontSize: 60,
   },
   tree: {
     color: '#3BB54A',

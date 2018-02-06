@@ -11,8 +11,7 @@ import ButtonPlus from './ButtonPlus'
 import RadioItem from './RadioItem'
 import Toggle from './Toggle'
 import ModalContainer from './ModalContainer'
-import RTLogoTextLarge from './RTLogoTextLarge'
-import RTLogoTextMedium from './RTLogoTextMedium'
+import RTLogoText from './RTLogoText'
 import TextSerif from './TextSerif'
 
 export default class Test extends Component {
@@ -24,10 +23,7 @@ export default class Test extends Component {
     return (
       <View style={{flexDirection: 'column'}}>
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
-          <RTLogoTextLarge />
-        </View>
-        <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
-          <RTLogoTextMedium />
+          <RTLogoText size={60}>raveltree</RTLogoText>
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <TextSerif size={20} color={'#b00000'}>TextSerif</TextSerif>
