@@ -14,6 +14,7 @@ import ModalContainer from './ModalContainer'
 import RTLogoText from './RTLogoText'
 import TextSerif from './TextSerif'
 import TextSans from './TextSans'
+import TextLink from './TextLink'
 
 export default class Test extends Component {
   onPressTest () {
@@ -31,6 +32,9 @@ export default class Test extends Component {
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <TextSans size={12} color={'#282828'}>TextSans</TextSans>
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
+          <TextLink>TextLink</TextLink>
         </View>
         {/*
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
