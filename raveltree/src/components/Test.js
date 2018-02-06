@@ -13,6 +13,7 @@ import Toggle from './Toggle'
 import ModalContainer from './ModalContainer'
 import RTLogoTextLarge from './RTLogoTextLarge'
 import RTLogoTextMedium from './RTLogoTextMedium'
+import TextSerif from './TextSerif'
 
 export default class Test extends Component {
   onPressTest () {
@@ -29,6 +30,10 @@ export default class Test extends Component {
           <RTLogoTextMedium />
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
+          <TextSerif size={20} color={'#b00000'}>TextSerif</TextSerif>
+        </View>
+        {/*
+        <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <Button title="Start a Ravel" onPress={this.onPressTest ()} />
           <ButtonReverse title="Explore" onPress={this.onPressTest ()} />
         </View>
@@ -44,6 +49,7 @@ export default class Test extends Component {
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <Toggle title="By concept" />
         </View>
+        */}
       </View>
     );
   }
