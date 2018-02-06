@@ -16,6 +16,7 @@ import TextSerif from './TextSerif'
 import TextSans from './TextSans'
 import TextLink from './TextLink'
 import Divider from './Divider'
+import IconUser from './IconUser'
 
 export default class Test extends Component {
   onPressTest () {
@@ -39,6 +40,9 @@ export default class Test extends Component {
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <Divider />
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
+          <IconUser />
         </View>
         {/*
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
