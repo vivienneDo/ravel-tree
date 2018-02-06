@@ -15,6 +15,7 @@ import RTLogoText from './RTLogoText'
 import TextSerif from './TextSerif'
 import TextSans from './TextSans'
 import TextLink from './TextLink'
+import Divider from './Divider'
 
 export default class Test extends Component {
   onPressTest () {
@@ -35,6 +36,9 @@ export default class Test extends Component {
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <TextLink>TextLink</TextLink>
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
+          <Divider />
         </View>
         {/*
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
