@@ -215,10 +215,6 @@ onGButtonPress() {
             {this.renderLoader()}
         </View>
       </View>
-
-      <View>
-        <Text style={styles.fontTest}>Testing</Text>
-      </View>
     </ScrollView>
     );
   }
