@@ -8,11 +8,9 @@ import {
   TouchableOpacity
 } from 'react-native';
 
+// author: Alex Aguirre
 // 2-3-18
 // Ravel Stub
-
-
-
 
 export default class RavelStub extends Component<{}> {
 

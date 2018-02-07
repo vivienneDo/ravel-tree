@@ -8,11 +8,11 @@ import {
   TouchableOpacity
 } from 'react-native';
 
+// author: Alex Aguirre
 // 2-5-18
 // Passage Card
 
 import VoteBar from '../VoteBar/VoteBar';
-
 
 export default class PassageCard extends Component<{}> {
 

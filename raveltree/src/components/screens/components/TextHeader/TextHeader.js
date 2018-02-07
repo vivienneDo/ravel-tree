@@ -8,6 +8,7 @@ import {
   TextInput
 } from 'react-native';
 
+// author: Alex Aguirre
 // 1-18-18
 // Text Header
 

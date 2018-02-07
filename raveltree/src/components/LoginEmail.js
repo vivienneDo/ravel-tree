@@ -19,6 +19,7 @@ import UserModel from '../models/UserModel';
 import MainPage from './MainPage';
 import InputForm from './screens/components/InputForm/InputForm';
 
+// author: Alex Aguirre
 // 1-24-18
 // Email Login Screen
 

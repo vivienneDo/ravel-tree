@@ -7,6 +7,7 @@ import {
 
 } from 'react-native';
 
+// author: Alex Aguirre
 // 1-24-18
 // Splash Screen
 

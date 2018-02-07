@@ -7,6 +7,7 @@ import {
   Image
 } from 'react-native';
 
+// author: Alex Aguirre
 // 1-20-18
 // User Image
 

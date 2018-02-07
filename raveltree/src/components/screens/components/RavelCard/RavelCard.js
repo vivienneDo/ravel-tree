@@ -8,11 +8,9 @@ import {
   TouchableOpacity
 } from 'react-native';
 
+// author: Alex Aguirre
 // 2-5-18
 // Ravel Card
-
-
-
 
 export default class RavelCard extends Component<{}> {
 

@@ -8,6 +8,8 @@ import {
   TouchableOpacity
 } from 'react-native';
 
+// author: Alex Aguirre & Vivienne Do
+
 import { MKTextField, MKColor, MKButton } from 'react-native-material-kit';
 import Loader from './Loader';
 import firebase from 'firebase';
