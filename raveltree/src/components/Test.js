@@ -21,6 +21,7 @@ import IconLeaf from './IconLeaf'
 import TextHeader from './TextHeader'
 import InputForm from './InputForm'
 import InputSearch from './InputSearch'
+import InputText from './InputText'
 
 export default class Test extends Component {
   onPressTest () {
@@ -60,9 +61,10 @@ export default class Test extends Component {
         </View>
         */}
         <View style={{flexDirection: 'column', justifyContent: 'center', paddingBottom: 20}}>
-          <Divider />
-          <InputSearch placeholder={'Type a concept. "In a world..."'}/>
-          <Divider />
+          <InputText placeholder={'Type a passage name (e.g., "The Reckoning").'}  />
+        </View>
+        <View style={{flexDirection: 'column', justifyContent: 'center', paddingBottom: 20}}>
+          <InputText placeholder={'Here\'s the content of the passage...'} height={200} multiline={true} />
         </View>
 
 
