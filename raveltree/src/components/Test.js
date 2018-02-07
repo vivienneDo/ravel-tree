@@ -20,6 +20,7 @@ import IconUser from './IconUser'
 import IconLeaf from './IconLeaf'
 import TextHeader from './TextHeader'
 import InputForm from './InputForm'
+import InputSearch from './InputSearch'
 
 export default class Test extends Component {
   onPressTest () {
@@ -29,6 +30,7 @@ export default class Test extends Component {
   render (){
     return (
       <View style={{flexDirection: 'column'}}>
+        {/*
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <RTLogoText size={60}>raveltree</RTLogoText>
         </View>
@@ -56,6 +58,16 @@ export default class Test extends Component {
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <InputForm placeholder={"Email"} />
         </View>
+        */}
+        <View style={{flexDirection: 'column', justifyContent: 'center', paddingBottom: 20}}>
+          <Divider />
+          <InputSearch placeholder={'Type a concept. "In a world..."'}/>
+          <Divider />
+        </View>
+
+
+
+
         {/*
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <Button title="Start a Ravel" onPress={this.onPressTest ()} />
