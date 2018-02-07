@@ -15,6 +15,7 @@
 const ColorPropType = require('ColorPropType');
 const Platform = require('Platform');
 const React = require('React');
+const AppRegistry = require('AppRegistry');
 const PropTypes = require('prop-types');
 const StyleSheet = require('StyleSheet');
 const View = require('View');
@@ -57,3 +58,5 @@ const styles = StyleSheet.create ({
     //
   },
 });
+
+AppRegistry.registerComponent('IconLeaf', () => IconLeaf);

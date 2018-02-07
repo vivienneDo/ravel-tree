@@ -10,6 +10,7 @@
 const ColorPropType = require('ColorPropType');
 const Platform = require('Platform');
 const React = require('React');
+const AppRegistry = require('AppRegistry');
 const PropTypes = require('prop-types');
 const StyleSheet = require('StyleSheet');
 const Text = require('Text');
@@ -141,3 +142,5 @@ const styles = StyleSheet.create ({
     color: '#FFFFFF',
   },
 });
+
+AppRegistry.registerComponent('Button', () => Button);

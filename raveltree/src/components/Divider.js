@@ -9,6 +9,7 @@
 const ColorPropType = require('ColorPropType');
 const Platform = require('Platform');
 const React = require('React');
+const AppRegistry = require('AppRegistry');
 const PropTypes = require('prop-types');
 const StyleSheet = require('StyleSheet');
 const Text = require('Text');
@@ -41,3 +42,5 @@ const styles = StyleSheet.create ({
     height: 1,
   },
 });
+
+AppRegistry.registerComponent('Divider', () => Divider);
