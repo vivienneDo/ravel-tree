@@ -18,7 +18,7 @@ export default class App extends Component {
   render() {
     return (
       <View style = {styles.testStyle}>
-        <RavelCard/>
+        <PassageCard/>
       </View>
     );
   }

@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
         borderColor: '#95989A',
         borderWidth: 2,
         left: '30%'
-      },
-      textStyle: {
+    },
+    textStyle: {
         fontSize: 16,
         fontFamily: 'EBGaramond',
         alignSelf: 'center'

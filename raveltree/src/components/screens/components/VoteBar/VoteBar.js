@@ -50,7 +50,6 @@ export default class VoteBar extends Component<{}> {
                     <Text style={styles.numStyle}>
                         {spacing}
                         {this.state.count - this.state.countDown}
-                        {tabbing}
                         {spacing}
                         {spacing}
                         {spacing}
@@ -77,24 +76,24 @@ const styles = StyleSheet.create({
     upVote: {
         backgroundColor: 'transparent',
         borderStyle: 'solid',
-        borderLeftWidth: 10,
-        borderRightWidth: 10,
-        borderBottomWidth: 20,
+        borderLeftWidth: 6,
+        borderRightWidth: 6,
+        borderBottomWidth: 12,
         borderLeftColor: 'transparent',
         borderRightColor: 'transparent',
         borderBottomColor: '#939393'
     },
     numStyle: {
         color: '#939393',
-        fontSize: 15,
+        fontSize: 11,
         fontWeight: 'bold'
     },
     downVote: {
         backgroundColor: 'transparent',
         borderStyle: 'solid',
-        borderLeftWidth: 10,
-        borderRightWidth: 10,
-        borderTopWidth: 20,
+        borderLeftWidth: 6,
+        borderRightWidth: 6,
+        borderTopWidth: 12,
         borderLeftColor: 'transparent',
         borderRightColor: 'transparent',
         borderTopColor: '#939393'
@@ -102,6 +101,8 @@ const styles = StyleSheet.create({
     barStyle: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
+        marginRight: 10
     }
 });
 
