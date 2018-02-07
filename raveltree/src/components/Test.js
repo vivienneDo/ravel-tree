@@ -24,6 +24,7 @@ import InputSearch from './InputSearch'
 import InputText from './InputText'
 import Tag from './Tag'
 import UserImage from './UserImage'
+import VoteBar from './VoteBar'
 
 export default class Test extends Component {
   onPressTest () {
@@ -70,6 +71,9 @@ export default class Test extends Component {
         </View>
         <View style={{flexDirection: 'column', justifyContent: 'center', paddingBottom: 20}}>
           <UserImage size={30} />
+        </View>
+        <View style={{flexDirection: 'column', justifyContent: 'center', paddingBottom: 20}}>
+          <VoteBar />
         </View>
 
 
