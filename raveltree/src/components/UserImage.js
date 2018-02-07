@@ -22,11 +22,16 @@ export default class UserImage extends Component<{}> {
     this.state = { isActive: this.props.active };
   }
 
+  componentWillReceiveProps (newProps) {
+    this.setState ({isActive: newProps.active});
+}
+
   render() {
 
     const {
       size,
       active,
+      disabled,
     } = this.props;
 
     // Uses a test image for now – will update later to dynamic image stored
@@ -49,13 +54,11 @@ export default class UserImage extends Component<{}> {
     ]);
 
     return (
-      <Touchable
-        style = {layoutStyles}
-        activeOpacity = {1}>
+      <Touchable style={layoutStyles} disabled={disabled} >
 
         <Image
-        style = {[imageStyles, this.state.isActive ? styles.active : styles.inactive]}
-        source = {image}
+          style = {[imageStyles, this.state.isActive ? styles.active : styles.inactive]}
+          source = {image}
         />
 
       </Touchable>

@@ -25,6 +25,7 @@ import InputText from './InputText'
 import Tag from './Tag'
 import UserImage from './UserImage'
 import VoteBar from './VoteBar'
+import NavBar from './NavBar'
 
 export default class Test extends Component {
   onPressTest () {
@@ -34,6 +35,9 @@ export default class Test extends Component {
   render (){
     return (
       <View style={{flexDirection: 'column'}}>
+        <NavBar active={'home'} />
+        <Divider />
+
         {/*
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <RTLogoText size={60}>raveltree</RTLogoText>
@@ -62,7 +66,6 @@ export default class Test extends Component {
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <InputForm placeholder={"Email"} />
         </View>
-        */}
         <View style={{flexDirection: 'column', justifyContent: 'center', paddingBottom: 20}}>
           <InputText placeholder={'Type a passage name (e.g., "The Reckoning").'}  />
         </View>
@@ -75,11 +78,6 @@ export default class Test extends Component {
         <View style={{flexDirection: 'column', justifyContent: 'center', paddingBottom: 20}}>
           <VoteBar />
         </View>
-
-
-
-
-        {/*
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <Button title="Start a Ravel" onPress={this.onPressTest ()} />
           <ButtonReverse title="Explore" onPress={this.onPressTest ()} />
