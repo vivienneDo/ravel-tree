@@ -18,6 +18,7 @@ import TextLink from './TextLink'
 import Divider from './Divider'
 import IconUser from './IconUser'
 import IconLeaf from './IconLeaf'
+import TextHeader from './TextHeader'
 
 export default class Test extends Component {
   onPressTest () {
@@ -47,6 +48,9 @@ export default class Test extends Component {
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <IconLeaf size={72} />
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
+          <TextHeader>Your Ravels</TextHeader>
         </View>
         {/*
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
