@@ -22,6 +22,7 @@ import TextHeader from './TextHeader'
 import InputForm from './InputForm'
 import InputSearch from './InputSearch'
 import InputText from './InputText'
+import Tag from './Tag'
 
 export default class Test extends Component {
   onPressTest () {
@@ -64,7 +65,7 @@ export default class Test extends Component {
           <InputText placeholder={'Type a passage name (e.g., "The Reckoning").'}  />
         </View>
         <View style={{flexDirection: 'column', justifyContent: 'center', paddingBottom: 20}}>
-          <InputText placeholder={'Here\'s the content of the passage...'} height={200} multiline={true} />
+          <Tag>Postmodernism</Tag>
         </View>
 
 
