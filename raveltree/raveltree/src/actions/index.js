@@ -14,20 +14,21 @@ export const getCurrentLoggedInUserUid = () => {
 
 // Wrapper method to set null values when creating a user
 export const updateUserProfile = (userProfile, {first_name, last_name, bio, 
-    photoURL, stat_ravel_led, stat_passage_written, 
-    stat_ravel_contributed, upvotes, ravel_points}) => {
-console.log("updating user profile");
-var user_uid = userProfile.uid;
+                                photoURL, stat_ravel_led, stat_passage_written, 
+                                stat_ravel_contributed, upvotes, ravel_points}) => {
 
-firebase.database().ref(`/users/${userProfile.uid}/userProfile`)
-.set({ user_uid, first_name, last_name, bio, photoURL,stat_ravel_led, stat_passage_written, 
-stat_ravel_contributed, upvotes, ravel_points })
-.then(() => {
-console.log('Success');
-})
-.catch((error) => {
-console.log(error);
-});
+    console.log("updating user profile");
+    var user_uid = userProfile.uid;
+
+    firebase.database().ref(`/users/${userProfile.uid}/userProfile`)
+    .set({ user_uid, first_name, last_name, bio, photoURL,stat_ravel_led, stat_passage_written, 
+    stat_ravel_contributed, upvotes, ravel_points })
+    .then(() => {
+    console.log('Success');
+    })
+    .catch((error) => {
+    console.log(error);
+    });
 }
 
 // Action: Logs the current user off
@@ -135,38 +136,6 @@ export const updateCurrentUserProfile = ({ first_name, last_name, bio, photoURL}
     }
 };
 
-
-
-// export const getImage = () => {
-
-//     ImagePicker.showImagePicker(options, (response) => {
-//       console.log('Response = ', response);
-
-//       if (response.didCancel) {
-//         console.log('User cancelled image picker');
-//       }
-//       else if (response.error) {
-//         console.log('ImagePicker Error: ', response.error);
-//       }
-//       else if (response.customButton) {
-//         console.log('User tapped custom button: ', response.customButton);
-//       }
-//       else {
-//         // let source = { uri: response.uri };
-//         // this.setState({image_uri: response.uri})
-
-//         // You can also display the image using data:
-//         // let image_uri = { uri: 'data:image/jpeg;base64,' + response.data };
-
-//     //   this.uploadImage(response.uri)
-//     //     .then(url => { alert('uploaded'); this.setState({image_uri: url}) })
-//     //     .catch(error => console.log(error))
-
-//       }
-//     });
-
-//   };
-
 // Actions: Will calculate the user's stats 
 export const calculatesUserStat = ({ stat_ravel_led, stat_ravel_contributed, stat_passage_written }) => {
     const { currentUser } = firebase.auth();
@@ -269,17 +238,12 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
 
 export const getAllUserCreatedRavel = (user) => {
     return (dispath) => {
-        firebase.database().ref(`/users/${user.uid}`)
-            .on('value', snapshot => {
-                var promises = [];
-                snapshots.forEach((key) => {
-                    promises.push(firebase.database().ref(`/ravel_created/${key.key}`).once('value'));
-                });
-                Promise.all(promises).then((snapshot) => {
-                    const all_user_ravel = snapshots.map(snapshot => snapshot.val);
-                    dispath({ type: GET_ALL_USER_RAVEL, payload: all_user_ravel});
-                });
-            });
+        var allRavels = firebase.database().ref(`/users/${user.uid}/ravel_created`);
+        allRavels.once('value').then(snapshot => {
+          
+          dispath({type: 'GET_ALL_USER_RAVEL',
+                payload: {}})
+        })
     };
 
 
