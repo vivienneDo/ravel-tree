@@ -28,6 +28,7 @@ import VoteBar from './VoteBar'
 import NavBar from './NavBar'
 import RadioSet from './RadioSet'
 import TagCloud from './TagCloud'
+import OptionSet from './OptionSet'
 
 export default class Test extends Component {
   onPressTest () {
@@ -37,6 +38,14 @@ export default class Test extends Component {
   render (){
     return (
       <View style={{flexDirection: 'column'}}>
+      <OptionSet options={[
+                  {name: 'fiction', title: 'Fiction'},
+                  {name: 'nonfiction', title: 'Nonfiction'},
+                  {name: 'multimedia', title: 'Multimedia'},
+                  {name: 'other', title: 'Other'},
+                ]}
+                active={'fiction'}
+        />
         <TagCloud tags={[
                      'Unconventional',
                      'Mystery',
@@ -50,7 +59,6 @@ export default class Test extends Component {
                   ]}
                   active={['Unconventional',]}
         />
-      
         <RadioSet options={[
                     {name: 'concept', title: 'By Concept'},
                     {name: 'tag', title: 'By Tag'},
