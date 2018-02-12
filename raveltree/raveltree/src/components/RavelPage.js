@@ -166,7 +166,7 @@ const mapStateToProps = state => {
     ravel_number_participants,
     ravel_created_date,
     ravel_participants,
-    ravel_tags, ravel_points} = state;
+    ravel_tags, ravel_points} = state.ravel;
 
   
     return { user_created,

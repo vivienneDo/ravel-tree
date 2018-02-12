@@ -13,12 +13,8 @@ import Loader from './Loader';
 import MainPage from './MainPage';
 import RavelPage from './RavelPage';
 //import Navigation from './Navigation';
-<<<<<<< HEAD
-import reducers from '../reducers/AllUserRavelReducer';
-//import reducers from '../reducers/UserReducer';
-=======
 import rootReducer from '../reducers/index';
->>>>>>> file-picker
+//import reducers from '../reducers/UserReducer';
 import Thunk from 'redux-thunk';
 
 const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), applyMiddleware(Thunk));
