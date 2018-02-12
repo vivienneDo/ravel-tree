@@ -5,24 +5,54 @@
  */
 
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Image, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { Text, View, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Platform } from 'react-native';
 import { getTheme } from 'react-native-material-kit';
 import {MKTextField, MKColor, MKButton} from 'react-native-material-kit';
 import * as actions from '../actions';
 import { updateUserProfile, getUserProfile, getCurrentLoggedInUserUid, startCreateRavel} from '../actions';
 import { connect} from 'react-redux';
 import _ from 'lodash';
+import firebase from 'firebase';
 //import RNFetchBlob from 'react-native-fetch-blob';
 //var ImagePicker = require('react-native-image-picker');
+import ImagePicker from 'react-native-image-picker';
+import SelectImage from '../utils/CameraPicker.js';
+
+// copy and paste this code where you will handle the file upload
+
+import RNFetchBlob from 'react-native-fetch-blob';
+
+const Blob = RNFetchBlob.polyfill.Blob;
+const fs = RNFetchBlob.fs;
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+window.Blob = Blob;
 
 const theme = getTheme();
+
+const CameraPickerButton = MKButton.coloredButton()
+    .withText('Camera Picker')
+    .build();
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',  
+    backgroundColor: '#F5FCFF', 
+  },
+  imageContainer : {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 150,
+    width:150,
+    borderRadius: 150/2,
+    backgroundColor: 'black',
+  },
+  avatarSource: {
+    height: 150,
+    width:150,
+    borderRadius: 150/2,
   },
   card: {
     marginTop: 10,
@@ -108,12 +138,21 @@ const styles = StyleSheet.create({
 });
 
 class MainPage extends Component {
+    constructor(props) {
+        super(props);
+        this.onCameraPickPress = this.onCameraPickPress.bind(this);
+    }
+
+    onCameraPickPress() {
+        SelectImage().then((url) => {
+          this.props.updateProfilePicture(url);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    }
 
     componentWillMount() {
-
-        
-        
-
         // ravel_title= 'ravel title', 
         // ravel_category= 'game mode', 
         // passage_length= 'passage',              
@@ -126,51 +165,50 @@ class MainPage extends Component {
         // visibility, enable_voting, enable_comment, ravel_concept, ravel_status});
 
 
-         first_name = 'Chris the builder';
-         last_name = 'Donut';
-         photoURL = 'Blah.com';
-         bio = 'This is a bio';
-        //  this.props.updateCurrentUserProfile({ first_name, last_name, bio, photoURL });
+        //  first_name = 'Chris the builder';
+        //  last_name = 'Donut';
+        //  bio = 'This is a bio';
+        //  this.props.updateCurrentUserProfile({ first_name, last_name, bio});
+         console.log("Updating user profile");
          console.log(getCurrentLoggedInUserUid());
-        //  this.props.getUserProfile(getCurrentLoggedInUserUid());
+         this.props.getUserProfile(getCurrentLoggedInUserUid());
     };
 
 
+  renderImage() {
+    if (!this.props.photoURL || this.props.photoURL.length === 0){
+        console.log('Showing text');
+        return <Text style = {{color:'white'}}>Hello</Text>
+    } else {
+        console.log('Showing Image');
+        return <Image style = {styles.avatarSource} source={{uri:this.props.photoURL}}/>;
+    }    
+  }
     
   render() {
     return (  
-        
-
       <View style={styles.container}>
-
+        <View style ={styles.imageContainer}>
+            {this.renderImage()}
+        </View>
         <Text>{this.props.last_name}</Text>
         <Text>{this.props.first_name}</Text>
         <Text>{this.props.bio}</Text>
-        <Text>{this.props.photoURL}</Text>
-
-
-        
+        <CameraPickerButton onPress={this.onCameraPickPress}/> 
       </View>
-      
-
-      
     );
   }
 }
 
 const mapStateToProps = state => {
-    const {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed, 
-        stat_passage_written, upvotes, ravel_points} = state;
 
-  
+    console.log(state);
+    const {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed, 
+        stat_passage_written, upvotes, ravel_points} = state.user;
     return {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed, 
         stat_passage_written, upvotes, ravel_points };
 };
   
-
-
-
   export default connect(mapStateToProps, actions) (MainPage);
-  //export default connect(mapStateToPropsUserProfile, {getUserProfile})(MainPage);
 
 

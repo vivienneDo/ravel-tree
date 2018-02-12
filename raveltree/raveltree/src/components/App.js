@@ -13,11 +13,10 @@ import Loader from './Loader';
 import MainPage from './MainPage';
 import RavelPage from './RavelPage';
 //import Navigation from './Navigation';
-import reducers from '../reducers/RavelReducer';
-//import reducers from '../reducers/UserReducer';
+import rootReducer from '../reducers/index';
 import Thunk from 'redux-thunk';
 
-const store = createStore(reducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), applyMiddleware(Thunk));
+const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), applyMiddleware(Thunk));
 export default class App extends Component { 
 
   state = { loggedIn: null};
@@ -46,7 +45,7 @@ export default class App extends Component {
     switch (this.state.loggedIn) {
       case true: 
         console.log('Showing main page');
-        return <RavelPage />; 
+        return <MainPage />; 
       case false: 
         return <Login />; 
       default:

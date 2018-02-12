@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  View, ScrollView
+  View, 
+  ScrollView,
+  Image,
+  Platform
 } from 'react-native';
 import { MKTextField, MKColor, MKButton } from 'react-native-material-kit';
 import Loader from './Loader';
@@ -12,7 +15,6 @@ import * as actions from '../actions';
 import MainPage from './MainPage';
 import RavelPage from './RavelPage';
 import {userResetPassword, signInWithEmail, createUserWithEmail, updateUserProfile} from '../actions';
-import ImagePicker from 'react-native-image-picker'
 
 // import fbsdk and use LoginButton and AccessToken
 const FBSDK = require('react-native-fbsdk');
@@ -31,16 +33,11 @@ const GLoginButton = MKButton.coloredButton()
     .withText('Create user')
     .build();
 
-const CameraPickerButton = MKButton.coloredButton()
-    .withText('Camera Picker')
-    .build();
-
 const styles = StyleSheet.create({
     form: {
         paddingBottom: 10,
         width: 200,
         paddingTop: 20
-
     },
 
     fieldStyles: {
@@ -67,6 +64,8 @@ const styles = StyleSheet.create({
     }, 
 });
 
+// The uploadImage function that you are going to use:
+
 export default class Login extends Component { 
   state = {
       email :  '',
@@ -75,7 +74,7 @@ export default class Login extends Component {
       loading: false,    
   };
 
-  onButtonPress() {
+onButtonPress() {
     const {email, password} = this.state;
     this.setState({error: '', loading: true });
 
@@ -97,42 +96,6 @@ onGButtonPress() {
     
 
 };
-
-onCameraPickerPress() {
-    // More info on all the options is below in the README...just some common use cases shown here
-    var options = {
-        title: 'Select Profile Picture',
-        storageOptions: {
-        skipBackup: true,
-        path: 'images'
-        }
-    };
-  
-  /**
-   * The first arg is the options object for customization (it can also be null or omitted for default options),
-   * The second arg is the callback which sends object: response (more info below in README)
-   */
-  ImagePicker.showImagePicker(options, (response) => {
-      console.log('Response = ', response);
-    
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      }
-      else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      }
-      else {
-        let source = { uri: response.uri };
-    
-        // You can also display the image using data:
-        // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-    
-      //   this.setState({
-      //     avatarSource: source
-      //   });
-      }
-    });
-}
 
   onAuthSuccess() {
       this.setState({
@@ -161,7 +124,6 @@ onCameraPickerPress() {
           <View style={styles.form}> 
           <GeneralLoginButton onPress={this.onButtonPress.bind(this)} /> 
           <GLoginButton onPress={this.onGButtonPress.bind(this)} /> 
-          <CameraPickerButton onPress={this.onCameraPickerPress.bind(this)} />
            </View> 
           );
           
