@@ -28,6 +28,13 @@ export default (state = initialState, action) => {
                 ravel_points: action.payload.ravel_points,
             };
 
+        case 'UPDATE_USER_PROFILE_PICTURE':
+            console.log('in update_user_profile_picture');
+            return {
+                ...state,
+                photoURL: action.payload
+            };   
+
         case 'UPDATE_USER_PROFILE':
             console.log('in update_user_profile');
             return {

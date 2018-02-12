@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  View, ScrollView
+  View, 
+  ScrollView,
+  Image,
+  Platform
 } from 'react-native';
 import { MKTextField, MKColor, MKButton } from 'react-native-material-kit';
 import Loader from './Loader';
@@ -13,7 +16,6 @@ import MainPage from './MainPage';
 import RavelPage from './RavelPage';
 import {userResetPassword, signInWithEmail, createUserWithEmail, updateUserProfile} from '../actions';
 
-
 // import fbsdk and use LoginButton and AccessToken
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -23,7 +25,6 @@ const {
   GraphRequestManager
 } = FBSDK;
 
-
 const GeneralLoginButton = MKButton.coloredButton()
     .withText('LOGIN')
     .build();
@@ -32,15 +33,11 @@ const GLoginButton = MKButton.coloredButton()
     .withText('Create user')
     .build();
 
-
-
-
 const styles = StyleSheet.create({
     form: {
         paddingBottom: 10,
         width: 200,
         paddingTop: 20
-
     },
 
     fieldStyles: {
@@ -67,6 +64,8 @@ const styles = StyleSheet.create({
     }, 
 });
 
+// The uploadImage function that you are going to use:
+
 export default class Login extends Component { 
   state = {
       email :  '',
@@ -75,7 +74,7 @@ export default class Login extends Component {
       loading: false,    
   };
 
-  onButtonPress() {
+onButtonPress() {
     const {email, password} = this.state;
     this.setState({error: '', loading: true });
 

@@ -11,7 +11,6 @@ export const getCurrentLoggedInUserUid = () => {
     return firebase.auth().currentUser.uid;
 }
 
-
 // Wrapper method to set null values when creating a user
 export const updateUserProfile = (userProfile, {first_name, last_name, bio, 
                                 photoURL, stat_ravel_led, stat_passage_written, 
@@ -33,14 +32,11 @@ export const updateUserProfile = (userProfile, {first_name, last_name, bio,
 
 // Action: Logs the current user off
 export const userLogOff = () => { 
-
     firebase.auth().signOut().then(function() {
       }, function(error) {
             console.log('Logging off Failed');
       });
 };
-
-
 
 // Params: Takes an exisiting user's email 
 // Action: Resets password
@@ -103,6 +99,22 @@ export const createUserWithEmail = (email, password) => {
 
 /* START USER ACTIONS (will set props)*/
 
+export const updateProfilePicture = (url) => {
+    return (dispatch) => {
+        const { currentUser } = firebase.auth();
+        firebase.database().ref(`/users/${currentUser.uid}/userProfile`).update({
+            photoURL : url,
+          })
+          .then(() => {
+            dispatch({ type: 'UPDATE_USER_PROFILE_PICTURE',
+            payload: url});
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+    }
+}
+
 // Params: user uid 
 // Action: Gets the meta-data for a user profile 
 export const getUserProfile = (uid) => {
@@ -110,6 +122,7 @@ export const getUserProfile = (uid) => {
     return (dispatch) => {
         firebase.database().ref(`/users/${uid}/userProfile`)
         .on('value', snapshot => {
+            console.log(snapshot.val());
             dispatch({ type: 'GET_USER_PROFILE',
                        payload: snapshot.val() });
         });
