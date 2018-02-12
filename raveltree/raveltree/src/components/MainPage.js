@@ -5,11 +5,11 @@
  */
 
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Platform } from 'react-native';
+import { Text, View, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Platform, Button } from 'react-native';
 import { getTheme } from 'react-native-material-kit';
 import {MKTextField, MKColor, MKButton} from 'react-native-material-kit';
 import * as actions from '../actions';
-import { updateUserProfile, getUserProfile, getCurrentLoggedInUserUid, startCreateRavel} from '../actions';
+import { userLogOff, updateUserProfile, getUserProfile, getCurrentLoggedInUserUid, startCreateRavel} from '../actions';
 import { connect} from 'react-redux';
 import _ from 'lodash';
 import firebase from 'firebase';
@@ -31,6 +31,10 @@ const theme = getTheme();
 
 const CameraPickerButton = MKButton.coloredButton()
     .withText('Camera Picker')
+    .build();
+
+const LogoutButton = MKButton.coloredButton()
+    .withText('Log Off')
     .build();
 
 
@@ -152,6 +156,10 @@ class MainPage extends Component {
         })
     }
 
+    onLogOutButtonPress() {
+        userLogOff();
+    }
+
     componentWillMount() {
         // ravel_title= 'ravel title', 
         // ravel_category= 'game mode', 
@@ -195,6 +203,7 @@ class MainPage extends Component {
         <Text>{this.props.first_name}</Text>
         <Text>{this.props.bio}</Text>
         <CameraPickerButton onPress={this.onCameraPickPress}/> 
+        <LogoutButton onPress = {this.onLogOutButtonPress}/>
       </View>
     );
   }

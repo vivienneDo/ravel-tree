@@ -14,6 +14,7 @@ import { connect} from 'react-redux';
 import * as actions from '../actions';
 import MainPage from './MainPage';
 import RavelPage from './RavelPage';
+import FBLoginComponent from '../utils/FBLoginComponent';
 import {userResetPassword, signInWithEmail, createUserWithEmail, updateUserProfile} from '../actions';
 
 // import fbsdk and use LoginButton and AccessToken
@@ -169,7 +170,7 @@ onGButtonPress() {
         />
 
         <View>
-        <LoginButton readPermissions = {['public_profile','email']}
+        {/* <LoginButton readPermissions = {['public_profile','email']}
           onLoginFinished = {
             (error, result) => {
               if (error) {
@@ -188,12 +189,19 @@ onGButtonPress() {
                         if (error) {
                             console.log('Error fetching data from ' + error.toString());
                         }
+
                         else {
-                            console.log('Success fetching data' + result.toString());
-                            console.log(results['first_name']);  
-                            firebase.database().ref(`/users/${firebase.auth().currentUser.uid}/userProfile`)
-                            updateUserProfile(user, {first_name:results['first_name'],last_name:results['last_name'],bio:'',photoURL:'', stat_ravel_led:'', stat_passage_written:'', stat_ravel_contributed:'', 
-                                upvotes:'', ravel_points:'' });
+                            firebase.database().ref(`/users`).child(user.uid).once('value', function(snapshot) {
+                                // Check null values if first time logging in with FB
+                                if ((snapshot.val() === null)) {
+                                    console.log('Success fetching data' + result.toString());
+                                    console.log(results['first_name']);  
+                                    firebase.database().ref(`/users/${firebase.auth().currentUser.uid}/userProfile`)
+                                    updateUserProfile(user, {first_name:results['first_name'],last_name:results['last_name'],bio:'',photoURL:'', stat_ravel_led:'', stat_passage_written:'', stat_ravel_contributed:'', 
+                                        upvotes:'', ravel_points:'' });
+                                }
+                            });
+                            
                         }
                     }
                     const infoRequest = new GraphRequest(
@@ -223,7 +231,8 @@ onGButtonPress() {
               }
             }
           }
-          onLogoutFinished={() => alert("logout.")}/>
+          onLogoutFinished={() => alert("logout.")}/> */}
+          <FBLoginComponent/>
           </View>
 
         <Text style={errorMessage}>
