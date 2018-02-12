@@ -13,7 +13,7 @@ import Loader from './Loader';
 import MainPage from './MainPage';
 import RavelPage from './RavelPage';
 //import Navigation from './Navigation';
-import reducers from '../reducers/RavelReducer';
+import reducers from '../reducers/AllUserRavelReducer';
 //import reducers from '../reducers/UserReducer';
 import Thunk from 'redux-thunk';
 

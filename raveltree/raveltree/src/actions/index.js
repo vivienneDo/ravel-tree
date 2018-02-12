@@ -236,18 +236,36 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
 
 };
 
-export const getAllUserCreatedRavel = (user) => {
-    return (dispath) => {
-        var allRavels = firebase.database().ref(`/users/${user.uid}/ravel_created`);
-        allRavels.once('value').then(snapshot => {
-          
-          dispath({type: 'GET_ALL_USER_RAVEL',
-                payload: {}})
-        })
-    };
+// export const getAllUserCreatedRavel = (user) => {
+//     return (dispath) => {
+//         // var allRavels = firebase.database().ref(`/users/${user.uid}/ravel_created`);
+//         firebase.database()
+//         .ref(`/users/${user.uid}/ravel_created`)
+//         .orderByKey()
+//         .limitToLast(10)
+//         .on('value', (snapshot) => {
+//             setTimeout(() => {
+//                 const ravel = snapshot.val() || [];
+//                 dispatch(receiveRavels(ravel))
+//             }, 0);
+//         });
+//     };
 
 
-};
+// };
+
+// export const addRavel = (rav) => {
+//     console.log("I am in add ravel");
+//     return (dispatch) => {
+//         dispatch({type: 'ADD_USER_CREATED_RAVEL', payload: {...rav}});
+//     };
+// };
+
+// export const receiveRavels = (ravel) => {
+//     return function (dispatch) {
+//         Object.values(ravel).forEach(rav => dispatch(addRavel(rav)));
+//     }
+// };
 
 // What you can upvote: a passage 
 // What you cannot upvote: a ravel, a comment
