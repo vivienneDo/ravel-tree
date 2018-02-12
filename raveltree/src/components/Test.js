@@ -26,6 +26,7 @@ import Tag from './Tag'
 import UserImage from './UserImage'
 import VoteBar from './VoteBar'
 import NavBar from './NavBar'
+import RadioSet from './RadioSet'
 
 export default class Test extends Component {
   onPressTest () {
@@ -35,9 +36,14 @@ export default class Test extends Component {
   render (){
     return (
       <View style={{flexDirection: 'column'}}>
-        <NavBar active={'home'} />
-        <Divider />
-
+        <RadioSet options={[
+                    {name: 'concept', title: 'By Concept'},
+                    {name: 'tag', title: 'By Tag'},
+                    {name: 'category', title: 'By Category'},
+                    {name: 'trending', title: 'By Trending'},
+                  ]}
+                  active={'concept'}
+        />
         {/*
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <RTLogoText size={60}>raveltree</RTLogoText>
