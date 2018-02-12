@@ -18,28 +18,42 @@ export default class Tag extends Component<{}> {
     // Keeps track of whether the tag is active (pressed) or not
     constructor(props) {
       super(props);
-      this.state = {isOn: false};
+      this.state = {active: this.props.active};
+     }
+
+     componentWillReceiveProps (newProps)
+     {
+       this.setState ({active: newProps.active});
      }
 
     render() {
 
       const {
         name,
+        size,
         accessibilityLabel,
+        toggleFormState,
+        active,
         disabled,
         testID,
       } = this.props;
 
       const layoutStyles = [styles.layout];
+      const textStyles = [styles.text];
       const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
-      // If the tag is pressed (active), change the style to active and
-      // isOn to true
+      if (this.props.size == 'small') {
+        layoutStyles.push ({height: 20});
+        textStyles.push ({fontSize: 10});
+      }
+
+      layoutStyles.push (this.state.active ? styles.active : styles.inactive);
+
       return (
         <Touchable
-          style = {[layoutStyles, this.state.isOn ? styles.active : styles.inactive]}
-          onPress = {()=> this.setState({isOn: !this.state.isOn})}>
-            <Text style = {styles.textStyle}>
+          style = {layoutStyles}
+          onPress={() => {this.props.toggleFormState(this.props.name)}}>
+            <Text style = {textStyles}>
                 {this.props.children}
             </Text>
         </Touchable>
@@ -53,17 +67,21 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: 'center',
     paddingHorizontal: 10,
+    marginBottom: 3,
+    marginTop: 3,
     alignSelf: 'flex-start',
   },
-   inactive: {
+  active: {
+   backgroundColor: '#2E8AF7',
+  },
+  inactive: {
     backgroundColor: '#B1B1B1',
-   },
-   textStyle: {
+  },
+  text: {
     color: 'white',
     textAlign: 'center',
     alignSelf: 'flex-start',
-   },
-   active: {
-    backgroundColor: '#2E8AF7',
-   },
+    fontFamily: 'Roboto',
+    fontSize: 12,
+  },
 });
