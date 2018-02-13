@@ -29,7 +29,7 @@ import Button from './Button'
 import InputText from './InputText'
 
 
-export default class PassagePopup extends React.Component {
+export default class AddPopup extends React.Component {
   constructor (props) {
     super (props);
   }
