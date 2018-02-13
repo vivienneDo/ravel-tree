@@ -43,7 +43,7 @@ export default class ModalContainer extends React.Component {
       testID,
     } = this.props;
 
-    const containerStyles = [styles.inactive];
+    const containerStyles = [styles.container];
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     if (this.props.isActive) {
@@ -55,13 +55,6 @@ export default class ModalContainer extends React.Component {
 
     return (
       <View style={containerStyles}>
-      {/* Will let childen implement the ScrollView because padding will vary.
-        <ScrollView>
-          <View style={styles.content}>
-            {this.props.children}
-          </View>
-        </ScrollView>
-      */}
         {this.props.children}
         <View style={styles.bottomButtons}>
           <Touchable
@@ -80,27 +73,22 @@ export default class ModalContainer extends React.Component {
 }
 
 const styles = StyleSheet.create ({
-  active: {
-    borderRadius: 20,
-    borderColor: '#2E8AF7',
-    borderWidth: 1,
-    width: '90%',
-    height: '90%',
-    alignSelf: 'center',
-    marginBottom: 11,
-    paddingTop: 10,
-    paddingBottom: 34,
-  },
-  inactive: {
+  container: {
+    flex: 0.95,
     borderRadius: 20,
     borderColor: '#7E7E7E',
     borderWidth: 1,
     width: '90%',
-    height: '90%',
     alignSelf: 'center',
-    marginBottom: 11,
+    margin: 'auto',
     paddingTop: 10,
     paddingBottom: 34,
+  },
+  active: {
+    borderColor: '#2E8AF7',
+  },
+  inactive: {
+    borderColor: '#7E7E7E',
   },
   content: {
     paddingLeft: 17,
@@ -121,5 +109,3 @@ const styles = StyleSheet.create ({
     color: '#2E8AF7',
   },
 });
-
-AppRegistry.registerComponent('ModalContainer', () => ModalContainer);
