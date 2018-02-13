@@ -1,10 +1,8 @@
 /* 
-
-FB Login component
-Instructions:
-import FBLoginComponent from '../utils/FBLoginComponent'; 
-in parent view to use 
-
+Name: FB Login component
+Instructions to use: import FBLoginComponent from '../utils/FBLoginComponent'; into parent
+Then, use the component as any other component 
+ex: <FBLoginComponent/> 
 */ 
 import React, { Component } from 'react';
 import firebase from 'firebase';
@@ -46,7 +44,10 @@ class FBLoginComponent extends Component {
 
                         else {
                             firebase.database().ref(`/users`).child(user.uid).once('value', function(snapshot) {
+                                
                                 // Check null values if first time logging in with FB
+                                // Check first time logging in, set the user profile infomation to null 
+                                // along with FB first name, last name 
                                 if ((snapshot.val() === null)) {
                                     console.log('Success fetching data' + result.toString());
                                     console.log(results['first_name']);  

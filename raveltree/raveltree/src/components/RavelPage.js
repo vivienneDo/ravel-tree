@@ -129,10 +129,10 @@ class RavelPage extends Component {
         ravel_tags = tags;
 
         
-        // this.props.createStartRavel({ ravel_title, ravel_category, passage_length, visibility, enable_voting, enable_comment,
-        //     ravel_concept, ravel_number_participants, ravel_participants, ravel_tags });
+        this.props.createStartRavel({ ravel_title, ravel_category, passage_length, visibility, enable_voting, enable_comment,
+            ravel_concept, ravel_number_participants, ravel_participants, ravel_tags });
 
-        //this.props.getAllUserCreatedRavel(firebase.auth().currentUser);
+        this.props.getAllUserCreatedRavel(firebase.auth().currentUser);
 
            
         
