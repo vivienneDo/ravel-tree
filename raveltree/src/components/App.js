@@ -9,6 +9,7 @@ import firebase from 'firebase';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import StatusBar from './StatusBar'
+import NavBar from './NavBar'
 import Login from './Login';
 import Loader from './Loader';
 import MainPage from './MainPage';
@@ -57,7 +58,7 @@ export default class App extends Component {
         console.log('Showing main page');
         return <MainPage />;
       case false:
-        return <Test />;
+        return <Test style={styles.content} />;
         //return <Login />;
       default:
         return <Loader size="large"/>;
@@ -67,9 +68,14 @@ export default class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <View>
+        <View style={styles.layout}>
           <StatusBar />
-          {this.renderInitialView()}
+          <View style={styles.content}>
+            {this.renderInitialView()}
+          </View>
+          <View style={styles.navBar}>
+            <NavBar />
+          </View>
         </View>
       </Provider>
     );
@@ -77,10 +83,15 @@ export default class App extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  layout: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  content :{
+    flex: 1,
+  },
+  navBar: {
+    alignSelf: 'flex-end',
   },
 });
