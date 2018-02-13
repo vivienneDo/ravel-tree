@@ -74,6 +74,7 @@ export default class ButtonSans extends React.Component <{
 
     const buttonStyles = [styles.button];
     const textStyles = [styles.text];
+    const layoutStylse = [styles.layout];
     const accessibilityTraits = ['button'];
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
@@ -106,7 +107,7 @@ export default class ButtonSans extends React.Component <{
         testID={testID}
         disabled={disabled}
         onPress={onPress}
-        style={styles.layout}>
+        style={layoutStyles}>
         <View style={buttonStyles}>
           <Text style={textStyles} disabled={disabled}>{title}</Text>
         </View>
