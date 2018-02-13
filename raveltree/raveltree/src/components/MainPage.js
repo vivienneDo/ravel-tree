@@ -9,7 +9,7 @@ import { Text, View, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, P
 import { getTheme } from 'react-native-material-kit';
 import {MKTextField, MKColor, MKButton} from 'react-native-material-kit';
 import * as actions from '../actions';
-import { getAllUserCreatedRavel, userLogOff, updateUserProfile, getUserProfile, getCurrentLoggedInUserUid, startCreateRavel} from '../actions';
+import { loadInitialUserCreatedRavel, getCurrentLoggedInUser, getAllUserCreatedRavel, userLogOff, updateUserProfile, getUserProfile, getCurrentLoggedInUserUid, startCreateRavel} from '../actions';
 import { connect} from 'react-redux';
 import _ from 'lodash';
 import firebase from 'firebase';
@@ -180,7 +180,7 @@ class MainPage extends Component {
          console.log("Updating user profile");
          console.log(getCurrentLoggedInUserUid());
          this.props.getUserProfile(getCurrentLoggedInUserUid());
-         //getAllUserCreatedRavel(firebase.auth().currentUser);
+        this.props.loadInitialUserCreatedRavel(getCurrentLoggedInUser());
     };
 
 

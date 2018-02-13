@@ -11,6 +11,10 @@ export const getCurrentLoggedInUserUid = () => {
     return firebase.auth().currentUser.uid;
 }
 
+export const getCurrentLoggedInUser = () => {
+    return firebase.auth().currentUser;
+}
+
 // Wrapper method to set null values when creating a user
 export const updateUserProfile = (userProfile, {first_name, last_name, bio, 
                                 photoURL, stat_ravel_led, stat_passage_written, 
@@ -100,18 +104,31 @@ export const createUserWithEmail = (email, password) => {
 /* START USER ACTIONS (will set props)*/
 
 export const updateProfilePicture = (url) => {
+
+    
     return (dispatch) => {
         const { currentUser } = firebase.auth();
         firebase.database().ref(`/users/${currentUser.uid}/userProfile`).update({
             photoURL : url,
           })
           .then(() => {
+
+                    // Update the AllUserRavelView as well if they have ravels 
+        // firebase.database().ref(`/users/${currentUser.uid}/ravel_created`).once('value', function (snapshot) {
+        //     if (snapshot.val() !== null ) {
+        //         firebase.child(`/users/${currentUser.uid}/ravel_created`).on('value', function(snapshot) {
+        //             snapshot.ref().update({user_created_photoURL: url}); 
+        //         });
+        //     }
+
+        // });
             dispatch({ type: 'UPDATE_USER_PROFILE_PICTURE',
             payload: url});
           })
           .catch((error) => {
             console.log(error);
           })
+                  
     }
 }
 
@@ -221,7 +238,7 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
     var user_created = currentUser.uid;
     var ravel_status = true;
     var ravel_create_date = new Date().toLocaleTimeString();
-    var user_created_photoURL = '';
+    var user_created_photoURL = firebase.database().ref(`/users/${currentUser.uid}/userProfile/photo_URL`);
     // TODO: Calculate ravel points dynamically 
     var ravel_points = '';
 
@@ -249,37 +266,36 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
 
 };
 
-export const getAllUserCreatedRavel = (user) => {
-    console.log('Getting all ravels');
-    return (dispatch) => {
-        // var allRavels = firebase.database().ref(`/users/${user.uid}/ravel_created`);
-        firebase.database()
-        .ref(`/users/${user.uid}/ravel_created`)
-        .orderByKey()
-        .limitToLast(10)
-        .on('value', (snapshot) => {
-            setTimeout(() => {
-                const ravels = snapshot.val() || [];
+// Closes a ravel, no longer editable 
+// export const closeUserRavel = (ravel_uid, user) => {
 
-                console.log("ravel objectL" + ravels);              
-                dispatch(receiveRavels(ravels))
-            }, 0);
+//     firebase.database().ref(`/users/${user.uid}/ravel_created`).child(ravel_uid).once('value', function(snapshot) {
+//         if (snapshot !== null ) {
+//             firebase.database().ref(`/ravels/${ravel_uid}`).update({ravel_status : false})
+//         }
+//     });
+
+// }
+
+// Loads all ravels for a particular user 
+// Params: user object 
+// Returns: a list of ravel_uids and meta-deta:
+// ravel_number_participants
+// ravel_points
+// ravel_title
+// ravel_uid
+// View: All_User_Created_Ravels
+
+export const loadInitialUserCreatedRavel = (user) => {
+
+    return (dispatch) => {
+        firebase.database().ref(`/users/${user.uid}/ravel_created`)
+        .on('value', snapshot => {
+            dispatch({ type: 'INITIAL_USER_RAVEL_FETCH', payload: snapshot.val() });
         });
     };
-
-
 };
 
-export const addRavel = (rav) => ({
-    type: 'ADD_USER_CREATED_RAVEL',
-    ...rav
-});
-
-export const receiveRavels = (ravels) => {
-    return function (dispatch) {
-        Object.values(ravels).forEach(rav => dispatch(addRavel(rav)));
-    }
-};
 
 // What you can upvote: a passage 
 // What you cannot upvote: a ravel, a comment
