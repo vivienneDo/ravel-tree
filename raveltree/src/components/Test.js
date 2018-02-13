@@ -29,6 +29,7 @@ import NavBar from './NavBar'
 import RadioSet from './RadioSet'
 import TagCloud from './TagCloud'
 import OptionSet from './OptionSet'
+import PassagePopup from './PassagePopup'
 
 export default class Test extends Component {
   onPressTest () {
@@ -38,6 +39,13 @@ export default class Test extends Component {
   render (){
     return (
       <View style={{flexDirection: 'column'}}>
+        <PassagePopup
+          ravel={'Cassius in Rome'}
+          title={'Pacing the Basement'}
+          passageID={'1-A'}
+          passage={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vitae vestibulum dolor, a rutrum ipsum. Donec nec venenatis nulla. Ut molestie vitae ligula quis condimentum. Integer tempus metus vitae elit bibendum blandit. Vestibulum placerat cursus turpis, eget congue massa vestibulum in. Etiam odio sapien, viverra sed gravida vitae, blandit a urna. Duis congue arcu id venenatis aliquam. Phasellus at mollis ex.\n\nPraesent in nulla eu magna gravida eleifend. Sed vestibulum dui vel erat pretium cursus. Aenean hendrerit augue ac quam imperdiet pretium. Nullam libero tellus, pulvinar in placerat gravida, maximus sed magna. Suspendisse neque felis, aliquam in volutpat ut, fringilla et nulla. Fusce et posuere lacus. Praesent vehicula at leo ultricies auctor. Mauris et enim mattis, consequat lectus vel, rhoncus ligula. Donec quis elit non sapien molestie tempus molestie nec sapien. In blandit interdum massa, vel ullamcorper eros facilisis ut.\n\nCurabitur vitae lectus sed arcu sagittis malesuada. Phasellus rhoncus, magna id suscipit consectetur, mi tellus accumsan felis, quis condimentum felis orci vel libero. Aenean ultrices magna ac lacus consequat, quis faucibus felis hendrerit. Nam rhoncus tincidunt risus ac aliquam.'}
+        />
+      {/*
       <OptionSet options={[
                   {name: 'fiction', title: 'Fiction'},
                   {name: 'nonfiction', title: 'Nonfiction'},
@@ -67,7 +75,6 @@ export default class Test extends Component {
                   ]}
                   active={'concept'}
         />
-        {/*
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <RTLogoText size={60}>raveltree</RTLogoText>
         </View>
@@ -107,6 +114,7 @@ export default class Test extends Component {
         <View style={{flexDirection: 'column', justifyContent: 'center', paddingBottom: 20}}>
           <VoteBar />
         </View>
+        <ButtonReverse title="Explore" onPress={this.onPressTest ()} />
         <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 20}}>
           <Button title="Start a Ravel" onPress={this.onPressTest ()} />
           <ButtonReverse title="Explore" onPress={this.onPressTest ()} />
