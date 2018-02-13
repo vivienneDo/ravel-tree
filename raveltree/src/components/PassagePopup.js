@@ -58,17 +58,17 @@ export default class PassagePopup extends React.Component {
       <ModalContainer name='PassagePopup' isActive={this.props.isActive}>
         <View style={styles.head}>
           <View style={styles.row1}>
-            <TextSerif style={styles.ravel}>{this.props.ravel}</TextSerif>
-            <TextSans style={styles.passageID}>{this.props.passageID}</TextSans>
+            <TextSerif size={16}>{this.props.ravel}</TextSerif>
+            <TextSans size={13} color={'#95989A'}>{this.props.passageID}</TextSans>
           </View>
           <View style={styles.row2}>
-            <TextSans style={styles.title}>{this.props.title}</TextSans>
+            <TextSans size={13} color={'#95989A'}>{this.props.title}</TextSans>
             <UserImage size={26}/>
           </View>
         </View>
         <ScrollView style={styles.scroll}>
           <View style={styles.scrollContent}>
-            <TextSerif style={styles.passage}>
+            <TextSerif>
               {this.props.passage}
             </TextSerif>
           </View>
@@ -106,20 +106,8 @@ const styles = StyleSheet.create ({
     paddingLeft: 17,
     paddingRight: 17,
   },
-  ravel: {
-    fontSize: 16,
-  },
-  title: {
-    fontSize: 13,
-    color: '#95989A',
-  },
   passageID: {
-    fontSize: 13,
-    color: '#95989A',
     alignSelf: 'flex-end',
-  },
-  passage: {
-
   },
   buttons: {
     flexDirection: 'row',
@@ -127,7 +115,6 @@ const styles = StyleSheet.create ({
     justifyContent: 'space-between',
     paddingLeft: 21,
     paddingRight: 21,
-
   },
 });
 
