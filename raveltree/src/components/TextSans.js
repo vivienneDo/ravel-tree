@@ -29,7 +29,7 @@ export default class TextSans extends React.Component {
     textStyles.push ([
       this.props.size ? {fontSize: size} : {fontSize: 12},
       this.props.color ? {color: color} : {color: '#282828'},
-      this.props.bold ? {fontWeight: bold} : {fontWeight: 400},
+      this.props.bold ? {fontWeight: 'bold'} : {fontWeight: '400'},
     ]);
 
     return (
