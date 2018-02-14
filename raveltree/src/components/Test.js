@@ -32,6 +32,7 @@ import OptionSet from './OptionSet'
 import PassagePopup from './PassagePopup'
 import ConceptPopup from './ConceptPopup'
 import AddPopup from './AddPopup'
+import ForkPopup from './ForkPopup'
 
 export default class Test extends Component {
   onPressTest () {
@@ -41,13 +42,15 @@ export default class Test extends Component {
   render (){
     return (
       <View style={{flexDirection: 'column', flex: 1}}>
-
+      <ForkPopup
+        ravel={'Cassius in Rome'}
+        passageID={{number: '1', version: 'B'}}
+      />
+        {/*
         <AddPopup
           ravel={'Cassius in Rome'}
           passageID={{number: '1', version: 'A'}}
         />
-
-        {/*
         <ConceptPopup
           ravel={'Cassius in Rome'}
           participantCount={4}
