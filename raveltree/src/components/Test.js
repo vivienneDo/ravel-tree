@@ -33,6 +33,7 @@ import PassagePopup from './PassagePopup'
 import ConceptPopup from './ConceptPopup'
 import AddPopup from './AddPopup'
 import ForkPopup from './ForkPopup'
+import MessageStub from './MessageStub'
 
 export default class Test extends Component {
   onPressTest () {
@@ -42,11 +43,17 @@ export default class Test extends Component {
   render (){
     return (
       <View style={{flexDirection: 'column', flex: 1}}>
-      <ForkPopup
-        ravel={'Cassius in Rome'}
-        passageID={{number: '1', version: 'B'}}
-      />
-        {/*
+        <MessageStub
+            message={
+              'Hey, Rebecca! I just read your newest passage for Shakespeare on Ice, and I have to say, you really knocked it out of the park. I adore your dialogue, especially the bits involving Falstaff. Truly a character who deserved the new life you\’ve given him—and truly a deserving writer to do so!\n\nI wanted to let you know I\’ll be starting a new ravel soon that I think you\’d really enjoy messing around with. I\’ll send you an invite as soon as it\’s ready!\n\nClint'}
+            user={'Clint Lane Clover'}
+            active
+        />
+        {/*}
+        <ForkPopup
+          ravel={'Cassius in Rome'}
+          passageID={{number: '1', version: 'B'}}
+        />
         <AddPopup
           ravel={'Cassius in Rome'}
           passageID={{number: '1', version: 'A'}}
