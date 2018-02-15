@@ -36,6 +36,7 @@ import ForkPopup from './ForkPopup'
 import MessageStub from './MessageStub'
 import MessageCard from './MessageCard'
 import NotificationCard from './NotificationCard'
+import RavelStub from './RavelStub'
 
 export default class Test extends Component {
   onPressTest () {
@@ -45,7 +46,7 @@ export default class Test extends Component {
   render (){
     return (
       <View style={{flexDirection: 'column', flex: 1}}>
-        
+        <RavelStub ravel={'Shakespeare On Ice'} users={61} score={324} />
         {/*}
         <NotificationCard
             notification={{type: 'upvoted', passage: 'Something Frozen This Way Comes', upvotes: 37}}
