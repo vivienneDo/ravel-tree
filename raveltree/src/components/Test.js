@@ -37,6 +37,7 @@ import MessageStub from './MessageStub'
 import MessageCard from './MessageCard'
 import NotificationCard from './NotificationCard'
 import RavelStub from './RavelStub'
+import RavelCard from './RavelCard'
 
 export default class Test extends Component {
   onPressTest () {
@@ -46,8 +47,9 @@ export default class Test extends Component {
   render (){
     return (
       <View style={{flexDirection: 'column', flex: 1}}>
-        <RavelStub ravel={'Shakespeare On Ice'} users={61} score={324} />
+        <RavelCard ravel={'The Tycoon'} users={6} score={311} concept={'A tale of travel, deceit, and unannounced visitors. W.K. Smithson, young heir to a burgeoning furniture import/export empire, must decide between prosperity and his heart when he encounters Millie J., a waitress at an Indonesian beach bar.'} />
         {/*}
+        <RavelStub ravel={'Shakespeare On Ice'} users={61} score={324} />
         <NotificationCard
             notification={{type: 'upvoted', passage: 'Something Frozen This Way Comes', upvotes: 37}}
             active
