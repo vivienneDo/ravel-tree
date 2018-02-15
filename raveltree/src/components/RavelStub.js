@@ -69,14 +69,14 @@ export default class RavelStub extends Component<{}> {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      width: '90%',
-      borderWidth: 1,
-      borderRadius: 20,
-      borderColor: '#8D8D8D',
-      paddingVertical: 5,
-      paddingHorizontal: 15
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '90%',
+    borderWidth: 1,
+    borderRadius: 20,
+    borderColor: '#8D8D8D',
+    paddingVertical: 5,
+    paddingHorizontal: 15
   },
   left: {
     flexDirection: 'row',
