@@ -33,5 +33,3 @@ const styles = StyleSheet.create({
       fontFamily: 'Montserrat'
     },
 });
-
-AppRegistry.registerComponent('TextHeader', () => TextHeader);

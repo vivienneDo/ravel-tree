@@ -42,5 +42,3 @@ const styles = StyleSheet.create ({
     height: 1,
   },
 });
-
-AppRegistry.registerComponent('Divider', () => Divider);

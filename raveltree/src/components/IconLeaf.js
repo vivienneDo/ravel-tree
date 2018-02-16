@@ -58,5 +58,3 @@ const styles = StyleSheet.create ({
     //
   },
 });
-
-AppRegistry.registerComponent('IconLeaf', () => IconLeaf);

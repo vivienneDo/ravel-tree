@@ -14,5 +14,3 @@ export default class StatusBar extends Component {
     );
   }
 }
-
-AppRegistry.registerComponent('StatusBar', () => StatusBar);

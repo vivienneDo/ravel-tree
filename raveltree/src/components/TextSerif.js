@@ -43,5 +43,3 @@ const styles = StyleSheet.create ({
     fontFamily: 'EB Garamond',
   },
 });
-
-AppRegistry.registerComponent('TextSerif', () => TextSerif);

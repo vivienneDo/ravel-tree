@@ -148,5 +148,3 @@ const styles = StyleSheet.create ({
     color: '#969696',
   },
 });
-
-AppRegistry.registerComponent('ButtonReverse', () => ButtonReverse);

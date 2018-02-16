@@ -131,5 +131,3 @@ const styles = StyleSheet.create ({
     color: '#F0F0F0',
   },
 });
-
-AppRegistry.registerComponent('Toggle', () => Toggle);

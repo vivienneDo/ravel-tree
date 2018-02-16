@@ -50,5 +50,3 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto',
   },
 });
-
-AppRegistry.registerComponent('InputForm', () => InputForm);

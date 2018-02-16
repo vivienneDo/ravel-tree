@@ -118,5 +118,3 @@ const styles = StyleSheet.create ({
     paddingRight: 21,
   },
 });
-
-AppRegistry.registerComponent('ModalContainer', () => ModalContainer);

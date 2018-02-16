@@ -45,5 +45,3 @@ const styles = StyleSheet.create({
       fontFamily: 'EB Garamond',
     }
 });
-
-AppRegistry.registerComponent('InputSearch', () => InputSearch);

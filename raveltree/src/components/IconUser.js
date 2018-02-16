@@ -57,5 +57,3 @@ const styles = StyleSheet.create ({
     //
   },
 });
-
-AppRegistry.registerComponent('IconUser', () => IconUser);

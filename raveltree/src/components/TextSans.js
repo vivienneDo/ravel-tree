@@ -45,5 +45,3 @@ const styles = StyleSheet.create ({
     fontFamily: 'Roboto',
   },
 });
-
-AppRegistry.registerComponent('TextSans', () => TextSans);
