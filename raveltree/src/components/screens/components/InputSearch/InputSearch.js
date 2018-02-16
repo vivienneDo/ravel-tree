@@ -14,27 +14,29 @@ import {
 
 export default class InputSearch extends Component<{}> {
   render() {
+
+    const {
+      placeHolder
+    } = this.props;
+
     return (
       <View>
-        {/* used for proper spacing */}
-          <Text></Text>
-          
+ 
          <TextInput 
          style = {styles.inputStyle} 
-         placeholder = {inputTxt} 
-         placeholderTextColor = '#95989A'/> 
+         placeholder = {placeHolder} 
+         placeholderTextColor = '#95989A'
+         /> 
+
       </View>
     );
   }
 }
 
-var inputTxt = 'Type a concept. "In a world..."';
-
-
 const styles = StyleSheet.create({
     inputStyle: {
       color: '#101010',
-      textAlign: 'center',
+    //  textAlign: 'center',
       fontSize: 20,
       borderColor: '#B7B7B7',
       fontFamily: 'EB Garamond',

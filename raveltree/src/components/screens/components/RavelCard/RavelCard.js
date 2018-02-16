@@ -12,37 +12,49 @@ import {
 // 2-5-18
 // Ravel Card
 
-export default class RavelCard extends Component<{}> {
+import IconLeaf from '../IconLeaf';
+import IconUser from '../IconUser';
+import UserImage from '../UserImage/UserImage';
 
+export default class RavelCard extends Component<{}> {
 
     render() {
         return (
             <View style = {styles.container}>
                 <View style = {styles.ravelStyle}>
-                    {/* user icon */}
-                    <TouchableOpacity
-                    activeOpacity = {1}
-                    >
-                        <Image 
-                        style = {styles.imageStyle} 
-                        source = {require('../../greenarrow.jpg')}
-                        />
-                    </TouchableOpacity>
+                    <View style = {{left: '30%'}}>
+                        <UserImage/>
+                    </View>
 
                     {/* Passage Name  */}
                     <Text style = {styles.textStyle}>
                         {pass}
                     </Text>
 
-                    {/* here goes IconUser with participant count */}
-                    <Text style = {styles.textStyle}> 
-                        {part} 
+                    <Text>
+                        {tab}
+                        {space}
                     </Text>
-                    {/* Here goes IconLeaf with score */}
+
+                    {/* here goes IconUser with participant count */}
+                    <IconUser/>
                     <Text style = {styles.textStyle}> 
-                        score# 
+                        {space}
+                        #
+                    </Text>
+
+                    <Text>
+                        {tab}
+                    </Text>
+
+                    {/* Here goes IconLeaf with score */}
+                    <IconLeaf/>
+                    <Text style = {styles.textStyle}> 
+                        {space}
+                        # 
                     </Text>
                 </View>
+
                 <Text style = {styles.passageStyle}>
                     Passage...
                 </Text>
@@ -52,7 +64,8 @@ export default class RavelCard extends Component<{}> {
 }
 
 var pass = '\tPassage Name';
-var part = '\tparticipant#';
+var tab = '\t';
+var space = '  ';
 
 const styles = StyleSheet.create({
     container: {
@@ -61,15 +74,6 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         height: '25%',
         width: 300
-    },
-    imageStyle: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        position: 'relative',
-        borderColor: '#95989A',
-        borderWidth: 2,
-        left: '30%'
     },
     textStyle: {
         fontSize: 16,

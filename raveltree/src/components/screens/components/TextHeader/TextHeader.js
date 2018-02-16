@@ -14,11 +14,14 @@ import {
 
 export default class TextHeader extends Component<{}> {
   render() {
+    const {
+      title
+    } = this.props;
+
     return (
       <View>
-         <Text 
-         style = {styles.textStyle}> 
-         YOUR RAVELS 
+         <Text style = {styles.textStyle}> 
+          {title} 
          </Text>
       </View>
     );
@@ -29,7 +32,7 @@ export default class TextHeader extends Component<{}> {
 const styles = StyleSheet.create({
     textStyle: {
       color: '#151515',
-      textAlign: 'center',
+    //  textAlign: 'center',
       fontSize: 12,
       letterSpacing: 1, // only for iOS
       fontFamily: 'Montserrat'

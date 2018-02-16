@@ -12,8 +12,11 @@ import {
 // 2-3-18
 // Ravel Stub
 
-export default class RavelStub extends Component<{}> {
+import IconLeaf from '../IconLeaf';
+import IconUser from '../IconUser';
+import UserImage from '../UserImage/UserImage';
 
+export default class RavelStub extends Component<{}> {
 
     render() {
         return (
@@ -21,21 +24,37 @@ export default class RavelStub extends Component<{}> {
                 <View style = {styles.container}>
                     
                     {/* user icon */}
-                    <TouchableOpacity
-                    activeOpacity = {1}>
-                        <Image 
-                        style = {styles.imageStyle} 
-                        source = {require('../../greenarrow.jpg')}
-                        />
-                    </TouchableOpacity>
+                    <View style = {{left: '30%'}}>
+                        <UserImage/>
+                    </View>
+
                     {/* passagravel name */}
                     <Text style = {styles.textStyle}>
                         {pass}
                     </Text>
+
+                    <Text>
+                        {tab}
+                    </Text>
+
                     {/* here goes IconUser with participant count */}
-                    <Text style = {styles.textStyle}> {part} </Text>
+                    <IconUser/>
+                    <Text style = {styles.textStyle}> 
+                        {space}
+                        # 
+                    </Text>
+                    
+                    <Text>
+                        {tab}
+                    </Text>
+
                     {/* Here goes IconLeaf with score */}
-                    <Text style = {styles.textStyle}> score # </Text>
+                    <IconLeaf/>
+                    <Text style = {styles.textStyle}> 
+                        {space}
+                        # 
+                        {space}
+                    </Text>
                 </View>
             </View>
         ); 
@@ -43,7 +62,8 @@ export default class RavelStub extends Component<{}> {
 }
 
 var pass = '\tPassageName';
-var part = '\tparticipant #';
+var tab = '\t';
+var space = '  ';
 
 const styles = StyleSheet.create({
     container: {
@@ -56,15 +76,6 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         paddingHorizontal: 5
     },
-    imageStyle: {
-        width: 26,
-        height: 26,
-        borderRadius: 13,
-        position: 'relative',
-        borderColor: '#95989A',
-        borderWidth: 2,
-        left: '30%'
-      },
       textStyle: {
           fontSize: 16,
           fontFamily: 'EBGaramond',

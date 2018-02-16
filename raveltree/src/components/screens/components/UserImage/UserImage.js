@@ -53,19 +53,19 @@ export default class UserImage extends Component<{}> {
 const styles = StyleSheet.create({
     // inactive image (gray outline)
    imageStyle: {
-     width: 100,
-     height: 100,
-     borderRadius: 50,
+     width: 30,
+     height: 30,
+     borderRadius: 15,
      position: 'relative',
      borderColor: '#95989A',
      borderWidth: 2
    },
    // active image (blue outline)
    activeImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 4,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 2,
     borderColor: '#2E8AF7',
     position: 'relative',
    }

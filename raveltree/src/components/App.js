@@ -9,7 +9,9 @@ import {
 import Backend from './Backend';
 import PassageCard from './screens/components/PassageCard/PassageCard';
 import RavelCard from './screens/components/RavelCard/RavelCard';
+import RavelStub from './screens/components/RavelStub/RavelStub';
 import Home from './screens/Home';
+import Splash from './screens/Splash';
 
 /* moved backend work to Backend.js
   using this file to test frontend components
@@ -18,7 +20,8 @@ import Home from './screens/Home';
 export default class App extends Component { 
   render() {
     return (
-      <View style = {styles.testStyle}>
+      //<View style = {styles.testStyle}>
+      <View>
         <Home/>
       </View>
     );

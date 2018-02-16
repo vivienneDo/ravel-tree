@@ -13,6 +13,7 @@ import {
 // Passage Card
 
 import VoteBar from '../VoteBar/VoteBar';
+import UserImage from '../UserImage/UserImage';
 
 export default class PassageCard extends Component<{}> {
 
@@ -42,16 +43,10 @@ export default class PassageCard extends Component<{}> {
                     <Text style = {styles.textSans}>
                         {pass}
                     </Text>
-                    
                     {/* user icon */}
-                    <TouchableOpacity
-                    activeOpacity = {1}
-                    >
-                        <Image 
-                        style = {styles.imageStyle} 
-                        source = {require('../../greenarrow.jpg')}
-                        />
-                    </TouchableOpacity>
+                    <View style = {{marginRight: '3%'}}>
+                        <UserImage/>
+                    </View>
                 </View>
 
                 
@@ -91,18 +86,9 @@ const styles = StyleSheet.create({
         borderColor: '#8D8D8D',
         borderWidth: 2,
         borderRadius: 20,
-        height: 300,
-        width: 300
+        height: 320,
+        width: 320
     },
-    imageStyle: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        position: 'relative',
-        borderColor: '#95989A',
-        borderWidth: 2,
-        marginRight: '3%'
-      },
       cardStyle: {
           flexDirection: 'row',
           justifyContent: 'space-between',
@@ -140,7 +126,7 @@ const styles = StyleSheet.create({
     bottomStyle: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 15,
+        marginTop: 30,
         marginRight: 10,
         alignItems: 'center'
     },
