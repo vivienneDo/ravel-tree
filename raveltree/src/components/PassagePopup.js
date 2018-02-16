@@ -5,6 +5,7 @@
 // Standard passage popup component for RavelTree.
 //
 // TODO: Make ravel, title, and ID touchable and link to respective content.
+// TODO: Add VoteBar
 
 'use strict';
 
