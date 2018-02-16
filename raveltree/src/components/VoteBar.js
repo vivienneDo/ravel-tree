@@ -1,3 +1,9 @@
+// Author:    Alex Aguirre
+// Created:   01/20/18
+// Modified:  02/16/18 by Frank Fusco (fr@nkfus.co)
+
+// Standard "vote bar" component for RavelTree.
+
 import React, {Component} from 'react';
 import {
   AppRegistry,
@@ -7,102 +13,91 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-// 1-20-18
-// Vote Bar
-
 
 export default class VoteBar extends Component<{}> {
 
-    // create constructor for the counters
-    constructor(props, props2) {
-    super(props, props2)
-    this.state = { count: 0 , countDown: 0}
-    }
+  constructor(props) {
+    super(props);
+    var upvotes = this.props.upvotes ? this.props.upvotes : 0;
+    var downvotes = this.props.downvotes ? this.props.downvotes : 0;
+    this.state = {upvotes: upvotes , downvotes: downvotes};
+  }
 
-    // create the count for the # of upvotes
-    onPress = () => {
+  // create the count for the # of upvotes
+  onPressUp = () => {
     this.setState( {
-        count: this.state.count + 1
+      upvotes: this.state.upvotes + 1
     })
-    }
+  }
 
-    // create the count for the # of downvotes
-    onPressDown = () => {
+  // create the count for the # of downvotes
+  onPressDown = () => {
     this.setState( {
-        countDown: this.state.countDown + 1
+      downvotes: this.state.downvotes + 1
     })
-    }
+  }
 
-    render() {
-        return (
-            <View>
+  render() {
+    const {
+      upvotes,
+      downvotes,
+      testID,
+    } = this.props;
 
-                <View style = {styles.barStyle}>
-                {/* style for the upVote triangle */}
-                    <TouchableOpacity
-                    style = {styles.upVote}
-                    onPress={this.onPress}>
-                    </TouchableOpacity>
+    return (
+      <View>
+        <View style = {styles.container}>
+          {/* style for the upVote triangle */}
+          <TouchableOpacity style ={styles.upVote} onPress={this.onPressUp} />
 
-                    {/* display the total # of votes next to the upVote button
-                        with proper spacing */}
-                    <Text style={styles.numStyle}>
-                        {spacing}
-                        {this.state.count - this.state.countDown}
-                        {tabbing}
-                        {spacing}
-                        {spacing}
-                        {spacing}
-                    </Text>
+          {/* display the total # of votes next to the upVote button
+              with proper spacing */}
+          <Text style={styles.numStyle}>
+              {this.state.upvotes - this.state.downvotes}
+          </Text>
 
-                    {/* style for the downVote triangle */}
-                    <TouchableOpacity
-                    style = {styles.downVote}
-                    onPress={this.onPressDown}>
-                    </TouchableOpacity>
-
-                </View>
-
-            </View>
-        );
-    }
+          {/* style for the downVote triangle */}
+          <TouchableOpacity style ={styles.downVote} onPress={this.onPressDown} />
+        </View>
+      </View>
+    );
+  }
 }
 
-// used for proper spacing in the vote bars
-var spacing = ' ';
-var tabbing = '\t';
-
 const styles = StyleSheet.create({
-    upVote: {
-        backgroundColor: 'transparent',
-        borderStyle: 'solid',
-        borderLeftWidth: 8,
-        borderRightWidth: 8,
-        borderBottomWidth: 15,
-        borderLeftColor: 'transparent',
-        borderRightColor: 'transparent',
-        borderBottomColor: '#939393',
-    },
-    numStyle: {
-        color: '#939393',
-        fontSize: 15,
-        bottom: 2,
-        fontWeight: 'bold',
-    },
-    downVote: {
-        backgroundColor: 'transparent',
-        borderStyle: 'solid',
-        borderLeftWidth: 8,
-        borderRightWidth: 8,
-        borderTopWidth: 15,
-        borderLeftColor: 'transparent',
-        borderRightColor: 'transparent',
-        borderTopColor: '#939393',
-    },
-    barStyle: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        height: 15,
-        width: 55,
-    }
+  container: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      height: 15,
+      width: 55,
+  },
+  upVote: {
+      backgroundColor: 'transparent',
+      borderStyle: 'solid',
+      borderLeftWidth: 8,
+      borderRightWidth: 8,
+      borderBottomWidth: 15,
+      borderLeftColor: 'transparent',
+      borderRightColor: 'transparent',
+      borderBottomColor: '#939393',
+      marginRight: 6,
+  },
+  numStyle: {
+      color: '#939393',
+      fontSize: 15,
+      bottom: 1,
+      fontWeight: 'bold',
+      marginRight: 8,
+  },
+  downVote: {
+      backgroundColor: 'transparent',
+      borderStyle: 'solid',
+      borderLeftWidth: 8,
+      borderRightWidth: 8,
+      borderTopWidth: 15,
+      borderLeftColor: 'transparent',
+      borderRightColor: 'transparent',
+      borderTopColor: '#939393',
+  },
 });
