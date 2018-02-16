@@ -15,7 +15,7 @@ export default class Test extends Component {
   showScreen (screen)
   {
     switch (screen) {
-      case ('Messages'):
+      case ('Messages'): {
         return (
           <Messages
             style={styles.content}
@@ -37,6 +37,7 @@ export default class Test extends Component {
             ]}
            />
         );
+      }
     }
   }
 
@@ -50,5 +51,5 @@ export default class Test extends Component {
 }
 
 const styles = StyleSheet.create({
-  
+
 });
