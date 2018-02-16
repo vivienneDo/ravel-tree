@@ -86,7 +86,7 @@ const styles = StyleSheet.create ({
   layout: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '90%',
+    width: '100%',
     height: 80,
     borderRadius: 20,
     borderWidth: 2,
@@ -108,7 +108,7 @@ const styles = StyleSheet.create ({
     height: 0,
   },
   content: {
-    flex: 0.90,
+    flex: 1,
     flexDirection: 'column',
   },
   head: {
@@ -119,7 +119,7 @@ const styles = StyleSheet.create ({
     marginRight: 10,
   },
   message: {
-
+    minHeight: 24,
   },
   messageText: {
     color: '#747474',
