@@ -38,6 +38,7 @@ import MessageCard from './MessageCard'
 import NotificationCard from './NotificationCard'
 import RavelStub from './RavelStub'
 import RavelCard from './RavelCard'
+import PassageCard from './PassageCard'
 
 export default class Test extends Component {
   onPressTest () {
@@ -47,8 +48,9 @@ export default class Test extends Component {
   render (){
     return (
       <View style={{flexDirection: 'column', flex: 1}}>
-        <RavelCard ravel={'The Tycoon'} users={6} score={311} concept={'A tale of travel, deceit, and unannounced visitors. W.K. Smithson, young heir to a burgeoning furniture import/export empire, must decide between prosperity and his heart when he encounters Millie J., a waitress at an Indonesian beach bar.'} />
+        <PassageCard ravel={'Endless Smirk'} title={'The Visitor'} passageID={'67-B'} passage={'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and whose teeth chattered in his head as he seized me by the chin.'} upvotes={13} downvotes={2} />
         {/*}
+        <RavelCard ravel={'The Tycoon'} users={6} score={311} concept={'A tale of travel, deceit, and unannounced visitors. W.K. Smithson, young heir to a burgeoning furniture import/export empire, must decide between prosperity and his heart when he encounters Millie J., a waitress at an Indonesian beach bar.'} />
         <RavelStub ravel={'Shakespeare On Ice'} users={61} score={324} />
         <NotificationCard
             notification={{type: 'upvoted', passage: 'Something Frozen This Way Comes', upvotes: 37}}
