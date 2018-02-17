@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 
 import Messages from './Messages'
+import MessageThread from './MessageThread';
 
 export default class Test extends Component {
   constructor (props) {
@@ -19,6 +20,30 @@ export default class Test extends Component {
         return (
           <Messages
             style={styles.content}
+            messages={[
+             {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca! There\'s some stuff I have to tell you, and I have to make it longer than two lines so I can examine the truncation.'},
+             {active: false, sender: 'Adam Jesper', message: 'I think...'},
+             {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca!'},
+             {active: false, sender: 'Adam Jesper', message: 'I think...'},
+             {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca!'},
+             {active: false, sender: 'Adam Jesper', message: 'I think...'},
+             {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca!'},
+             {active: false, sender: 'Adam Jesper', message: 'I think...'},
+             {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca!'},
+             {active: false, sender: 'Adam Jesper', message: 'I think...'},
+             {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca!'},
+             {active: false, sender: 'Adam Jesper', message: 'I think...'},
+             {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca!'},
+             {active: false, sender: 'Adam Jesper', message: 'I think...'},
+            ]}
+           />
+        );
+      }
+      case ('MessageThread'): {
+        return (
+          <MessageThread
+            style={styles.content}
+            user={'Clint Lane Clover'}
             messages={[
              {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca! There\'s some stuff I have to tell you, and I have to make it longer than two lines so I can examine the truncation.'},
              {active: false, sender: 'Adam Jesper', message: 'I think...'},

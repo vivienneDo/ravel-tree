@@ -42,6 +42,7 @@ export default class MessageCard extends React.Component {
   render () {
     const {
       active,
+      showReply,
       testID,
       message,
       user,
@@ -74,7 +75,7 @@ export default class MessageCard extends React.Component {
             </TextSans>
           </View>
           <View style={styles.replyButton}>
-            <View style={styles.replyText}>
+            <View style={this.props.showReply ? styles.replyText : {display: 'none'}}>
               <TextLink size={12}>Reply</TextLink>
             </View>
           </View>
@@ -88,7 +89,7 @@ const styles = StyleSheet.create ({
   layout: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '90%',
+    width: '100%',
     borderRadius: 20,
     borderWidth: 2,
     padding: 20,
@@ -101,6 +102,7 @@ const styles = StyleSheet.create ({
   },
   content: {
     flexDirection: 'column',
+    width: '100%',
   },
   head: {
     flexDirection: 'row',

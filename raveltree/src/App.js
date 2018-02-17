@@ -20,6 +20,7 @@ import Thunk from 'redux-thunk';
 import UserModel from './models/UserModel';
 
 import Messages from './screens/Messages';
+import MessageThread from './screens/MessageThread';
 
 
 const instructions = Platform.select({
@@ -60,7 +61,7 @@ export default class App extends Component {
         console.log('Showing main page');
         return <MainPage />;
       case false:
-        return <Test screen={'Messages'} />;
+        return <Test screen={'MessageThread'} />;
         //return <Login />;
       default:
         return <Loader size="large"/>;

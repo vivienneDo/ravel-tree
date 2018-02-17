@@ -2,19 +2,16 @@
 // Created: 02/16/18
 // Modified: 02/16/18
 //
-// Messages screen for RavelTree.
+// Message thread screen for RavelTree.
 //
 // Pass in a "messages" array prop like so:
 //
-// <Messages
+// <MessageThread
 //    messages={[
 //      {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca!'},
 //      {active: false, sender: 'Adam Jesper', message: 'I think...'},
 //    ]}
 // />
-//
-// TODO: Make entire stub touchable and link to message thread.
-// TODO: Pass in array of threads instead?
 
 import React, { Component } from 'react';
 import {
@@ -23,12 +20,14 @@ import {
   View, ScrollView
 } from 'react-native';
 
+import LinkBack from '../components/LinkBack'
 import RTLogoText from '../components/RTLogoText'
 import TextHeader from '../components/TextHeader'
 import MessageStub from '../components/MessageStub'
 import MessageCard from '../components/MessageCard'
+import TextSans from '../components/TextSans'
 
-export default class Messages extends Component {
+export default class MessageThread extends Component {
   constructor (props) {
     super (props);
   }
@@ -36,12 +35,13 @@ export default class Messages extends Component {
   getMessages () {
     return (
       <View>
-        {this.props.messages.map ((message) =>
+        {this.props.messages.map ((message, index) =>
           <View style={styles.message}>
-            <MessageStub
+            <MessageCard
               active={message.active}
               user={message.sender}
               message={message.message}
+              showReply={index == 0}
             />
           </View>
         )}
@@ -51,17 +51,20 @@ export default class Messages extends Component {
 
   render (){
     const {
+      user,
       messages,
       testID,
     } = this.props;
 
     return (
       <View style={styles.layout}>
+        <LinkBack />
         <View style={styles.logo}>
           <RTLogoText />
         </View>
         <View style={styles.header}>
           <TextHeader>Messages</TextHeader>
+          <TextSans size={14} color={'#5E5E5E'}>{this.props.user}</TextSans>
         </View>
         <ScrollView contentContainerStyle={styles.messages}>
           {this.getMessages ()}
@@ -84,6 +87,7 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 20,
+    alignItems: 'flex-start',
   },
   messages: {
     flexDirection: 'column',
