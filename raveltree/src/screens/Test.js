@@ -7,6 +7,7 @@ import {
 
 import Messages from './Messages'
 import MessageThread from './MessageThread';
+import Notifications from './Notifications';
 
 export default class Test extends Component {
   constructor (props) {
@@ -61,6 +62,20 @@ export default class Test extends Component {
              {active: false, sender: 'Adam Jesper', message: 'I think...'},
             ]}
            />
+        );
+      }
+      case ('Notifications'): {
+        return (
+          <Notifications
+            style={styles.content}
+            notifications={[
+              {type: 'upvoted', passage: 'Something Frozen This Way Comes', upvotes: 37},
+              {type: 'invitationAccepted', user: 'Adam Jesper', passage: 'Shakespeare on Ice'},
+              {type: 'newParticipant', user: 'Clint Lane Clover', passage: 'Shakespeare on Ice'},
+              {type: 'message', user: 'Clint Lane Clover'},
+              {type: 'invitation', user: 'Brad Hooper', passage: 'Endless Smirk'},
+            ]}
+          />
         );
       }
     }

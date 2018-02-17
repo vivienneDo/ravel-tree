@@ -162,7 +162,7 @@ const styles = StyleSheet.create ({
   layout: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '90%',
+    width: '100%',
     minHeight: 80,
     borderRadius: 20,
     borderWidth: 2,
@@ -184,8 +184,10 @@ const styles = StyleSheet.create ({
     height: 0,
   },
   content: {
-    flex: 0.90,
+    //flex: 0.90,
+    flex: 1,
     flexDirection: 'column',
+    paddingRight: 30,
   },
   notification: {
     flexDirection: 'row',

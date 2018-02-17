@@ -61,7 +61,7 @@ export default class App extends Component {
         console.log('Showing main page');
         return <MainPage />;
       case false:
-        return <Test screen={'MessageThread'} />;
+        return <Test screen={'Notifications'} />;
         //return <Login />;
       default:
         return <Loader size="large"/>;
