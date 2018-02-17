@@ -5,6 +5,7 @@
 // "Ravel Stub" component for RavelTree.
 //
 // TODO: Make entire stub touchable and link to content.
+// TODO: Align users and ravel scores (so they appear in columns when stacked).
 
 import React, {Component} from 'react';
 import {
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '90%',
+    width: '100%',
     borderWidth: 1,
     borderRadius: 20,
     borderColor: '#8D8D8D',

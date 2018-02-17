@@ -22,7 +22,8 @@ import UserModel from './models/UserModel';
 import Messages from './screens/Messages';
 import MessageThread from './screens/MessageThread';
 import Notifications from './screens/Notifications';
-import TermsAndPrivacy from './screens/TermsAndPrivacy'
+import TermsAndPrivacy from './screens/TermsAndPrivacy';
+import YourRavels from './screens/YourRavels';
 
 
 const instructions = Platform.select({
@@ -63,7 +64,7 @@ export default class App extends Component {
         console.log('Showing main page');
         return <MainPage />;
       case false:
-        return <Test screen={'TermsAndPrivacy'} />;
+        return <Test screen={'YourRavels'} />;
         //return <Login />;
       default:
         return <Loader size="large"/>;

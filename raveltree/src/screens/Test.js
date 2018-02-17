@@ -9,6 +9,7 @@ import Messages from './Messages'
 import MessageThread from './MessageThread';
 import Notifications from './Notifications';
 import TermsAndPrivacy from './TermsAndPrivacy'
+import YourRavels from './YourRavels'
 
 export default class Test extends Component {
   constructor (props) {
@@ -88,6 +89,19 @@ export default class Test extends Component {
           />
         );
       }
+      case ('YourRavels'): {
+        return (
+          <YourRavels
+             ravels={[
+               {ravel: 'Shakespeare on Ice', users: 61, score: 324},
+               {ravel: 'Where\'s the Beef?', users: 4, score: 14},
+               {ravel: 'The Sound of Violins', users: 2, score: 10},
+               {ravel: 'Something Special', users: 19, score: 123},
+               {ravel: 'Shallow Waters', users: 1, score: 34},
+             ]}
+          />
+        );
+      }
     }
   }
 
@@ -101,5 +115,7 @@ export default class Test extends Component {
 }
 
 const styles = StyleSheet.create({
-
+  content: {
+    //width: '100%',
+  }
 });
