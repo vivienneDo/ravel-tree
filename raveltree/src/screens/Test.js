@@ -8,6 +8,7 @@ import {
 import Messages from './Messages'
 import MessageThread from './MessageThread';
 import Notifications from './Notifications';
+import TermsAndPrivacy from './TermsAndPrivacy'
 
 export default class Test extends Component {
   constructor (props) {
@@ -75,6 +76,15 @@ export default class Test extends Component {
               {type: 'message', user: 'Clint Lane Clover'},
               {type: 'invitation', user: 'Brad Hooper', passage: 'Endless Smirk'},
             ]}
+          />
+        );
+      }
+      case ('TermsAndPrivacy'): {
+        return (
+          <TermsAndPrivacy
+            style={styles.content}
+            terms={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer congue, ipsum id congue rutrum, enim libero viverra leo, vel suscipit nibh nisl non risus. Donec dapibus malesuada lobortis. Vestibulum augue nunc, rutrum vitae lacus eget, aliquet tincidunt ipsum. Nulla facilisis lacinia urna, eu pulvinar lectus tempus nec. Aliquam fringilla commodo semper. Proin eu sem eget ipsum pharetra volutpat. Nam a viverra arcu. Etiam ante justo, auctor non pharetra at, gravida et metus. Donec feugiat commodo gravida. Vestibulum tristique felis et accumsan consectetur. Fusce laoreet feugiat ex eu vestibulum. Proin porta enim quam, quis scelerisque ipsum pharetra ac. Praesent auctor eget diam vel finibus. Sed id augue nec erat tempus efficitur.'}
+            privacy={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer congue, ipsum id congue rutrum, enim libero viverra leo, vel suscipit nibh nisl non risus. Donec dapibus malesuada lobortis. Vestibulum augue nunc, rutrum vitae lacus eget, aliquet tincidunt ipsum. Nulla facilisis lacinia urna, eu pulvinar lectus tempus nec. Aliquam fringilla commodo semper. Proin eu sem eget ipsum pharetra volutpat. Nam a viverra arcu. Etiam ante justo, auctor non pharetra at, gravida et metus. Donec feugiat commodo gravida. Vestibulum tristique felis et accumsan consectetur. Fusce laoreet feugiat ex eu vestibulum. Proin porta enim quam, quis scelerisque ipsum pharetra ac. Praesent auctor eget diam vel finibus. Sed id augue nec erat tempus efficitur.'}
           />
         );
       }

@@ -21,6 +21,8 @@ import UserModel from './models/UserModel';
 
 import Messages from './screens/Messages';
 import MessageThread from './screens/MessageThread';
+import Notifications from './screens/Notifications';
+import TermsAndPrivacy from './screens/TermsAndPrivacy'
 
 
 const instructions = Platform.select({
@@ -61,7 +63,7 @@ export default class App extends Component {
         console.log('Showing main page');
         return <MainPage />;
       case false:
-        return <Test screen={'Notifications'} />;
+        return <Test screen={'TermsAndPrivacy'} />;
         //return <Login />;
       default:
         return <Loader size="large"/>;
