@@ -69,6 +69,7 @@ var space = '  ';
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         borderColor: '#8D8D8D',
         borderWidth: 2,
         borderRadius: 20,
