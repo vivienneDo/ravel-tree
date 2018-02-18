@@ -106,6 +106,7 @@ export default class Test extends Component {
       case ('Profile'): {
         return (
           <Profile
+             isOwned={false}
              user={'Rebecca Bates'}
              score={1064}
              bio={'Rebecca Bates was born on a dairy farm in upstate New York. Her parents made it a point to rear her with a thorough appreciation of manual labor. She seeks to bring all that appreciation into her writing—though it usually finds its way in there pretty much on its own.\n\nRebecca earned an MFA from Georgetown in 2015. She lives in Manhattan with six pugs.'}

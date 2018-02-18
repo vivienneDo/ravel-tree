@@ -7,6 +7,7 @@
 // Pass in user data as props like so:
 //
 // <Profile
+//    isOwned
 //    user={'Rebecca Bates'}
 //    score={1064}
 //    bio={'Rebecca Bates was born on a dairy farm in upstate New York. Her parents made it a point to rear her with a thorough appreciation of manual labor. She seeks to bring all that appreciation into her writing—though it usually finds its way in there pretty much on its own.\n\nRebecca earned an MFA from Georgetown in 2015. She lives in Manhattan with six pugs.'}
@@ -17,6 +18,10 @@
 //      upvotesReceived: 731,
 //    }}
 // />
+//
+// Note: "isOwned" displays the active user's profile, including links to log
+// out and edit content. If false, these elements will be omitted, and
+// "message" and "follow" functions will be added.
 
 import React, { Component } from 'react';
 import {
@@ -41,6 +46,7 @@ export default class Profile extends Component {
 
   render (){
     const {
+      isOwned,
       user,
       score,
       bio,
@@ -56,7 +62,11 @@ export default class Profile extends Component {
         <View style={styles.top}>
           <View style={styles.topLeft}>
             <UserImage size={100} />
-            <TextLink size={12}>Change Image</TextLink>
+            {isOwned ? (
+              <TextLink size={12}>Change Image</TextLink>
+            ) : (
+              <View style={{display: 'none'}} />
+            )}
           </View>
           <View style={styles.topRight}>
             <TextSerif size={22}>{this.props.user}</TextSerif>
@@ -64,14 +74,27 @@ export default class Profile extends Component {
               <IconLeaf size={30} />
               <TextSerif size={24}>{this.props.score}</TextSerif>
             </View>
-            <TextLink size={12}>Log Out</TextLink>
+            {isOwned ? (
+              <TextLink size={12}>Log Out</TextLink>
+            ) : (
+              <View>
+                <View style={styles.spaceBelow}>
+                  <TextLink size={12}>Follow</TextLink>
+                </View>
+                <TextLink size={12}>Message</TextLink>
+              </View>
+            )}
           </View>
         </View>
         <ScrollView style={styles.scroll}>
           <View style={styles.bio}>
             <View style={styles.bioHeader}>
               <TextHeader>Bio&nbsp;&nbsp;</TextHeader>
-              <TextLink size={12}>Edit</TextLink>
+              {isOwned ? (
+                <TextLink size={12}>Edit</TextLink>
+              ) : (
+                <View style={{display: 'none'}} />
+              )}
             </View>
             <TextSerif size={16}>{this.props.bio}</TextSerif>
           </View>
@@ -186,5 +209,8 @@ const styles = StyleSheet.create({
   },
   rightItem: {
     marginVertical: 1.8,
+  },
+  spaceBelow: {
+    marginBottom: 8,
   },
 });
