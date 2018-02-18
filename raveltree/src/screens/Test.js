@@ -9,7 +9,8 @@ import Messages from './Messages'
 import MessageThread from './MessageThread';
 import Notifications from './Notifications';
 import TermsAndPrivacy from './TermsAndPrivacy'
-import YourRavels from './YourRavels'
+import YourRavels from './YourRavels';
+import Profile from './Profile';
 
 export default class Test extends Component {
   constructor (props) {
@@ -99,6 +100,21 @@ export default class Test extends Component {
                {ravel: 'Something Special', users: 19, score: 123},
                {ravel: 'Shallow Waters', users: 1, score: 34},
              ]}
+          />
+        );
+      }
+      case ('Profile'): {
+        return (
+          <Profile
+             user={'Rebecca Bates'}
+             score={1064}
+             bio={'Rebecca Bates was born on a dairy farm in upstate New York. Her parents made it a point to rear her with a thorough appreciation of manual labor. She seeks to bring all that appreciation into her writing—though it usually finds its way in there pretty much on its own.\n\nRebecca earned an MFA from Georgetown in 2015. She lives in Manhattan with six pugs.'}
+             statistics={{
+               ravelsLed: 5,
+               ravelsContributedTo: 29,
+               passagesWritten: 213,
+               upvotesReceived: 731,
+             }}
           />
         );
       }
