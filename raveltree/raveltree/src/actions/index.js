@@ -238,7 +238,7 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
     var user_created = currentUser.uid;
     var ravel_status = true;
     var ravel_create_date = new Date().toLocaleTimeString();
-    var user_created_photoURL = firebase.database().ref(`/users/${currentUser.uid}/userProfile/photo_URL`);
+    var user_created_photoURL = '';
     // TODO: Calculate ravel points dynamically 
     var ravel_points = '';
 
@@ -288,13 +288,17 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
 
 export const loadInitialUserCreatedRavel = (user) => {
 
+    
     return (dispatch) => {
+        var photoURL = firebase.database().ref(`/users/${user.uid}/userProfile/photoURL`);
+        
         firebase.database().ref(`/users/${user.uid}/ravel_created`)
         .on('value', snapshot => {
             dispatch({ type: 'INITIAL_USER_RAVEL_FETCH', payload: snapshot.val() });
         });
     };
 };
+
 
 
 // What you can upvote: a passage 
