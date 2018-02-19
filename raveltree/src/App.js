@@ -25,6 +25,7 @@ import Notifications from './screens/Notifications';
 import TermsAndPrivacy from './screens/TermsAndPrivacy';
 import YourRavels from './screens/YourRavels';
 import Profile from './screens/Profile';
+import StartARavel from './screens/StartARavel'
 
 
 const instructions = Platform.select({
@@ -65,7 +66,7 @@ export default class App extends Component {
         console.log('Showing main page');
         return <MainPage />;
       case false:
-        return <Test screen={'Profile'} />;
+        return <Test screen={'StartARavel'} />;
         //return <Login />;
       default:
         return <Loader size="large"/>;

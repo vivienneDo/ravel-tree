@@ -12,19 +12,33 @@ import {
 // Input Text
 
 export default class InputSearch extends Component<{}> {
+
+  constructor (props) {
+    super (props);
+    this.state = {text: ''};
+  }
+
+  componentWillReceiveProps (newProps)
+  {
+    this.setState ({text: newProps.text})
+  }
+
   render() {
 
     const {
       placeholder,
+      onChangeText,
       //text,
     } = this.props;
 
     return (
       <View style={styles.layout}>
          <TextInput
-         style = {styles.input}
-         placeholder = {placeholder}
-         placeholderTextColor = '#95989A'/>
+            style = {styles.input}
+            placeholder = {placeholder}
+            placeholderTextColor = '#95989A'
+            onChangeText={(text) => {this.props.onChangeText (text)}}
+         />
       </View>
     );
   }

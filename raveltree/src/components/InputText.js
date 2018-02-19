@@ -1,3 +1,9 @@
+// Author:   Alex Aguirre
+// Created:  01/18/18
+// Modified: 02/19/18 by Frank Fusco (fr@nkfus.co)
+
+// Standard "Input Text" component for RavelTree
+
 import React, {Component} from 'react';
 import {
   AppRegistry,
@@ -8,14 +14,23 @@ import {
   TextInput
 } from 'react-native';
 
-// 1-18-18
-// Input Text
 
 export default class InputText extends Component<{}> {
+  constructor (props) {
+    super (props);
+    this.state = {text: ''};
+  }
+
+  componentWillReceiveProps (newProps)
+  {
+    this.setState ({text: newProps.text})
+  }
+
   render() {
 
     const {
       placeholder,
+      onChangeText,
       //text,
       height,
       width,
@@ -32,10 +47,12 @@ export default class InputText extends Component<{}> {
     return (
       <View style={layoutStyles}>
          <TextInput
-         multiline = {multiline}
-         style = {styles.inputStyle}
-         placeholder = {placeholder}
-         placeholderTextColor = '#B7B7B7'/>
+           multiline = {multiline}
+           style = {styles.inputStyle}
+           placeholder = {placeholder}
+           placeholderTextColor = '#B7B7B7'
+           onChangeText={(text) => {this.props.onChangeText (text)}}
+         />
       </View>
     );
   }

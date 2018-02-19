@@ -11,6 +11,7 @@ import Notifications from './Notifications';
 import TermsAndPrivacy from './TermsAndPrivacy'
 import YourRavels from './YourRavels';
 import Profile from './Profile';
+import StartARavel from './StartARavel'
 
 export default class Test extends Component {
   constructor (props) {
@@ -117,6 +118,11 @@ export default class Test extends Component {
                upvotesReceived: 731,
              }}
           />
+        );
+      }
+      case ('StartARavel'): {
+        return (
+          <StartARavel />
         );
       }
     }
