@@ -11,20 +11,14 @@ import { createStore, applyMiddleware } from 'redux';
 import Login from './Login';
 import Loader from './Loader';
 import MainPage from './MainPage';
+import RavelPage from './RavelPage';
+import GetAllUserRavels from './GetAllUserRavels';
 //import Navigation from './Navigation';
-import reducers from '../reducers/UserReducer';
+import rootReducer from '../reducers/index';
+//import reducers from '../reducers/UserReducer';
 import Thunk from 'redux-thunk';
-import UserModel from '../models/UserModel';
 
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
-const store = createStore(reducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), applyMiddleware(Thunk));
+const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), applyMiddleware(Thunk));
 export default class App extends Component { 
 
   state = { loggedIn: null};
@@ -53,7 +47,7 @@ export default class App extends Component {
     switch (this.state.loggedIn) {
       case true: 
         console.log('Showing main page');
-        return <MainPage />; 
+        return <GetAllUserRavels />; 
       case false: 
         return <Login />; 
       default:

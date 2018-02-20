@@ -2,40 +2,43 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  View, ScrollView
+  View, 
+  ScrollView,
+  Image,
+  Platform
 } from 'react-native';
 import { MKTextField, MKColor, MKButton } from 'react-native-material-kit';
 import Loader from './Loader';
 import firebase from 'firebase';
 import { connect} from 'react-redux';
 import * as actions from '../actions';
-import UserModel from '../models/UserModel';
 import MainPage from './MainPage';
+import RavelPage from './RavelPage';
+import FBLoginComponent from '../utils/FBLoginComponent';
+import {searchUserByName, userResetPassword, signInWithEmail, createUserWithEmail, updateUserProfile} from '../actions';
 
+// import fbsdk and use LoginButton and AccessToken
 const FBSDK = require('react-native-fbsdk');
 const {
   LoginButton,
-  AccessToken
+  AccessToken,
+  GraphRequest,
+  GraphRequestManager
 } = FBSDK;
-
 
 const GeneralLoginButton = MKButton.coloredButton()
     .withText('LOGIN')
     .build();
 
 const GLoginButton = MKButton.coloredButton()
-    .withText('GOOGLE LOGIN')
+    .withText('Create user')
     .build();
-
-
-
 
 const styles = StyleSheet.create({
     form: {
         paddingBottom: 10,
         width: 200,
         paddingTop: 20
-
     },
 
     fieldStyles: {
@@ -62,6 +65,8 @@ const styles = StyleSheet.create({
     }, 
 });
 
+// The uploadImage function that you are going to use:
+
 export default class Login extends Component { 
   state = {
       email :  '',
@@ -70,35 +75,28 @@ export default class Login extends Component {
       loading: false,    
   };
 
-  onButtonPress() {
-      const {email, password} = this.state;
-      this.setState({error: '', loading: true });
-
-      firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(this.onAuthSuccess.bind(this))
-        .catch(() => {
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then(this.onAuthSuccess.bind(this))
-                .catch(this.onAuthFailed.bind(this));
-        });
-
-  }
-
-onGButtonPress() {
+onButtonPress() {
     const {email, password} = this.state;
     this.setState({error: '', loading: true });
 
-    firebase.auth().signInWithEmailAndPassword(email, password)
-      .then(this.onAuthSuccess.bind(this))
-      .catch(() => {
-          firebase.auth().createUserWithEmailAndPassword(email, password)
-              .then(this.onAuthSuccess.bind(this))
-              .catch(this.onAuthFailed.bind(this));
-      });
+    signInWithEmail(email,password);
+    this.onAuthSuccess.bind(this);
+    this.onAuthFailed.bind(this);
 
-      
+  };
 
-}
+onGButtonPress() {
+
+    const {email, password} = this.state;
+    this.setState({error: '', loading: true });
+
+    createUserWithEmail(email,password);
+
+    this.onAuthSuccess.bind(this);
+    this.onAuthFailed.bind(this);
+    
+
+};
 
   onAuthSuccess() {
       this.setState({
@@ -172,35 +170,69 @@ onGButtonPress() {
         />
 
         <View>
-        <LoginButton readPermissions={['public_profile','email']}
-          onLoginFinished={
+        {/* <LoginButton readPermissions = {['public_profile','email']}
+          onLoginFinished = {
             (error, result) => {
               if (error) {
-                alert("login has error: " + result.error);
+                alert("facebook login has error: " + result.error);
               } else if (result.isCancelled) {
-                alert("login is cancelled.");
+                alert("facebook login is cancelled.");
               } else {
-                console.log("Attempting to log into firebase");
+                console.log("Attempting to log into firebase through facebook");
                 AccessToken.getCurrentAccessToken().then(
-                  (data) => {
-                       const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
-                       firebase.auth().signInWithCredential(credential)
-                        .then(this.onAuthSuccess.bind(this))
-                        .catch(this.onAuthFailed.bind(this));
+                    (data) => {
+                         const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
+                         firebase.auth().signInWithCredential(credential)
+                          .then((user) => {
+                            let accessToken = data.accessToken;
+                                const responseInfoCallback = (error, results) => {
+                        if (error) {
+                            console.log('Error fetching data from ' + error.toString());
+                        }
 
-                    console.log('Attempting log in with facebook');
-                  }, (error) => {
-                      console.log(error);
-                  }
+                        else {
+                            firebase.database().ref(`/users`).child(user.uid).once('value', function(snapshot) {
+                                // Check null values if first time logging in with FB
+                                if ((snapshot.val() === null)) {
+                                    console.log('Success fetching data' + result.toString());
+                                    console.log(results['first_name']);  
+                                    firebase.database().ref(`/users/${firebase.auth().currentUser.uid}/userProfile`)
+                                    updateUserProfile(user, {first_name:results['first_name'],last_name:results['last_name'],bio:'',photoURL:'', stat_ravel_led:'', stat_passage_written:'', stat_ravel_contributed:'', 
+                                        upvotes:'', ravel_points:'' });
+                                }
+                            });
+                            
+                        }
+                    }
+                    const infoRequest = new GraphRequest(
+                        '/me',
+                        {
+                            accessToken: accessToken,
+                            parameters: {
+                                fields: {
+                                    string: 'first_name, last_name'
+                                }
+                            }
+                        },
+                        responseInfoCallback
+                        
+                    );
+
+                    new GraphRequestManager().addRequest(infoRequest).start();
+                          })
+                          .catch(this.onAuthFailed.bind(this));
+  
+                      console.log('Attempting log in with facebook');
+        
+                }, (error) => {
+                    console.log(error);
+                    }
                 )
-                 
-                // Go to MainPage here
-                console.log("Lol");
-
               }
             }
           }
-          onLogoutFinished={() => alert("logout.")}/>
+          onLogoutFinished={() => alert("logout.")}/> */}
+          <FBLoginComponent/>
           </View>
 
         <Text style={errorMessage}>
@@ -214,4 +246,6 @@ onGButtonPress() {
     );
   }
 }
+
+
 
