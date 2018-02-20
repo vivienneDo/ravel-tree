@@ -41,12 +41,15 @@ export default class Toggle extends React.Component {
   };
 
   handleToggle () {
-    this.setState ({isOn: !this.state.isOn});
+    var newState = !this.state.isOn;
+    this.setState ({isOn: newState});
+    this.props.onChange (newState);
   }
 
   render () {
     const {
       name,
+      onChange,
       accessibilityLabel,
       disabled,
       testID,

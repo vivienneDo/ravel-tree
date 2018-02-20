@@ -42,6 +42,7 @@ export default class OptionSet extends React.Component {
     this.setState ({active: newState});
 
     // TODO: Selection logic here.
+    this.props.onChange (newState);
   }
 
   createTag (tag) {
@@ -59,6 +60,8 @@ export default class OptionSet extends React.Component {
   render () {
     const {
       active,
+      onChange,
+      testID,
     } = this.props;
 
     const layoutStyles = [styles.layout];

@@ -5,6 +5,9 @@
 // "Start a Ravel" screen for RavelTree.
 //
 // TODO: Validate text input (including checking against existing ravel names).
+// TODO: When "Visibility" is set to Private, disable the "Restict voting to
+// participants" option (may have to make disabled toggles and options more
+// clearly distinguishable from inactive ones).
 
 import React, { Component } from 'react';
 import {
@@ -24,22 +27,61 @@ import Toggle from '../components/Toggle'
 import InputText from '../components/InputText'
 import Button from '../components/Button'
 
+const DEFAULT_CATEGORY = 'fiction';
+const DEFAULT_PASSAGE_LENGTH = 'paragraph';
+const DEFAULT_VISIBILITY = 'public';
+const DEFAULT_ENABLE_EMBEDDED_MEDIA = false;
+const DEFAULT_ENABLE_PASSAGE_COMMENTS = true;
+const DEFAULT_RESTRICT_VOTING_TO_PARTICIPANTS = true;
+
 export default class StartARavel extends Component {
   constructor (props) {
     super (props);
     this.state = {
       ravelName: '',
-      concept:   '',
+      category: DEFAULT_CATEGORY,
+      passageLength: DEFAULT_PASSAGE_LENGTH,
+      visibility: DEFAULT_VISIBILITY,
+      enableEmbeddedMultimedia: DEFAULT_ENABLE_EMBEDDED_MEDIA,
+      enablePassageComments: DEFAULT_ENABLE_PASSAGE_COMMENTS,
+      restrictVotingToParticipants: DEFAULT_RESTRICT_VOTING_TO_PARTICIPANTS,
+      concept: '',
     };
   }
 
-  onChangeConcept (newText) {
-    this.setState ({concept: newText});
+  onChangeRavelName (data) {
+    this.setState ({ravelName: data});
   }
 
-  onChangeRavelName (newText) {
-    this.setState ({ravelName: newText});
+  onChangeCategory (data) {
+    this.setState ({category: data});
   }
+
+  onChangePassageLength (data) {
+    this.setState ({passageLength: data});
+  }
+
+  onChangeVisibility (data) {
+    this.setState ({visibility: data});
+  }
+
+  onChangeEnableEmbeddedMultimedia (data) {
+    this.setState ({enableEmbeddedMultimedia: data})
+  }
+
+  onChangeEnablePassageComments (data) {
+    this.setState ({enablePassageComments: data})
+  }
+
+  onChangeRestrictVotingToParticipants (data) {
+    this.setState ({restrictVotingToParticipants: data})
+  }
+
+  onChangeConcept (data) {
+    this.setState ({concept: data});
+  }
+
+
 
   render (){
     const {
@@ -78,7 +120,8 @@ export default class StartARavel extends Component {
                 {name: 'multimedia', title: 'Multimedia'},
                 {name: 'other', title: 'Other'},
               ]}
-              active={'fiction'}
+              active={DEFAULT_CATEGORY}
+              onChange={option => this.onChangeCategory (option)}
             />
           </View>
           <View style={styles.optionRow}>
@@ -89,7 +132,8 @@ export default class StartARavel extends Component {
                 {name: 'page', title: 'Page'},
                 {name: 'chapter', title: 'Chapter'},
               ]}
-              active={'paragraph'}
+              active={DEFAULT_PASSAGE_LENGTH}
+              onChange={option => this.onChangePassageLength (option)}
             />
           </View>
           <View style={styles.optionRow}>
@@ -99,7 +143,8 @@ export default class StartARavel extends Component {
                 {name: 'public', title: 'Public'},
                 {name: 'private', title: 'Private'},
               ]}
-              active={'public'}
+              active={DEFAULT_VISIBILITY}
+              onChange={option => this.onChangeVisibility (option)}
             />
           </View>
           <View style={styles.toggles}>
@@ -116,13 +161,22 @@ export default class StartARavel extends Component {
             </View>
             <View style={styles.toggleSwitches}>
               <View style={styles.toggleSwitch}>
-                <Toggle name="enableEmbeddedMultimedia" />
+                <Toggle
+                  name="enableEmbeddedMultimedia"
+                  onChange={value => this.onChangeEnableEmbeddedMultimedia (value)}
+                />
               </View>
               <View style={styles.toggleSwitch}>
-                <Toggle name="enablePassageComments" />
+                <Toggle
+                  name="enablePassageComments"
+                  onChange={value => this.onChangeEnablePassageComments (value)}
+                />
               </View>
               <View style={styles.toggleSwitch}>
-                <Toggle name="restrictVotingToParticipants" />
+                <Toggle
+                  name="restrictVotingToParticipants"
+                  onChange={value => this.onChangeRestrictVotingToParticipants (value)}
+                />
               </View>
             </View>
           </View>
