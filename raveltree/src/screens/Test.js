@@ -12,6 +12,7 @@ import TermsAndPrivacy from './TermsAndPrivacy'
 import YourRavels from './YourRavels';
 import Profile from './Profile';
 import StartARavel from './StartARavel'
+import AddTags from './AddTags'
 
 export default class Test extends Component {
   constructor (props) {
@@ -123,6 +124,11 @@ export default class Test extends Component {
       case ('StartARavel'): {
         return (
           <StartARavel />
+        );
+      }
+      case ('AddTags'): {
+        return (
+          <AddTags mode={'add'}/>
         );
       }
     }

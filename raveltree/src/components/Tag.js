@@ -1,3 +1,9 @@
+// Author:  Alex Aguirre
+// Created:  01/20/18
+// Modified: 02/20/18 by Frank Fusco (fr@nkfus.co)
+//
+// Standard "tag" component for RavelTree.
+
 import React, {Component} from 'react';
 import {
   AppRegistry,
@@ -10,65 +16,91 @@ import {
   Platform,
 } from 'react-native';
 
-// 1-20-18
-// Vote Bar
+const HEIGHT = 25;
+const HEIGHT_SMALL = 20;
+const MARGIN_VERTICAL = 3;
 
 export default class Tag extends Component<{}> {
 
-    // Keeps track of whether the tag is active (pressed) or not
+  static get HEIGHT () {
+    return HEIGHT;
+  }
+
+  static get HEIGHT_SMALL () {
+    return HEIGHT_SMALL;
+  }
+
+  static get MARGIN_VERTICAL () {
+    return MARGIN_VERTICAL;
+  }
+
+  // Keeps track of whether the tag is active (pressed) or not
     constructor(props) {
-      super(props);
-      this.state = {active: this.props.active};
-     }
+    super(props);
+    this.state = {active: this.props.active};
+  }
 
-     componentWillReceiveProps (newProps)
-     {
-       this.setState ({active: newProps.active});
-     }
+  componentWillReceiveProps (newProps) {
+    this.setState ({active: newProps.active});
+  }
 
-    render() {
+  onTagLayout = (e) => {
+    if (!this.props.onTagLayout) { return; }
+    this.props.onTagLayout (e.nativeEvent.layout.width, e.nativeEvent.layout.height, this.props.name);
+  }
 
-      const {
-        name,
-        size,
-        accessibilityLabel,
-        toggleFormState,
-        active,
-        disabled,
-        testID,
-      } = this.props;
+  render() {
 
-      const layoutStyles = [styles.layout];
-      const textStyles = [styles.text];
-      const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
+    const {
+      name,
+      size,
+      mode,
+      accessibilityLabel,
+      onTagLayout,
+      //onPassDimensions,
+      toggleFormState,
+      active,
+      disabled,
+      testID,
+    } = this.props;
 
-      if (this.props.size == 'small') {
-        layoutStyles.push ({height: 20});
-        textStyles.push ({fontSize: 10});
-      }
+    const layoutStyles = [styles.layout];
+    const textStyles = [styles.text];
 
-      layoutStyles.push (this.state.active ? styles.active : styles.inactive);
+    // If in "display only" mode, encapsulate in a view instead of a Touchable.
+    const Touchable = mode === 'displayOnly' ? View :
+      Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
-      return (
+    if (this.props.size == 'small') {
+      layoutStyles.push ({height: 20});
+      textStyles.push ({fontSize: 10});
+    }
+
+    layoutStyles.push (this.state.active ? styles.active : styles.inactive);
+
+    return (
+      <View
+        style={layoutStyles}
+        onLayout={this.onTagLayout}
+      >
         <Touchable
-          style = {layoutStyles}
           onPress={() => {this.props.toggleFormState(this.props.name)}}>
             <Text style = {textStyles}>
                 {this.props.children}
             </Text>
         </Touchable>
-      );
-    }
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
   layout: {
-    height: 25,
+    height: HEIGHT,
     borderRadius: 30,
     justifyContent: 'center',
     paddingHorizontal: 10,
-    marginBottom: 3,
-    marginTop: 3,
+    marginVertical: MARGIN_VERTICAL,
     alignSelf: 'flex-start',
   },
   active: {

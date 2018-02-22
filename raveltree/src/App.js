@@ -19,6 +19,8 @@ import reducers from './reducers/UserReducer';
 import Thunk from 'redux-thunk';
 import UserModel from './models/UserModel';
 
+import './Constants';
+
 import Messages from './screens/Messages';
 import MessageThread from './screens/MessageThread';
 import Notifications from './screens/Notifications';
@@ -26,6 +28,7 @@ import TermsAndPrivacy from './screens/TermsAndPrivacy';
 import YourRavels from './screens/YourRavels';
 import Profile from './screens/Profile';
 import StartARavel from './screens/StartARavel'
+import AddTags from './screens/AddTags'
 
 
 const instructions = Platform.select({
@@ -66,7 +69,7 @@ export default class App extends Component {
         console.log('Showing main page');
         return <MainPage />;
       case false:
-        return <Test screen={'StartARavel'} />;
+        return <Test screen={'AddTags'} />;
         //return <Login />;
       default:
         return <Loader size="large"/>;
