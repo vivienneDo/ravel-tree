@@ -17,6 +17,7 @@ import GetAllUserRavels from './GetAllUserRavels';
 import rootReducer from '../reducers/index';
 //import reducers from '../reducers/UserReducer';
 import Thunk from 'redux-thunk';
+import { connect } from 'react-redux';
 
 const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), applyMiddleware(Thunk));
 export default class App extends Component { 
@@ -24,14 +25,6 @@ export default class App extends Component {
   state = { loggedIn: null};
 
   componentWillMount() {
-    firebase.initializeApp({
-      apiKey: "AIzaSyCmt6Cq6wj2NJZ-WOCE27brxfW-kg6TUKQ",
-      authDomain: "crmlinkedln2-81204.firebaseapp.com",
-      databaseURL: "https://crmlinkedln2-81204.firebaseio.com",
-      projectId: "crmlinkedln2-81204",
-      storageBucket: "crmlinkedln2-81204.appspot.com",
-      messagingSenderId: "107870538404"
-    });
 
     firebase.auth().onAuthStateChanged((user) => {
       console.log('Authentication state has changed');

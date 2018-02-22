@@ -7,8 +7,8 @@ import SearchReducer from './SearchReducer'
 const rootReducer = combineReducers({
     ravel: RavelReducer,
     user: UserReducer,
-    all_user_ravels: AllUserRavelReducer,
-    search_users: SearchReducer
+    current_user_ravel: AllUserRavelReducer,
+    search: SearchReducer
 })
 
 export default rootReducer;
