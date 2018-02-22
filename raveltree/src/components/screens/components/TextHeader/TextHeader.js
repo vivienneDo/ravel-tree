@@ -21,7 +21,7 @@ export default class TextHeader extends Component<{}> {
     return (
       <View>
          <Text style = {styles.textStyle}> 
-          {title} 
+          {title.toUpperCase()} 
          </Text>
       </View>
     );

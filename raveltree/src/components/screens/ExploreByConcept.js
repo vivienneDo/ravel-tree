@@ -4,7 +4,8 @@ import {
     StyleSheet, 
     Text, 
     View,
-    ScrollView
+    ScrollView,
+    TouchableOpacity
 } from 'react-native';
 
 // author: Alex Aguirre
@@ -20,26 +21,35 @@ import TextSerif from './components/TextSerif';
 import TextHeader from './components/TextHeader/TextHeader';
 import RadioSet from './components/RadioSet';
 import RadioItem from './components/RadioItem';
+import RavelCard from './components/RavelCard/RavelCard';
 
 export default class ExploreByConcept extends Component<{}> {
 
     render() {
         return (
             <ScrollView showsVerticalScrollIndicator = {false}>
+
+                <TouchableOpacity style = {{marginTop: 30, marginLeft: 17}}>
+                    <Text style = {{color: '#2E8AF7'}}>
+                        Back
+                    </Text>
+                </TouchableOpacity>
+
                 {/* RavelTree logo at the top in the center */}
                 <View style = {styles.logoStyle}>
                     <RTLogoText/>
                 </View>
 
-                {/* Explore and Start a Ravel Buttons */}
-                <View style = {styles.buttonStyle}>
-                    <ButtonReverse title = "EXPLORE"/>
-                    <Button title = "START A RAVEL"/>
+                {/* Explore Section */}
+                <View style = {{marginLeft: 17}}>
+                    <TextHeader title = "Explore"/>
                 </View>
 
-                <Divider/>
-                
-                <RadioSet/>
+                {/* need to get working radioset and optionset here */}
+
+                <View style = {{marginTop: 10}}>
+                    <Divider/>
+                </View>
 
                 <View style = {styles.inputStyle}>
                     <InputSearch placeHolder = {inputTxt}/>
@@ -47,14 +57,12 @@ export default class ExploreByConcept extends Component<{}> {
                 
                 <Divider/>
 
-                {/* show the new and latest ravels for the user */}
-                <View style = {styles.txtHStyle}>
-                    <TextHeader title = "NEW FOR YOU"/>
+                {/* related ravel cards will pop up here */}
+                <View style = {styles.cardStyle}>
+                    <RavelCard/>
                 </View>
 
-                <View style = {styles.cardStyle}>
-                    
-                </View>
+                {/* NavBar will go here */}
 
             </ScrollView>
         ); 
@@ -66,10 +74,10 @@ var inputTxt = 'Type a concept. "In a world..."';
 const styles = StyleSheet.create({
     logoStyle: {
        // flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 25,
-        paddingBottom: 15,
+       alignItems: 'center',
+       justifyContent: 'center',
+       //marginTop: 20,
+       marginBottom: 15,
     },
     buttonStyle: {
         flexDirection: 'row',
@@ -79,27 +87,14 @@ const styles = StyleSheet.create({
         marginRight: 20,
         paddingBottom: 20
     },
-    userStyle: {
-        marginTop: 15,
-        marginLeft: 20,
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
     inputStyle: {
-        marginLeft: 20, 
-        paddingBottom: 20, 
+        marginLeft: 17, 
+        marginBottom: 10, 
         marginTop: 10,
     },
-    txtHStyle: {
-        marginLeft: 20, 
-        paddingBottom: 20, 
-        marginTop: 13
-    },
     cardStyle: {
-        alignItems: 'center'
-       // marginLeft: 20, 
-        //paddingBottom: 20,
-      //  marginTop: 13
+        alignItems: 'center',
+        marginTop: 17
     }
 });
 

@@ -111,10 +111,7 @@ export default class ButtonReverse extends React.Component <{
         onPress={onPress}
         style={styles.layout}>
         <View style={buttonStyles}>
-        {/*
           <Text style={textStyles} disabled={disabled}>{title.toUpperCase()}</Text>
-        */}
-          <Text style={textStyles} disabled={disabled}>{title}</Text>
         </View>
       </Touchable>
     )

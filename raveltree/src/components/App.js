@@ -15,6 +15,8 @@ import Splash from './screens/Splash';
 import ExploreByTags from './screens/ExploreByTags';
 import Tags from './screens/components/Tags/Tags';
 import ExploreByCategory from './screens/ExploreByCategory';
+import ExploreByConcept from './screens/ExploreByConcept';
+import ExploreByTrending from './screens/ExploreByTrending';
 
 /* moved backend work to Backend.js
   using this file to test frontend components
@@ -25,7 +27,7 @@ export default class App extends Component {
     return (
       //<View style = {styles.testStyle}>
       <View>
-        <ExploreByCategory/>
+        <ExploreByTags/>
       </View>
     );
   }

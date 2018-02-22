@@ -4,7 +4,8 @@ import {
     StyleSheet, 
     Text, 
     View,
-    ScrollView
+    ScrollView,
+    TouchableOpacity
 } from 'react-native';
 
 // author: Alex Aguirre
@@ -18,37 +19,50 @@ import Divider from './components/Divider';
 import InputSearch from './components/InputSearch/InputSearch';
 import Tags from './components/Tags/Tags';
 import RavelCard from './components/RavelCard/RavelCard';
+import TextHeader from './components/TextHeader/TextHeader';
 
 export default class ExploreByTags extends Component<{}> {
 
     render() {
         return (
             <ScrollView showsVerticalScrollIndicator = {false}>
+
+                <TouchableOpacity style = {{marginTop: 30, marginLeft: 17}}>
+                    <Text style = {{color: '#2E8AF7'}}>
+                        Back
+                    </Text>
+                </TouchableOpacity>
+
                 {/* RavelTree logo at the top in the center */}
                 <View style = {styles.logoStyle}>
                     <RTLogoText/>
                 </View>
 
-                {/* Explore and Start a Ravel Buttons */}
-                <View style = {styles.buttonStyle}>
-                    <ButtonReverse title = "EXPLORE"/>
-                    <Button title = "START A RAVEL"/>
+                <View style = {{marginLeft: 17}}>
+                    <TextHeader title = "explore"/>
                 </View>
 
-                <Divider/>
+                {/* need to get working radioset and optionset here */}
                 
-                {/* need to get working tagcloud here */}
-                <Tags title = "tags" />
+                {/* need to get working tag cloud here */}
 
+                <View style = {{paddingTop: 10}}>
+                    <Divider/>
+                </View>
+
+                {/* where users will search for tags */}
                 <View style = {styles.inputStyle}>
                     <InputSearch placeHolder = {inputTxt}/>
                 </View>
                 
                 <Divider/>
 
+                {/* related ravel cards will pop up here */}
                 <View style = {styles.cardStyle}>
                     <RavelCard/>
                 </View>
+
+                {/* NavBar will go here */}
 
             </ScrollView>
         ); 
@@ -60,10 +74,10 @@ var inputTxt = 'Search a tag';
 const styles = StyleSheet.create({
     logoStyle: {
        // flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 25,
-        paddingBottom: 15,
+       alignItems: 'center',
+       justifyContent: 'center',
+       //marginTop: 20,
+       marginBottom: 15,
     },
     buttonStyle: {
         flexDirection: 'row',
@@ -73,20 +87,14 @@ const styles = StyleSheet.create({
         marginRight: 20,
         paddingBottom: 20
     },
-    userStyle: {
-        marginTop: 15,
-        marginLeft: 20,
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
     inputStyle: {
-        marginLeft: 20, 
-        paddingBottom: 20, 
+        marginLeft: 17, 
+        marginBottom: 17, 
         marginTop: 10,
     },
     cardStyle: {
         alignItems: 'center',
-       // marginLeft: 20, 
+       // marginLeft: 17, 
         //paddingBottom: 20,
         marginTop: 17
     }

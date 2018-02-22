@@ -46,19 +46,6 @@ export default class ExploreByCategory extends Component<{}> {
 
                 {/* need to get working radioset and optionset here */}
                 
-                {/* need to get working tag cloud here */}
-
-
-                <View style = {{paddingTop: 10}}>
-                    <Divider/>
-                </View>
-
-                {/* where users will search the category */}
-                <View style = {styles.inputStyle}>
-                    <InputSearch placeHolder = {inputTxt}/>
-                </View>
-                
-                <Divider/>
 
                 {/* related ravel cards will pop up here */}
                 <View style = {styles.cardStyle}>
@@ -77,10 +64,10 @@ var inputTxt = 'Search a category';
 const styles = StyleSheet.create({
     logoStyle: {
        // flex: 1,
-       alignItems: 'center',
-       justifyContent: 'center',
-       //marginTop: 20,
-       marginBottom: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+        //marginTop: 20,
+        marginBottom: 15,
     },
     buttonStyle: {
         flexDirection: 'row',
