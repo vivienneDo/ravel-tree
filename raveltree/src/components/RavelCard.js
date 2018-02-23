@@ -29,6 +29,7 @@ export default class RavelCard extends Component<{}> {
   render() {
     const {
       ravel,
+      author,
       users,
       score,
       concept,
