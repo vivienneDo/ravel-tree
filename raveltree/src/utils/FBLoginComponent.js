@@ -52,8 +52,8 @@ class FBLoginComponent extends Component {
                                     console.log('Success fetching data' + result.toString());
                                     console.log(results['first_name']);  
                                     firebase.database().ref(`/users/${firebase.auth().currentUser.uid}/userProfile`)
-                                    updateUserProfile(user, {first_name:results['first_name'],last_name:results['last_name'],bio:'',photoURL:'', stat_ravel_led:'', stat_passage_written:'', stat_ravel_contributed:'', 
-                                        upvotes:'', ravel_points:'' });
+                                    updateUserProfile(user, {first_name:results['first_name'],last_name:results['last_name'],bio:'',photoURL:'', stat_ravel_led:0, stat_passage_written:0, stat_ravel_contributed:0, 
+                                        upvotes:0, ravel_points:0 });
                                 }
                             });
                             

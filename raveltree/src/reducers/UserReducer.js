@@ -3,11 +3,11 @@ const initialState = {
     last_name: '',
     bio: '',
     photoURL:'',
-    stat_ravel_led: '',
-    stat_ravel_contributed: '',
-    stat_passage_written: '',
-    upvotes: '',
-    ravel_points: '',
+    stat_ravel_led: 0,
+    stat_ravel_contributed: 0,
+    stat_passage_written: 0,
+    upvotes: 0,
+    ravel_points: 0,
 };
 
 export default (state = initialState, action) => {

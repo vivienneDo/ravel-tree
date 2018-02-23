@@ -28,7 +28,7 @@ class GetAllUserRavels extends Component {
         // var enable_comment = "yes"
         // var ravel_concept = "blah"
         // var m_ravel_participants = ['9quvopDSS0RqytjDexKHMroOwMg1', 'EG4lyDlPz4QyM1Ezi89ICY5V4Ok1']
-        // var ravel_tags = ["testing_tag2", "testing_tag"]
+        // var ravel_tags = ["testing_tag1", "testing_tag2"]
 
         // this.props.createStartRavel( {ravel_title, ravel_category, passage_length, visibility, enable_voting, enable_comment,
         // ravel_concept, m_ravel_participants, ravel_tags });
@@ -43,8 +43,10 @@ class GetAllUserRavels extends Component {
         //console.log('Ravel UID in Get All Users..' + this.props.ravel_uid);
         //this.props.getRavelMetaData(ravel_uid);
         //this.props.getAllRavelUser(m_ravel_uid);
-        //this.props.searchRavelByTag('testing_tag');
-        this.props.getAllRavelParticipantUserProfile('-L5vzmMpdC9jRwYKsysB');
+        //this.props.searchRavelByTag(['testing_tag1', 'testing_tag_2']);
+        //this.props.getAllRavelParticipantUserProfile('-L6-bdXiHLY-1ALPJwuQ');
+        //this.props.searchRavelByTitle('title');
+        this.props.loadAllRavel();
 
     
      
