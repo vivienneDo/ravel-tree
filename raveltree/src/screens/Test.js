@@ -17,6 +17,7 @@ import InviteParticipants from './InviteParticipants'
 import Splash from './Splash'
 import Login from './Login'
 import LoginEmail from './LoginEmail'
+import Home from './Home'
 
 export default class Test extends Component {
   constructor (props) {
@@ -160,6 +161,19 @@ export default class Test extends Component {
       case ('LoginEmail'): {
         return (
           <LoginEmail />
+        );
+      }
+      case ('Home'): {
+        return (
+          <Home
+            user={"Rebecca Bates"}
+            passages={[
+              {ravel: 'Endless Smirk', passageID: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I\'m going to need if I\'m going to fill up more space to ensure that this gets truncated after a certain number of lines.', upvotes: 11, downvotes: 0},
+              {ravel: 'Endless Smirk', passageID: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I\'m going to need if I\'m going to fill up more space to ensure that this gets truncated after a certain number of lines.', upvotes: 11, downvotes: 0},
+              {ravel: 'Endless Smirk', passageID: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I\'m going to need if I\'m going to fill up more space to ensure that this gets truncated after a certain number of lines.', upvotes: 11, downvotes: 0},
+              {ravel: 'Endless Smirk', passageID: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I\'m going to need if I\'m going to fill up more space to ensure that this gets truncated after a certain number of lines.', upvotes: 11, downvotes: 0},
+            ]}
+          />
         );
       }
     }
