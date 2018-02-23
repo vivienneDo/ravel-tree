@@ -19,8 +19,6 @@ import reducers from './reducers/UserReducer';
 import Thunk from 'redux-thunk';
 import UserModel from './models/UserModel';
 
-import './Constants';
-
 import Messages from './screens/Messages';
 import MessageThread from './screens/MessageThread';
 import Notifications from './screens/Notifications';
