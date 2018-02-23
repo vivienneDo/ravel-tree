@@ -13,6 +13,7 @@ import YourRavels from './YourRavels';
 import Profile from './Profile';
 import StartARavel from './StartARavel'
 import AddTags from './AddTags'
+import InviteParticipants from './InviteParticipants'
 
 export default class Test extends Component {
   constructor (props) {
@@ -129,6 +130,18 @@ export default class Test extends Component {
       case ('AddTags'): {
         return (
           <AddTags mode={'add'}/>
+        );
+      }
+      case ('InviteParticipants'): {
+        return (
+          <InviteParticipants
+            mode={'add'}
+            participants={[
+              {name: 'Adam Jesper', score: 9821},
+              {name: 'Brad Hooper', score: 3219},
+              {name: 'Anne Jensen', score: undefined},
+            ]}
+          />
         );
       }
     }
