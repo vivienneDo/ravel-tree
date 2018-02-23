@@ -14,6 +14,7 @@ import Profile from './Profile';
 import StartARavel from './StartARavel'
 import AddTags from './AddTags'
 import InviteParticipants from './InviteParticipants'
+import Splash from './Splash'
 
 export default class Test extends Component {
   constructor (props) {
@@ -129,7 +130,7 @@ export default class Test extends Component {
       }
       case ('AddTags'): {
         return (
-          <AddTags mode={'add'}/>
+          <AddTags mode={'add'} />
         );
       }
       case ('InviteParticipants'): {
@@ -142,6 +143,11 @@ export default class Test extends Component {
               {name: 'Anne Jensen', score: undefined},
             ]}
           />
+        );
+      }
+      case ('Splash'): {
+        return (
+          <Splash />
         );
       }
     }

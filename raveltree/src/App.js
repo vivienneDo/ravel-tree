@@ -28,6 +28,7 @@ import Profile from './screens/Profile';
 import StartARavel from './screens/StartARavel'
 import AddTags from './screens/AddTags'
 import InviteParticipants from './screens/InviteParticipants'
+import Splash from './screens/Splash'
 
 
 const instructions = Platform.select({
@@ -68,7 +69,7 @@ export default class App extends Component {
         console.log('Showing main page');
         return <MainPage />;
       case false:
-        return <Test screen={'InviteParticipants'} />;
+        return <Test screen={'Splash'} />;
         //return <Login />;
       default:
         return <Loader size="large"/>;
