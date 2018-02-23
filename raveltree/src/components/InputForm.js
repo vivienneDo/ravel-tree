@@ -11,11 +11,23 @@ import {
 // Input Text
 
 export default class InputForm extends Component<{}> {
+
+  constructor (props) {
+    super (props);
+    this.state = {text: ''};
+  }
+
+  componentWillReceiveProps (newProps)
+  {
+    this.setState ({text: newProps.text})
+  }
+
   render() {
 
     const {
       placeholder,
       password,
+      onChangeText,
       //text,
     } = this.props;
 
@@ -27,6 +39,7 @@ export default class InputForm extends Component<{}> {
           placeholderTextColor = '#939393'
           autoCapitalize = 'none'
           secureTextEntry = {password}
+          onChangeText={(text) => {this.props.onChangeText (text)}}
           //value = {text}
         />
       </View>
