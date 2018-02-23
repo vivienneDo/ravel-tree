@@ -15,6 +15,7 @@ export default class InputForm extends Component<{}> {
 
     const {
       placeholder,
+      password,
       //text,
     } = this.props;
 
@@ -25,6 +26,7 @@ export default class InputForm extends Component<{}> {
           placeholder = {placeholder}
           placeholderTextColor = '#939393'
           autoCapitalize = 'none'
+          secureTextEntry = {password}
           //value = {text}
         />
       </View>
