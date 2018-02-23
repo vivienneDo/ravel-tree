@@ -89,8 +89,14 @@ export default class ButtonSans extends React.Component <{
     }
     if (width)
     {
+      // If a percentage is passed, make sure it doesn't cascade.
+      if (width.slice (-1) == '%') {
+        layoutStyles.push ({width: width});
+        buttonStyles.push ({width: '100%'});
+      } else {
       layoutStyles.push ({width: width});
       buttonStyles.push ({width: width});
+      }
     }
     if (height) {
       layoutStyles.push ({height: height});
