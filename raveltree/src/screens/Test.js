@@ -15,6 +15,8 @@ import StartARavel from './StartARavel'
 import AddTags from './AddTags'
 import InviteParticipants from './InviteParticipants'
 import Splash from './Splash'
+import Login from './Login'
+import LoginEmail from './LoginEmail'
 
 export default class Test extends Component {
   constructor (props) {
@@ -148,6 +150,16 @@ export default class Test extends Component {
       case ('Splash'): {
         return (
           <Splash />
+        );
+      }
+      case ('Login'): {
+        return (
+          <Login />
+        );
+      }
+      case ('LoginEmail'): {
+        return (
+          <LoginEmail />
         );
       }
     }
