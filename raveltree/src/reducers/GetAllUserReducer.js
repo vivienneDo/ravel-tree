@@ -1,14 +1,16 @@
 const initialState = {
-    ravels: []
+    all_user_keys: []
 };
 
 export default (state = initialState, action) => {
     switch (action.type) {
-        case 'INITIAL_USER_RAVEL_FETCH':
+        
+        case 'ALL_USER_KEY_FETCH': 
             return {
                 ...state,
-                ravels: action.payload
+                all_user_keys: action.payload,
             };
+
         default:
             return state;
     }

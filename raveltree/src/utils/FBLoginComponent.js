@@ -38,9 +38,9 @@ class FBLoginComponent extends Component {
                             .then((user) => {
                             let accessToken = data.accessToken;
                                 const responseInfoCallback = (error, results) => {
-                        if (error) {
-                            console.log('Error fetching data from ' + error.toString());
-                        }
+                            if (error) {
+                                console.log('Error fetching data from ' + error.toString());
+                            }
 
                         else {
                             firebase.database().ref(`/users`).child(user.uid).once('value', function(snapshot) {
@@ -54,6 +54,8 @@ class FBLoginComponent extends Component {
                                     firebase.database().ref(`/users/${firebase.auth().currentUser.uid}/userProfile`)
                                     updateUserProfile(user, {first_name:results['first_name'],last_name:results['last_name'],bio:'',photoURL:'', stat_ravel_led:0, stat_passage_written:0, stat_ravel_contributed:0, 
                                         upvotes:0, ravel_points:0 });
+                                        firebase.database().ref(`/master_user_key/${user.uid}`).set({
+                                            user_uid: true})
                                 }
                             });
                             

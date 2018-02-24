@@ -3,6 +3,7 @@ const initialState = {
     ravel_meta_data: [],
     all_child_uid_val: [],
     all_ravel: [],
+    all_ravel_key: [],
     ravel_tag_update: false
 };
 
@@ -35,6 +36,13 @@ export default (state = initialState, action) => {
                 ...state,
                 ravel_tag_update: action.payload
             };
+        case 'ALL_RAVEL_KEY_FETCH': 
+            return {
+                ...state,
+                all_ravel_keys: action.payload
+            };
+
+        
         default:
             return state;
     }

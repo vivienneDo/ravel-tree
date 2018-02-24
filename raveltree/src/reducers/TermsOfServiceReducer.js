@@ -1,14 +1,16 @@
 const initialState = {
-    ravels: []
+    terms_of_service: ''
 };
 
 export default (state = initialState, action) => {
     switch (action.type) {
-        case 'INITIAL_USER_RAVEL_FETCH':
+        
+        case 'GET_TERMS_OF_SERVICE': 
             return {
                 ...state,
-                ravels: action.payload
+                terms_of_service: action.payload,
             };
+
         default:
             return state;
     }

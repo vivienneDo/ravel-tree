@@ -117,10 +117,11 @@ export const createUserWithEmail = (email, password) => {
 
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((user) => { 
+        firebase.database().ref(`/master_user_key/${user.uid}`).set({ user_uid: true })
 
         updateUserProfile(user, {first_name:'',last_name:'',bio:'',photoURL:'', stat_ravel_led:0, stat_passage_written:0, stat_ravel_contributed:0, 
                                 upvotes:0, ravel_points:0 });
-    })
+    })   
     .catch(function(error) {
 
     var errorCode = error.code;
@@ -137,6 +138,38 @@ export const createUserWithEmail = (email, password) => {
 
 };
 
+/**
+ * @param: nothing
+ * @returns: 
+ * state.all_user_keys
+ *      'ALL_USER_KEY_FETCH': a list of all user uid and it's status (true/false)
+ */
+export const loadAllUserKey = () => {
+
+    return (dispatch) => {
+            firebase.database().ref(`master_user_key`)
+            .once('value', function(snapshotRavels) {
+                dispatch({ type: 'ALL_USER_KEY_FETCH', payload: snapshotRavels.val()});
+            });
+    };
+};
+
+
+/**
+ * @param: nothing
+ * @returns: 
+ * state.ravel
+ *      'ALL_RAVEL_KEY_FETCH': a list of all ravel uid and it's status (true/false)
+ */
+export const loadAllRavelKey = () => {
+
+    return (dispatch) => {
+            firebase.database().ref(`master_ravel_key`)
+            .once('value', function(snapshotRavels) {
+                dispatch({ type: 'ALL_RAVEL_KEY_FETCH', payload: snapshotRavels.val()});
+            });
+    };
+};
 
 /**
  * @param: photo url
@@ -377,7 +410,14 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
                         stat_ravel_led : ravel_led_stat + ravel_counter,
                       })
                 })
-            })         
+            })     
+            .then(() => {
+                // Add to master_ravel_key
+                firebase.database().ref(`/master_ravel_key/${ravel_uid}`).set({
+                    ravel_uid: true
+                })
+            })          
+    
             .catch((error) => {
                 console.log('Failed creating ravel');
             });
@@ -575,4 +615,42 @@ export const updateRavelTag = (ravel_uid, ravel_tags) => {
         
     };
 
+}
+
+
+/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
+ * @param: 
+ * @returns: 
+ * 
+ */
+export const insertTermsOfService = (terms_of_service) => {
+
+    firebase.database().ref(`terms_of_service/terms_of_service`).set({terms_of_service});
+    
+}
+
+/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
+ * @param: 
+ * @returns: 
+ * 
+ */
+export const updateTermsOfService = (terms_of_service) => {
+
+    firebase.database().ref(`terms_of_service/terms_of_service`).update({terms_of_service});
+    
+}
+
+/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
+ * @param: nothing 
+ * @returns: the current terms of service 
+ * 
+ */
+export const readTermsOfService = () => {
+
+    return (dispatch) => {
+        firebase.database().ref(`terms_of_service`).once('value', (snapshot) => {
+            dispatch({ type: 'GET_TERMS_OF_SERVICE', payload: snapshot.val()})
+        });
+    }
+   
 }
