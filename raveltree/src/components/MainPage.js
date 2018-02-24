@@ -13,13 +13,9 @@ import { loadInitialUserCreatedRavel, getCurrentLoggedInUser, getAllUserCreatedR
 import { connect} from 'react-redux';
 import _ from 'lodash';
 import firebase from 'firebase';
-//import RNFetchBlob from 'react-native-fetch-blob';
-//var ImagePicker = require('react-native-image-picker');
+
 import ImagePicker from 'react-native-image-picker';
 import SelectImage from '../utils/CameraPicker.js';
-
-// copy and paste this code where you will handle the file upload
-
 import RNFetchBlob from 'react-native-fetch-blob';
 
 const Blob = RNFetchBlob.polyfill.Blob;

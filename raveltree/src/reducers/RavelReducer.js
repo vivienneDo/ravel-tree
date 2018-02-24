@@ -2,7 +2,8 @@ const initialState = {
     ravel_uid: '',
     ravel_meta_data: [],
     all_child_uid_val: [],
-    all_ravel: []
+    all_ravel: [],
+    ravel_tag_update: false
 };
 
 export default (state = initialState, action) => {
@@ -29,7 +30,11 @@ export default (state = initialState, action) => {
                 ...state,
                 all_ravel: action.payload
             };
-
+        case 'UPDATE_RAVEL_TAG':
+            return {
+                ...state,
+                ravel_tag_update: action.payload
+            };
         default:
             return state;
     }

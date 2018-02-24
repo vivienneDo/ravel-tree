@@ -28,7 +28,7 @@ class GetAllUserRavels extends Component {
         // var enable_comment = "yes"
         // var ravel_concept = "blah"
         // var m_ravel_participants = ['9quvopDSS0RqytjDexKHMroOwMg1', 'EG4lyDlPz4QyM1Ezi89ICY5V4Ok1']
-        // var ravel_tags = ["testing_tag1", "testing_tag2"]
+        //var ravel_tags = ["testing_tag1", "testing_tag2"]
 
         // this.props.createStartRavel( {ravel_title, ravel_category, passage_length, visibility, enable_voting, enable_comment,
         // ravel_concept, m_ravel_participants, ravel_tags });
@@ -46,7 +46,10 @@ class GetAllUserRavels extends Component {
         //this.props.searchRavelByTag(['testing_tag1', 'testing_tag_2']);
         //this.props.getAllRavelParticipantUserProfile('-L6-bdXiHLY-1ALPJwuQ');
         //this.props.searchRavelByTitle('title');
-        this.props.loadAllRavel();
+        //this.props.loadAllRavel();
+        //this.props.updateProfilePicture('testing_updates_again');
+        this.props.updateRavelTag('-L652msbo55P_DyqRSKE', ["push_tag4666", "push_tag67777"])
+
 
     
      
