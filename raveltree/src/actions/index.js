@@ -630,10 +630,7 @@ export const searchRavelByCategory = (category) => {
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
                 });
             }
-        }
-
-
-        
+        }     
     }
 }
 
@@ -772,7 +769,8 @@ export const updateRavelParticipant = (ravel_uid, ravel_tags) => {
 
     return (dispatch) => {
         
-        
+        // Currently only checks if the ravel_number_participant is greater than 4. If I have time, I will add
+        // error check on adding the same uid.
         firebase.database().ref(`ravels/${ravel_uid}/ravel_number_participants`).once('value', (snapshot) => {
 
             if (snapshot.val() >= 4) {
@@ -790,9 +788,6 @@ export const updateRavelParticipant = (ravel_uid, ravel_tags) => {
                         ravel_tags.forEach((elm) => { m_tag_set[elm] = false } );  
                         var master = {...get_current_tags, ...m_tag_set};
                         firebase.database().ref(`ravels/${ravel_uid}`).update({ ravel_participants : master });          
-                        firebase.database().ref(`ravels/${ravel_uid}/ravel_participants`).once('value', (snapshot) => {
-                        firebase.database().ref(`ravels/${ravel_uid}`).update({ravel_number_participants: snapshot.numChildren()})
-                        })
                         dispatch({ type: 'UPDATE_RAVEL_PARTICIPANTS', payload: true})
                     })
                     .then(() => {
@@ -808,15 +803,14 @@ export const updateRavelParticipant = (ravel_uid, ravel_tags) => {
             }
             
         }) 
-
-        
-        
+       
     };
 
+    // remove duplicates
     function arrayUnique(array) {
         var a = array.concat();
-        for(var i=0; i<a.length; ++i) {
-            for(var j=i+1; j<a.length; ++j) {
+        for(var i = 0; i < a.length; ++i) {
+            for(var j = i + 1; j < a.length; ++j) {
                 if(a[i] === a[j])
                     a.splice(j--, 1);
             }
@@ -869,46 +863,50 @@ export const readTermsOfService = () => {
  * @param {*} ravel_uid 
  * @returns: state.notification
  *      'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE' - sets 'true' if accepts, 'false' if does not accept 
- * actions: sets the ravel participant to 'true' if a user accepts the ravel invite 
+ * actions: sets the ravel participant to 'true' if a user accepts the ravel invite. Updates the ravel_number_participant 
+ *          field. 
  * 
  */
 export const acceptRavelInvite = (ravel_uid) => {
 
-    var currentUid = firebase.auth().currentUser.uid;
-    console.log(currentUid)
-
-    // Update the user's ravel participated count
-    var stat_ravel_contributed;                               
+    var currentUid = firebase.auth().currentUser.uid;                           
     var ravel_counter = 1;
-    return (dispath) => {
+    
+    return (dispatch) => {
 
         firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).once('value', (snapshot) => {
-            console.log('snaoshot val' + snapshot.val())
             if (snapshot.val() != null && snapshot.val() === false) {
-                firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).set(true);
-                dispath({type: 'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE', payload: true})
+                var stat_ravel_contributed; 
+                var m_ravel_number_participants;
+
+                firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).set(true)
+                firebase.database().ref(`/users/${currentUid}/userProfile/stat_ravel_contributed`).once('value', (snapshot) => {
+                stat_ravel_contributed = snapshot.val()})
                 .then(() => {
-                    firebase.database().ref(`/users/${currentUser}/userProfile/stat_ravel_contributed`).once('value', (snapshot) => {
-    
-                        stat_ravel_contributed = snapshot.val();   
-                    })
+                    firebase.database().ref(`/users/${currentUid}/userProfile`).update({
+                    stat_ravel_contributed : stat_ravel_contributed + ravel_counter})
+                })
+                .then(() => {
+                    firebase.database().ref(`ravels/${ravel_uid}/ravel_number_participants`).once('value', (snapshotNum) => {
+                    m_ravel_number_participants = snapshotNum.val() })
                     .then(() => {
-                        firebase.database().ref(`/users/${currentUser}/userProfile`).update({
-                            stat_ravel_contributed : stat_ravel_contributed + ravel_counter,
-                          })
+                        firebase.database().ref(`ravels/${ravel_uid}`).update({
+                            ravel_number_participants : m_ravel_number_participants + ravel_counter
+                        })
+                        firebase.database().ref(`/users/${currentUid}/ravel_created/${ravel_uid}`).update({
+                            ravel_number_participants: m_ravel_number_participants + ravel_counter
+                        })
                     })
-                })   
+
+                })
+                
+                dispatch({type: 'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE', payload: true})
 
             } else {
-                dispath({type: 'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE', payload: false})
+                dispatch({type: 'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE', payload: false})
             }
         })
-    
-
     }
-    
-    
-
 }
 
 /**
