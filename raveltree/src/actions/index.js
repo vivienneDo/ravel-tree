@@ -1,5 +1,13 @@
 import firebase from 'firebase';
-import _ from 'lodash'
+import _ from 'lodash';
+import ImagePicker from 'react-native-image-picker';
+import SelectImage from '../utils/CameraPicker.js';
+import RNFetchBlob from 'react-native-fetch-blob';
+
+const Blob = RNFetchBlob.polyfill.Blob;
+const fs = RNFetchBlob.fs;
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+window.Blob = Blob;
 firebase.initializeApp({
     apiKey: "AIzaSyCmt6Cq6wj2NJZ-WOCE27brxfW-kg6TUKQ",
     authDomain: "crmlinkedln2-81204.firebaseapp.com",
@@ -221,6 +229,24 @@ export const updateProfilePicture = (url) => {
 }
 
 /**
+ * @param {@} 
+ */
+
+export const selectImageFromPhotoLibAndUpdate = () => {
+
+    return (dispatch) => {
+        SelectImage().then((url) => {
+            updateProfilePicture(url);
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    }
+}
+
+
+
+/**
  * @param: user uid 
  * @returns: 
  * state.user: 
@@ -238,6 +264,28 @@ export const getUserProfile = (uid) => {
         });
     };
 };
+
+// /**
+//  * @param: nothing 
+//  * @returns: 
+//  * state.user: 
+//  *      'GET_CURRENT_USER_PROFILE' - an entire userProfile object
+//  * actions: gets the user profile of the passed in uid 
+//  * 
+//  */
+// export const getCurrentUserProfile = (uid) => {
+
+//     var currentUid = firebase.auth().currentUser.uid;
+
+//     return (dispatch) => {
+//         firebase.database().ref(`/users/${currentUid}/userProfile`)
+//         .once('value', snapshot => {
+//             dispatch({ type: 'GET_CURRENT_USER_PROFILE',
+//                        payload: snapshot.val() });
+//         });
+//     };
+// };
+
 
 
 /**
@@ -337,7 +385,7 @@ export const updateUserRavelPoint = (ravel_points) => {
 
 
 /**
- * @param: ravel_title, ravel_category, passage_length, visibility, enable_voting, enable_comment,
+ * @param: ravel_title, ravel_category, passage_length, visibility (true/false), enable_voting (true/false), enable_comment (true/false),
            ravel_concept, m_ravel_participants [ARRAY], ravel_tags [ARRAY]
  * @returns: 
  * state.ravel
@@ -370,21 +418,59 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
     var ravel_points = 0;
     var ravel_number_participants = m_ravel_participants.length;
     var ravel_participants = {};
-    m_ravel_participants.forEach(function(elm) { ravel_participants[elm] = true })
+    m_ravel_participants.forEach(function(elm) { ravel_participants[elm] = false })
     
     // Update the user's ravel created count
     var ravel_led_stat;                               
     var ravel_counter = 1; 
     
-    var tag_set = {};
-    ravel_tags.forEach(function(elm) { tag_set[elm] = true })
-                
+    // Must be able to filter by: title, category, tag 
+    // public_title: true, public_fiction: true, public_nonfiction: true, pubic_other:true ,
+    // public_tag_set: tag_set 
+    // these fields are for filter purpose only to improve speed you must create new fields 
+    // since firebase only supports one filter param... 
+    var public_tag_set = {};
+    ravel_tags.forEach(function(elm) { public_tag_set["public_" + elm] = false })
+    var public_ravel_title = '';
+    // category 
+    var public_cat_fiction = false; 
+    var public_cat_nonfiction = false;
+    var public_cat_other = false;
+
+    if (visibility === true) {
+
+        // tags
+        ravel_tags.forEach(function(elm) { public_tag_set["public_" + elm] = true })
+
+        // title 
+        public_ravel_title = "public_" + ravel_title;
+        
+        // category
+        switch (ravel_category) {
+            case 'fiction': {
+                public_cat_fiction = true 
+            }
+            case 'non_fiction': {
+                public_cat_nonfiction = true
+            }
+            case 'other': {
+                pubic_cat_other = true
+            }
+            default: {
+                public_cat_other = true 
+            }
+        }
+
+    }
+    
+
     return (dispatch) => {
         var ravel_uid;
         firebase.database().ref(`/ravels`)
             .push({ user_created, user_created_photoURL, ravel_title, ravel_category, passage_length,
                 visibility, enable_voting, enable_comment, ravel_concept, ravel_status,ravel_number_participants,
-                ravel_participants, m_ravel_participants, ravel_create_date, tag_set, ravel_points })
+                ravel_participants, m_ravel_participants, ravel_create_date, public_tag_set, ravel_points, public_ravel_title,
+                public_cat_fiction, public_cat_nonfiction, public_cat_other })
             .then(returnKey => {
                 ravel_uid = returnKey.getKey();
                 firebase.database().ref(`/ravels/${ravel_uid}/ravel_uid`).set(ravel_uid);
@@ -424,9 +510,6 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
         
     };
 
-
-
-
 };
 
 /**
@@ -456,6 +539,7 @@ export const loadInitialUserCreatedRavel = (user) => {
     };
 };
 
+
 /**
  * @param: a first name search 
  * @returns: 
@@ -484,8 +568,9 @@ export const searchUserByName = (first_name) => {
 export const searchRavelByTag = (tag) => {
 
     return (dispatch) => {
+
         tag.forEach((tag) => { 
-            firebase.database().ref(`/ravels/`).orderByChild(`tag_set/${tag}`).equalTo(true).once('value', function(snapshot) {
+            firebase.database().ref(`/ravels/`).orderByChild(`public_tag_set/${'public_' + tag}`).equalTo(true).once('value', function(snapshot) {
                 dispatch({type : 'SEARCH_RAVEL_BY_TAG', payload: snapshot.val()});
             });   
         })
@@ -504,8 +589,10 @@ export const searchRavelByTag = (tag) => {
  */
 export const searchRavelByTitle = (title) => {
 
+    var public_title = 'public_' + title; 
+
     return (dispatch) => {
-        firebase.database().ref(`/ravels/`).orderByChild("ravel_title").equalTo(title).once('value', snapshot => {
+        firebase.database().ref(`/ravels/`).orderByChild("public_ravel_title").equalTo(public_title).once('value', snapshot => {
             dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: snapshot.val()})
         });
     }
@@ -522,19 +609,40 @@ export const searchRavelByTitle = (title) => {
 export const searchRavelByCategory = (category) => {
 
     return (dispatch) => {
-        firebase.database().ref(`/ravels/`).orderByChild("ravel_category").equalTo(category).once('value', snapshot => {
-            dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
-        });
+        switch (ravel_category) {
+            case 'fiction': {
+                firebase.database().ref(`/ravels/`).orderByChild("public_cat_fiction").equalTo(true).once('value', snapshot => {
+                    dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
+                });
+            }
+            case 'non_fiction': {
+                firebase.database().ref(`/ravels/`).orderByChild("public_cat_nonfiction").equalTo(true).once('value', snapshot => {
+                    dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
+                });
+            }
+            case 'other': {
+                firebase.database().ref(`/ravels/`).orderByChild("public_cat_other").equalTo(true).once('value', snapshot => {
+                    dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
+                });
+            }
+            default: {
+                firebase.database().ref(`/ravels/`).orderByChild("public_cat_other").equalTo(true).once('value', snapshot => {
+                    dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
+                });
+            }
+        }
+
+
+        
     }
 }
 
-
-/**
+/** ADMIN 
  * @param: ravel uid (unique id)
  * @returns: 
  * state.ravel
  *      'GET_RAVEL_META_DATA': a particular ravel object that contains its metadata 
- * actions: attempts to get a particular ravel object's metadata 
+ * actions: attempts to get a particular ravel object's metadata (public/private)
  */
 export const getRavelMetaData = (ravel_uid) => {
     return (dispatch) => {
@@ -588,6 +696,38 @@ export const loadAllRavel = () => {
     };
 };
 
+
+/**
+ * @param: nothing
+ * @returns: 
+ * state.ravel 
+ *      'ALL_PUBLIC_RAVEL_FETCH': a list of all public ravel objects 
+ * actions: attempts to get a list of all public ravel objects 
+ */
+export const loadAllPublicRavel = () => {
+
+    return (dispatch) => {
+
+            firebase.database().ref(`ravels`).orderByChild(`visibility`).equalTo(true).once('value', (snapshotPublicRavel) => {
+                dispatch({ type: 'ALL_PUBLIC_RAVEL_FETCH', payload: snapshotPublicRavel.val()});
+            });           
+    };
+};
+
+export const loadNonCreatedCurrentUserRavel = () => {
+    var currentUid = firebase.auth().currentUser.uid;
+
+    return (dispatch) => {
+
+        firebase.database().ref(`ravels`).orderByChild(`ravel_participants/${currentUid}`).equalTo(true).once('value', (snapshot) => {
+            dispatch({ type: 'ALL_NON_CREATED_CURR_USER_RAVEL', payload: snapshot.val()})
+        })
+
+    }
+
+   
+}
+
 /**
  * @param: ravel uid, a new set of ravel_tags[ARRAY]
  * @returns: 
@@ -601,15 +741,15 @@ export const updateRavelTag = (ravel_uid, ravel_tags) => {
 
     return (dispatch) => {
      
-        firebase.database().ref(`ravels/${ravel_uid}/tag_set`).once('value', (snapshot) => {
+        firebase.database().ref(`ravels/${ravel_uid}/public_tag_set`).once('value', (snapshot) => {
         get_current_tags = snapshot.val();
 
         })
         .then(() => {
             var m_tag_set = {};
-            ravel_tags.forEach((elm) => { m_tag_set[elm] = true } );  
+            ravel_tags.forEach((elm) => { m_tag_set['public_' + elm] = true } );  
             var master = {...get_current_tags, ...m_tag_set};
-            firebase.database().ref(`ravels/${ravel_uid}`).update({ tag_set : master });
+            firebase.database().ref(`ravels/${ravel_uid}`).update({ public_tag_set : master });
             dispatch({ type: 'UPDATE_RAVEL_TAG', payload: true})
         })
         
@@ -625,7 +765,7 @@ export const updateRavelTag = (ravel_uid, ravel_tags) => {
  */
 export const insertTermsOfService = (terms_of_service) => {
 
-    firebase.database().ref(`terms_of_service/terms_of_service`).set({terms_of_service});
+    firebase.database().ref(`terms_of_service`).set({terms_of_service : terms_of_service});
     
 }
 
@@ -636,7 +776,7 @@ export const insertTermsOfService = (terms_of_service) => {
  */
 export const updateTermsOfService = (terms_of_service) => {
 
-    firebase.database().ref(`terms_of_service/terms_of_service`).update({terms_of_service});
+    firebase.database().ref(`terms_of_service`).update({terms_of_service : terms_of_service});
     
 }
 
@@ -653,4 +793,35 @@ export const readTermsOfService = () => {
         });
     }
    
+}
+
+/**
+ * 
+ * @param {*} ravel_uid 
+ * @returns: state.notification
+ *      'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE' - sets 'true' if accepts, 'false' if does not accept 
+ * actions: sets the ravel participant to 'true' if a user accepts the ravel invite 
+ * 
+ */
+export const acceptRavelInvite = (ravel_uid) => {
+
+    var currentUid = firebase.auth().currentUser.uid;
+    console.log(currentUid)
+    return (dispath) => {
+
+        firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).once('value', (snapshot) => {
+            console.log('snaoshot val' + snapshot.val())
+            if (snapshot.val() != null && snapshot.val() === false) {
+                firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).set(true);
+                dispath({type: 'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE', payload: true})
+            } else {
+                dispath({type: 'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE', payload: false})
+            }
+        })
+    
+
+    }
+    
+    
+
 }

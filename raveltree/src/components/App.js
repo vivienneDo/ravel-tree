@@ -40,7 +40,7 @@ export default class App extends Component {
     switch (this.state.loggedIn) {
       case true: 
         console.log('Showing main page');
-        return <GetAllUserRavels />; 
+        return <MainPage />; 
       case false: 
         return <Login />; 
       default:

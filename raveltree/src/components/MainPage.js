@@ -150,6 +150,8 @@ class MainPage extends Component {
         .catch((error) => {
           console.log(error);
         })
+
+        //this.props.selectImageFromPhotoLibAndUpdate();
     }
 
     onLogOutButtonPress() {

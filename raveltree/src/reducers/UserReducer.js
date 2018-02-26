@@ -14,6 +14,7 @@ export default (state = initialState, action) => {
     console.log("getting user profile2")
     console.log('in index');
     switch (action.type) {
+
         case 'GET_USER_PROFILE':
             console.log('in get_user_profile');
             return {

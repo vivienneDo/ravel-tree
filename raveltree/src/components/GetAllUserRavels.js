@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, Image, ScrollView, TouchableOpacity, Linking } 
 import { getTheme } from 'react-native-material-kit';
 import {MKTextField, MKColor, MKButton} from 'react-native-material-kit';
 import * as actions from '../actions';
+//import {acceptRavelInvite} from '../actions';
 //import { getAllRavelUser, getRavelMetaData, searchUserByName, loadInitialUserCreatedRavel, updateUserProfile, getUserProfile, getCurrentLoggedInUserUid, createStartRavel, userLogOff, getAllUserCreatedRavel} from '../actions';
 import firebase from 'firebase';
 import { connect } from 'react-redux';
@@ -23,12 +24,13 @@ class GetAllUserRavels extends Component {
         // var ravel_title = "title"
         // var ravel_category = "game"
         // var passage_length = "paragraph"
-        // var visibility = "public"
-        // var enable_voting = "yes"
-        // var enable_comment = "yes"
-        // var ravel_concept = "blah"
-        // var m_ravel_participants = ['9quvopDSS0RqytjDexKHMroOwMg1', 'EG4lyDlPz4QyM1Ezi89ICY5V4Ok1']
-        // var ravel_tags = ["testing_tag1", "testing_tag2"]
+        // var visibility = true
+        // var enable_voting = true
+        // var enable_comment = true
+        // var ravel_concept = "fiction"
+        // var currentuid = actions.getCurrentLoggedInUserUid();
+        // var m_ravel_participants = [currentuid, 'EG4lyDlPz4QyM1Ezi89ICY5V4Ok1']
+        // var ravel_tags = ["testing_tag2", "testing_tag1"]
 
         // this.props.createStartRavel( {ravel_title, ravel_category, passage_length, visibility, enable_voting, enable_comment,
         // ravel_concept, m_ravel_participants, ravel_tags });
@@ -43,13 +45,16 @@ class GetAllUserRavels extends Component {
         //console.log('Ravel UID in Get All Users..' + this.props.ravel_uid);
         //this.props.getRavelMetaData(ravel_uid);
         //this.props.getAllRavelUser(m_ravel_uid);
-        //this.props.searchRavelByTag(['testing_tag1', 'testing_tag_2']);
+        //this.props.searchRavelByTag(['testing_tag2', 'testing_tag1']);
         //this.props.getAllRavelParticipantUserProfile('-L6-bdXiHLY-1ALPJwuQ');
         //this.props.searchRavelByTitle('title');
         //this.props.loadAllRavel();
         //this.props.updateProfilePicture('testing_updates_again');
-        //this.props.updateRavelTag('-L652msbo55P_DyqRSKE', ["push_tag4666", "push_tag67777"])
+        //this.props.updateRavelTag('-L6EF_prExXCVIf2NQ4w', ["push_tag4666", "push_tag67777"])
         //this.props.loadAllUserKey();
+        //this.props.loadAllPublicRavel();
+        this.props.acceptRavelInvite('-L6EVQE7jKZYSb4mEei1');
+        //this.props.loadNonCreatedCurrentUserRavel();
 
 
     

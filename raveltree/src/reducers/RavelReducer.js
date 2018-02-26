@@ -42,7 +42,12 @@ export default (state = initialState, action) => {
                 all_ravel_keys: action.payload
             };
 
-        
+        case 'ALL_PUBLIC_RAVEL_FETCH':
+            return {
+                ...state,
+                all_public_ravel_fetch: action.payload
+            }
+       
         default:
             return state;
     }
