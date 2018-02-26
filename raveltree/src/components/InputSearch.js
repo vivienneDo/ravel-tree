@@ -1,3 +1,9 @@
+// Author: Alex Aguirre
+// Created: 01/18/18
+// Modified: 02/26/18 by Frank Fusco (fr@nkfus.co)
+//
+// "Input Search" component for RavelTree.
+
 import React, {Component} from 'react';
 import {
   AppRegistry,
@@ -8,8 +14,6 @@ import {
   TextInput
 } from 'react-native';
 
-// 1-18-18
-// Input Text
 
 export default class InputSearch extends Component<{}> {
 
@@ -28,7 +32,7 @@ export default class InputSearch extends Component<{}> {
     const {
       placeholder,
       onChangeText,
-      //text,
+      text,
     } = this.props;
 
     return (
@@ -37,6 +41,7 @@ export default class InputSearch extends Component<{}> {
             style = {styles.input}
             placeholder = {placeholder}
             placeholderTextColor = '#95989A'
+            value = {text}
             onChangeText={(text) => {this.props.onChangeText (text)}}
          />
       </View>
