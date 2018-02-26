@@ -757,6 +757,75 @@ export const updateRavelTag = (ravel_uid, ravel_tags) => {
 
 }
 
+/**
+ * @param: ravel uid, a new set of ravel participants[ARRAY]
+ * @returns: 
+ * state.ravel
+ *      'UPDATE_RAVEL_PARTICIPANTS': returns true if successful, false if not.
+ * actions: attempts to adds the new participants to the list of existing participants for a particular ravel
+ *          if the ravel_par_number <= 4
+ */
+export const updateRavelParticipant = (ravel_uid, ravel_tags) => {
+
+    var get_curr_tags = {}; 
+    var get_curr_tags2 = [];
+
+    return (dispatch) => {
+        
+        
+        firebase.database().ref(`ravels/${ravel_uid}/ravel_number_participants`).once('value', (snapshot) => {
+
+            if (snapshot.val() >= 4) {
+                
+                    alert('Max number of ravel participant is 4.')
+                    dispatch({ type: 'UPDATE_RAVEL_PARTICIPANTS', payload: false})
+                    
+            } else {
+                firebase.database().ref(`ravels/${ravel_uid}/ravel_participants`).once('value', (snapshot) => {
+                    get_current_tags = snapshot.val();
+            
+                    })
+                    .then(() => {
+                        var m_tag_set = {};
+                        ravel_tags.forEach((elm) => { m_tag_set[elm] = false } );  
+                        var master = {...get_current_tags, ...m_tag_set};
+                        firebase.database().ref(`ravels/${ravel_uid}`).update({ ravel_participants : master });          
+                        firebase.database().ref(`ravels/${ravel_uid}/ravel_participants`).once('value', (snapshot) => {
+                        firebase.database().ref(`ravels/${ravel_uid}`).update({ravel_number_participants: snapshot.numChildren()})
+                        })
+                        dispatch({ type: 'UPDATE_RAVEL_PARTICIPANTS', payload: true})
+                    })
+                    .then(() => {
+            
+                        firebase.database().ref(`ravels/${ravel_uid}/m_ravel_participants`).once('value', (snapshot) => {
+                        get_curr_tags2 = snapshot.val();
+                        var master_set = arrayUnique(get_curr_tags2.concat(ravel_tags));
+                        firebase.database().ref(`ravels/${ravel_uid}`).update({m_ravel_participants : master_set})
+                        })
+            
+                    })
+    
+            }
+            
+        }) 
+
+        
+        
+    };
+
+    function arrayUnique(array) {
+        var a = array.concat();
+        for(var i=0; i<a.length; ++i) {
+            for(var j=i+1; j<a.length; ++j) {
+                if(a[i] === a[j])
+                    a.splice(j--, 1);
+            }
+        }
+    
+        return a;
+    }
+
+}
 
 /** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
  * @param: 
@@ -807,6 +876,10 @@ export const acceptRavelInvite = (ravel_uid) => {
 
     var currentUid = firebase.auth().currentUser.uid;
     console.log(currentUid)
+
+    // Update the user's ravel participated count
+    var stat_ravel_contributed;                               
+    var ravel_counter = 1;
     return (dispath) => {
 
         firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).once('value', (snapshot) => {
@@ -814,6 +887,18 @@ export const acceptRavelInvite = (ravel_uid) => {
             if (snapshot.val() != null && snapshot.val() === false) {
                 firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).set(true);
                 dispath({type: 'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE', payload: true})
+                .then(() => {
+                    firebase.database().ref(`/users/${currentUser}/userProfile/stat_ravel_contributed`).once('value', (snapshot) => {
+    
+                        stat_ravel_contributed = snapshot.val();   
+                    })
+                    .then(() => {
+                        firebase.database().ref(`/users/${currentUser}/userProfile`).update({
+                            stat_ravel_contributed : stat_ravel_contributed + ravel_counter,
+                          })
+                    })
+                })   
+
             } else {
                 dispath({type: 'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE', payload: false})
             }
@@ -823,5 +908,23 @@ export const acceptRavelInvite = (ravel_uid) => {
     }
     
     
+
+}
+
+/**
+ * 
+ */
+export const addAdminUser = (uid) => {
+
+    return (dispatch) => {
+        firebase.database().ref(`/admin`).push({uid:true});
+    }
+}
+
+/**
+ * 
+ */
+export const deleteUser = (user) => {
+
 
 }

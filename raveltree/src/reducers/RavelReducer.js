@@ -4,7 +4,8 @@ const initialState = {
     all_child_uid_val: [],
     all_ravel: [],
     all_ravel_key: [],
-    ravel_tag_update: false
+    ravel_tag_update: false,
+    ravel_participants_update: false
 };
 
 export default (state = initialState, action) => {
@@ -47,7 +48,11 @@ export default (state = initialState, action) => {
                 ...state,
                 all_public_ravel_fetch: action.payload
             }
-       
+        case 'UPDATE_RAVEL_PARTICIPANTS':
+            return {
+                ...state,
+                ravel_participants_update: action.payload
+            }
         default:
             return state;
     }
