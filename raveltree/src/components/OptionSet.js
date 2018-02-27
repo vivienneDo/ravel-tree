@@ -13,7 +13,7 @@
 //             {name: 'multimedia', title: 'Multimedia'},
 //             {name: 'other', title: 'Other'},
 //           ]}
-//           active={'Fiction'}
+//           active={'fiction'}
 // />
 
 'use strict';

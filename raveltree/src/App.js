@@ -31,6 +31,7 @@ import InviteParticipants from './screens/InviteParticipants'
 import Splash from './screens/Splash'
 import LoginEmail from './screens/LoginEmail'
 import Home from './screens/Home'
+import Explore from './screens/Explore'
 
 
 const instructions = Platform.select({
@@ -71,7 +72,7 @@ export default class App extends Component {
         console.log('Showing main page');
         return <MainPage />;
       case false:
-        return <Test screen={'Home'} />;
+        return <Test screen={'Explore'} />;
         //return <Login />;
       default:
         return <Loader size="large"/>;

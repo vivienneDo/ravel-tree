@@ -64,7 +64,6 @@ export default class AddTags extends Component {
     super (props);
     this.state = {
       tagsShowing: [],
-      //tagsShowingDimensions: [],
       nextTagIndex: 0,
       tagsSelected: [],
       tagCloudWidth: 0,

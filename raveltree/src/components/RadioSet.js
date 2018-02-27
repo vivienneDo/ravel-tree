@@ -40,7 +40,8 @@ export default class RadioSet extends React.Component {
   handleSelect (newState) {
     this.setState (newState);
 
-    // TODO: Selection logic here.
+    // Selection logic here.
+    this.props.onSetFormState (newState);
   }
 
   createRadioItem (option) {
@@ -54,6 +55,7 @@ export default class RadioSet extends React.Component {
   render () {
     const {
       active,
+      setFormState,
     } = this.props;
 
     const layoutStyles = [styles.layout];

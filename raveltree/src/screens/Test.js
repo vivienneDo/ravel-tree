@@ -18,6 +18,7 @@ import Splash from './Splash'
 import Login from './Login'
 import LoginEmail from './LoginEmail'
 import Home from './Home'
+import Explore from './Explore'
 
 export default class Test extends Component {
   constructor (props) {
@@ -172,6 +173,17 @@ export default class Test extends Component {
               {ravel: 'Endless Smirk', passageID: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I\'m going to need if I\'m going to fill up more space to ensure that this gets truncated after a certain number of lines.', upvotes: 11, downvotes: 0},
               {ravel: 'Endless Smirk', passageID: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I\'m going to need if I\'m going to fill up more space to ensure that this gets truncated after a certain number of lines.', upvotes: 11, downvotes: 0},
               {ravel: 'Endless Smirk', passageID: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I\'m going to need if I\'m going to fill up more space to ensure that this gets truncated after a certain number of lines.', upvotes: 11, downvotes: 0},
+            ]}
+          />
+        );
+      }
+      case ('Explore'): {
+        return (
+          <Explore
+            ravels={[
+              {ravel: 'The Tycoon', author: 'Malcolm Masters', users: 6, score: 311, concept: 'A tale of travel, deceit, and unannounced visitors. W.K. Smithson, young heir to a burgeoning furniture import/export empire, must decide between prosperity and his heart when he encounters Millie J., a waitress at an Indonesian beach bar.'},
+              {ravel: 'Lonely Conclusions', author: 'Anne Jensen', users: 2, score: 128, concept: 'A visitor to a yellow-cake uranium refinery finds that the international regulatory framework for nuclear development is sorely lacking in specificity.'},
+              {ravel: 'The End of the Road', author: 'Anne Jensen', users: 9, score: 90, concept: 'When the Joneses receive an unexpected visitor, they decide to take matters into their own hands.'},
             ]}
           />
         );

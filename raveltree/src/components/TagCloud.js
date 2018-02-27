@@ -74,8 +74,11 @@ export default class TagCloud extends React.Component {
       this.props.onSelectTag (name);
 
 
-    }
-    else {
+    // } else if (this.props.mode == 'explore') {
+    //   // If in "explore" mode, pass up the value.
+    //   this.props.onSelectTag (name);
+
+    } else {
       if (typeof active != 'undefined' && active.includes (name)) {
         active.splice (active.indexOf (name), 1);
       }
