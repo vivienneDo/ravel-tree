@@ -30,13 +30,19 @@ export default class PassageStub extends Component<{}> {
       author,
       passageID,
       score,
+      active,
       testID,
     } = this.props;
+
+    var containerStyles = [
+      styles.container,
+      active ? {borderColor: '#2E8AF7'} : undefined,
+    ];
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     return (
-      <View style = {styles.container}>
+      <View style = {containerStyles}>
         <View style={styles.left}>
           <View style={styles.userImage}>
             <UserImage size={26} />
