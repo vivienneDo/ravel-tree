@@ -32,6 +32,7 @@ import Splash from './screens/Splash'
 import LoginEmail from './screens/LoginEmail'
 import Home from './screens/Home'
 import Explore from './screens/Explore'
+import Ravel from './screens/Ravel'
 
 
 const instructions = Platform.select({
@@ -72,7 +73,7 @@ export default class App extends Component {
         console.log('Showing main page');
         return <MainPage />;
       case false:
-        return <Test screen={'Explore'} />;
+        return <Test screen={'Ravel'} />;
         //return <Login />;
       default:
         return <Loader size="large"/>;

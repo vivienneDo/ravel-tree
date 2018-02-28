@@ -19,6 +19,120 @@ import Login from './Login'
 import LoginEmail from './LoginEmail'
 import Home from './Home'
 import Explore from './Explore'
+import Ravel from './Ravel'
+
+
+class RavelTree {
+  constructor (ravel) {
+    this.title        = ravel.title;
+    this.author       = ravel.author;
+    this.participants = ravel.participants;
+    this.score        = ravel.score;
+    this.concept      = ravel.concept;
+    this.tags         = ravel.tags;
+    this.roots        = ravel.roots;
+  }
+
+  get title        () { return this.title;        }
+  get author       () { return this.author;       }
+  get participants () { return this.participants; }
+  get score        () { return this.score;        }
+  get concept      () { return this.concept;      }
+  get tags         () { return this.tags;         }
+  get roots        () { return this.roots;        }
+
+  get optimalPath  () { return this.optimalPath (); }
+
+  optimalPath () {
+    const PASSAGE_UPVOTE_WEIGHT = 1;
+    const PASSAGE_DOWNVOTE_WEIGHT = 2;
+
+    return (
+      // TODO: Build up an array or linked list of passages.
+      undefined
+    );
+  }
+}
+
+
+class Passage {
+  constructor (passage) {
+    this.name      = passage.name;
+    this.author    = passage.author;
+    this.ID        = passage.ID;
+    this.upvotes   = passage.upvotes;
+    this.downvotes = passage.downvotes;
+    this.comments  = passage.comments;
+    this.text      = passage.text;
+    this.children  = passage.children;
+  }
+
+  get name      () { return this.name;     }
+  get author    () { return this.author;   }
+  get ID        () { return this.ID;       }
+  get upvotes   () { return this.upvotes   }
+  get downvotes () { return this.downvotes }
+  get comments  () { return this.comments  }
+  get text      () { return this.text;     }
+  get children  () { return this.children; }
+
+  get score     () { return this.score (); }
+
+  score () {
+    return (this.upvotes - this.downvotes);
+  }
+
+}
+
+
+var ravel = new RavelTree ({
+  title: 'Cassius in Rome',
+  author: 'Rebecca Bates',
+  participants: ['Adam Jesper', 'Brad Hooper', 'Anne Jensen',],
+  upvotes: 330,
+  downvotes: 12,
+  comments: [],
+  concept: 'In a world lit only by fire, the associates of one Julius Caesar are the torch-bearers.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sodales quis felis.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sodales quis felis eget dapibus. In in eros erat. Suspendisse dapibus sapien non tortor gravida finibus. Nulla eleifend, sem a molestie congue, lectus risus ultricies nisl, nec sagittis enim urna eget erat. Nullam viverra aliquet sem.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sodales quis felis eget dapibus. In in eros erat. Suspendisse dapibus sapien non tortor gravida finibus. Nulla eleifend, sem a molestie congue, lectus risus ultricies nisl, nec sagittis enim urna eget erat. Nullam viverra aliquet sem.',
+  tags: ['Rome', 'Ancient Times', 'Intrigue'],
+  roots: [
+    passage1A,
+  ],
+});
+
+
+var passage1A = new Passage ({
+  name: 'Pacing the Basement',
+  author: 'Rebecca Bates',
+  ID: '1-A',
+  upvotes: 151,
+  downvotes: 30,
+  comments: [],
+  text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sodales quis felis eget dapibus. In in eros erat. Suspendisse dapibus sapien non tortor gravida finibus. Nulla eleifend, sem a molestie congue, lectus risus ultricies nisl, nec sagittis enim urna eget erat. Nullam viverra aliquet sem.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sodales quis felis eget dapibus. In in eros erat. Suspendisse dapibus sapien non tortor gravida finibus. Nulla eleifend, sem a molestie congue, lectus risus ultricies nisl, nec sagittis enim urna eget erat. Nullam viverra aliquet sem.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sodales quis felis eget dapibus. In in eros erat. Suspendisse dapibus sapien non tortor gravida finibus. Nulla eleifend, sem a molestie congue, lectus risus ultricies nisl, nec sagittis enim urna eget erat. Nullam viverra aliquet sem.',
+  children: [passage2A, passage2B],
+})
+
+var passage2A = new Passage ({
+  name: 'Musing',
+  author: 'Rebecca Bates',
+  ID: '2-A',
+  upvotes: 20,
+  downvotes: 2,
+  comments: [],
+  text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sodales quis felis eget dapibus. In in eros erat. Suspendisse dapibus sapien non tortor gravida finibus. Nulla eleifend, sem a molestie congue, lectus risus ultricies nisl, nec sagittis enim urna eget erat. Nullam viverra aliquet sem.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sodales quis felis eget dapibus. In in eros erat. Suspendisse dapibus sapien non tortor gravida finibus. Nulla eleifend, sem a molestie congue, lectus risus ultricies nisl, nec sagittis enim urna eget erat. Nullam viverra aliquet sem.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sodales quis felis eget dapibus. In in eros erat. Suspendisse dapibus sapien non tortor gravida finibus. Nulla eleifend, sem a molestie congue, lectus risus ultricies nisl, nec sagittis enim urna eget erat. Nullam viverra aliquet sem.',
+  children: [],
+})
+
+var passage2B = new Passage ({
+  name: 'Intrusion',
+  author: 'Anne Jensen',
+  ID: '2-B',
+  upvotes: 7,
+  downvotes: 1,
+  comments: [],
+  text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sodales quis felis eget dapibus. In in eros erat. Suspendisse dapibus sapien non tortor gravida finibus. Nulla eleifend, sem a molestie congue, lectus risus ultricies nisl, nec sagittis enim urna eget erat. Nullam viverra aliquet sem.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sodales quis felis eget dapibus. In in eros erat. Suspendisse dapibus sapien non tortor gravida finibus. Nulla eleifend, sem a molestie congue, lectus risus ultricies nisl, nec sagittis enim urna eget erat. Nullam viverra aliquet sem.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sodales quis felis eget dapibus. In in eros erat. Suspendisse dapibus sapien non tortor gravida finibus. Nulla eleifend, sem a molestie congue, lectus risus ultricies nisl, nec sagittis enim urna eget erat. Nullam viverra aliquet sem.',
+  children: [],
+})
+
 
 export default class Test extends Component {
   constructor (props) {
@@ -185,6 +299,18 @@ export default class Test extends Component {
               {ravel: 'Lonely Conclusions', author: 'Anne Jensen', users: 2, score: 128, concept: 'A visitor to a yellow-cake uranium refinery finds that the international regulatory framework for nuclear development is sorely lacking in specificity.'},
               {ravel: 'The End of the Road', author: 'Anne Jensen', users: 9, score: 90, concept: 'When the Joneses receive an unexpected visitor, they decide to take matters into their own hands.'},
             ]}
+          />
+        );
+      }
+      case ('Ravel'): {
+        return (
+          <Ravel
+            title={'Cassius in Rome'}
+            author={'Rebecca Bates'}
+            participants={['Adam Jesper', 'Brad Hooper', 'Anne Jensen',]}
+            score={318}
+            mode={'owned'}
+            tree={undefined}
           />
         );
       }
