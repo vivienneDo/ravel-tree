@@ -5,7 +5,7 @@ const initialState = {
 
 export default (state = initialState, action) => {
     switch (action.type) {
-        case 'INITIAL_USER_RAVEL_FETCH':
+        case 'INITIAL_CREATED_CURR_USER_RAVEL_FETCH':
             return {
                 ...state,
                 all_user_created_ravels: action.payload

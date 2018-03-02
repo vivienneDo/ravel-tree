@@ -151,7 +151,6 @@ class MainPage extends Component {
           console.log(error);
         })
 
-        //this.props.selectImageFromPhotoLibAndUpdate();
     }
 
     onLogOutButtonPress() {
@@ -177,7 +176,7 @@ class MainPage extends Component {
         //  this.props.updateCurrentUserProfile({ first_name, last_name, bio});
          console.log("Updating user profile");
          console.log(getCurrentLoggedInUserUid());
-         this.props.getUserProfile(getCurrentLoggedInUserUid());
+         //this.props.getUserProfile(getCurrentLoggedInUserUid());
         //this.props.loadInitialUserCreatedRavel(getCurrentLoggedInUser());
     };
 

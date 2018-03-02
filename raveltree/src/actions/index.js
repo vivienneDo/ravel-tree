@@ -1,13 +1,13 @@
 import firebase from 'firebase';
 import _ from 'lodash';
-import ImagePicker from 'react-native-image-picker';
-import SelectImage from '../utils/CameraPicker.js';
-import RNFetchBlob from 'react-native-fetch-blob';
+// import ImagePicker from 'react-native-image-picker';
+// import SelectImage from '../utils/CameraPicker.js';
+// import RNFetchBlob from 'react-native-fetch-blob';
 
-const Blob = RNFetchBlob.polyfill.Blob;
-const fs = RNFetchBlob.fs;
-window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
-window.Blob = Blob;
+// const Blob = RNFetchBlob.polyfill.Blob;
+// const fs = RNFetchBlob.fs;
+// window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+// window.Blob = Blob;
 firebase.initializeApp({
     apiKey: "AIzaSyCmt6Cq6wj2NJZ-WOCE27brxfW-kg6TUKQ",
     authDomain: "crmlinkedln2-81204.firebaseapp.com",
@@ -166,7 +166,7 @@ export const loadAllUserKey = () => {
 /**
  * @param: nothing
  * @returns: 
- * state.ravel
+ * state.master_ravel
  *      'ALL_RAVEL_KEY_FETCH': a list of all ravel uid and it's status (true/false)
  */
 export const loadAllRavelKey = () => {
@@ -183,7 +183,7 @@ export const loadAllRavelKey = () => {
  * @param: photo url
  * @returns: 
  * state.user: 
- *      'UPDATE_USER_PROFILE_PICTURE' - new photo url 
+ *      'UPDATE_CURRENT_USER_PROFILE_PICTURE' - new photo url 
  * 
  * actions: updates the currently logged in user's user profile picture
  * and updates in their user_created ravel card reference 
@@ -199,7 +199,7 @@ export const updateProfilePicture = (url) => {
             photoURL : url,
           })
           .then(() => {
-            dispatch({ type: 'UPDATE_USER_PROFILE_PICTURE',
+            dispatch({ type: 'UPDATE_CURRENT_USER_PROFILE_PICTURE',
             payload: url});
           })
           .then(() => {
@@ -228,23 +228,6 @@ export const updateProfilePicture = (url) => {
     }
 }
 
-/**
- * @param {@} 
- */
-
-export const selectImageFromPhotoLibAndUpdate = () => {
-
-    return (dispatch) => {
-        SelectImage().then((url) => {
-            updateProfilePicture(url);
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-    }
-}
-
-
 
 /**
  * @param: user uid 
@@ -265,47 +248,47 @@ export const getUserProfile = (uid) => {
     };
 };
 
-// /**
-//  * @param: nothing 
-//  * @returns: 
-//  * state.user: 
-//  *      'GET_CURRENT_USER_PROFILE' - an entire userProfile object
-//  * actions: gets the user profile of the passed in uid 
-//  * 
-//  */
-// export const getCurrentUserProfile = (uid) => {
+/**
+ * @param: nothing 
+ * @returns: 
+ * state.user: 
+ *      'GET_CURRENT_USER_PROFILE' - an entire userProfile object
+ * actions: gets the user profile of the current user 
+ * 
+ */
+export const getCurrentUserProfile = () => {
 
-//     var currentUid = firebase.auth().currentUser.uid;
+    var currentUid = firebase.auth().currentUser.uid;
 
-//     return (dispatch) => {
-//         firebase.database().ref(`/users/${currentUid}/userProfile`)
-//         .once('value', snapshot => {
-//             dispatch({ type: 'GET_CURRENT_USER_PROFILE',
-//                        payload: snapshot.val() });
-//         });
-//     };
-// };
+    return (dispatch) => {
+        firebase.database().ref(`/users/${currentUid}/userProfile`)
+        .once('value', snapshot => {
+            dispatch({ type: 'GET_CURRENT_USER_PROFILE',
+                       payload: snapshot.val() });
+        });
+    };
+};
 
 
 
 /**
- * @param: user's first name, last name and bio 
+ * @param: user's { first_name, last_name, bio }
  * @returns: 
  * state.user
- *      'UPDATE_USER_PROFILE' : first_name, last_name, bio
- * actions: attempts to update the current logged in user's first name, last and bio 
+ *      'UPDATE_CURRENT_USER_PROFILE' : first_name, last_name, bio
+ * actions: attempts to update the current logged in user's first name, last and bio and gives back the updated userProfile
+ *          object
  */
 export const updateCurrentUserProfile = ({ first_name, last_name, bio }) => {
 
     const { currentUser } = firebase.auth();
 
     return (dispatch) => {
-
-        firebase.database().ref(`/users/${currentUser.uid}/userProfile`)
-            .set({ first_name, last_name, bio})
-            .then(() => {
-                dispatch({ type: 'UPDATE_USER_PROFILE',
-                           payload: {first_name, last_name, bio}});
+        console.log('currentuser... = ' + currentUser)
+        firebase.database().ref(`/users/${currentUser.uid}/userProfile`).update({ first_name, last_name, bio})
+        firebase.database().ref(`/users/${currentUser.uid}/userProfile`).once('value', snapshot => {
+            dispatch({ type: 'UPDATE_CURRENT_USER_PROFILE',
+                payload: snapshot.val() });
             })
             .catch((error) => {
                 console.log(error);
@@ -385,8 +368,8 @@ export const updateUserRavelPoint = (ravel_points) => {
 
 
 /**
- * @param: ravel_title, ravel_category, passage_length, visibility (true/false), enable_voting (true/false), enable_comment (true/false),
-           ravel_concept, m_ravel_participants [ARRAY], ravel_tags [ARRAY]
+ * @param: { ravel_title, ravel_category, passage_length, visibility (true/false), enable_voting (true/false), enable_comment (true/false),
+           ravel_concept, m_ravel_participants [ARRAY], ravel_tags [ARRAY] }
  * @returns: 
  * state.ravel
  *      <1>'CREATE_RAVEL' - a new ravel uid
@@ -510,33 +493,6 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
         
     };
 
-};
-
-/**
- * @param: User object
- * @returns: 
- * state.current_user_ravel:
- *      'INITIAL_USER_RAVEL_FETCH' : a list of ravels that a particular user created    
- * actions: gets a particular user's ravels 
- * 
- */
-export const loadInitialUserCreatedRavel = (user) => {
-
-    return (dispatch) => {
-            firebase.database().ref(`/users/${user.uid}/ravel_created`)
-            firebase.database().ref(`/users`).orderByChild(`/${user.uid}/ravel_created`).once('value', (snapshot) => {
-
-                snapshot.forEach((childSnapShot) => {
-                    var uid_child = childSnapShot.key; 
-                })
-            })       
-            .then(() => {              
-                firebase.database().ref(`/users/${user.uid}/ravel_created`)                 
-                .once('value', function(snapshotRavels) {
-                    dispatch({ type: 'INITIAL_USER_RAVEL_FETCH', payload:  snapshotRavels.val()});
-                });
-            })          
-    };
 };
 
 
@@ -679,7 +635,7 @@ export const getAllRavelParticipantUserProfile = (ravel_uid) => {
 /**
  * @param: nothing
  * @returns: 
- * state.ravel 
+ * state.master_ravel 
  *      'ALL_RAVEL_FETCH': a list of all ravel objects 
  * actions: attempts to get a list of all ravel objects 
  */
@@ -697,7 +653,7 @@ export const loadAllRavel = () => {
 /**
  * @param: nothing
  * @returns: 
- * state.ravel 
+ * state.master_ravel 
  *      'ALL_PUBLIC_RAVEL_FETCH': a list of all public ravel objects 
  * actions: attempts to get a list of all public ravel objects 
  */
@@ -711,6 +667,14 @@ export const loadAllPublicRavel = () => {
     };
 };
 
+/**
+ * @param: nothing
+ * @returns: 
+ * state.current_user_ravel:
+ *      'ALL_NON_CREATED_CURR_USER_RAVEL' : a list of ravels that the current user is particpating in (but did not create) 
+ * actions: gets the current user's participating ravels 
+ * 
+ */
 export const loadNonCreatedCurrentUserRavel = () => {
     var currentUid = firebase.auth().currentUser.uid;
 
@@ -724,6 +688,38 @@ export const loadNonCreatedCurrentUserRavel = () => {
 
    
 }
+
+/**
+ * @param: nothing
+ * @returns: 
+ * state.current_user_ravel:
+ *      'INITIAL_USER_RAVEL_FETCH' : a list of ravels that the current user created   
+ * actions: gets the current user's created ravels 
+ * 
+ */
+export const loadInitialUserCreatedRavel = () => {
+
+    var currentUserUid = firebase.auth().currentUser.uid;
+
+    return (dispatch) => {
+            firebase.database().ref(`/users/${currentUserUid}/ravel_created`)
+            firebase.database().ref(`/users`).orderByChild(`/${currentUserUid}/ravel_created`).once('value', (snapshot) => {
+
+                snapshot.forEach((childSnapShot) => {
+                    var uid_child = childSnapShot.key; 
+                })
+            })       
+            .then(() => {              
+                firebase.database().ref(`/users/${currentUserUid}/ravel_created`)                 
+                .once('value', function(snapshotRavels) {
+                    dispatch({ type: 'INITIAL_CREATED_CURR_USER_RAVEL_FETCH', payload:  snapshotRavels.val()});
+                });
+            })          
+    };
+};
+
+
+
 
 /**
  * @param: ravel uid, a new set of ravel_tags[ARRAY]

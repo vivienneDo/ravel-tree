@@ -1,18 +1,22 @@
 import { combineReducers } from 'redux'
 import RavelReducer from './RavelReducer'
-import UserReducer from './UserReducer'
-import AllUserRavelReducer from './AllUserRavelReducer'
+import CurrentUserReducer from './CurrentUserReducer'
+import CurrentUserRavelFetchReducer from './CurrentUserRavelFetchReducer'
 import SearchReducer from './SearchReducer'
-import GetAllUserReducer from './GetAllUserReducer'
+import MasterUserFetchReducer from './MasterUserFetchReducer'
 import TermsOfServiceReducer from './TermsOfServiceReducer'
 import NotificationReducer from './NotificationReducer'
+import UserReducer from './UserReducer'
+import MasterRavelReducer from './MasterRavelReducer'
 
 const rootReducer = combineReducers({
     ravel: RavelReducer,
+    master_ravel: MasterRavelReducer,
     user: UserReducer,
-    current_user_ravel: AllUserRavelReducer,
+    current_user: CurrentUserReducer,
+    current_user_ravel: CurrentUserRavelFetchReducer,
     search: SearchReducer,
-    all_user_keys: GetAllUserReducer,
+    master_user: MasterUserFetchReducer,
     term_of_service: TermsOfServiceReducer,
     notification: NotificationReducer
 })

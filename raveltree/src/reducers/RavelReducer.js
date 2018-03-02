@@ -1,9 +1,7 @@
 const initialState = {
     ravel_uid: '',
     ravel_meta_data: [],
-    all_child_uid_val: [],
-    all_ravel: [],
-    all_ravel_key: [],
+    all_participant_of_a_ravel: [],
     ravel_tag_update: false,
     ravel_participants_update: false
 };
@@ -17,7 +15,6 @@ export default (state = initialState, action) => {
                 ravel_uid: action.payload.ravel_uid,
             };
         case 'GET_RAVEL_META_DATA': 
-        console.log('Inside get meta data')
             return {
                 ...state,
                 ravel_meta_data: action.payload
@@ -25,29 +22,14 @@ export default (state = initialState, action) => {
         case 'GET_ALL_RAVEL_PARTICIPANT_USER_PROFILE':
             return {
                 ...state,
-                all_child_uid_val: action.payload
-            };
-        case 'ALL_RAVEL_FETCH':
-            return {
-                ...state,
-                all_ravel: action.payload
+                all_participant_of_a_ravel: action.payload
             };
         case 'UPDATE_RAVEL_TAG':
             return {
                 ...state,
                 ravel_tag_update: action.payload
             };
-        case 'ALL_RAVEL_KEY_FETCH': 
-            return {
-                ...state,
-                all_ravel_keys: action.payload
-            };
-
-        case 'ALL_PUBLIC_RAVEL_FETCH':
-            return {
-                ...state,
-                all_public_ravel_fetch: action.payload
-            }
+        
         case 'UPDATE_RAVEL_PARTICIPANTS':
             return {
                 ...state,

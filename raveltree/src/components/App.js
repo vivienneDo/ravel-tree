@@ -18,6 +18,7 @@ import rootReducer from '../reducers/index';
 //import reducers from '../reducers/UserReducer';
 import Thunk from 'redux-thunk';
 import { connect } from 'react-redux';
+import ComponentTemplate from './ComponentTemplate';
 
 const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), applyMiddleware(Thunk));
 export default class App extends Component { 
@@ -40,7 +41,7 @@ export default class App extends Component {
     switch (this.state.loggedIn) {
       case true: 
         console.log('Showing main page');
-        return <MainPage />; 
+        return <ComponentTemplate/>; 
       case false: 
         return <Login />; 
       default:
