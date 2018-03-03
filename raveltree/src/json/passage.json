@@ -1,0 +1,88 @@
+{
+    "master_ravel_key" : {
+      "-L6d3jEkXx_HIYUf4Bwm" : {
+        "ravel_uid" : true
+      }
+    },
+    "master_user_key" : {
+      "s4HePJqwqFh7UQHTCU653YXU2Tn2" : {
+        "user_uid" : true
+      }
+    },
+    "ravels" : {
+      "-L6d3jEkXx_HIYUf4Bwm" : {
+        "enable_comment" : true,
+        "enable_voting" : true,
+        "m_ravel_participants" : [ "s4HePJqwqFh7UQHTCU653YXU2Tn2", "EG4lyDlPz4QyM1Ezi89ICY5V4Ok1" ],
+        "passage_length" : "paragraph",
+        "public_cat_fiction" : false,
+        "public_cat_nonfiction" : false,
+        "public_cat_other" : true,
+        "public_ravel_title" : "public_title",
+        "public_tag_set" : {
+          "public_testing_tag1" : true,
+          "public_testing_tag2" : true
+        },
+        "ravel_category" : "game",
+        "ravel_concept" : "fiction",
+        "ravel_create_date" : "6:36:28 PM",
+        "ravel_number_participants" : 3,
+        "ravel_participants" : {
+          "EG4lyDlPz4QyM1Ezi89ICY5V4Ok1" : false,
+          "s4HePJqwqFh7UQHTCU653YXU2Tn2" : true
+        },
+        "ravel_points" : 0,
+        "ravel_status" : true,
+        "ravel_title" : "title",
+        "ravel_uid" : "-L6d3jEkXx_HIYUf4Bwm",
+        "user_created" : "s4HePJqwqFh7UQHTCU653YXU2Tn2",
+        "user_created_photoURL" : "https://firebasestorage.googleapis.com/v0/b/crmlinkedln2-81204.appspot.com/o/s4HePJqwqFh7UQHTCU653YXU2Tn2%2FprofilePic?alt=media&token=d3efb3f2-4561-49af-a5a1-9ad2b0dd7cca",
+        "visibility" : true,
+        "has_passage": true
+      }
+    },
+    "passage": { 
+        "-L6d3jEkXx_HIYUf4Bwm" : { 
+            "passage_uid": {
+                "ravel_uid" : "-L6d3jEkXx_HIYUf4Bwm",
+                "passage_title": "title of passage",
+                "passage_body": "body of passage",
+                "user_created_photoURL": "",
+                "passage_upvote": 0,
+                "parent_passage": true
+            }
+        } 
+
+    },
+    "users" : {
+      "s4HePJqwqFh7UQHTCU653YXU2Tn2" : {
+
+        "ravel_created" : {
+          "-L6d3jEkXx_HIYUf4Bwm" : {
+            "ravel_number_participants" : 3,
+            "user_created_photoURL" : "https://firebasestorage.googleapis.com/v0/b/crmlinkedln2-81204.appspot.com/o/s4HePJqwqFh7UQHTCU653YXU2Tn2%2FprofilePic?alt=media&token=d3efb3f2-4561-49af-a5a1-9ad2b0dd7cca"
+          },
+          "-L6d3jLMpkmxnG8Mhbh1" : {
+            "ravel_number_participants" : 2,
+            "ravel_points" : 0,
+            "ravel_title" : "title",
+            "ravel_uid" : "-L6d3jEkXx_HIYUf4Bwm",
+            "user_created_photoURL" : "https://firebasestorage.googleapis.com/v0/b/crmlinkedln2-81204.appspot.com/o/s4HePJqwqFh7UQHTCU653YXU2Tn2%2FprofilePic?alt=media&token=d3efb3f2-4561-49af-a5a1-9ad2b0dd7cca"
+          }
+        },
+        "userProfile" : {
+          "bio" : "Bio Updated",
+          "first_name" : "Update Vivienne",
+          "last_name" : "The Tester",
+          "photoURL" : "https://firebasestorage.googleapis.com/v0/b/crmlinkedln2-81204.appspot.com/o/s4HePJqwqFh7UQHTCU653YXU2Tn2%2FprofilePic?alt=media&token=d3efb3f2-4561-49af-a5a1-9ad2b0dd7cca",
+          "ravel_points" : 0,
+          "stat_passage_written" : 0,
+          "stat_ravel_contributed" : 1,
+          "stat_ravel_led" : 1,
+          "upvotes" : 0,
+          "user_uid" : "s4HePJqwqFh7UQHTCU653YXU2Tn2"
+        }
+      }
+    }
+  }
+  
