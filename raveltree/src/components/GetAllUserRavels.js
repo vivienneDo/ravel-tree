@@ -19,7 +19,7 @@ class GetAllUserRavels extends Component {
 
     componentWillMount() {
         // var first_name = 'Vivienne';
-        // var ravel_uid = '-L5akFEpeXj3Ls-1uQcH';
+          var ravel_uid = '-L6d3jEkXx_HIYUf4Bwm';
 
         // var ravel_title = "title"
         // var ravel_category = "game"
@@ -28,7 +28,7 @@ class GetAllUserRavels extends Component {
         // var enable_voting = true
         // var enable_comment = true
         // var ravel_concept = "fiction"
-        // var currentuid = actions.getCurrentLoggedInUserUid();
+         var currentuid = actions.getCurrentLoggedInUserUid();
         // var m_ravel_participants = [currentuid, 'EG4lyDlPz4QyM1Ezi89ICY5V4Ok1']
         // var ravel_tags = ["testing_tag2", "testing_tag1"]
 
@@ -46,22 +46,24 @@ class GetAllUserRavels extends Component {
         //this.props.getRavelMetaData(ravel_uid);
         //this.props.getAllRavelUser(m_ravel_uid);
         //this.props.searchRavelByTag(['testing_tag2', 'testing_tag1']);
-        //this.props.getAllRavelParticipantUserProfile('-L6-bdXiHLY-1ALPJwuQ');
+        //this.props.getAllRavelParticipantUserProfile(ravel_uid);
         //this.props.searchRavelByTitle('title');
         //this.props.loadAllRavel();
         //this.props.updateProfilePicture('testing_updates_again');
         //this.props.updateRavelTag('-L6EF_prExXCVIf2NQ4w', ["push_tag4666", "push_tag67777"])
         //this.props.loadAllUserKey();
         //this.props.loadAllPublicRavel();
-        //this.props.acceptRavelInvite('-L6FRcKRs5GsfjHoP92W');
+        // this.props.acceptRavelInvite(ravel_uid);
+        this.props.getRavelMetaData(ravel_uid);
+        this.props.getAllRavelParticipantUserProfile(ravel_uid);
         //this.props.loadNonCreatedCurrentUserRavel();
         //this.props.updateRavelParticipant('-L6FRcKRs5GsfjHoP92W', ['participant', 'part0']);
-        var first_name = 'Vivienne'
-        var last_name = 'The Great'
-        var bio = 'hello'
+        // var first_name = 'Vivienne'
+        // var last_name = 'The Great'
+        // var bio = 'hello'
 
-        this.props.getCurrentUserProfile();
-        this.props.updateCurrentUserProfile({first_name, last_name, bio});
+        // this.props.getCurrentUserProfile();
+        // this.props.updateCurrentUserProfile({first_name, last_name, bio});
 
 
     

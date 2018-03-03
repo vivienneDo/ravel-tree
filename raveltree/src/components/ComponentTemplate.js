@@ -25,7 +25,7 @@ class ComponentTemplate extends Component {
         this.props.getCurrentUserProfile();
         
         // Test an update 
-        var first_name = 'Vivienne'
+        var first_name = 'Update Vivienne'
         var last_name = 'The Tester'
         var bio = 'Bio Updated'
 
@@ -36,9 +36,9 @@ class ComponentTemplate extends Component {
 
   render() {
     return (  
-      
+      // Test to see if the first_name prop updated 
       <View style={styles.container}>
-             
+           <Text>  ${this.props.currentUserProfile.first_name}</Text>  
       </View> 
     );
   }
@@ -46,6 +46,8 @@ class ComponentTemplate extends Component {
 
 // // TODO: set up mapStateToProps 
 const mapStateToProps = state => {
+
+    console.log('State' + state.current_user.currentUserProfile.first_name)
 
     const { currentUserProfile } = state.current_user;
 

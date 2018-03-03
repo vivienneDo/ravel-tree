@@ -1,13 +1,6 @@
 import firebase from 'firebase';
 import _ from 'lodash';
-// import ImagePicker from 'react-native-image-picker';
-// import SelectImage from '../utils/CameraPicker.js';
-// import RNFetchBlob from 'react-native-fetch-blob';
 
-// const Blob = RNFetchBlob.polyfill.Blob;
-// const fs = RNFetchBlob.fs;
-// window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
-// window.Blob = Blob;
 firebase.initializeApp({
     apiKey: "AIzaSyCmt6Cq6wj2NJZ-WOCE27brxfW-kg6TUKQ",
     authDomain: "crmlinkedln2-81204.firebaseapp.com",
@@ -43,7 +36,7 @@ export const getCurrentLoggedInUser = () => {
  * @param: nothing 
  * @returns: nothing
  * actions: Wrapper method that is used to set null values upon a
- * new user creation 
+ * new user creation. Do not directly call. 
  * 
  */
 export const updateUserProfile = (userProfile, {first_name, last_name, bio, 
@@ -284,7 +277,6 @@ export const updateCurrentUserProfile = ({ first_name, last_name, bio }) => {
     const { currentUser } = firebase.auth();
 
     return (dispatch) => {
-        console.log('currentuser... = ' + currentUser)
         firebase.database().ref(`/users/${currentUser.uid}/userProfile`).update({ first_name, last_name, bio})
         firebase.database().ref(`/users/${currentUser.uid}/userProfile`).once('value', snapshot => {
             dispatch({ type: 'UPDATE_CURRENT_USER_PROFILE',
@@ -446,7 +438,6 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
 
     }
     
-
     return (dispatch) => {
         var ravel_uid;
         firebase.database().ref(`/ravels`)
@@ -607,29 +598,33 @@ export const getRavelMetaData = (ravel_uid) => {
 
 
 /**
- * @param: ravel uid
+ * @param: ravel_uid
  * @returns: 
  * state.ravel
- *      'GET_ALL_RAVEL_PARTICIPANT_USER_PROFILE': a list of userProfile objects of all participants for a particular ravel
- * actions: attempts to get a list of userProfile objects of all participants for a particular ravel
+ *      'GET_ALL_RAVEL_PARTICIPANT_USER_PROFILE': an array of userProfile objects of all participants for a particular ravel
+ * actions: attempts to get an array of userProfile objects of all participants for a particular ravel
  * 
  */
 export const getAllRavelParticipantUserProfile = (ravel_uid) => {
     
-    var all_child_uid_val = [];
+    var all_participant_of_a_ravel = [];
     return (dispatch) => {    
-
-        firebase.database().ref(`/ravels/${ravel_uid}/m_ravel_participants`).once('value', function (snapshot) {
-            snapshot.forEach(function (childSnapShot) {               
-                var child_uid = childSnapShot.val(); 
-                firebase.database().ref(`/users/${child_uid}/userProfile`).once('value', function (snapshotChild){
-                    all_child_uid_val.push(snapshotChild.val());
-                    dispatch( {type: 'GET_ALL_RAVEL_PARTICIPANT_USER_PROFILE', payload: all_child_uid_val})                   
-                })
-            })      
-        })
-
+        firebase.database().ref(`ravels/${ravel_uid}/ravel_participants`).orderByKey().once('value', function(snapshot) {
+            console.log('snapshot value:' + snapshot.val());
+            snapshot.forEach((childSnapShot) => {
+                            if(childSnapShot.val() === true){
+                                
+                                firebase.database().ref(`/users/${childSnapShot.key}/userProfile`).once('value', function (snapshotChild){
+                                    all_participant_of_a_ravel.push(snapshotChild.val());
+                                    dispatch( {type: 'GET_ALL_RAVEL_PARTICIPANT_USER_PROFILE', payload: all_participant_of_a_ravel})                   
+                                })
+                            }})
+            
+        });  
     }
+
+     
+    
 }
 
 /**
