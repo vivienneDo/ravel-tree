@@ -19,7 +19,7 @@ class GetAllUserRavels extends Component {
 
     componentWillMount() {
         // var first_name = 'Vivienne';
-          var ravel_uid = '-L6d3jEkXx_HIYUf4Bwm';
+       var ravel_uid = '-L6h7xMoEDjmNOB8FWWb';
 
         // var ravel_title = "title"
         // var ravel_category = "game"
@@ -28,7 +28,7 @@ class GetAllUserRavels extends Component {
         // var enable_voting = true
         // var enable_comment = true
         // var ravel_concept = "fiction"
-        //var currentuid = actions.getCurrentLoggedInUserUid();
+        // var currentuid = actions.getCurrentLoggedInUserUid();
         // var m_ravel_participants = [currentuid, 'EG4lyDlPz4QyM1Ezi89ICY5V4Ok1']
         // var ravel_tags = ["testing_tag2", "testing_tag1"]
 
@@ -53,13 +53,13 @@ class GetAllUserRavels extends Component {
         //this.props.updateRavelTag('-L6EF_prExXCVIf2NQ4w', ["push_tag4666", "push_tag67777"])
         //this.props.loadAllUserKey();
         //this.props.loadAllPublicRavel();
-        //this.props.acceptRavelInvite('11');
-        // this.props.getRavelMetaData(ravel_uid);
+        // this.props.acceptRavelInvite(ravel_uid);
+        //this.props.getRavelMetaData(ravel_uid);
         // this.props.getAllRavelParticipantUserProfile(ravel_uid);
         // var passage_title = 'passage title'
         // var passage_body = 'passage body'
         // this.props.createPassage({ravel_uid, passage_title, passage_body});
-        this.props.upVotePassage('-L6esHnah1z8XwnTXLfL');
+        //this.props.upVotePassage('-L6esHnah1z8XwnTXLfL');
         //this.props.downVotePassage('-L6esHnah1z8XwnTXLfL');
 
         //this.props.loadNonCreatedCurrentUserRavel();
