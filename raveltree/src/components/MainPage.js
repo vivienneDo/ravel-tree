@@ -211,7 +211,7 @@ const mapStateToProps = state => {
 
     console.log(state);
     const {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed, 
-        stat_passage_written, upvotes, ravel_points} = state.user;
+        stat_passage_written, upvotes, ravel_points} = state.current_user;
     return {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed, 
         stat_passage_written, upvotes, ravel_points };
 };

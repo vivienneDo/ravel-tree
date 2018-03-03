@@ -960,3 +960,132 @@ export const addAdminUser = (uid) => {
     }
 }
 
+
+/**
+ * 
+ * @param {*} {ravel_uid, passage_title, passage_body}
+ */
+export const createPassage = ({ravel_uid, passage_title, passage_body}) => {
+
+    const { currentUser } = firebase.auth();
+    var user_created = currentUser.uid;
+    var ravel_title = '';
+    var passage_create_date = new Date().toLocaleTimeString();
+    var user_created_photoURL = '';   
+    var passage_upvote = 0;
+    var passage_downvote = 0;
+    var stat_passage_written;                               
+
+    return (dispatch) => {
+
+    var passage_uid;
+
+    firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
+        m_ravel_title = snapshotPhoto.val();
+    })
+    .then(() => {
+        firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
+            m_ravel_title = snapshotPhoto.val();
+        })
+    })
+    .then(() => {
+        
+    })
+
+        firebase.database().ref(`/passages`)
+            .push({ passage_downvote, passage_upvote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
+            .then(returnKey => {
+                passage_uid = returnKey.getKey();
+                // Do something with the passage_uid    
+            })
+            .then(() => {  
+                dispatch({ type: 'CREATE_PASSAGE',
+                           payload: {passage_uid} });
+            })
+            .then(() => {
+                firebase.database().ref(`/users/${user_created}/userProfile/photoURL`).once('value', snapshotPhoto => {
+                        user_created_photoURL = snapshotPhoto.val();        
+                })
+                .then(() => {
+                    firebase.database().ref(`/passages/${passage_uid}`).update({user_created_photoURL : user_created_photoURL})
+                })         
+                firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
+                    ravel_title = snapshotPhoto.val();
+                })
+                .then(() => {
+                    firebase.database().ref(`/passages/${passage_uid}`).update({ravel_title : ravel_title})
+                })
+
+            })
+            .then(() => {
+                firebase.database().ref(`/passages/${passage_uid}`).once('value', (snapshot) => {
+                    dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
+                })
+            })
+            .then(() => {
+                firebase.database().ref(`users/${user_created}/userProfile/stat_passage_written`).once('value', (snapshot) => {
+                    stat_passage_written = snapshot.val() + 1
+                    
+                })
+                .then(() => {
+                    firebase.database().ref(`users/${user_created}/userProfile`).update({stat_passage_written : stat_passage_written});                    
+                })
+            })
+
+    }
+}
+
+export const upVotePassage = (passage_uid) => {
+
+    var upvotes;
+
+    return () => {
+        firebase.database().ref(`/passages/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+            upvotes = snapshot.val() + 1
+        })
+        .then(() => {
+            firebase.database().ref(`/passages/${passage_uid}`).update({passage_upvote : upvotes});                    
+        })
+    }
+
+}
+
+export const downVotePassage = (passage_uid) => {
+
+    var downvotes;
+
+    return () => {
+        firebase.database().ref(`/passages/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+            downvotes = snapshot.val() - 1
+        })
+        .then(() => {
+            firebase.database().ref(`/passages/${passage_uid}`).update({passage_downvote : downvotes});                    
+        })
+    }
+
+}
+
+export const calculateTotalVotePassage = (passage_uid) => {
+
+    var downvotes;
+    var upvotes; 
+    var totalVotes;
+
+    firebase.database().ref(`/passages/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+        downvotes = snapshot.val()
+    })
+    .then(() => {
+
+        firebase.database().ref(`/passages/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+            upvotes = snapshot.val() 
+        })
+
+    })
+    .then(() => {
+        totalVotes = upvotes + downvotes
+        console.log('total votes' + totalVotes)
+    })
+
+
+}
+
