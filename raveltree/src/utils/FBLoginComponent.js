@@ -49,8 +49,7 @@ class FBLoginComponent extends Component {
                                 // Check first time logging in, set the user profile infomation to null 
                                 // along with FB first name, last name 
                                 if ((snapshot.val() === null)) {
-                                    console.log('Success fetching data' + result.toString());
-                                    console.log(results['first_name']);  
+                                    console.log('Success fetching data' + result.toString());  
                                     firebase.database().ref(`/users/${firebase.auth().currentUser.uid}/userProfile`)
                                     updateUserProfile(user, {first_name:results['first_name'],last_name:results['last_name'],bio:'',photoURL:'', stat_ravel_led:0, stat_passage_written:0, stat_ravel_contributed:0, 
                                         upvotes:0, ravel_points:0 });

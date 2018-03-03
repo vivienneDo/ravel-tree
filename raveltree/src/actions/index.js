@@ -48,7 +48,7 @@ export const updateUserProfile = (userProfile, {first_name, last_name, bio,
     .set({ user_uid, first_name, last_name, bio, photoURL,stat_ravel_led, stat_passage_written, 
     stat_ravel_contributed, upvotes, ravel_points })
     .catch((error) => {
-    console.log(error);
+        alert('Error Updating Profile...')
     });
 }
 
@@ -60,10 +60,12 @@ export const updateUserProfile = (userProfile, {first_name, last_name, bio,
  * 
  */
 export const userLogOff = () => { 
+
     firebase.auth().signOut().then(function() {
-      }, function(error) {
-            console.log('Logging off Failed');
-      });
+    })
+    .catch((error) => {
+        alert('Error Logging Off...');
+    })
 };
 
 
@@ -77,9 +79,9 @@ export const userResetPassword = (email) => {
     var auth = firebase.auth();
 
     auth.sendPasswordResetEmail(email).then(function() {
-
-    }).catch(function(error) {
-        console.log("Cannot send email");
+    })
+    .catch(function(error) {
+        alert('Cannot reset password...');
     });
 }
 
@@ -151,7 +153,10 @@ export const loadAllUserKey = () => {
             firebase.database().ref(`master_user_key`)
             .once('value', function(snapshotRavels) {
                 dispatch({ type: 'ALL_USER_KEY_FETCH', payload: snapshotRavels.val()});
-            });
+            })
+            .catch((error) => {
+                alert('Error loading all user keys...');
+            })
     };
 };
 
@@ -168,7 +173,10 @@ export const loadAllRavelKey = () => {
             firebase.database().ref(`master_ravel_key`)
             .once('value', function(snapshotRavels) {
                 dispatch({ type: 'ALL_RAVEL_KEY_FETCH', payload: snapshotRavels.val()});
-            });
+            })
+            .catch((error) => {
+                alert('Error loading all ravel keys...')
+            })
     };
 };
 
@@ -215,7 +223,7 @@ export const updateProfilePicture = (url) => {
             })
           })
           .catch((error) => {
-            console.log(error);
+            alert('Error updating profile picture at this time...')
           })
                   
     }
@@ -237,7 +245,10 @@ export const getUserProfile = (uid) => {
         .once('value', snapshot => {
             dispatch({ type: 'GET_USER_PROFILE',
                        payload: snapshot.val() });
-        });
+        })
+        .catch((error) => {
+            alert('Error loading user profile at this time...')
+        })
     };
 };
 
@@ -258,7 +269,10 @@ export const getCurrentUserProfile = () => {
         .once('value', snapshot => {
             dispatch({ type: 'GET_CURRENT_USER_PROFILE',
                        payload: snapshot.val() });
-        });
+        })
+        .catch((error) => {
+            alert('Error loading user profile at this time...')
+        })
     };
 };
 
@@ -283,7 +297,7 @@ export const updateCurrentUserProfile = ({ first_name, last_name, bio }) => {
                 payload: snapshot.val() });
             })
             .catch((error) => {
-                console.log(error);
+                alert('Error updating user profile at this time...')
             });
 
     }
@@ -386,10 +400,6 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
             user_created_photoURL = '';
         }
     })
-    .catch((error) => {
-        console.log(error)
-    })                            
-    
     var ravel_points = 0;
     var ravel_number_participants = m_ravel_participants.length;
     var ravel_participants = {};
@@ -477,10 +487,9 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
                     ravel_uid: true
                 })
             })          
-    
             .catch((error) => {
-                console.log('Failed creating ravel');
-            });
+                alert('Error creating ravel at this time...')
+            }) 
         
     };
 
@@ -499,7 +508,10 @@ export const searchUserByName = (first_name) => {
     return (dispatch) => {
         firebase.database().ref(`/users`).orderByChild("userProfile/first_name").equalTo(first_name).once('value', function(snapshot) {
             dispatch({type : 'SEARCH_USER_FIRST_NAME', payload: snapshot.val()});
-        });       
+        })
+        .catch((error) => {
+            alert('Error search for users at this...')
+        })    
     } 
 }
 
@@ -519,8 +531,12 @@ export const searchRavelByTag = (tag) => {
         tag.forEach((tag) => { 
             firebase.database().ref(`/ravels/`).orderByChild(`public_tag_set/${'public_' + tag}`).equalTo(true).once('value', function(snapshot) {
                 dispatch({type : 'SEARCH_RAVEL_BY_TAG', payload: snapshot.val()});
-            });   
+            })
+            .catch((error) => {
+                alert('Error searching for ravels...')
+            }) 
         })
+
             
     } 
 }
@@ -541,7 +557,10 @@ export const searchRavelByTitle = (title) => {
     return (dispatch) => {
         firebase.database().ref(`/ravels/`).orderByChild("public_ravel_title").equalTo(public_title).once('value', snapshot => {
             dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: snapshot.val()})
-        });
+        })
+        .catch((error) => {
+            alert('Error searching for ravels...')
+        }) 
     }
 }
 
@@ -560,22 +579,34 @@ export const searchRavelByCategory = (category) => {
             case 'fiction': {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_fiction").equalTo(true).once('value', snapshot => {
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
-                });
+                })
+                .catch((error) => {
+                    alert('Error searching for ravels...')
+                }) 
             }
             case 'non_fiction': {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_nonfiction").equalTo(true).once('value', snapshot => {
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
-                });
+                })
+                .catch((error) => {
+                    alert('Error searching for ravels...')
+                }) 
             }
             case 'other': {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_other").equalTo(true).once('value', snapshot => {
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
-                });
+                })
+                .catch((error) => {
+                    alert('Error searching for ravels...')
+                }) 
             }
             default: {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_other").equalTo(true).once('value', snapshot => {
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
-                });
+                })
+                .catch((error) => {
+                    alert('Error searching for ravels...')
+                }) 
             }
         }     
     }
@@ -592,7 +623,10 @@ export const getRavelMetaData = (ravel_uid) => {
     return (dispatch) => {
         firebase.database().ref(`/ravels/${ravel_uid}`).once('value', function (snapshot) {
             dispatch({ type: 'GET_RAVEL_META_DATA', payload: snapshot.val()})
-        });
+        })
+        .catch((error) => {
+            alert('Error getting metadata for ravels...')
+        }) 
     }
 }
 
@@ -610,17 +644,18 @@ export const getAllRavelParticipantUserProfile = (ravel_uid) => {
     var all_participant_of_a_ravel = [];
     return (dispatch) => {    
         firebase.database().ref(`ravels/${ravel_uid}/ravel_participants`).orderByKey().once('value', function(snapshot) {
-            console.log('snapshot value:' + snapshot.val());
             snapshot.forEach((childSnapShot) => {
                             if(childSnapShot.val() === true){
-                                
                                 firebase.database().ref(`/users/${childSnapShot.key}/userProfile`).once('value', function (snapshotChild){
                                     all_participant_of_a_ravel.push(snapshotChild.val());
                                     dispatch( {type: 'GET_ALL_RAVEL_PARTICIPANT_USER_PROFILE', payload: all_participant_of_a_ravel})                   
                                 })
                             }})
             
-        });  
+        })
+        .catch((error) => {
+            alert('Error getting user profiles..')
+        })   
     }
 
      
@@ -640,7 +675,10 @@ export const loadAllRavel = () => {
             firebase.database().ref(`/ravels/`)
             .once('value', function(snapshotRavels) {
                 dispatch({ type: 'ALL_RAVEL_FETCH', payload: snapshotRavels.val()});
-            });
+            })
+            .catch((error) => {
+                alert('Error loading all ravels...')
+            }) 
     };
 };
 
@@ -658,7 +696,10 @@ export const loadAllPublicRavel = () => {
 
             firebase.database().ref(`ravels`).orderByChild(`visibility`).equalTo(true).once('value', (snapshotPublicRavel) => {
                 dispatch({ type: 'ALL_PUBLIC_RAVEL_FETCH', payload: snapshotPublicRavel.val()});
-            });           
+            })
+            .catch((error) => {
+                alert('Error loading all ravels...')
+            })         
     };
 };
 
@@ -678,6 +719,9 @@ export const loadNonCreatedCurrentUserRavel = () => {
         firebase.database().ref(`ravels`).orderByChild(`ravel_participants/${currentUid}`).equalTo(true).once('value', (snapshot) => {
             dispatch({ type: 'ALL_NON_CREATED_CURR_USER_RAVEL', payload: snapshot.val()})
         })
+        .catch((error) => {
+            alert('Error loading user participated ravels...')
+        }) 
 
     }
 
@@ -708,8 +752,11 @@ export const loadInitialUserCreatedRavel = () => {
                 firebase.database().ref(`/users/${currentUserUid}/ravel_created`)                 
                 .once('value', function(snapshotRavels) {
                     dispatch({ type: 'INITIAL_CREATED_CURR_USER_RAVEL_FETCH', payload:  snapshotRavels.val()});
-                });
-            })          
+                })
+            })   
+            .catch((error) => {
+                alert('Error loading user created...')
+            })        
     };
 };
 
@@ -740,6 +787,9 @@ export const updateRavelTag = (ravel_uid, ravel_tags) => {
             firebase.database().ref(`ravels/${ravel_uid}`).update({ public_tag_set : master });
             dispatch({ type: 'UPDATE_RAVEL_TAG', payload: true})
         })
+        .catch((error) => {
+            alert('Error updating ravel tags...')
+        }) 
         
     };
 
@@ -910,10 +960,3 @@ export const addAdminUser = (uid) => {
     }
 }
 
-/**
- * 
- */
-export const deleteUser = (user) => {
-
-
-}

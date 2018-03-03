@@ -53,7 +53,7 @@ class GetAllUserRavels extends Component {
         //this.props.updateRavelTag('-L6EF_prExXCVIf2NQ4w', ["push_tag4666", "push_tag67777"])
         //this.props.loadAllUserKey();
         //this.props.loadAllPublicRavel();
-        // this.props.acceptRavelInvite(ravel_uid);
+        //this.props.acceptRavelInvite('11');
         this.props.getRavelMetaData(ravel_uid);
         this.props.getAllRavelParticipantUserProfile(ravel_uid);
         //this.props.loadNonCreatedCurrentUserRavel();
