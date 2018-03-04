@@ -45,7 +45,7 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -57,31 +57,6 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>UIAppFonts</key>
-	<array>
-		<string>Entypo.ttf</string>
-		<string>EvilIcons.ttf</string>
-		<string>Feather.ttf</string>
-		<string>FontAwesome.ttf</string>
-		<string>Foundation.ttf</string>
-		<string>Ionicons.ttf</string>
-		<string>MaterialCommunityIcons.ttf</string>
-		<string>MaterialIcons.ttf</string>
-		<string>Octicons.ttf</string>
-		<string>SimpleLineIcons.ttf</string>
-		<string>Zocial.ttf</string>
-		<string>rubicon-icon-font.ttf</string>
-		<string>Rubik-Black.ttf</string>
-		<string>Rubik-BlackItalic.ttf</string>
-		<string>Rubik-Bold.ttf</string>
-		<string>Rubik-BoldItalic.ttf</string>
-		<string>Rubik-Italic.ttf</string>
-		<string>Rubik-Light.ttf</string>
-		<string>Rubik-LightItalic.ttf</string>
-		<string>Rubik-Medium.ttf</string>
-		<string>Rubik-MediumItalic.ttf</string>
-		<string>Rubik-Regular.ttf</string>
-	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -95,6 +70,37 @@
 	<string>1513136905467741</string>
 	<key>FacebookDisplayName</key>
 	<string>Ravel Tree</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Entypo.ttf</string>
+		<string>EvilIcons.ttf</string>
+		<string>Feather.ttf</string>
+		<string>FontAwesome.ttf</string>
+		<string>Foundation.ttf</string>
+		<string>Ionicons.ttf</string>
+		<string>MaterialCommunityIcons.ttf</string>
+		<string>MaterialIcons.ttf</string>
+		<string>Octicons.ttf</string>
+		<string>SimpleLineIcons.ttf</string>
+		<string>Zocial.ttf</string>
+		<string>EBGaramond-Regular.ttf</string>
+		<string>Montserrat-Bold.ttf</string>
+		<string>Montserrat-Regular.ttf</string>
+		<string>Roboto-Black.ttf</string>
+		<string>Roboto-BlackItalic.ttf</string>
+		<string>Roboto-Bold.ttf</string>
+		<string>Roboto-BoldItalic.ttf</string>
+		<string>Roboto-Italic.ttf</string>
+		<string>Roboto-Light.ttf</string>
+		<string>Roboto-LightItalic.ttf</string>
+		<string>Roboto-Medium.ttf</string>
+		<string>Roboto-MediumItalic.ttf</string>
+		<string>Roboto-Regular.ttf</string>
+		<string>Roboto-Thin.ttf</string>
+		<string>Roboto-ThinItalic.ttf</string>
+	</array>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
