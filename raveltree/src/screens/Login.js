@@ -4,6 +4,10 @@
 //
 // Login screen for RavelTree.
 
+// Modification Log 
+// 03/03/18 VD Do - Added FBLoginComponent import and FB lib imports. Use FB component instead of old Login Button 
+//                  FB button should create a user in fb and set the user's first name and last name from fb to db 
+
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -26,7 +30,7 @@ import TextHeader from '../components/TextHeader'
 
 import FBLoginComponent from '../utils/FBLoginComponent';
 
-// import fbsdk and use LoginButton and AccessToken
+// Import fbsdk and use LoginButton and AccessToken
 const FBSDK = require('react-native-fbsdk');
 const {
   LoginButton,
