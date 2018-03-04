@@ -163,7 +163,7 @@ export default class Login extends Component {
         <View style={styles.content}>
           <View style = {styles.buttons}>
             {/* Facebook button */}
-            <FBLoginComponent />
+            <FBLoginComponent/>
             {/* <LoginButton
               style = {styles.facebook}
               readPermissions = {['public_profile','email']}
