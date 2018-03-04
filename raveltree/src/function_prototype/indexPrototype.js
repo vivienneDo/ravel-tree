@@ -1,3 +1,33 @@
+/*********************************** ~ HEADER ~ **************************************************/
+/* @created by: Vivienne Do 
+ *  Note to reader: DO NOT IMPORT THIS FILE, IMPORT ../actions/index.js 
+ * Since Javescript does not support interfaces, I created a file that lays out 
+ * all of functions declarations. If the function's comments does not contain "mapStateToProps"
+ * information, that means the function does not return a state.
+ * 
+ * Example of REDUX function: 
+ * /**
+ * @param: nothing 
+ * @returns: 
+ * mapStateToProps = state => currentUserProfile =                  // This is the object returned by the reducer
+ * state.current_user:                                              // you will map it to your store and set it = state.<reducer's state>
+ *      'GET_CURRENT_USER_PROFILE' - an entire userProfile object   // This is the state returned by the reducer 
+ *          - this.props.currentUserProfile.bio                     // This is how you would map the fields from the object 
+ *          - this.props.currentUserProfile.first_name 
+ *          - this.props.currentUserProfile.last_name 
+ *          - this.props.currentUserProfile.photoURL
+ *          - this.props.currentUserProfile.ravel_points
+ *          - this.props.currentUserProfile.stats_passage_written
+ *          - this.props.currentUserProfile.stat_ravel_contributed
+ *          - this.props.currentUserProfile.stat_ravel_led
+ *          - this.props.currentUserProfile.upvotes
+ *          - this.props.currentUserProfile.user_uid
+ * actions: gets the user profile of the current user 
+ * 
+ */
+
+ /*********************************** ~ HEADER ~ **************************************************/
+
 /* CREATE USER/LOGIN FUNCTIONS */
 
 /**

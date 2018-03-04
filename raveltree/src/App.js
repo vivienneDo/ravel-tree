@@ -1,3 +1,6 @@
+// Change Log  
+// 03/03/18 VD Do - Added backend imports, added combined reducers, moved firebase db credential to actions/index.js
+
 import React, { Component } from 'react';
 import {
   Platform,
@@ -51,14 +54,6 @@ export default class App extends Component {
   state = { loggedIn: null};
 
   componentWillMount() {
-    // firebase.initializeApp({
-    //   apiKey: "AIzaSyCmt6Cq6wj2NJZ-WOCE27brxfW-kg6TUKQ",
-    //   authDomain: "crmlinkedln2-81204.firebaseapp.com",
-    //   databaseURL: "https://crmlinkedln2-81204.firebaseio.com",
-    //   projectId: "crmlinkedln2-81204",
-    //   storageBucket: "crmlinkedln2-81204.appspot.com",
-    //   messagingSenderId: "107870538404"
-    // });
 
     firebase.auth().onAuthStateChanged((user) => {
       console.log('Authentication state has changed');

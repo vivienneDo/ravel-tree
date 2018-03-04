@@ -1,3 +1,8 @@
+/* @created by: Vivienne Do  
+ * Note to reader: Please go to ../function_prototype/indexPrototype.js and read all of the parameter and
+ * state returns for each function
+ */
+
 import firebase from 'firebase';
 import _ from 'lodash';
 
