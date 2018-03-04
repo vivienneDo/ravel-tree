@@ -1,6 +1,6 @@
 /*********************************** ~ HEADER ~ **************************************************/
 /* @created by: Vivienne Do 
- *  Note to reader: DO NOT IMPORT THIS FILE, IMPORT ../actions/index.js 
+ *  Note to reader: DO NOT IMPORT THIS FILE, use => import * as actions from '../actions'
  * Since Javescript does not support interfaces, I created a file that lays out 
  * all of functions declarations. If the function's comments does not contain "mapStateToProps"
  * information, that means the function does not return a state.
