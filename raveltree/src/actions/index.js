@@ -336,74 +336,6 @@ export const updateCurrentUserProfile = ({ first_name, last_name, bio }) => {
 };
 
 
-/** TODO
- * @param: 
- * @returns: 
- * 
- */
-export const calculatesUserStat = ({ stat_ravel_led, stat_ravel_contributed, stat_passage_written }) => {
-    const { currentUser } = firebase.auth();
-
-    return (dispatch) => {
-        firebase.database().ref(`/users/${currentUser.uid}/userProfile`)
-        .set({ stat_ravel_led, stat_ravel_contributed, stat_passage_written })
-        .then(() => {
-            dispath({type: 'UPDATE_USER_STAT',
-                     payload: {stat_ravel_led, stat_ravel_contributed, stat_passage_written}});
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    };
-};
-
-
-/** TODO 
- * @param: 
- * @returns: 
- * 
- * 
- */
-export const calculatesUserUpVote = (upvotes) => {
-    const { currentUser } = firebase.auth();
-
-    return (dispatch) => {
-        firebase.database().ref(`/users/${currentUser.uid}/userProfile`)
-        .set(upvotes)
-        .then(() => {
-            dispath({type: 'UPDATE_USER_UPVOTE',
-                    payload: upvotes})
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-        
-    };
-};
-
-
-/** TODO
- * @param: 
- * @returns: 
- * 
- * 
- */
-export const updateUserRavelPoint = (ravel_points) => {
-    const { currentUser } = firebase.auth();
-
-    return (dispatch) => {
-        firebase.database().ref(`/users/${currentUser.uid}/userProfile`)
-        set(ravel_points)
-        .then(() => {
-            dispatch({type: 'UPDATE_USER_RAVEL_POINT',
-                    payload: ravel_points});
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    };
-};
-
 
 /**
  * @param: { ravel_title, ravel_category, passage_length, visibility (true/false), enable_voting (true/false), enable_comment (true/false),
@@ -522,6 +454,9 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
                     firebase.database().ref(`/users/${currentUser.uid}/userProfile`).update({
                         stat_ravel_led : ravel_led_stat + ravel_counter,
                       })
+                      .then(() => {
+                        userRavelPointCalculation(user_created);
+                    }) 
                 })
             })     
             .then(() => {
@@ -531,7 +466,7 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
                 })
             })          
 
-        })     
+        })    
         .catch((error) => {
             alert('Error creating ravel at this time...')
         }) 
@@ -1109,6 +1044,10 @@ export const acceptRavelInvite = (ravel_uid) => {
                         firebase.database().ref(`/users/${currentUid}/ravel_created/${ravel_uid}`).update({
                             ravel_number_participants: m_ravel_number_participants + ravel_counter
                         })
+                        .then(() => {
+                            userRavelPointCalculation(currentUid);
+                        })
+                        
                     })
 
                 })
@@ -1213,8 +1152,11 @@ export const createPassage = ({ravel_uid, passage_title, passage_body}) => {
                     stat_passage_written = snapshot.val() + 1
                     
                 })
-                .then(() => {
+                .then(() => { // Update the number of passages a user has written 
                     firebase.database().ref(`users/${user_created}/userProfile`).update({stat_passage_written : stat_passage_written});                    
+                })
+                .then(() => {
+                    userRavelPointCalculation(user_created);
                 })
             })
 
@@ -1225,18 +1167,31 @@ export const createPassage = ({ravel_uid, passage_title, passage_body}) => {
  * 
  * @param {*} passage_uid 
  * @returns {*} nothing 
- * actions: updates a passage's upvote count
+ * actions: updates a passage's upvote count, updates the user created userProfile upvote field 
  */
 export const upVotePassage = (passage_uid) => {
 
     var upvotes;
+    var passage_creator_uid;
 
     return () => {
         firebase.database().ref(`/passages/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
             upvotes = snapshot.val() + 1
         })
         .then(() => {
-            firebase.database().ref(`/passages/${passage_uid}`).update({passage_upvote : upvotes});                    
+            firebase.database().ref(`/passages/${passage_uid}`).update({passage_upvote : upvotes});                  
+        })
+        .then(() => {
+            firebase.database().ref(`passages/${passage_uid}/user_created`).once('value', (snapshot) => {
+                passage_creator_uid = snapshot.val();
+            })
+            .then(() => {
+                firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : upvotes})
+                
+            })
+            .then(() => {
+                userRavelPointCalculation(passage_creator_uid);
+            })
         })
     }
 
@@ -1246,49 +1201,79 @@ export const upVotePassage = (passage_uid) => {
  * 
  * @param {*} passage_uid 
  * @returns {*} nothing
- * actions: updates a passage's downvote count
+ * actions: updates a passage's "upvote" count by decrementing it by 1,  updates the user created userProfile upvote field 
  */
 export const downVotePassage = (passage_uid) => {
 
-    var downvotes;
+    var total_votes;
+    var passage_creator_uid;
+    var user_uid;
 
     return () => {
-        firebase.database().ref(`/passages/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
-            downvotes = snapshot.val() - 1
+        firebase.database().ref(`/passages/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+            total_votes = snapshot.val() - 1
         })
         .then(() => {
-            firebase.database().ref(`/passages/${passage_uid}`).update({passage_downvote : downvotes});                    
+            firebase.database().ref(`/passages/${passage_uid}`).update({ passage_upvote : total_votes });                    
+        })
+        .then(() => {
+            firebase.database().ref(`passages/${passage_uid}/user_created`).once('value', (snapshot) => {
+                passage_creator_uid = snapshot.val();
+                user_uid = snapshot.val()
+            })
+            .then(() => {
+                firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : total_votes})
+
+            })
+            .then(() => {
+                userRavelPointCalculation(passage_creator_uid);
+            })
         })
     }
 
 }
 
-/**
- * 
- * @param {*} passage_uid 
- * @returns {*} nothing*** for stats puposes: upvote + downvote total 
- */
-export const calculateTotalVotePassage = (passage_uid) => {
+/** HELPER FUNCTION  */
 
-    var downvotes;
-    var upvotes; 
-    var totalVotes;
+export const userRavelPointCalculation = (user_uid) => {
+    /**
+     * ravel_points: close
+       stat_passage_written: 
+       stat_ravel_contributed: 
+       stat_ravel_led:
+       up_votes:
+     */
+    console.log('inside user ravel point calc')
+     /** ravel_points = f(userProfile) = stat_ravel_led + stat_ravel_contributed + stat_passage_written + up_votes*/
+     var m_stat_ravel_led;
+     var m_stat_ravel_contributed;
+     var m_stat_passage_written;
+     var m_upvotes;
+     var m_ravel_points;
 
-    firebase.database().ref(`/passages/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
-        downvotes = snapshot.val()
-    })
-    .then(() => {
+         firebase.database().ref(`users/${user_uid}/userProfile/stat_ravel_led`).once('value', (snapshot) => {           
+             m_stat_ravel_led = snapshot.val()
+         })
+         .then(() => {
+            firebase.database().ref(`users/${user_uid}/userProfile/stat_ravel_contributed`).once('value', (snapshot) => {
+                m_stat_ravel_contributed = snapshot.val()
+            })
+            .then(() => {
+                firebase.database().ref(`users/${user_uid}/userProfile/stat_passage_written`).once('value', (snapshot) => {
+                    m_stat_passage_written = snapshot.val()
+                })
+                .then(() => {
+                    firebase.database().ref(`users/${user_uid}/userProfile/upvotes`).once('value', (snapshot) => {
+                        m_upvotes = snapshot.val()
+                    })
+                    .then(() => {
+                        m_ravel_points = m_stat_ravel_led + m_stat_ravel_contributed + m_stat_passage_written +
+                                        m_upvotes;
+                        firebase.database().ref(`users/${user_uid}/userProfile`).update({ravel_points : m_ravel_points})
+                    })
 
-        firebase.database().ref(`/passages/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
-            upvotes = snapshot.val() 
-        })
-
-    })
-    .then(() => {
-        totalVotes = upvotes + downvotes
-        console.log('total votes' + totalVotes)
-    })
-
-
+                })
+            })          
+         })
+     
 }
-
