@@ -13,7 +13,7 @@ src/actions/index.js                        -- contains all of the functions
 src/actions/README_DB.txt                   -- README file...you're in it! 
 
 src/function_prototype/indexPrototype.js    -- all function prototypes (with params and returns)
-src/function_prototype/<*>Model (all prototypes)
+src/function_prototype/<*>Model (separated prototypes)
 
 src/components/CameraPicker.js              -- camera picker component (will merge with front-end component)
 src/components/ComponentTemplate.js         -- a template on how to use redux and connect 
