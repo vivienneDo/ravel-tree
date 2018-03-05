@@ -5,6 +5,8 @@
  * all of functions declarations. If the function's comments does not contain "mapStateToProps"
  * information, that means the function does not return a state.
  * 
+ * This is the complete list, category has been created under src/function_prototype/<category>Model
+ * 
  * Example of REDUX function: 
  * /**
  * @param: nothing 
