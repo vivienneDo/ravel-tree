@@ -21,7 +21,6 @@ import Loader from '../Loader';
 import firebase from 'firebase';
 import { connect} from 'react-redux';
 import * as actions from '../actions';
-import UserModel from '../models/UserModel';
 import MainPage from './MainPage';
 
 import RTLogoText from '../components/RTLogoText';
