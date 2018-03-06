@@ -55,6 +55,7 @@ class Screen extends Component {
   }
 
   showScreen () {
+    //return <YourRavels {...this.props} />;
     switch (this.props.activeScreen) {
       case ('Login'):
         return <Login {...this.props} />;
