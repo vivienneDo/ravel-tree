@@ -9,6 +9,7 @@ import NotificationReducer from './NotificationReducer'
 import UserReducer from './UserReducer'
 import MasterRavelReducer from './MasterRavelReducer'
 import PassageReducer from './PassageReducer'
+import AdminReducer from './AdminReducer'
 
 const rootReducer = combineReducers({
     ravel: RavelReducer,
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
     master_user: MasterUserFetchReducer,
     term_of_service: TermsOfServiceReducer,
     notification: NotificationReducer,
-    passage: PassageReducer
+    passage: PassageReducer,
+    admin_functions: AdminReducer
 })
 
 export default rootReducer;

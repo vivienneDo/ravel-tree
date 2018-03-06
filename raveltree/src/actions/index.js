@@ -10,6 +10,7 @@ firebase.initializeApp({
     messagingSenderId: "107870538404"
   });
 
+
 /**
  * @param: nothing
  * @returns: the current user's uid 
@@ -49,7 +50,6 @@ export const updateUserProfile = (userProfile, {first_name, last_name, bio,
         alert('Error Updating Profile...')
     });
 }
-
 
 /**
  * @param: nothing
@@ -433,7 +433,7 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
             .then(returnKey => {
                 ravel_uid = returnKey.getKey();
                 firebase.database().ref(`/ravels/${ravel_uid}/ravel_uid`).set(ravel_uid);
-                firebase.database().ref(`/users/${currentUser.uid}/ravel_created`).push({ravel_uid, user_created_photoURL, ravel_title, ravel_number_participants, ravel_points});                         
+                firebase.database().ref(`/users/${currentUser.uid}/ravel_created/${ravel_uid}`).set({ravel_uid, user_created_photoURL, ravel_title, ravel_number_participants, ravel_points});                         
             })
             .then(() => {
 
@@ -455,7 +455,7 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
                         stat_ravel_led : ravel_led_stat + ravel_counter,
                       })
                       .then(() => {
-                        userRavelPointCalculation(user_created);
+                        userRavelPointCalculationHelper(user_created);
                     }) 
                 })
             })     
@@ -968,42 +968,7 @@ export const updateRavelParticipant = (ravel_uid, ravel_tags) => {
 
 }
 
-/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
- * @param: 
- * @returns: 
- * 
- */
-export const insertTermsOfService = (terms_of_service) => {
 
-    firebase.database().ref(`terms_of_service`).set({terms_of_service : terms_of_service});
-    
-}
-
-/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
- * @param: 
- * @returns: 
- * 
- */
-export const updateTermsOfService = (terms_of_service) => {
-
-    firebase.database().ref(`terms_of_service`).update({terms_of_service : terms_of_service});
-    
-}
-
-/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
- * @param: nothing 
- * @returns: the current terms of service 
- * 
- */
-export const readTermsOfService = () => {
-
-    return (dispatch) => {
-        firebase.database().ref(`terms_of_service`).once('value', (snapshot) => {
-            dispatch({ type: 'GET_TERMS_OF_SERVICE', payload: snapshot.val()})
-        });
-    }
-   
-}
 
 /**
  * 
@@ -1045,7 +1010,7 @@ export const acceptRavelInvite = (ravel_uid) => {
                             ravel_number_participants: m_ravel_number_participants + ravel_counter
                         })
                         .then(() => {
-                            userRavelPointCalculation(currentUid);
+                            userRavelPointCalculationHelper(currentUid);
                         })
                         
                     })
@@ -1059,6 +1024,55 @@ export const acceptRavelInvite = (ravel_uid) => {
             }
         })
     }
+}
+
+
+/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
+ * @param: 
+ * @returns: 
+ * 
+ */
+export const insertTermsOfService = (terms_of_service) => {
+
+    return (dispatch) => {
+        firebase.database().ref(`terms_of_service`).set({terms_of_service : terms_of_service})
+        .then(() => {
+            firebase.database().ref(`terms_of_service/terms_of_service`).once('value', (snapshot) => {
+                dispatch({type: 'INSERT_TERMS_OF_SERVICE', payload: snapshot.val() })
+
+            })
+        })
+        
+    }
+
+
+    
+}
+
+/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
+ * @param: 
+ * @returns: 
+ * 
+ */
+export const updateTermsOfService = (terms_of_service) => {
+
+    firebase.database().ref(`terms_of_service`).update({terms_of_service : terms_of_service});
+    
+}
+
+/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
+ * @param: nothing 
+ * @returns: the current terms of service 
+ * 
+ */
+export const readTermsOfService = () => {
+
+    return (dispatch) => {
+        firebase.database().ref(`terms_of_service/terms_of_service`).once('value', (snapshot) => {
+            dispatch({ type: 'GET_TERMS_OF_SERVICE', payload: snapshot.val()})
+        });
+    }
+   
 }
 
 /**
@@ -1156,11 +1170,30 @@ export const createPassage = ({ravel_uid, passage_title, passage_body}) => {
                     firebase.database().ref(`users/${user_created}/userProfile`).update({stat_passage_written : stat_passage_written});                    
                 })
                 .then(() => {
-                    userRavelPointCalculation(user_created);
+                    userRavelPointCalculationHelper(user_created);
                 })
             })
 
     }
+}
+
+/** TO DO  
+* Function that gets a ravel's particular passage, will do after talking about structure 
+*/
+export const getPassageMetaData = () => {
+    
+}
+
+export const forkPassage = () => {
+
+}
+
+export const mergePassage = () => {
+
+}
+
+export const passageRavelPointCalculation = () => {
+
 }
 
 /**
@@ -1190,7 +1223,7 @@ export const upVotePassage = (passage_uid) => {
                 
             })
             .then(() => {
-                userRavelPointCalculation(passage_creator_uid);
+                userRavelPointCalculationHelper(passage_creator_uid);
             })
         })
     }
@@ -1208,6 +1241,9 @@ export const downVotePassage = (passage_uid) => {
     var total_votes;
     var passage_creator_uid;
     var user_uid;
+    var m_down_votes;
+
+
 
     return () => {
         firebase.database().ref(`/passages/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
@@ -1226,16 +1262,28 @@ export const downVotePassage = (passage_uid) => {
 
             })
             .then(() => {
-                userRavelPointCalculation(passage_creator_uid);
+                userRavelPointCalculationHelper(passage_creator_uid);
+            })
+            .then(() => {
+                downVotePassageHelper(passage_uid);
             })
         })
     }
 
 }
 
+
+
 /** HELPER FUNCTION  */
 
-export const userRavelPointCalculation = (user_uid) => {
+/**
+ * @param {*} user_uid 
+ * @returns {*} nothing 
+ * actions: Updates the ravel_points. This is a helper function that is called when a user:
+ * creates a ravel, creates a passage, a passage they wrote become upvoted/downvoted, a user accepts 
+ * a ravel invite 
+ */
+export const userRavelPointCalculationHelper = (user_uid) => {
     /**
      * ravel_points: close
        stat_passage_written: 
@@ -1276,4 +1324,27 @@ export const userRavelPointCalculation = (user_uid) => {
             })          
          })
      
+}
+
+/**
+ * 
+ * @param {*} passage_uid 
+ * @returns {*} nothing
+ * actions: function that updates the passage_downvote field for stats purposes
+ */
+export const downVotePassageHelper = (passage_uid) => {
+
+    console.log('I am in here')
+
+        var m_down_votes;
+
+        firebase.database().ref(`/passages/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+            m_down_votes = snapshot.val() - 1
+        })
+        .then(() => {
+            firebase.database().ref(`/passages/${passage_uid}`).update({ passage_downvote : m_down_votes})
+        })
+
+    
+
 }
