@@ -4,10 +4,6 @@
 //
 // Login screen for RavelTree.
 
-// Modification Log 
-// 03/03/18 VD Do - Added FBLoginComponent import and FB lib imports. Use FB component instead of old Login Button 
-//                  FB button should create a user in fb and set the user's first name and last name from fb to db 
-
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -21,23 +17,20 @@ import {
 import { MKTextField, MKColor, MKButton } from 'react-native-material-kit';
 import Loader from '../Loader';
 import firebase from 'firebase';
-import { connect} from 'react-redux';
+import { connect } from 'react-redux';
 import * as actions from '../actions';
 import MainPage from './MainPage';
+
 import RTLogoText from '../components/RTLogoText';
 import TextLink from '../components/TextLink';
 import TextHeader from '../components/TextHeader'
 
-import FBLoginComponent from '../utils/FBLoginComponent';
-
-// Import fbsdk and use LoginButton and AccessToken
 const FBSDK = require('react-native-fbsdk');
 const {
   LoginButton,
-  AccessToken,
-  GraphRequest,
-  GraphRequestManager
+  AccessToken
 } = FBSDK;
+
 
 const GeneralLoginButton = MKButton.coloredButton()
     .withText('LOGIN')
@@ -53,13 +46,17 @@ const GLoginButton = MKButton.coloredButton()
     .withBackgroundColor('#1E88E5')
     .build();
 
-export default class Login extends Component {
-  state = {
-      email :  '',
-      password: '',
-      error: '',
-      loading: false,
-  };
+
+class Login extends Component {
+  constructor (props: any, context: any) {
+    super (props, context);
+    this.state = {
+        email :  '',
+        password: '',
+        error: '',
+        loading: false,
+    };
+  }
 
   onButtonPress() {
       const {email, password} = this.state;
@@ -85,6 +82,11 @@ export default class Login extends Component {
                 .then(this.onAuthSuccess.bind(this))
                 .catch(this.onAuthFailed.bind(this));
         });
+  }
+
+  onPressSignInWithAnEmailAddress () {
+    this.props.setActiveScreen ('LoginEmail');
+    console.log (this.props.activeScreen);
   }
 
   onAuthSuccess() {
@@ -167,15 +169,14 @@ export default class Login extends Component {
         <View style={styles.content}>
           <View style = {styles.buttons}>
             {/* Facebook button */}
-            <FBLoginComponent/>
-            {/* <LoginButton
+            <LoginButton
               style = {styles.facebook}
               readPermissions = {['public_profile','email']}
               onLoginFinished = {
                 (error, result) => {this.onLoginFinished (error, result)}
               }
               onLogoutFinished={() => alert("logout.")}
-            /> */}
+            />
             {/* Google button */}
             <View>
               {this.renderLoader()}
@@ -186,7 +187,7 @@ export default class Login extends Component {
           </View>
           <View style={styles.emailLink}>
             {/* Takes the user to the email login page */}
-            <TextLink size={18}>Sign in with an email address</TextLink>
+            <TextLink size={18} onPress={() => this.onPressSignInWithAnEmailAddress ()}>Sign in with an email address</TextLink>
           </View>
           {/* Terms and Privacy */}
           <TextLink size={12} color={'#2e8af7'}>
@@ -253,8 +254,6 @@ const styles = StyleSheet.create({
   },
 
 
-
-
   form: {
       paddingBottom: 10,
       width: 200,
@@ -269,3 +268,11 @@ const styles = StyleSheet.create({
      //marginTop: 20,
   },
 });
+
+function mapStateToProps (state) {
+  return {
+    activeScreen: state.activeScreen,
+  };
+}
+
+export default connect (mapStateToProps)(Login);
