@@ -67,7 +67,7 @@ class Home extends Component<{}> {
 
   getPassages () {
     return (
-      <View>
+      <View style={styles.passages}>
         {TEST_PASSAGES.map ((passage) =>
           <View style={styles.passageCard}>
             <PassageCard
@@ -195,7 +195,12 @@ const styles = StyleSheet.create({
   textHeader: {
     marginBottom: 14,
   },
+  passages: {
+    justifyContent: 'center',
+    width: '100%',
+  },
   passageCard: {
+    width: '100%',
     marginBottom: 20,
   },
 });
