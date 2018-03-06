@@ -1,6 +1,6 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/17/18
-// Modified: 02/17/18
+// Modified: 03/06/18
 //
 // "Terms and Privacy" screen for RavelTree.
 //
@@ -62,10 +62,11 @@ export default class TermsAndPrivacy extends Component {
 const styles = StyleSheet.create({
   layout: {
     flexDirection: 'column',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     width: '100%',
     height: '100%',
     paddingHorizontal: 17,
+    backgroundColor: '#eeeeee',
   },
   scroll: {
     marginTop: 20,
