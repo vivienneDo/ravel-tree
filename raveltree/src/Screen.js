@@ -55,7 +55,7 @@ class Screen extends Component {
   }
 
   showScreen () {
-    return <Home {...this.props} />;
+    //return <Home {...this.props} />;
     switch (this.props.activeScreen) {
       case ('Login'):
         return <Login {...this.props} />;
@@ -73,7 +73,8 @@ class Screen extends Component {
         return <Notifications {...this.props} />;
       case ('Profile'):
         return <Profile {...this.props} />;
-
+      case ('Explore'):
+        return <Explore {...this.props} />;
 
 
       default:

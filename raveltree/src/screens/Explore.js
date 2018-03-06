@@ -1,6 +1,6 @@
 // Author: Alex Aguirre
 // Created: 02/07/18
-// Modified: 02/23/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/06/18 by Frank Fusco (fr@nkfus.co)
 //
 // "Explore" screen for RavelTree.
 //
@@ -22,6 +22,9 @@ import {
     View,
     ScrollView
 } from 'react-native';
+
+import { connect } from 'react-redux'
+import _ from 'lodash';
 
 import RTLogoText from '../components/RTLogoText';
 import ButtonReverse from '../components/ButtonReverse';
@@ -72,7 +75,13 @@ const DEFAULT_SUGGESTED_TAGS = [
   'Away',
 ];
 
-export default class Home extends Component<{}> {
+TEST_RAVELS = [
+  {ravel: 'The Tycoon', author: 'Malcolm Masters', users: 6, score: 311, concept: 'A tale of travel, deceit, and unannounced visitors. W.K. Smithson, young heir to a burgeoning furniture import/export empire, must decide between prosperity and his heart when he encounters Millie J., a waitress at an Indonesian beach bar.'},
+  {ravel: 'Lonely Conclusions', author: 'Anne Jensen', users: 2, score: 128, concept: 'A visitor to a yellow-cake uranium refinery finds that the international regulatory framework for nuclear development is sorely lacking in specificity.'},
+  {ravel: 'The End of the Road', author: 'Anne Jensen', users: 9, score: 90, concept: 'When the Joneses receive an unexpected visitor, they decide to take matters into their own hands.'},
+];
+
+class Explore extends Component<{}> {
 
   constructor (props) {
     super (props);
@@ -222,7 +231,7 @@ export default class Home extends Component<{}> {
   getRavels () {
     return (
       <View style={{width: '100%'}}>
-        {this.props.ravels.map ((ravel) =>
+        {TEST_RAVELS.map ((ravel) =>
           <View style={styles.ravelCard}>
             <RavelCard
               ravel={ravel.ravel}
@@ -236,7 +245,6 @@ export default class Home extends Component<{}> {
       </View>
     );
   }
-
 
   render() {
     const {
@@ -346,3 +354,12 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
+
+function mapStateToProps (state) {
+  return {
+    activeScreen: state.activeScreen,
+    previousScreen: state.previousScreen,
+  };
+}
+
+export default connect (mapStateToProps)(Explore);

@@ -54,7 +54,7 @@ class Home extends Component<{}> {
   }
 
   onPressExplore () {
-
+    this.props.setActiveScreen ('Explore');
   }
 
   onPressStartARavel () {
