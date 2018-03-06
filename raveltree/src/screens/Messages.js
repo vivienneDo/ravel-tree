@@ -1,6 +1,6 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/16/18
-// Modified: 02/16/18
+// Modified: 03/06/18
 //
 // Messages screen for RavelTree.
 //
@@ -23,12 +23,32 @@ import {
   View, ScrollView
 } from 'react-native';
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import RTLogoText from '../components/RTLogoText'
 import TextHeader from '../components/TextHeader'
 import MessageStub from '../components/MessageStub'
 import MessageCard from '../components/MessageCard'
 
-export default class Messages extends Component {
+const TEST_MESSAGES = [
+  {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca! There\'s some stuff I have to tell you, and I have to make it longer than two lines so I can examine the truncation.'},
+  {active: false, sender: 'Adam Jesper', message: 'I think...'},
+  {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca!'},
+  {active: false, sender: 'Adam Jesper', message: 'I think...'},
+  {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca!'},
+  {active: false, sender: 'Adam Jesper', message: 'I think...'},
+  {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca!'},
+  {active: false, sender: 'Adam Jesper', message: 'I think...'},
+  {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca!'},
+  {active: false, sender: 'Adam Jesper', message: 'I think...'},
+  {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca!'},
+  {active: false, sender: 'Adam Jesper', message: 'I think...'},
+  {active: true, sender: 'Clint Lane Clover', message: 'Hey Rebecca!'},
+  {active: false, sender: 'Adam Jesper', message: 'I think...'},
+];
+
+class Messages extends Component {
   constructor (props) {
     super (props);
   }
@@ -36,7 +56,7 @@ export default class Messages extends Component {
   getMessages () {
     return (
       <View>
-        {this.props.messages.map ((message) =>
+        {TEST_MESSAGES.map ((message) =>
           <View style={styles.message}>
             <MessageStub
               active={message.active}
@@ -96,3 +116,12 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
 });
+
+function mapStateToProps (state) {
+  return {
+    activeScreen: state.activeScreen,
+    previousScreen: state.previousScreen,
+  };
+}
+
+export default connect (mapStateToProps)(Messages);

@@ -18,13 +18,19 @@ import {
   View, ScrollView
 } from 'react-native';
 
+import { connect} from 'react-redux';
+
 import LinkBack from '../components/LinkBack'
 import RTLogoText from '../components/RTLogoText'
 import TextSans from '../components/TextSans'
 
-export default class TermsAndPrivacy extends Component {
+class TermsAndPrivacy extends Component {
   constructor (props) {
     super (props);
+  }
+
+  onPressBack () {
+    this.props.setActiveScreen (this.props.previousScreen);
   }
 
   render (){
@@ -36,7 +42,7 @@ export default class TermsAndPrivacy extends Component {
 
     return (
       <View style={styles.layout}>
-        <LinkBack />
+        <LinkBack onPress={() => this.onPressBack ()}/>
         <ScrollView style={styles.scroll}>
           <View style={styles.logo}>
             <RTLogoText size={60} />
@@ -66,7 +72,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     paddingHorizontal: 17,
-    backgroundColor: '#eeeeee',
   },
   scroll: {
     marginTop: 20,
@@ -86,3 +91,13 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
+
+function mapStateToProps (state) {
+  return {
+    activeScreen: state.activeScreen,
+    previousScreen: state.previousScreen,
+    showNavBar: state.showNavBar,
+  };
+}
+
+export default connect (mapStateToProps)(TermsAndPrivacy);

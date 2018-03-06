@@ -1,6 +1,6 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/17/18
-// Modified: 02/17/18
+// Modified: 03/06/18
 //
 // Notifications screen for RavelTree.
 //
@@ -25,11 +25,22 @@ import {
   View, ScrollView
 } from 'react-native';
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import RTLogoText from '../components/RTLogoText'
 import TextHeader from '../components/TextHeader'
 import NotificationCard from '../components/NotificationCard'
 
-export default class Notifications extends Component {
+const TEST_NOTIFICATIONS = [
+  {type: 'upvoted', passage: 'Something Frozen This Way Comes', upvotes: 37},
+  {type: 'invitationAccepted', user: 'Adam Jesper', passage: 'Shakespeare on Ice'},
+  {type: 'newParticipant', user: 'Clint Lane Clover', passage: 'Shakespeare on Ice'},
+  {type: 'message', user: 'Clint Lane Clover'},
+  {type: 'invitation', user: 'Brad Hooper', passage: 'Endless Smirk'},
+];
+
+class Notifications extends Component {
   constructor (props) {
     super (props);
   }
@@ -37,7 +48,7 @@ export default class Notifications extends Component {
   getNotifications () {
     return (
       <View>
-        {this.props.notifications.map ((notification) =>
+        {TEST_NOTIFICATIONS.map ((notification) =>
           <View style={styles.notification}>
             <NotificationCard
                notification={notification}
@@ -96,3 +107,12 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
 });
+
+function mapStateToProps (state) {
+  return {
+    activeScreen: state.activeScreen,
+    previousScreen: state.previousScreen,
+  };
+}
+
+export default connect (mapStateToProps)(Notifications);

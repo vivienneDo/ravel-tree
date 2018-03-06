@@ -1,6 +1,6 @@
 // Author: Alex Aguirre
 // Created: 02/07/18
-// Modified: 02/23/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/06/18 by Frank Fusco (fr@nkfus.co)
 //
 // Home screen for RavelTree.
 //
@@ -25,6 +25,9 @@ import {
     ScrollView
 } from 'react-native';
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import RTLogoText from '../components/RTLogoText';
 import ButtonReverse from '../components/ButtonReverse';
 import Button from '../components/Button';
@@ -35,7 +38,20 @@ import TextSerif from '../components/TextSerif';
 import TextHeader from '../components/TextHeader';
 import PassageCard from '../components/PassageCard';
 
-export default class Home extends Component<{}> {
+const TEST_USER = 'Rebecca Bates';
+const TEST_PASSAGES =[
+  {ravel: 'Endless Smirk', passageID: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I\'m going to need if I\'m going to fill up more space to ensure that this gets truncated after a certain number of lines.', upvotes: 11, downvotes: 0},
+  {ravel: 'Endless Smirk', passageID: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I\'m going to need if I\'m going to fill up more space to ensure that this gets truncated after a certain number of lines.', upvotes: 11, downvotes: 0},
+  {ravel: 'Endless Smirk', passageID: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I\'m going to need if I\'m going to fill up more space to ensure that this gets truncated after a certain number of lines.', upvotes: 11, downvotes: 0},
+  {ravel: 'Endless Smirk', passageID: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I\'m going to need if I\'m going to fill up more space to ensure that this gets truncated after a certain number of lines.', upvotes: 11, downvotes: 0},
+];
+
+
+class Home extends Component<{}> {
+  constructor (props: any, context: any) {
+    super (props, context);
+    this.props.setShowNavBar (true);
+  }
 
   onPressExplore () {
 
@@ -52,7 +68,7 @@ export default class Home extends Component<{}> {
   getPassages () {
     return (
       <View>
-        {this.props.passages.map ((passage) =>
+        {TEST_PASSAGES.map ((passage) =>
           <View style={styles.passageCard}>
             <PassageCard
               ravel={passage.ravel}
@@ -78,6 +94,7 @@ export default class Home extends Component<{}> {
     } = this.props;
     return (
       <View style={styles.layout}>
+
         {/* RavelTree logo at the top in the center */}
         <View style = {styles.logo}>
           <RTLogoText/>
@@ -182,3 +199,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
+
+function mapStateToProps (state) {
+  return {
+    activeScreen: state.activeScreen,
+    previousScreen: state.previousScreen,
+    showNavBar: state.showNavBar,
+  };
+}
+
+export default connect (mapStateToProps)(Home);

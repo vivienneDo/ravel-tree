@@ -1,8 +1,10 @@
 // Author: Alex Aguirre
 // Created: 01/24/18
-// Modified: 02/23/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/05/18 by Frank Fusco (fr@nkfus.co)
 //
 // Email login screen for RavelTree.
+//
+// TODO: Password reset function.
 
 import React, {Component} from 'react';
 import {
@@ -21,15 +23,16 @@ import Loader from '../Loader';
 import firebase from 'firebase';
 import { connect} from 'react-redux';
 import * as actions from '../actions';
-import MainPage from './MainPage';
+import _ from 'lodash';
 
+import LinkBack from '../components/LinkBack';
 import RTLogoText from '../components/RTLogoText';
 import InputForm from '../components/InputForm';
 import TextSans from '../components/TextSans';
 import TextLink from '../components/TextLink';
 import ButtonSans from '../components/ButtonSans';
 
-export default class LoginEmail extends Component {
+class LoginEmail extends Component {
   state = {
     email :  '',
     password: '',
@@ -39,6 +42,15 @@ export default class LoginEmail extends Component {
 
   onPressRegister () {
 
+  }
+
+  onPressBack () {
+    this.props.setActiveScreen ('Login');
+  }
+
+  onPressTermsAndPrivacy () {
+    this.props.setPreviousScreen (this.constructor.name);
+    this.props.setActiveScreen ('TermsAndPrivacy');
   }
 
   /* take in and store the user info on Firebase */
@@ -79,6 +91,8 @@ export default class LoginEmail extends Component {
 
     return (
       <View style={styles.layout}>
+
+        <LinkBack onPress={() => this.onPressBack ()}/>
 
         <View style={styles.logo}>
           <RTLogoText size={60} />
@@ -131,7 +145,7 @@ export default class LoginEmail extends Component {
             <TextLink size={16}>Reset it</TextLink>
           </View>
 
-          <TextLink size={12}>Terms and Privacy</TextLink>
+          <TextLink size={12} onPress={() => this.onPressTermsAndPrivacy ()}>Terms and Privacy</TextLink>
 
         </View>
 
@@ -193,3 +207,13 @@ const styles = StyleSheet.create({
     marginVertical: '5%',
   },
 });
+
+function mapStateToProps (state) {
+  return {
+    activeScreen: state.activeScreen,
+    previousScreen: state.previousScreen,
+    showNavBar: state.showNavBar,
+  };
+}
+
+export default connect (mapStateToProps)(LoginEmail);

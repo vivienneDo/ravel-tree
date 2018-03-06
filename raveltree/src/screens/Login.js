@@ -1,6 +1,6 @@
 // Author: Alex Aguirre and Vivienne Do
 // Created: ?
-// Modified: 02/23/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/05/18 by Frank Fusco (fr@nkfus.co)
 //
 // Login screen for RavelTree.
 
@@ -19,7 +19,7 @@ import Loader from '../Loader';
 import firebase from 'firebase';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
-import MainPage from './MainPage';
+import _ from 'lodash';
 
 import RTLogoText from '../components/RTLogoText';
 import TextLink from '../components/TextLink';
@@ -72,21 +72,29 @@ class Login extends Component {
   }
 
   onGButtonPress() {
-      const {email, password} = this.state;
-      this.setState({error: '', loading: true });
+    // TODO: Google Login.
+    // For now, just pretends the user is authenticated.
+    this.props.setActiveScreen ('Home');
 
-      firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(this.onAuthSuccess.bind(this))
-        .catch(() => {
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then(this.onAuthSuccess.bind(this))
-                .catch(this.onAuthFailed.bind(this));
-        });
+      // const {email, password} = this.state;
+      // this.setState({error: '', loading: true });
+      //
+      // firebase.auth().signInWithEmailAndPassword(email, password)
+      //   .then(this.onAuthSuccess.bind(this))
+      //   .catch(() => {
+      //       firebase.auth().createUserWithEmailAndPassword(email, password)
+      //           .then(this.onAuthSuccess.bind(this))
+      //           .catch(this.onAuthFailed.bind(this));
+      //   });
   }
 
   onPressSignInWithAnEmailAddress () {
     this.props.setActiveScreen ('LoginEmail');
-    console.log (this.props.activeScreen);
+  }
+
+  onPressTermsAndPrivacy () {
+    this.props.setPreviousScreen (this.constructor.name);
+    this.props.setActiveScreen ('TermsAndPrivacy');
   }
 
   onAuthSuccess() {
@@ -190,7 +198,7 @@ class Login extends Component {
             <TextLink size={18} onPress={() => this.onPressSignInWithAnEmailAddress ()}>Sign in with an email address</TextLink>
           </View>
           {/* Terms and Privacy */}
-          <TextLink size={12} color={'#2e8af7'}>
+          <TextLink size={12} color={'#2e8af7'} onPress={() => this.onPressTermsAndPrivacy ()}>
             Terms and Privacy
           </TextLink>
         </View>
@@ -272,6 +280,7 @@ const styles = StyleSheet.create({
 function mapStateToProps (state) {
   return {
     activeScreen: state.activeScreen,
+    showNavBar: state.showNavBar,
   };
 }
 

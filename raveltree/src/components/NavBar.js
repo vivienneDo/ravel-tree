@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/07/18
-// Modified:  02/07/18
+// Modified:  03/06/18
 
 // Navigation bar component for RavelTree.
 //
@@ -38,6 +38,9 @@ const Image = require('Image');
 const TouchableNativeFeedback = require('TouchableNativeFeedback');
 const TouchableOpacity = require('TouchableOpacity');
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import Divider from './Divider'
 import UserImage from './UserImage'
 
@@ -45,7 +48,7 @@ const HEIGHT = 50;
 
 var windowHeight;
 
-export default class NavBar extends React.Component {
+class NavBar extends React.Component {
 
   constructor (props) {
     super (props);
@@ -55,11 +58,20 @@ export default class NavBar extends React.Component {
 
   handleSelect (selected) {
     if (this.state.active != selected) {
-      this.setState ({
-        active: selected,
-      })
+      this.setState ({active: selected});
+      this.props.setNavBarTab (selected);
 
       // TODO: Navigation logic here.
+      var tab;
+      switch (selected) {
+        case ('home'):          tab = 'Home';           break;
+        case ('your-ravels'):   tab = 'YourRavels';     break;
+        case ('messages'):      tab = 'Messages';       break;
+        case ('notifications'): tab = 'Notifications';  break;
+        case ('profile'):       tab = 'Profile';        break;
+        default:                tab = 'Home';           break;
+      }
+      this.props.setActiveScreen (tab);
     }
   }
 
@@ -190,3 +202,14 @@ const styles = StyleSheet.create ({
     fontSize: 14,
   },
 });
+
+function mapStateToProps (state) {
+  return {
+    active: state.activeTab,
+    activeScreen: state.activeScreen,
+    previousScreen: state.previousScreen,
+    showNavBar: state.showNavBar,
+  };
+}
+
+export default connect (mapStateToProps)(NavBar);

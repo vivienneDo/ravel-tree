@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import { connect } from 'react-redux'
+import _ from 'lodash';
 
 import firebase from 'firebase';
 
@@ -15,8 +16,6 @@ import Loader from './Loader';
 
 import StatusBar from './components/StatusBar'
 import NavBar from './components/NavBar'
-
-//import Navigation from './Navigation';
 
 import Test from './screens/Test';
 
@@ -41,15 +40,16 @@ class Screen extends Component {
   constructor (props: any, context: any) {
     super (props, context);
     this.state = {loggedIn: null};
+    this.props.setShowNavBar (false);
   }
 
   componentWillMount() {
     firebase.auth().onAuthStateChanged((user) => {
-      console.log('Authentication state has changed');
+      console.log('Authentication state has changed: ' + (user ? 'True' : 'False'));
       if (user) {
-        this.setState({loggedIn: true})
+        this.setState ({loggedIn: true})
       } else {
-        this.setState({loggedIn: false})
+        this.setState ({loggedIn: false})
       }
     });
   }
@@ -62,28 +62,32 @@ class Screen extends Component {
         return <LoginEmail {...this.props} />;
       case ('TermsAndPrivacy'):
         return <TermsAndPrivacy {...this.props} />;
+      case ('Home'):
+        return <Home {...this.props} />;
+      case ('YourRavels'):
+        return <YourRavels {...this.props} />;
+      case ('Messages'):
+        return <Messages {...this.props} />;
+      case ('Notifications'):
+        return <Notifications {...this.props} />;
+      case ('Profile'):
+        return <Profile {...this.props} />;
+
+
+
       default:
         return <Login {...this.props} />;
     }
-
-    // switch (false) { //switch (this.state.loggedIn) {
-    //   case true:
-    //     return <Home />;
-    //   case false:
-    //     return <Test screen={'Explore'} />;
-    //     //return <Login />;
-    //   default:
-    //     return <Loader size="large"/>;
-    // }
   }
 
   showNavBar () {
-    if (this.state.loggedIn)
-    return (
-      <View style={styles.navBar}>
-        <NavBar />
-      </View>
-    );
+    if (this.props.showNavBar) {
+      return (
+        <View style={styles.navBar}>
+          <NavBar {...this.props} />
+        </View>
+      );
+    }
   }
 
   render() {
@@ -116,7 +120,9 @@ const styles = StyleSheet.create({
 
 function mapStateToProps (state) {
   return {
-    activeScreen: state.activeScreen
+    activeScreen: state.activeScreen,
+    previousScreen: state.previousScreen,
+    showNavBar: state.showNavBar,
   };
 }
 

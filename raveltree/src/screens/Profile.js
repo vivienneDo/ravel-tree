@@ -1,6 +1,6 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/17/18
-// Modified: 02/17/18
+// Modified: 03/06/18
 //
 // Profile screen for RavelTree.
 //
@@ -30,6 +30,9 @@ import {
   View, ScrollView
 } from 'react-native';
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import RTLogoText from '../components/RTLogoText'
 import TextSans from '../components/TextSans'
 import TextSerif from '../components/TextSerif'
@@ -38,8 +41,17 @@ import TextHeader from '../components/TextHeader'
 import UserImage from '../components/UserImage'
 import IconLeaf from '../components/IconLeaf'
 
+const TEST_USER = 'Rebecca Bates';
+const TEST_SCORE = 1064;
+const TEST_BIO = 'Rebecca Bates was born on a dairy farm in upstate New York. Her parents made it a point to rear her with a thorough appreciation of manual labor. She seeks to bring all that appreciation into her writing—though it usually finds its way in there pretty much on its own.\n\nRebecca earned an MFA from Georgetown in 2015. She lives in Manhattan with six pugs.';
+const TEST_STATISTICS = {
+  ravelsLed: 5,
+  ravelsContributedTo: 29,
+  passagesWritten: 213,
+  upvotesReceived: 731,
+}
 
-export default class Profile extends Component {
+class Profile extends Component {
   constructor (props) {
     super (props);
   }
@@ -69,10 +81,10 @@ export default class Profile extends Component {
             )}
           </View>
           <View style={styles.topRight}>
-            <TextSerif size={22}>{this.props.user}</TextSerif>
+            <TextSerif size={22}>{TEST_USER}</TextSerif>
             <View style={styles.score}>
               <IconLeaf size={30} />
-              <TextSerif size={24}>{this.props.score}</TextSerif>
+              <TextSerif size={24}>{TEST_SCORE}</TextSerif>
             </View>
             {isOwned ? (
               <TextLink size={12}>Log Out</TextLink>
@@ -96,7 +108,7 @@ export default class Profile extends Component {
                 <View style={{display: 'none'}} />
               )}
             </View>
-            <TextSerif size={16}>{this.props.bio}</TextSerif>
+            <TextSerif size={16}>{TEST_BIO}</TextSerif>
           </View>
           <View style={styles.statistics}>
             <View style={styles.statisticsHeader}>
@@ -119,16 +131,16 @@ export default class Profile extends Component {
               </View>
               <View style={styles.statisticsRight}>
                 <View style={styles.rightItem}>
-                  <TextSans size={20} bold color={'#3BB54A'}>{this.props.statistics.ravelsLed}</TextSans>
+                  <TextSans size={20} bold color={'#3BB54A'}>{TEST_STATISTICS.ravelsLed}</TextSans>
                 </View>
                 <View style={styles.rightItem}>
-                  <TextSans size={20} bold color={'#3BB54A'}>{this.props.statistics.ravelsContributedTo}</TextSans>
+                  <TextSans size={20} bold color={'#3BB54A'}>{TEST_STATISTICS.ravelsContributedTo}</TextSans>
                 </View>
                 <View style={styles.rightItem}>
-                  <TextSans size={20} bold color={'#3BB54A'}>{this.props.statistics.passagesWritten}</TextSans>
+                  <TextSans size={20} bold color={'#3BB54A'}>{TEST_STATISTICS.passagesWritten}</TextSans>
                 </View>
                 <View style={styles.rightItem}>
-                  <TextSans size={20} bold color={'#3BB54A'}>{this.props.statistics.upvotesReceived}</TextSans>
+                  <TextSans size={20} bold color={'#3BB54A'}>{TEST_STATISTICS.upvotesReceived}</TextSans>
                 </View>
               </View>
             </View>
@@ -214,3 +226,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 });
+
+function mapStateToProps (state) {
+  return {
+    activeScreen: state.activeScreen,
+    previousScreen: state.previousScreen,
+  };
+}
+
+export default connect (mapStateToProps)(Profile);

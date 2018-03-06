@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from './actions'
-
+import _ from 'lodash';
 
 import Screen from './Screen'
 
