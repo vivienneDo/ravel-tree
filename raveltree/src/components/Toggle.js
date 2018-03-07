@@ -21,24 +21,9 @@ const View = require('View');
 export default class Toggle extends React.Component {
   constructor (props) {
     super (props);
-    this.state = {isOn: false};
+    this.state = {isOn: this.props.active};
     this.handleToggle = this.handleToggle.bind (this);
   }
-
-  static propTypes = {
-
-    // Name of the toggle (used by parents and/or event listeners)
-    name: PropTypes.string.isRequired,
-
-    // Text to display for blindness accessibility features
-    accessibilityLabel: PropTypes.string,
-
-    // If true, disable all interactions for this component.
-    disabled: PropTypes.bool,
-
-    // Used to locate this view in end-to-end tests.
-    testID: PropTypes.string,
-  };
 
   handleToggle () {
     var newState = !this.state.isOn;
@@ -49,6 +34,7 @@ export default class Toggle extends React.Component {
   render () {
     const {
       name,
+      active,
       onChange,
       accessibilityLabel,
       disabled,
