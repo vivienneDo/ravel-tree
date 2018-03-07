@@ -1,4 +1,4 @@
-// From Jon Lebensold (https://www.youtube.com/watch?v=WrDwSRu8oz8)
+// From https://redux.js.org/recipes/reducing-boilerplate
 //
 // A function that accepts an initial state and a series of handlers and returns
 // a reducer function that will call that action type for that state and action.

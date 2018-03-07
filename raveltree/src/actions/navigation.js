@@ -1,10 +1,11 @@
 import * as types from './types'
 
-export function setActiveScreen (screen) {
+export function setActiveScreen (screen, screenData = {}) {
   console.log ("Active screen set to " + screen);
   return {
     type: types.SET_ACTIVE_SCREEN,
-    screen
+    screen,
+    screenData
   }
 }
 

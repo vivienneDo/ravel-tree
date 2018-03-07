@@ -8,9 +8,19 @@ export const activeScreen = createReducer ('Login', {
   }
 });
 
-export const previousScreen = createReducer ('Login', {
+export const screenData = createReducer ({}, {
+  [types.SET_ACTIVE_SCREEN] (state, action) {
+    return action.screenData;
+  },
+});
+
+export const previousScreens = createReducer (['Home'], {
   [types.SET_PREVIOUS_SCREEN] (state, action) {
-    return action.screen;
+    //return action.screen;
+    var screens = state;
+    screens.push (action.screen);
+    console.log ("Previous screens: " + screens);
+    return screens;
   }
 });
 

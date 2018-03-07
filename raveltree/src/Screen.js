@@ -75,7 +75,10 @@ class Screen extends Component {
         return <Profile {...this.props} />;
       case ('Explore'):
         return <Explore {...this.props} />;
-
+      case ('StartARavel'):
+        return <StartARavel {...this.props} />;
+      case ('AddTags'):
+        return <AddTags {...this.props} />;
 
       default:
         return <Login {...this.props} />;

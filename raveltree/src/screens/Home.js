@@ -58,7 +58,8 @@ class Home extends Component<{}> {
   }
 
   onPressStartARavel () {
-
+    this.props.setPreviousScreen (this.constructor.name);
+    this.props.setActiveScreen ('StartARavel');
   }
 
   onChangeText (text) {

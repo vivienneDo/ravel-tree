@@ -21,6 +21,9 @@ import {
   View, ScrollView
 } from 'react-native';
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import LinkBack from '../components/LinkBack'
 import LinkContinue from '../components/LinkContinue'
 import Divider from '../components/Divider'
@@ -59,16 +62,19 @@ const DEFAULT_SUGGESTED_TAGS = [
   'Away',
 ];
 
-export default class AddTags extends Component {
+class AddTags extends Component {
   constructor (props) {
     super (props);
     this.state = {
+      search: '',
       tagsShowing: [],
       nextTagIndex: 0,
       tagsSelected: [],
       tagCloudWidth: 0,
       tagCloudHeight: TAG_CLOUD_HEIGHT,
+      ...this.props.screenData,
     };
+    console.log (this.props.screenData.ravelName);
   }
 
   onTagCloudLayout = (e) => {
@@ -153,19 +159,26 @@ export default class AddTags extends Component {
 
   onChangeSearch (query) {
     // TODO
+    this.setState ({search: query});
+  }
+
+  onPressBack () {
+    var screenData = Object.assign ({}, this.props.screenData, );
+    this.props.setActiveScreen (this.props.previousScreen, screenData);
   }
 
 
   render (){
     const {
-      mode,
       onTagLayout,
       testID,
     } = this.props;
 
+    mode = this.props.screenData ? this.props.screenData.mode : this.props.mode;
+
     return (
       <View style={styles.layout}>
-        <LinkBack />
+        <LinkBack onPress={() => this.onPressBack ()} />
         <LinkContinue
           disabled={this.state.tagsSelected.length == 0}
         />
@@ -183,6 +196,7 @@ export default class AddTags extends Component {
           <View style={styles.headInput}>
             <InputSearch
               placeholder={'Search tags...'}
+              text={this.state.search == '' ? undefined : this.state.search}
               onChangeText={newText => this.onChangeSearch (newText)}
             />
           </View>
@@ -259,3 +273,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+function mapStateToProps (state) {
+  return {
+    activeScreen: state.activeScreen,
+    previousScreen: state.previousScreens.pop (),
+    screenData: state.screenData,
+  };
+}
+
+export default connect (mapStateToProps)(AddTags);

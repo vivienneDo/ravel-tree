@@ -1,6 +1,6 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/19/18
-// Modified: 02/19/18
+// Modified: 03/06/18
 //
 // "Start a Ravel" screen for RavelTree.
 //
@@ -15,6 +15,9 @@ import {
   Text,
   View, ScrollView
 } from 'react-native';
+
+import { connect } from 'react-redux'
+import _ from 'lodash';
 
 import LinkBack from '../components/LinkBack'
 import LinkContinue from '../components/LinkContinue'
@@ -34,19 +37,30 @@ const DEFAULT_ENABLE_EMBEDDED_MEDIA = false;
 const DEFAULT_ENABLE_PASSAGE_COMMENTS = true;
 const DEFAULT_RESTRICT_VOTING_TO_PARTICIPANTS = true;
 
-export default class StartARavel extends Component {
+class StartARavel extends Component {
   constructor (props) {
     super (props);
     this.state = {
-      ravelName: '',
-      category: DEFAULT_CATEGORY,
-      passageLength: DEFAULT_PASSAGE_LENGTH,
-      visibility: DEFAULT_VISIBILITY,
-      enableEmbeddedMultimedia: DEFAULT_ENABLE_EMBEDDED_MEDIA,
-      enablePassageComments: DEFAULT_ENABLE_PASSAGE_COMMENTS,
-      restrictVotingToParticipants: DEFAULT_RESTRICT_VOTING_TO_PARTICIPANTS,
-      concept: '',
+        ravelName: '',
+        category: '',
+        passageLength: '',
+        visibility: '',
+        enableEmbeddedMultimedia: '',
+        enablePassageComments: '',
+        restrictVotingToParticipants: '',
+        concept: '',
+        ...this.props.screenData,
     };
+  }
+
+  onPressBack () {
+    this.props.setActiveScreen (this.props.previousScreen);
+  }
+
+  onPressContinue () {
+    var screenData = Object.assign ({}, this.state, {mode: 'add'});
+    this.props.setPreviousScreen (this.constructor.name);
+    this.props.setActiveScreen ('AddTags', screenData);
   }
 
   onChangeRavelName (data) {
@@ -81,8 +95,6 @@ export default class StartARavel extends Component {
     this.setState ({concept: data});
   }
 
-
-
   render (){
     const {
       testID,
@@ -90,11 +102,12 @@ export default class StartARavel extends Component {
 
     return (
       <View style={styles.layout}>
-        <LinkBack />
+        <LinkBack onPress={() => this.onPressBack ()} />
         <LinkContinue
           disabled={
             (this.state.ravelName == '') || (this.state.concept == '')
           }
+          onPress={() => this.onPressContinue ()}
         />
         <View style={styles.head}>
           <Divider style={styles.divider}/>
@@ -105,6 +118,7 @@ export default class StartARavel extends Component {
           <View style={styles.headInput}>
             <InputSearch
               placeholder={'Ravel name'}
+              text={this.state.ravelName == '' ? undefined : this.state.ravelName}
               onChangeText={newText => this.onChangeRavelName (newText)}
             />
           </View>
@@ -120,7 +134,7 @@ export default class StartARavel extends Component {
                 {name: 'multimedia', title: 'Multimedia'},
                 {name: 'other', title: 'Other'},
               ]}
-              active={DEFAULT_CATEGORY}
+              active={this.state.category == '' ? DEFAULT_CATEGORY : this.state.category}
               onChange={option => this.onChangeCategory (option)}
             />
           </View>
@@ -132,7 +146,7 @@ export default class StartARavel extends Component {
                 {name: 'page', title: 'Page'},
                 {name: 'chapter', title: 'Chapter'},
               ]}
-              active={DEFAULT_PASSAGE_LENGTH}
+              active={this.state.passageLength == '' ? DEFAULT_PASSAGE_LENGTH : this.state.passageLength}
               onChange={option => this.onChangePassageLength (option)}
             />
           </View>
@@ -143,7 +157,7 @@ export default class StartARavel extends Component {
                 {name: 'public', title: 'Public'},
                 {name: 'private', title: 'Private'},
               ]}
-              active={DEFAULT_VISIBILITY}
+              active={this.state.visibility == '' ? DEFAULT_VISIBILITY : this.state.visibility}
               onChange={option => this.onChangeVisibility (option)}
             />
           </View>
@@ -163,18 +177,21 @@ export default class StartARavel extends Component {
               <View style={styles.toggleSwitch}>
                 <Toggle
                   name="enableEmbeddedMultimedia"
+                  active={this.state.enableEmbeddedMultimedia == '' ? DEFAULT_ENABLE_EMBEDDED_MEDIA : this.state.enableEmbeddedMultimedia}
                   onChange={value => this.onChangeEnableEmbeddedMultimedia (value)}
                 />
               </View>
               <View style={styles.toggleSwitch}>
                 <Toggle
                   name="enablePassageComments"
+                  active={this.state.enablePassageComments == '' ? DEFAULT_ENABLE_PASSAGE_COMMENTS : this.state.enablePassageComments}
                   onChange={value => this.onChangeEnablePassageComments (value)}
                 />
               </View>
               <View style={styles.toggleSwitch}>
                 <Toggle
                   name="restrictVotingToParticipants"
+                  active={this.state.restrictVotingToParticipants == '' ? DEFAULT_RESTRICT_VOTING_TO_PARTICIPANTS : this.state.restrictVotingToParticipants}
                   onChange={value => this.onChangeRestrictVotingToParticipants (value)}
                 />
               </View>
@@ -188,6 +205,7 @@ export default class StartARavel extends Component {
               multiline
               height={150}
               placeholder={'Type a concept here (e.g., "This ravel will be about...").'}
+              text={this.state.concept == '' ? undefined : this.state.concept}
               onChangeText={newText => this.onChangeConcept (newText)}
             />
           </View>
@@ -271,3 +289,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
+
+function mapStateToProps (state) {
+  return {
+    activeScreen: state.activeScreen,
+    previousScreen: state.previousScreens.pop (),
+    screenData: state.screenData,
+  };
+}
+
+export default connect (mapStateToProps)(StartARavel);
