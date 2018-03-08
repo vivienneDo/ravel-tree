@@ -76,16 +76,16 @@ class Login extends Component {
     // For now, just pretends the user is authenticated.
     this.props.setActiveScreen ('Home');
 
-      // const {email, password} = this.state;
-      // this.setState({error: '', loading: true });
-      //
-      // firebase.auth().signInWithEmailAndPassword(email, password)
-      //   .then(this.onAuthSuccess.bind(this))
-      //   .catch(() => {
-      //       firebase.auth().createUserWithEmailAndPassword(email, password)
-      //           .then(this.onAuthSuccess.bind(this))
-      //           .catch(this.onAuthFailed.bind(this));
-      //   });
+    // const {email, password} = this.state;
+    // this.setState({error: '', loading: true });
+    //
+    // firebase.auth().signInWithEmailAndPassword(email, password)
+    //   .then(this.onAuthSuccess.bind(this))
+    //   .catch(() => {
+    //       firebase.auth().createUserWithEmailAndPassword(email, password)
+    //           .then(this.onAuthSuccess.bind(this))
+    //           .catch(this.onAuthFailed.bind(this));
+    //   });
   }
 
   onPressSignInWithAnEmailAddress () {
