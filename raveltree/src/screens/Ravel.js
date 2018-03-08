@@ -11,6 +11,9 @@ import {
   View, ScrollView
 } from 'react-native';
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import LinkBack from '../components/LinkBack'
 import Divider from '../components/Divider'
 import TextHeader from '../components/TextHeader'
@@ -24,7 +27,7 @@ import Button from '../components/Button'
 import ButtonPlus from '../components/ButtonPlus'
 
 
-export default class Ravel extends Component {
+class Ravel extends Component {
   constructor (props) {
     super (props);
     this.state = {
@@ -220,3 +223,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreens,
+  } = state.navigation;
+
+  return {
+    activeScreen,
+    previousScreens,
+  };
+}
+
+export default connect (mapStateToProps)(Ravel);

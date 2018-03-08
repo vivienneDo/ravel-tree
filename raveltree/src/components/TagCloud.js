@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/12/18
-// Modified:  02/12/18
+// Modified:  03/08/18
 
 // Standard "tag cloud" component for a group of tags for RavelTree.
 //
@@ -99,7 +99,7 @@ export default class TagCloud extends React.Component {
 
   createTag (tag) {
     return (
-      <View style={styles.item} >
+      <View key={tag} style={styles.item} >
         <Tag name={tag}
              active={typeof this.state.active == 'undefined' ? null : this.state.active.includes(tag)}
              toggleFormState={newState => this.handleSelect(newState)}

@@ -1,6 +1,6 @@
 // Author: Alex Aguirre
 // Created: 02/07/18
-// Modified: 03/06/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/08/18 by Frank Fusco (fr@nkfus.co)
 //
 // "Explore" screen for RavelTree.
 //
@@ -232,7 +232,7 @@ class Explore extends Component<{}> {
     return (
       <View style={{width: '100%'}}>
         {TEST_RAVELS.map ((ravel) =>
-          <View style={styles.ravelCard}>
+          <View key={ravel.ravel} style={styles.ravelCard}>
             <RavelCard
               ravel={ravel.ravel}
               author={ravel.author}

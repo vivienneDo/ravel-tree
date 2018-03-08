@@ -1,6 +1,6 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/23/18
-// Modified: 02/23/18
+// Modified: 03/08/18
 //
 // "Invite Participants" screen for RavelTree.
 //
@@ -24,6 +24,9 @@ import {
   View, ScrollView
 } from 'react-native';
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import LinkBack from '../components/LinkBack'
 import Divider from '../components/Divider'
 import TextHeader from '../components/TextHeader'
@@ -36,7 +39,7 @@ import UserImage from '../components/UserImage'
 import IconLeaf from '../components/IconLeaf'
 
 
-export default class InviteParticipants extends Component {
+class InviteParticipants extends Component {
   constructor (props) {
     super (props);
     this.state = {
@@ -218,3 +221,17 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
 });
+
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreens,
+  } = state.navigation;
+
+  return {
+    activeScreen,
+    previousScreens,
+  };
+}
+
+export default connect (mapStateToProps)(InviteParticipants);

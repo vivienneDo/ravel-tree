@@ -20,6 +20,9 @@ import {
   View, ScrollView
 } from 'react-native';
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import LinkBack from '../components/LinkBack'
 import RTLogoText from '../components/RTLogoText'
 import TextHeader from '../components/TextHeader'
@@ -27,7 +30,7 @@ import MessageStub from '../components/MessageStub'
 import MessageCard from '../components/MessageCard'
 import TextSans from '../components/TextSans'
 
-export default class MessageThread extends Component {
+class MessageThread extends Component {
   constructor (props) {
     super (props);
   }
@@ -100,3 +103,17 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
 });
+
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreens,
+  } = state.navigation;
+
+  return {
+    activeScreen,
+    previousScreens,
+  };
+}
+
+export default connect (mapStateToProps)(MessageThread);

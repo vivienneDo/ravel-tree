@@ -1,6 +1,6 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/17/18
-// Modified: 03/06/18
+// Modified: 03/08/18
 //
 // Notifications screen for RavelTree.
 //
@@ -49,7 +49,7 @@ class Notifications extends Component {
     return (
       <View>
         {TEST_NOTIFICATIONS.map ((notification) =>
-          <View style={styles.notification}>
+          <View key={Object.values (notification)} style={styles.notification}>
             <NotificationCard
                notification={notification}
                active

@@ -13,9 +13,12 @@ import {
   View, ScrollView
 } from 'react-native';
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import RTLogoText from '../components/RTLogoText'
 
-export default class Splash extends Component {
+class Splash extends Component {
   constructor (props) {
     super (props);
   }
@@ -41,3 +44,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreens,
+    showNavBar,
+  } = state.navigation;
+
+  return {
+    activeScreen,
+    previousScreens,
+    showNavBar,
+  };
+}
+
+export default connect (mapStateToProps)(Splash);

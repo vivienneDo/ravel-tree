@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/07/18
-// Modified:  02/07/18
+// Modified:  03/08/18
 
 // Standard "radio set" component for a group of radio buttons for RavelTree.
 //
@@ -46,7 +46,7 @@ export default class RadioSet extends React.Component {
 
   createRadioItem (option) {
     return (
-      <View style={styles.item} >
+      <View key={option.name} style={styles.item} >
         <RadioItem title={option.title} name={option.name} active={this.state.active == option.name} setFormState={newState => this.handleSelect(newState)} />
       </View>
     )

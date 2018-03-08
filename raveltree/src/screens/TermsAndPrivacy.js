@@ -30,7 +30,6 @@ class TermsAndPrivacy extends Component {
   }
 
   onPressBack () {
-    //this.props.setActiveScreen (this.props.previousScreen);
     this.props.navigateBack ();
   }
 

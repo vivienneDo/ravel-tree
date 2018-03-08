@@ -1,6 +1,6 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/17/18
-// Modified: 03/06/18
+// Modified: 03/08/18
 //
 // "Your Ravels" screen for RavelTree.
 //
@@ -60,7 +60,7 @@ class YourRavels extends Component {
     return (
       <View>
         {TEST_RAVELS.map ((ravel) =>
-          <View style={styles.ravel}>
+          <View key={ravel.ravel} style={styles.ravel}>
             <RavelStub
                ravel={ravel.ravel}
                users={ravel.users}
@@ -80,6 +80,14 @@ class YourRavels extends Component {
         </View>
       );
     }
+  }
+
+  onPressStartARavel () {
+    this.props.navigateForward ('StartARavel', this.constructor.name);
+  }
+
+  onPressExplore () {
+    this.props.setActiveScreen ('Explore');
   }
 
   render (){
@@ -108,10 +116,10 @@ class YourRavels extends Component {
           </View>
               <View style={styles.buttons}>
                 <View style={styles.button}>
-                  <Button title={'Start a Ravel'} />
+                  <Button title={'Start a Ravel'} onPress={() => this.onPressStartARavel ()} />
                 </View>
                 <View style={styles.button}>
-                  <ButtonReverse title={'Explore'} />
+                  <ButtonReverse title={'Explore'} onPress={() => this.onPressExplore ()} />
                 </View>
               </View>
         </ScrollView>

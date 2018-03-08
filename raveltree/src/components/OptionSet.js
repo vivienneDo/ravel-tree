@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/12/18
-// Modified:  02/12/18
+// Modified:  03/08/18
 
 // Standard "option set" component for a group of radio-button-like tag options
 // for RavelTree.
@@ -47,7 +47,7 @@ export default class OptionSet extends React.Component {
 
   createTag (tag) {
     return (
-      <View style={styles.item} >
+      <View key={tag.name} style={styles.item} >
         <Tag name={tag.name}
              active={this.state.active == tag.name}
              toggleFormState={newState => this.handleSelect(newState)}>
