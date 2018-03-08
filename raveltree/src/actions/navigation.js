@@ -5,6 +5,7 @@ import * as types from './types'
  * @returns:
  *  mapStateToProps:
  *    state.activeScreen
+ *    state.screenData
  * actions: Sets the active screen.
  *
  */
@@ -38,8 +39,12 @@ export const setPreviousScreen = (screen) => {
 }
 
 /**
- * @param: nothing
- * @returns: nothing
+ * @param: Next screen, Current screen, Screen-related data to pass
+ * @returns:
+ *  mapStateToProps:
+ *    state.previousScreens
+ *    state.activeScreen
+ *    state.screenData
  * actions: Navigates to the specified screen, adding the current screen to the
  *          array of previous screens.
  *
@@ -58,7 +63,10 @@ export const navigateForward = (next, current, screenData) => {
 
 /**
  * @param: nothing
- * @returns: nothing
+ * @returns:
+ *  mapStateToProps:
+ *    state.previousScreens
+ *    state.activeScreen
  * actions: Navigates to the most recent previous screen.
  *
  */
