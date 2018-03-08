@@ -1,6 +1,6 @@
 // Author:   Alex Aguirre
 // Created:  01/18/18
-// Modified: 03/06/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/08/18 by Frank Fusco (fr@nkfus.co)
 
 // Standard "Input Text" component for RavelTree
 
@@ -31,7 +31,7 @@ export default class InputText extends Component<{}> {
     const {
       placeholder,
       onChangeText,
-      text,
+      //text,
       height,
       width,
       multiline,
@@ -50,7 +50,7 @@ export default class InputText extends Component<{}> {
            multiline = {multiline}
            style = {styles.inputStyle}
            placeholder = {placeholder}
-           text = {this.state.text}
+           value = {this.state.text}
            placeholderTextColor = '#B7B7B7'
            onChangeText={(text) => {this.props.onChangeText (text)}}
          />
