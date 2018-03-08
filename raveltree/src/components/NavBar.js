@@ -57,18 +57,7 @@ class NavBar extends React.Component {
   handleSelect (selected) {
     if (this.props.activeTab != selected) {
       this.props.setNavBarTab (selected);
-
-      // TODO: Navigation logic here.
-      var tab;
-      switch (selected) {
-        case ('home'):          tab = 'Home';           break;
-        case ('your-ravels'):   tab = 'YourRavels';     break;
-        case ('messages'):      tab = 'Messages';       break;
-        case ('notifications'): tab = 'Notifications';  break;
-        case ('profile'):       tab = 'Profile';        break;
-        default:                tab = 'Home';           break;
-      }
-      this.props.setActiveScreen (tab);
+      this.props.setActiveScreen (selected);
     }
   }
 
@@ -81,9 +70,14 @@ class NavBar extends React.Component {
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
+    console.log (this.props.activeScreen);
+
     const tabs = ['Home', 'YourRavels', 'Messages', 'Notifications', 'Profile'];
     if (!tabs.includes(this.props.activeScreen)) {
       this.props.setNavBarTab (null);
+    }
+    else {
+      this.props.setNavBarTab (this.props.activeScreen);
     }
 
     var messageCount = 3;       // TODO: Retrieve from Firebase.
@@ -93,55 +87,55 @@ class NavBar extends React.Component {
       <View>
         <Divider />
         <View style={layoutStyles}>
-          <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('home')}>
+          <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Home')}>
             <Image
-              source = {this.props.activeTab == 'home' ? require('./img/home-active.png') : require('./img/home.png')}
+              source = {this.props.activeTab == 'Home' ? require('./img/home-active.png') : require('./img/home.png')}
               style = {styles.image}
             />
-            <Text style = {[styles.text, this.props.activeTab == 'home' ? styles.active : styles.inactive]}>
+            <Text style = {[styles.text, this.props.activeTab == 'Home' ? styles.active : styles.inactive]}>
               Home
             </Text>
           </Touchable>
-          <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('your-ravels')}>
+          <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('YourRavels')}>
             <Image
-              source = {this.props.activeTab == 'your-ravels' ? require('./img/book-active.png') : require('./img/book.png')}
+              source = {this.props.activeTab == 'YourRavels' ? require('./img/book-active.png') : require('./img/book.png')}
               style = {styles.image}
             />
-            <Text style = {[styles.text, this.props.activeTab == 'your-ravels' ? styles.active : styles.inactive]}>
+            <Text style = {[styles.text, this.props.activeTab == 'YourRavels' ? styles.active : styles.inactive]}>
               Your Ravels
             </Text>
           </Touchable>
-          <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('messages')}>
+          <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Messages')}>
               <View>
                 <View style={styles.notification}>
                   <Text style={styles.notificationText}>{messageCount}</Text>
                 </View>
                 <Image
-                  source = {this.props.activeTab == 'messages' ? require('./img/envelope-active.png') : require('./img/envelope.png')}
+                  source = {this.props.activeTab == 'Messages' ? require('./img/envelope-active.png') : require('./img/envelope.png')}
                   style = {styles.image}
                 />
               </View>
-              <Text style = {[styles.text, this.props.activeTab == 'messages' ? styles.active : styles.inactive]}>
+              <Text style = {[styles.text, this.props.activeTab == 'Messages' ? styles.active : styles.inactive]}>
                 Messages
               </Text>
           </Touchable>
-          <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('notifications')}>
+          <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Notifications')}>
             <View>
               <View style={styles.notification}>
                 <Text style={styles.notificationText}>{notificationCount}</Text>
               </View>
               <Image
-                source = {this.props.activeTab == 'notifications' ? require('./img/bell-active.png') : require('./img/bell.png')}
+                source = {this.props.activeTab == 'Notifications' ? require('./img/bell-active.png') : require('./img/bell.png')}
                 style = {styles.image}
               />
             </View>
-            <Text style = {[styles.text, this.props.activeTab == 'notifications' ? styles.active : styles.inactive]}>
+            <Text style = {[styles.text, this.props.activeTab == 'Notifications' ? styles.active : styles.inactive]}>
               Notifications
             </Text>
           </Touchable>
-          <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('profile')}>
-            <UserImage size={30} active={this.props.activeTab === 'profile'} disabled />
-            <Text style = {[styles.text, this.props.activeTab === 'profile' ? styles.active : styles.inactive]}>
+          <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Profile')}>
+            <UserImage size={30} active={this.props.activeTab === 'Profile'} disabled />
+            <Text style = {[styles.text, this.props.activeTab === 'Profile' ? styles.active : styles.inactive]}>
               Profile
             </Text>
           </Touchable>
@@ -205,12 +199,19 @@ const styles = StyleSheet.create ({
   },
 });
 
-function mapStateToProps (state) {
+const mapStateToProps = (state) => {
+  const {
+    activeTab,
+    activeScreen,
+    previousScreen,
+    showNavBar,
+  } = state.navigation;
+
   return {
-    activeTab: state.activeTab,
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreen,
-    showNavBar: state.showNavBar,
+    activeTab,
+    activeScreen,
+    previousScreen,
+    showNavBar,
   };
 }
 

@@ -58,8 +58,7 @@ class Home extends Component<{}> {
   }
 
   onPressStartARavel () {
-    this.props.setPreviousScreen (this.constructor.name);
-    this.props.setActiveScreen ('StartARavel');
+    this.props.navigateForward ('StartARavel', this.constructor.name);
   }
 
   onChangeText (text) {
@@ -206,11 +205,17 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapStateToProps (state) {
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreens,
+    showNavBar,
+  } = state.navigation;
+
   return {
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreen,
-    showNavBar: state.showNavBar,
+    activeScreen,
+    previousScreens,
+    showNavBar,
   };
 }
 

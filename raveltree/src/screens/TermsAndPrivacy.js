@@ -30,7 +30,8 @@ class TermsAndPrivacy extends Component {
   }
 
   onPressBack () {
-    this.props.setActiveScreen (this.props.previousScreen);
+    //this.props.setActiveScreen (this.props.previousScreen);
+    this.props.navigateBack ();
   }
 
   render (){
@@ -92,11 +93,17 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapStateToProps (state) {
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreen,
+    showNavBar,
+  } = state.navigation;
+
   return {
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreen,
-    showNavBar: state.showNavBar,
+    activeScreen,
+    previousScreen,
+    showNavBar,
   };
 }
 

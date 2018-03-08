@@ -74,7 +74,7 @@ class AddTags extends Component {
       tagCloudHeight: TAG_CLOUD_HEIGHT,
       ...this.props.screenData,
     };
-    console.log (this.props.screenData.ravelName);
+    //console.log (this.props.screenData.ravelName);
   }
 
   onTagCloudLayout = (e) => {
@@ -163,8 +163,9 @@ class AddTags extends Component {
   }
 
   onPressBack () {
-    var screenData = Object.assign ({}, this.props.screenData, );
-    this.props.setActiveScreen (this.props.previousScreen, screenData);
+    // var screenData = Object.assign ({}, this.props.screenData, );
+    // this.props.setActiveScreen (this.props.previousScreens.pop (), screenData);
+    this.props.navigateBack ();
   }
 
 
@@ -274,11 +275,17 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapStateToProps (state) {
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreens,
+    screenData,
+  } = state.navigation;
+
   return {
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreens.pop (),
-    screenData: state.screenData,
+    activeScreen,
+    previousScreens,
+    screenData,
   };
 }
 

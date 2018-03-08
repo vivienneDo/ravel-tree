@@ -64,6 +64,7 @@ class Passage {
     this.downvotes = passage.downvotes;
     this.comments  = passage.comments;
     this.text      = passage.text;
+    this.parents   = passage.parents;
     this.children  = passage.children;
   }
 
@@ -74,6 +75,7 @@ class Passage {
   get downvotes () { return this.downvotes }
   get comments  () { return this.comments  }
   get text      () { return this.text;     }
+  get parents   () { return this.parents;  }
   get children  () { return this.children; }
 
   get score     () { return this.score (); }

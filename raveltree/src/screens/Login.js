@@ -89,6 +89,7 @@ class Login extends Component {
   }
 
   onPressSignInWithAnEmailAddress () {
+    this.props.setPreviousScreen (this.constructor.name);
     this.props.setActiveScreen ('LoginEmail');
   }
 
@@ -277,10 +278,15 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapStateToProps (state) {
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    showNavBar,
+  } = state.navigation;
+
   return {
-    activeScreen: state.activeScreen,
-    showNavBar: state.showNavBar,
+    activeScreen,
+    showNavBar,
   };
 }
 

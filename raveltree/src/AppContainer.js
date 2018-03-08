@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from './actions'
+import * as actions from './actions';
 import _ from 'lodash';
 
 import Screen from './Screen'
@@ -21,9 +22,13 @@ function mapDispatchToProps (dispatch) {
   return bindActionCreators (ActionCreators, dispatch);
 }
 
-function mapStateToProps (state) {
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+  } = state.navigation;
+
   return {
-    //activeScreen: state.activeScreen,
+    activeScreen,
   };
 }
 

@@ -54,13 +54,12 @@ class StartARavel extends Component {
   }
 
   onPressBack () {
-    this.props.setActiveScreen (this.props.previousScreen);
+    this.props.navigateBack ();
   }
 
   onPressContinue () {
     var screenData = Object.assign ({}, this.state, {mode: 'add'});
-    this.props.setPreviousScreen (this.constructor.name);
-    this.props.setActiveScreen ('AddTags', screenData);
+    this.props.navigateForward ('AddTags', this.constructor.name, screenData);
   }
 
   onChangeRavelName (data) {
@@ -290,11 +289,17 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapStateToProps (state) {
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreens,
+    screenData,
+  } = state.navigation;
+
   return {
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreens.pop (),
-    screenData: state.screenData,
+    activeScreen,
+    previousScreens,
+    screenData,
   };
 }
 

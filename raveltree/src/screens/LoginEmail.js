@@ -45,7 +45,8 @@ class LoginEmail extends Component {
   }
 
   onPressBack () {
-    this.props.setActiveScreen ('Login');
+    //this.props.setActiveScreen ('Login');
+    this.props.navigateBack ();
   }
 
   onPressTermsAndPrivacy () {

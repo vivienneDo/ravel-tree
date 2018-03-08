@@ -7,7 +7,8 @@ import {
   TouchableHighlight
 } from 'react-native';
 
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
+import * as actions from './actions';
 import _ from 'lodash';
 
 import firebase from 'firebase';
@@ -123,11 +124,17 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapStateToProps (state) {
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreen,
+    showNavBar,
+  } = state.navigation;
+
   return {
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreen,
-    showNavBar: state.showNavBar,
+    activeScreen,
+    previousScreen,
+    showNavBar,
   };
 }
 
