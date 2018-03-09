@@ -1,6 +1,6 @@
-// Author: Frank Fusco (fr@nkfus.co)
-// Created: 02/17/18
-// Modified: 03/08/18
+// Author:   Frank Fusco (fr@nkfus.co)
+// Created:  02/17/18
+// Modified: 03/09/18
 //
 // Notifications screen for RavelTree.
 //
@@ -15,8 +15,6 @@
 //      {type: 'invitation', user: 'Brad Hooper', passage: 'Endless Smirk'}
 //    ]}
 // />
-//
-// TODO: Make entire card touchable and link to respective content thread.
 
 import React, { Component } from 'react';
 import {
@@ -53,6 +51,7 @@ class Notifications extends Component {
             <NotificationCard
                notification={notification}
                active
+               {...this.props}
             />
           </View>
         )}
@@ -108,10 +107,13 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapStateToProps (state) {
+const mapStateToProps = (state) => {
+  const {
+    screenData,
+  } = state.navigation;
+
   return {
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreen,
+    screenData,
   };
 }
 

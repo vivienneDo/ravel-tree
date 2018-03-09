@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/15/18
-// Modified:  02/15/18
+// Modified:  03/09/18
 
 // Standard "Notification Card" component for RavelTree.
 //
@@ -19,7 +19,7 @@
 //    {type: 'message', user: 'Clint Lane Clover'}
 //    {type: 'invitation', user: 'Brad Hooper', passage: 'Endless Smirk'}
 //
-// TODO: Make entire card touchable and link to respective content.
+// TODO: Include prop in screenData for 'upvote' type to trigger PassagePopup modal.
 
 'use strict';
 
@@ -36,21 +36,47 @@ const TouchableOpacity = require('TouchableOpacity');
 const View = require('View');
 const ScrollView = require('ScrollView');
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import TextSans from './TextSans'
 
-export default class NotificationCard extends React.Component {
+class NotificationCard extends React.Component {
   constructor (props) {
     super (props);
   }
 
-  static propTypes = {
+  onPressCard () {
+    const notification = this.props.notification;
+    switch (notification.type) {
 
-    // Whether the container is active (will color the border)
-    active: PropTypes.bool,
+      case ('upvoted'):
+        // TODO: Include prop in screenData to trigger PassagePopup
+        var screenData = Object.assign ({}, {ravelID: notification.ravelID, passageID: notification.passageID});
+        this.navigateForward ('Ravel', this.constructor.name, screenData);
+        return;
 
-    // Used to locate this view in end-to-end tests.
-    testID: PropTypes.string,
-  };
+      case ('invitation'):
+        var screenData = Object.assign ({}, {ravelID: notification.ravelID, mode: 'invitation'});
+        this.navigateForward ('Ravel', this.constructor.name, screenData);
+        return;
+
+      case ('invitationAccepted'):
+        var screenData = Object.assign ({}, {ravelID: notification.ravelID});
+        this.navigateForward ('Ravel', this.constructor.name, screenData);
+        return;
+
+      case ('newParticipant'):
+        var screenData = Object.assign ({}, {ravelID: notification.ravelID});
+        this.navigateForward ('Ravel', this.constructor.name, screenData);
+        return;
+
+      case ('message'):
+        screenData = Object.assign ({}, {messageThreadID: notification.messageThreadID});
+        this.setActiveScreen ('MessageThread', screenData);
+        return;
+    }
+  }
 
   displayNotification (notification) {
     switch (notification.type) {
@@ -127,7 +153,7 @@ export default class NotificationCard extends React.Component {
     const {
       active,
       testID,
-      message,
+      notification,
       user,
     } = this.props;
 
@@ -146,14 +172,14 @@ export default class NotificationCard extends React.Component {
     }
 
     return (
-      <View style={layoutStyles}>
+      <Touchable onPress={() => this.onPressCard ()} style={layoutStyles}>
         <View style={dotStyles} />
         <View style={styles.content}>
           <View style={styles.notification}>
               {this.displayNotification (this.props.notification)}
           </View>
         </View>
-      </View>
+      </Touchable>
     )
   }
 }
@@ -193,3 +219,15 @@ const styles = StyleSheet.create ({
     flexDirection: 'row',
   },
 });
+
+const mapStateToProps = (state) => {
+  const {
+    screenData,
+  } = state.navigation;
+
+  return {
+    screenData,
+  };
+}
+
+export default connect (mapStateToProps)(NotificationCard);
