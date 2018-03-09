@@ -15,6 +15,8 @@
 //      {type: 'invitation', user: 'Brad Hooper', passage: 'Endless Smirk'}
 //    ]}
 // />
+//
+// TODO: getNotifications (): Firebase retrieval.
 
 import React, { Component } from 'react';
 import {
@@ -44,6 +46,9 @@ class Notifications extends Component {
   }
 
   getNotifications () {
+
+    // TODO: Firebase retrieval.
+
     return (
       <View>
         {TEST_NOTIFICATIONS.map ((notification) =>

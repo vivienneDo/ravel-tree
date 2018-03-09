@@ -18,8 +18,6 @@
 //    {type: 'newParticipant', user: 'Clint Lane Clover', passage: 'Shakespeare on Ice'}
 //    {type: 'message', user: 'Clint Lane Clover'}
 //    {type: 'invitation', user: 'Brad Hooper', passage: 'Endless Smirk'}
-//
-// TODO: Include prop in screenData for 'upvote' type to trigger PassagePopup modal.
 
 'use strict';
 
@@ -51,29 +49,28 @@ class NotificationCard extends React.Component {
     switch (notification.type) {
 
       case ('upvoted'):
-        // TODO: Include prop in screenData to trigger PassagePopup
-        var screenData = Object.assign ({}, {ravelID: notification.ravelID, passageID: notification.passageID});
-        this.navigateForward ('Ravel', this.constructor.name, screenData);
+        var screenData = Object.assign ({}, {ravelID: notification.ravelID, passageID: notification.passageID, showModal: 'PassagePopup'});
+        this.props.navigateForward ('Ravel', this.constructor.name, screenData);
         return;
 
       case ('invitation'):
         var screenData = Object.assign ({}, {ravelID: notification.ravelID, mode: 'invitation'});
-        this.navigateForward ('Ravel', this.constructor.name, screenData);
+        this.props.navigateForward ('Ravel', this.constructor.name, screenData);
         return;
 
       case ('invitationAccepted'):
         var screenData = Object.assign ({}, {ravelID: notification.ravelID});
-        this.navigateForward ('Ravel', this.constructor.name, screenData);
+        this.props.navigateForward ('Ravel', this.constructor.name, screenData);
         return;
 
       case ('newParticipant'):
         var screenData = Object.assign ({}, {ravelID: notification.ravelID});
-        this.navigateForward ('Ravel', this.constructor.name, screenData);
+        this.props.navigateForward ('Ravel', this.constructor.name, screenData);
         return;
 
       case ('message'):
         screenData = Object.assign ({}, {messageThreadID: notification.messageThreadID});
-        this.setActiveScreen ('MessageThread', screenData);
+        this.props.setActiveScreen ('MessageThread', screenData);
         return;
     }
   }

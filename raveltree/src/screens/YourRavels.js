@@ -15,8 +15,6 @@
 //      {ravel: 'Shallow Waters', users: 1, score: 34},
 //    ]}
 // />
-//
-// TODO: Make entire card touchable and link to respective content thread.
 
 import React, { Component } from 'react';
 import {
@@ -88,7 +86,7 @@ class YourRavels extends Component {
   }
 
   onPressExplore () {
-    this.props.setActiveScreen ('Explore');
+    this.props.navigateForward ('Explore', this.constructor.name);
   }
 
   render (){

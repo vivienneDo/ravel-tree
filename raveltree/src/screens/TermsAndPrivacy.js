@@ -10,6 +10,8 @@
 //    terms={'Terms of service here.'}
 //    privacy={'Privacy policy here.'}
 // />
+//
+// TODO: Firebase retrieval (won't use props anymore).
 
 import React, { Component } from 'react';
 import {
@@ -18,7 +20,8 @@ import {
   View, ScrollView
 } from 'react-native';
 
-import { connect} from 'react-redux';
+import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import LinkBack from '../components/LinkBack'
 import RTLogoText from '../components/RTLogoText'

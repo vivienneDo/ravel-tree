@@ -14,8 +14,7 @@
 //    ]}
 // />
 //
-// TODO: Make entire stub link to message thread.
-// TODO: Pass in array of threads instead?
+// TODO: getMessages (): Firebase retrieval.
 
 import React, { Component } from 'react';
 import {
@@ -67,6 +66,9 @@ class Messages extends Component {
   }
 
   getMessages () {
+
+    // TODO: Firebase retrieval.
+
     return (
       <View>
         {TEST_MESSAGES.map ((message) =>

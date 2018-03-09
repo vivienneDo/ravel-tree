@@ -4,10 +4,12 @@
 
 // Standard passage card component for RavelTree.
 //
-// TODO: Link ravel, title, passage index, and passage text link to respective content.
 // TODO: Ellipsis modal menu.
 // TODO: Truncate text (8 lines?)
 // TODO: Limit voting power to 1 per user per passage.
+// TODO: navigateToRavel () and navigateToPassage (): Replace
+//       this.constructor.name with the name of the parent screen. Will have to
+//       retrieve this through props.
 
 'use strict';
 
@@ -42,27 +44,25 @@ class PassageCard extends React.Component {
   }
 
   onPressPassageID () {
-    this.navigateToPassage (this.props.passageID);
+    this.navigateToPassage (this.props.ravelID, this.props.passageID);
   }
 
   onPressTitle () {
-    this.navigateToPassage (this.props.passageID);
+    this.navigateToPassage (this.props.ravelID, this.props.passageID);
   }
 
   onPressPassage () {
-    this.navigateToPassage (this.props.passageID);
+    this.navigateToPassage (this.props.ravelID, this.props.passageID);
   }
 
   navigateToRavel (id) {
-    // TODO
-    // var screenData = _____;
-    // navigateForward ('Ravel', this.constructor.name, screenData);
+    var screenData = Object.assign ({}, {ravelID: id});
+    this.props.navigateForward ('Ravel', this.constructor.name, screenData);
   }
 
-  navigateToPassage (id) {
-    // TODO
-    // var screenData = _____; // TODO: Include prop in screenData to show PassagePopup.
-    // navigateForward ('Ravel', this.constructor.name, screenData);
+  navigateToPassage (ravelID, passageID) {
+    var screenData = Object.assign ({}, {ravelID: ravelID, passageID: passageID, showModal: 'PassagePopup'});
+    this.props.navigateForward ('Ravel', this.constructor.name, screenData);
   }
 
   onPressEllipsis () {

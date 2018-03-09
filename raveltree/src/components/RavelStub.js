@@ -4,7 +4,6 @@
 //
 // "Ravel Stub" component for RavelTree.
 //
-// TODO: Make stub link to content.
 // TODO: Align users and ravel scores (so they appear in columns when stacked).
 
 import React, {Component} from 'react';

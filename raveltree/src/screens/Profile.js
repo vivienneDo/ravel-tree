@@ -22,6 +22,9 @@
 // Note: "isOwned" displays the active user's profile, including links to log
 // out and edit content. If false, these elements will be omitted, and
 // "message" and "follow" functions will be added.
+//
+// TODO: Set isOwned locally, checking whether the passed userID matches the
+//       userID of the current user in global Redux state.
 
 import React, { Component } from 'react';
 import {

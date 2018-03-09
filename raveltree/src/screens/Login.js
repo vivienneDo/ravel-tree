@@ -3,6 +3,10 @@
 // Modified: 03/05/18 by Frank Fusco (fr@nkfus.co)
 //
 // Login screen for RavelTree.
+//
+// TODO: Facebook authentication ->
+//       Set global user data via Redux function ->
+//       Navigate to Home screen
 
 import React, { Component } from 'react';
 import {

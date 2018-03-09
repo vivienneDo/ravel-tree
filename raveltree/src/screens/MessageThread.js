@@ -12,6 +12,8 @@
 //      {active: false, sender: 'Adam Jesper', message: 'I think...'},
 //    ]}
 // />
+//
+// TODO: getMessages (): Firebase retrieval.
 
 import React, { Component } from 'react';
 import {
@@ -39,6 +41,9 @@ class MessageThread extends Component {
   }
 
   getMessages () {
+
+    // TODO: Firebase retrieval.
+
     return (
       <View>
         {this.props.messages.map ((message, index) =>

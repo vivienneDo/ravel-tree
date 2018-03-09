@@ -48,6 +48,7 @@ class Ravel extends Component {
       score: '',
       mode: '',
       tree: [],
+      showModal: 'none',
       ...this.props.screenData,
     };
   }
@@ -59,7 +60,7 @@ class Ravel extends Component {
           <UserImage size={40} />
         </View>
         {TEST_RAVEL.participants.map ((user) =>
-          <View style={styles.user}>
+          <View key={user} style={styles.user}>
             <UserImage size={30} />
           </View>
         )}
@@ -106,12 +107,15 @@ class Ravel extends Component {
             //active
             {...this.props}
           />
-          {this.showPlus (this.props.mode == 'owned' || mode == 'participant')}
+          {this.showPlus (this.props.mode == 'owned' || this.props.mode == 'participant')}
         </View>
       </View>
     );
   }
 
+  onPressBack () {
+    this.props.navigateBack ();
+  }
 
   render (){
     const {
@@ -125,7 +129,7 @@ class Ravel extends Component {
 
     return (
       <View style={styles.layout}>
-        <LinkBack />
+        <LinkBack onPress={() => this.onPressBack ()} />
         <View style={styles.head}>
           <Divider />
           <View style={styles.title}>
