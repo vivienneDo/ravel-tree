@@ -1,6 +1,6 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/16/18
-// Modified: 02/16/18
+// Modified: 03/09/18
 //
 // Message thread screen for RavelTree.
 //
@@ -33,6 +33,9 @@ import TextSans from '../components/TextSans'
 class MessageThread extends Component {
   constructor (props) {
     super (props);
+    this.state = {
+      ...this.props.screenData,
+    }
   }
 
   getMessages () {
@@ -45,6 +48,7 @@ class MessageThread extends Component {
               user={message.sender}
               message={message.message}
               showReply={index == 0}
+              {...this.props}
             />
           </View>
         )}
@@ -106,13 +110,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   const {
-    activeScreen,
-    previousScreens,
+    screenData,
   } = state.navigation;
 
   return {
-    activeScreen,
-    previousScreens,
+    screenData,
   };
 }
 

@@ -3,8 +3,6 @@
 // Modified:  02/13/18
 
 // Standard "Message Stub" component for RavelTree.
-//
-// TODO: Make username touchable and link to respective content.
 
 'use strict';
 
@@ -29,21 +27,24 @@ export default class MessageStub extends React.Component {
     super (props);
   }
 
-  static propTypes = {
+  onPressStub () {
+    var screenData = Object.assign ({}, {messageThreadID: this.props.messageThreadID});
+    this.props.navigateForward ('MessageThread', this.constructor.name, screenData);
+  }
 
-    // Whether the container is active (will color the border)
-    active: PropTypes.bool,
-
-    // Used to locate this view in end-to-end tests.
-    testID: PropTypes.string,
-  };
+  onPressUser () {
+    var screenData = Object.assign ({}, {userID: this.props.userID});
+    navigateForward ('Profile', this.constructor.name, screenData);
+  }
 
   render () {
     const {
       active,
       testID,
       message,
+      messageThreadID,
       user,
+      userID,
     } = this.props;
 
     const layoutStyles = [styles.layout];
@@ -61,14 +62,16 @@ export default class MessageStub extends React.Component {
     }
 
     return (
-      <View style={layoutStyles}>
+      <Touchable onPress={() => this.onPressStub ()} style={layoutStyles}>
         <View style={dotStyles} />
         <View style={styles.content}>
           <View style={styles.head}>
             <View style={styles.userImage}>
               <UserImage size={26} />
             </View>
-            <TextSans bold size={14}>{this.props.user}</TextSans>
+            <Touchable onPress={() => this.onPressUser ()}>
+              <TextSans bold size={14}>{this.props.user}</TextSans>
+            </Touchable>
             <TextSans size={14}> says:</TextSans>
           </View>
           <View style={styles.message}>
@@ -77,7 +80,7 @@ export default class MessageStub extends React.Component {
             </Text>
           </View>
         </View>
-      </View>
+      </Touchable>
     )
   }
 }

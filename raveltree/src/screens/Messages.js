@@ -1,6 +1,6 @@
 // Author: Frank Fusco (fr@nkfus.co)
-// Created: 02/16/18
-// Modified: 03/08/18
+// Created:  02/16/18
+// Modified: 03/09/18
 //
 // Messages screen for RavelTree.
 //
@@ -14,7 +14,7 @@
 //    ]}
 // />
 //
-// TODO: Make entire stub touchable and link to message thread.
+// TODO: Make entire stub link to message thread.
 // TODO: Pass in array of threads instead?
 
 import React, { Component } from 'react';
@@ -75,6 +75,7 @@ class Messages extends Component {
               active={message.active}
               user={message.sender}
               message={message.message}
+              {...this.props}
             />
           </View>
         )}

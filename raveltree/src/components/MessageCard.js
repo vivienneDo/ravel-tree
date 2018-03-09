@@ -1,10 +1,10 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/15/18
-// Modified:  02/15/18
+// Modified:  03/09/18
 
 // Standard "Message Card" component for RavelTree.
 //
-// TODO: Make username touchable and link to respective content.
+// TODO: Reply function.
 
 'use strict';
 
@@ -21,23 +21,26 @@ const TouchableOpacity = require('TouchableOpacity');
 const View = require('View');
 const ScrollView = require('ScrollView');
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import TextSans from './TextSans'
 import TextLink from './TextLink'
 import UserImage from './UserImage'
 
-export default class MessageCard extends React.Component {
+class MessageCard extends React.Component {
   constructor (props) {
     super (props);
   }
 
-  static propTypes = {
+  onPressUser () {
+    var screenData = Object.assign ({}, {userID: this.props.userID});
+    navigateForward ('Profile', this.constructor.name, screenData);
+  }
 
-    // Whether the container is active (will color the border)
-    active: PropTypes.bool,
-
-    // Used to locate this view in end-to-end tests.
-    testID: PropTypes.string,
-  };
+  onPressReply () {
+    // TODO
+  }
 
   render () {
     const {
@@ -46,6 +49,7 @@ export default class MessageCard extends React.Component {
       testID,
       message,
       user,
+      userID,
     } = this.props;
 
     const layoutStyles = [styles.layout];
@@ -66,7 +70,9 @@ export default class MessageCard extends React.Component {
             <View style={styles.userImage}>
               <UserImage size={26} />
             </View>
-            <TextSans bold size={14}>{this.props.user}</TextSans>
+            <Touchable onPress={() => this.onPressUser ()}>
+              <TextSans bold size={14}>{this.props.user}</TextSans>
+            </Touchable>
             <TextSans size={14}> says:</TextSans>
           </View>
           <View style={styles.message}>
@@ -76,7 +82,7 @@ export default class MessageCard extends React.Component {
           </View>
           <View style={styles.replyButton}>
             <View style={this.props.showReply ? styles.replyText : {display: 'none'}}>
-              <TextLink size={12}>Reply</TextLink>
+              <TextLink size={12} onPress={() => onPressReply ()}>Reply</TextLink>
             </View>
           </View>
         </View>
@@ -124,3 +130,15 @@ const styles = StyleSheet.create ({
     alignSelf: 'flex-end',
   },
 });
+
+const mapStateToProps = (state) => {
+  const {
+    screenData,
+  } = state.navigation;
+
+  return {
+    screenData,
+  };
+}
+
+export default connect (mapStateToProps)(MessageCard);
