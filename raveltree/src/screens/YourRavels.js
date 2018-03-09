@@ -45,8 +45,8 @@ const TEST_RAVELS = [
 const TEST_RAVELS_IN = [];
 
 class YourRavels extends Component {
-  constructor (props) {
-    super (props);
+  constructor (props, context) {
+    super (props, context);
   }
 
   getRavels () {
@@ -65,6 +65,7 @@ class YourRavels extends Component {
                ravel={ravel.ravel}
                users={ravel.users}
                score={ravel.score}
+               {...this.props}
             />
           </View>
         )}

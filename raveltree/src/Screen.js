@@ -56,8 +56,10 @@ class Screen extends Component {
   }
 
   showScreen () {
-    //return <Home {...this.props} />;
+    //return <Ravel {...this.props} />;
     switch (this.props.activeScreen) {
+      case ('Splash'):
+        return <Splash {...this.props} />;
       case ('Login'):
         return <Login {...this.props} />;
       case ('LoginEmail'):
@@ -70,6 +72,8 @@ class Screen extends Component {
         return <YourRavels {...this.props} />;
       case ('Messages'):
         return <Messages {...this.props} />;
+      case ('MessageThread'):
+        return <MessageThread {...this.props} />;
       case ('Notifications'):
         return <Notifications {...this.props} />;
       case ('Profile'):
@@ -80,7 +84,10 @@ class Screen extends Component {
         return <StartARavel {...this.props} />;
       case ('AddTags'):
         return <AddTags {...this.props} />;
-
+      case ('InviteParticipants'):
+        return <InviteParticipants {...this.props} />;
+      case ('Ravel'):
+        return <Ravel {...this.props} />;
       default:
         return <Login {...this.props} />;
     }

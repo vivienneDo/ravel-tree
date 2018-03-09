@@ -1,12 +1,13 @@
 // Author:    Alex Aguirre
 // Created:   02/5/18
-// Modified:  02/15/18 by Frank Fusco (fr@nkfus.co)
+// Modified:  03/09/18 by Frank Fusco (fr@nkfus.co)
 
 // Standard passage card component for RavelTree.
 //
-// TODO: Make ravel, title, and ID touchable and link to respective content.
+// TODO: Link ravel, title, passage index, and passage text link to respective content.
 // TODO: Ellipsis modal menu.
 // TODO: Truncate text (8 lines?)
+// TODO: Limit voting power to 1 per user per passage.
 
 'use strict';
 
@@ -22,29 +23,57 @@ const TouchableNativeFeedback = require('TouchableNativeFeedback');
 const TouchableOpacity = require('TouchableOpacity');
 const View = require('View');
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import TextSerif from './TextSerif'
 import TextSans from './TextSans'
 import UserImage from './UserImage'
 import VoteBar from './VoteBar'
 
 
-export default class PassageCard extends React.Component {
-  constructor (props) {
-    super (props);
+class PassageCard extends React.Component {
+  constructor (props, context) {
+    super (props, context);
   }
 
-  static propTypes = {
+  onPressRavel () {
+    this.navigateToRavel (this.props.ravelID);
+  }
 
-    // Whether the container is active (will color the border)
-    isActive: PropTypes.bool,
+  onPressPassageID () {
+    this.navigateToPassage (this.props.passageID);
+  }
 
-    // Used to locate this view in end-to-end tests.
-    testID: PropTypes.string,
-  };
+  onPressTitle () {
+    this.navigateToPassage (this.props.passageID);
+  }
+
+  onPressPassage () {
+    this.navigateToPassage (this.props.passageID);
+  }
+
+  navigateToRavel (id) {
+    // TODO
+    // var screenData = _____;
+    // navigateForward ('Ravel', this.constructor.name, screenData);
+  }
+
+  navigateToPassage (id) {
+    // TODO
+    // var screenData = _____; // TODO: Include prop in screenData to show PassagePopup.
+    // navigateForward ('Ravel', this.constructor.name, screenData);
+  }
+
+  onPressEllipsis () {
+    // TODO: Modal options menu ("Share," etc.)
+  }
 
   render () {
     const {
       ravel,
+      ravelID,
+      passageIndex,
       passageID,
       title,
       passage,
@@ -59,21 +88,27 @@ export default class PassageCard extends React.Component {
       <View style={styles.container}>
         <View style={styles.head}>
           <View style={styles.row1}>
-            <TextSerif size={16}>{this.props.ravel}</TextSerif>
-            <TextSans size={13} color={'#95989A'}>{this.props.passageID}</TextSans>
+            <Touchable onPress={() => this.onPressRavel ()}>
+              <TextSerif size={16}>{this.props.ravel}</TextSerif>
+            </Touchable>
+            <Touchable onPress={() => this.onPressPassageID ()}>
+              <TextSans size={13} color={'#95989A'}>{this.props.passageIndex}</TextSans>
+            </Touchable>
           </View>
           <View style={styles.row2}>
-            <TextSans size={13} color={'#95989A'}>{this.props.title}</TextSans>
+            <Touchable onPress={() => this.onPressTitle ()}>
+              <TextSans size={13} color={'#95989A'}>{this.props.title}</TextSans>
+            </Touchable>
             <UserImage size={26}/>
           </View>
         </View>
-        <View style={styles.passage}>
+        <Touchable onPress={() => this.onPressPassage ()} style={styles.passage}>
           <TextSerif>
             {this.props.passage}
           </TextSerif>
-        </View>
+        </Touchable>
         <View style={styles.buttons}>
-          <Touchable>
+          <Touchable onPress={() => this.onPressEllipsis ()}>
             <TextSans size={40} color={'#95989A'}>...</TextSans>
           </Touchable>
           <VoteBar upvotes={this.props.upvotes} downvotes={this.props.downvotes} />
@@ -113,7 +148,7 @@ const styles = StyleSheet.create ({
     // paddingLeft: 17,
     // paddingRight: 17,
   },
-  passageID: {
+  passageIndex: {
     alignSelf: 'flex-end',
   },
   buttons: {
@@ -125,3 +160,17 @@ const styles = StyleSheet.create ({
     // paddingRight: 21,
   },
 });
+
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreens,
+  } = state.navigation;
+
+  return {
+    activeScreen,
+    previousScreens,
+  };
+}
+
+export default connect (mapStateToProps)(PassageCard);

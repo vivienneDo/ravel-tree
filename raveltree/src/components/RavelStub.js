@@ -1,10 +1,10 @@
 // Author:   Alex Aguirre
 // Created:  02/03/18
-// Modified: 02/15/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/09/18 by Frank Fusco (fr@nkfus.co)
 //
 // "Ravel Stub" component for RavelTree.
 //
-// TODO: Make entire stub touchable and link to content.
+// TODO: Make stub link to content.
 // TODO: Align users and ravel scores (so they appear in columns when stacked).
 
 import React, {Component} from 'react';
@@ -19,16 +19,29 @@ import {
   TouchableNativeFeedback,
 } from 'react-native';
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+import * as actions from '../actions';
+
 import UserImage from './UserImage'
 import TextSerif from './TextSerif'
 import IconUser from './IconUser'
 import IconLeaf from './IconLeaf'
 
-export default class RavelStub extends Component<{}> {
+class RavelStub extends Component<{}> {
+  constructor (props) {
+    super (props);
+  }
+
+  onPressStub () {
+    var screenData = Object.assign ({}, {ravelID: this.props.ravelID});
+    this.props.navigateForward ('Ravel', this.constructor.name, screenData);
+  }
 
   render() {
     const {
       ravel,
+      ravelID,
       users,
       score,
     } = this.props;
@@ -36,7 +49,7 @@ export default class RavelStub extends Component<{}> {
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     return (
-      <View style = {styles.container}>
+      <Touchable onPress={() => this.onPressStub ()} style={styles.container}>
         <View style={styles.left}>
           <View style={styles.userImage}>
             <UserImage size={26} />
@@ -61,7 +74,7 @@ export default class RavelStub extends Component<{}> {
             </View>
           </View>
         </View>
-      </View>
+      </Touchable>
     );
   }
 }
@@ -104,3 +117,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
   }
 });
+
+function mapStateToProps (state) {
+  return {
+    activeScreen: state.activeScreen,
+    previousScreen: state.previousScreen,
+  };
+}
+
+export default connect (mapStateToProps)(RavelStub);

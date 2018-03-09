@@ -1,6 +1,6 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/19/18
-// Modified: 03/07/18
+// Modified: 03/08/18
 //
 // "Start a Ravel" screen for RavelTree.
 //
@@ -45,9 +45,9 @@ class StartARavel extends Component {
         category: '',
         passageLength: '',
         visibility: '',
-        enableEmbeddedMultimedia: '',
-        enablePassageComments: '',
-        restrictVotingToParticipants: '',
+        enableEmbeddedMultimedia: DEFAULT_ENABLE_EMBEDDED_MEDIA,
+        enablePassageComments: DEFAULT_ENABLE_PASSAGE_COMMENTS,
+        restrictVotingToParticipants: DEFAULT_RESTRICT_VOTING_TO_PARTICIPANTS,
         concept: '',
         ...this.props.screenData,
     };
@@ -176,21 +176,21 @@ class StartARavel extends Component {
               <View style={styles.toggleSwitch}>
                 <Toggle
                   name="enableEmbeddedMultimedia"
-                  active={this.state.enableEmbeddedMultimedia == '' ? DEFAULT_ENABLE_EMBEDDED_MEDIA : this.state.enableEmbeddedMultimedia}
+                  active={this.state.enableEmbeddedMultimedia}
                   onChange={value => this.onChangeEnableEmbeddedMultimedia (value)}
                 />
               </View>
               <View style={styles.toggleSwitch}>
                 <Toggle
                   name="enablePassageComments"
-                  active={this.state.enablePassageComments == '' ? DEFAULT_ENABLE_PASSAGE_COMMENTS : this.state.enablePassageComments}
+                  active={this.state.enablePassageComments}
                   onChange={value => this.onChangeEnablePassageComments (value)}
                 />
               </View>
               <View style={styles.toggleSwitch}>
                 <Toggle
                   name="restrictVotingToParticipants"
-                  active={this.state.restrictVotingToParticipants == '' ? DEFAULT_RESTRICT_VOTING_TO_PARTICIPANTS : this.state.restrictVotingToParticipants}
+                  active={this.state.restrictVotingToParticipants}
                   onChange={value => this.onChangeRestrictVotingToParticipants (value)}
                 />
               </View>

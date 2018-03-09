@@ -5,6 +5,9 @@ import {
   View, ScrollView
 } from 'react-native';
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import Messages from './Messages'
 import MessageThread from './MessageThread';
 import Notifications from './Notifications';
@@ -136,7 +139,7 @@ var passage2B = new Passage ({
 })
 
 
-export default class Test extends Component {
+class Test extends Component {
   constructor (props) {
     super (props);
   }
@@ -333,3 +336,17 @@ const styles = StyleSheet.create({
     //width: '100%',
   }
 });
+
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreens,
+  } = state.navigation;
+
+  return {
+    activeScreen,
+    previousScreens,
+  };
+}
+
+export default connect (mapStateToProps)(Test);

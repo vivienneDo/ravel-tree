@@ -1,10 +1,10 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/27/18
-// Modified: 02/27/18
+// Modified: 03/09/18
 //
 // "Passage Stub" component for RavelTree.
 //
-// TODO: Make entire stub touchable and link to content (modal).
+// TODO: Make entire stub link to content (modal).
 
 import React, {Component} from 'react';
 import {
@@ -17,17 +17,29 @@ import {
   TouchableNativeFeedback,
 } from 'react-native';
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import UserImage from './UserImage'
 import TextSerif from './TextSerif'
 import TextSans from './TextSans'
 import IconLeaf from './IconLeaf'
 
-export default class PassageStub extends Component<{}> {
+class PassageStub extends Component<{}> {
+  constructor (props, context) {
+    super (props, context);
+  }
+
+  onPressStub () {
+    // TODO: "ShowModal ()" function to display PassagePopup by PassageID?
+    //       (this.props.passageID)
+  }
 
   render() {
     const {
       name,
       author,
+      passageIndex,
       passageID,
       score,
       active,
@@ -42,7 +54,7 @@ export default class PassageStub extends Component<{}> {
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     return (
-      <View style = {containerStyles}>
+      <Touchable onPress={() => this.onPressStub ()} style={containerStyles}>
         <View style={styles.left}>
           <View style={styles.userImage}>
             <UserImage size={26} />
@@ -50,8 +62,8 @@ export default class PassageStub extends Component<{}> {
           <TextSans size={12}>{this.props.name}</TextSans>
         </View>
         <View style={styles.right}>
-          <View style={styles.passageID}>
-            <TextSans size={13} color={'#95989A'}>{passageID}</TextSans>
+          <View style={styles.passageIndex}>
+            <TextSans size={13} color={'#95989A'}>{passageIndex}</TextSans>
           </View>
           <View style={styles.score}>
             <IconLeaf />
@@ -60,7 +72,7 @@ export default class PassageStub extends Component<{}> {
             </View>
           </View>
         </View>
-      </View>
+      </Touchable>
     );
   }
 }
@@ -90,7 +102,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  passageID: {
+  passageIndex: {
     marginRight: 8,
   },
   score: {
@@ -101,3 +113,17 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
   },
 });
+
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreens,
+  } = state.navigation;
+
+  return {
+    activeScreen,
+    previousScreens,
+  };
+}
+
+export default connect (mapStateToProps)(PassageStub);

@@ -16,6 +16,12 @@
 // - 'mode' prop denotes whether this is part of the ravel creation process or
 //   later editing.
 
+const TEST_PARTICIPANTS = [
+  {name: 'Adam Jesper', score: 9821},
+  {name: 'Brad Hooper', score: 3219},
+  {name: 'Anne Jensen', score: undefined},
+];
+
 
 import React, { Component } from 'react';
 import {
@@ -43,7 +49,9 @@ class InviteParticipants extends Component {
   constructor (props) {
     super (props);
     this.state = {
-      participants: this.props.participants,
+      participants: TEST_PARTICIPANTS,
+      mode: this.props.mode,
+      ...this.props.screenData,
     };
   }
 
@@ -63,7 +71,7 @@ class InviteParticipants extends Component {
 
   displayParticipant (user) {
     return (
-      <View style={styles.participant}>
+      <View key={user.name} style={styles.participant}>
         <View style={styles.participantLeft}>
           <View style={styles.userImage}>
             <UserImage size={26} />
@@ -85,17 +93,27 @@ class InviteParticipants extends Component {
     );
   }
 
+  onPressBack () {
+    this.props.navigateBack ();
+  }
+
+  onPressStartRavel () {
+    this.props.setActiveScreen ('Ravel', this.state);
+
+    // TODO: Save to database.
+  }
 
   render (){
     const {
-      mode,
       participants,
       testID,
     } = this.props;
 
+    const mode = this.state.mode;
+
     return (
       <View style={styles.layout}>
-        <LinkBack />
+        <LinkBack onPress={() => this.onPressBack ()}/>
         <View style={styles.head}>
           <View style={styles.headText}>
             <TextHeader>Invite Participants</TextHeader>
@@ -127,6 +145,7 @@ class InviteParticipants extends Component {
           <Button
             title={mode =='add' ? 'Start Ravel' : 'Save Changes'}
             disabled={this.state.participants.length == 0}
+            onPress={() => this.onPressStartRavel ()}
           />
         </View>
       </View>
@@ -226,11 +245,13 @@ const mapStateToProps = (state) => {
   const {
     activeScreen,
     previousScreens,
+    screenData,
   } = state.navigation;
 
   return {
     activeScreen,
     previousScreens,
+    screenData,
   };
 }
 

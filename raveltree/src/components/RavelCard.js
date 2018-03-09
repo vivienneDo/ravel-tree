@@ -1,21 +1,26 @@
 // Author:   Alex Aguirre
 // Created:  02/05/18
-// Modified: 02/15/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/09/18 by Frank Fusco (fr@nkfus.co)
 //
 // "Ravel Card" component for RavelTree.
 //
-// TODO: Make entire card touchable and link to content.
+// TODO: Make entire card link to content.
 // TODO: Truncate concept text?
 
 import React, {Component} from 'react';
 import {
   AppRegistry,
   StyleSheet,
+  Platform,
   Text,
   View,
   Image,
   TouchableOpacity
 } from 'react-native';
+
+import { connect } from 'react-redux'
+import _ from 'lodash';
+import * as actions from '../actions';
 
 import UserImage from './UserImage'
 import TextSerif from './TextSerif'
@@ -23,20 +28,30 @@ import TextSans from './TextSans'
 import IconUser from './IconUser'
 import IconLeaf from './IconLeaf'
 
-export default class RavelCard extends Component<{}> {
+class RavelCard extends Component<{}> {
+  constructor (props, context) {
+    super (props, context);
+  }
 
+  onPressCard () {
+    var screenData = Object.assign ({}, {ravelID: this.props.ravelID});
+    this.props.navigateForward ('Ravel', this.constructor.name, screenData);
+  }
 
   render() {
     const {
       ravel,
+      ravelID,
       author,
       users,
       score,
       concept,
     } = this.props;
 
+    const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
+
     return (
-      <View style = {styles.container}>
+      <Touchable onPress={() => this.onPressCard ()} style = {styles.container}>
         <View style={styles.head}>
           <View style={styles.left}>
             <View style={styles.userImage}>
@@ -66,7 +81,7 @@ export default class RavelCard extends Component<{}> {
         <View style={styles.concept}>
           <TextSans size={16} color={'#7F7F7F'}>{this.props.concept}</TextSans>
         </View>
-      </View>
+      </Touchable>
     );
   }
 }
@@ -112,3 +127,12 @@ const styles = StyleSheet.create({
       paddingHorizontal: 2,
     },
 });
+
+function mapStateToProps (state) {
+  return {
+    activeScreen: state.activeScreen,
+    previousScreen: state.previousScreen,
+  };
+}
+
+export default connect (mapStateToProps)(RavelCard);

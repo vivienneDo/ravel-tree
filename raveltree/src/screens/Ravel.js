@@ -1,8 +1,11 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/27/18
-// Modified: 02/27/18
+// Modified: 03/08/18
 //
 // "Ravel" screen for RavelTree.
+//
+// TODO: Firebase lookup by passed RavelID in constructor.
+//       (this.state.ravelID)
 
 import React, { Component } from 'react';
 import {
@@ -26,16 +29,28 @@ import PassageStub from '../components/PassageStub'
 import Button from '../components/Button'
 import ButtonPlus from '../components/ButtonPlus'
 
+const TEST_RAVEL = {
+  title: 'Cassius in Rome',
+  author: 'Rebecca Bates',
+  participants: ['Adam Jesper', 'Brad Hooper', 'Anne Jensen',],
+  score: 318,
+  mode: 'owned',
+  tree: undefined,
+}
 
 class Ravel extends Component {
   constructor (props) {
     super (props);
     this.state = {
-
+      title: '',
+      author: '',
+      participants: [],
+      score: '',
+      mode: '',
+      tree: [],
+      ...this.props.screenData,
     };
   }
-
-
 
   showUsers () {
     return (
@@ -43,7 +58,7 @@ class Ravel extends Component {
         <View style={styles.user}>
           <UserImage size={40} />
         </View>
-        {this.props.participants.map ((user) =>
+        {TEST_RAVEL.participants.map ((user) =>
           <View style={styles.user}>
             <UserImage size={30} />
           </View>
@@ -86,9 +101,10 @@ class Ravel extends Component {
           <PassageStub
             name={'Pacing the Basement'}
             author={'Rebecca Bates'}
-            passageID={'1-A'}
+            passageIndex={'1-A'}
             score={121}
             //active
+            {...this.props}
           />
           {this.showPlus (this.props.mode == 'owned' || mode == 'participant')}
         </View>

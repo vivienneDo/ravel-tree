@@ -1,6 +1,6 @@
 // Author: Alex Aguirre
 // Created: 02/07/18
-// Modified: 03/08/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/09/18 by Frank Fusco (fr@nkfus.co)
 //
 // "Explore" screen for RavelTree.
 //
@@ -239,6 +239,7 @@ class Explore extends Component<{}> {
               users={ravel.users}
               score={ravel.score}
               concept={ravel.concept}
+              {...this.props}
             />
           </View>
         )}

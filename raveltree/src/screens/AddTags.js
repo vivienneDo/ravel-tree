@@ -119,7 +119,7 @@ class AddTags extends Component {
 
   displaySelectedTag (tagName) {
     return (
-      <View style={styles.selectedTag}>
+      <View key={tagName} style={styles.selectedTag}>
         <Tag name={tagName} active mode={'displayOnly'}>{tagName}</Tag>
         <TextLink size={14} onPress={() => {this.onRemoveTag (tagName)}}>
           Remove
@@ -168,6 +168,10 @@ class AddTags extends Component {
     this.props.navigateBack ();
   }
 
+  onPressContinue () {
+    var screenData = Object.assign ({}, this.state, {mode: 'add'});
+    this.props.navigateForward ('InviteParticipants', this.constructor.name, screenData);
+  }
 
   render (){
     const {
@@ -181,6 +185,7 @@ class AddTags extends Component {
       <View style={styles.layout}>
         <LinkBack onPress={() => this.onPressBack ()} />
         <LinkContinue
+          onPress={() => this.onPressContinue ()}
           disabled={this.state.tagsSelected.length == 0}
         />
         <View style={styles.head}>
