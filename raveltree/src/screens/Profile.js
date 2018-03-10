@@ -1,6 +1,6 @@
-// Author: Frank Fusco (fr@nkfus.co)
-// Created: 02/17/18
-// Modified: 03/06/18
+// Author:   Frank Fusco (fr@nkfus.co)
+// Created:  02/17/18
+// Modified: 03/10/18
 //
 // Profile screen for RavelTree.
 //
@@ -25,6 +25,10 @@
 //
 // TODO: Set isOwned locally, checking whether the passed userID matches the
 //       userID of the current user in global Redux state.
+// TODO: Align statistics.
+// TODO: onPressChangeImage ()
+// TODO: onPressLogOut ()
+// TODO: onPressEdit ()
 
 import React, { Component } from 'react';
 import {
@@ -59,6 +63,26 @@ class Profile extends Component {
     super (props);
   }
 
+  onPressChangeImage () {
+    // TODO
+  }
+
+  onPressLogOut () {
+    // TODO
+  }
+
+  onPressFollow () {
+    // TODO
+  }
+
+  onPressMessage () {
+    // TODO
+  }
+
+  onPressEdit () {
+    // TODO
+  }
+
   render (){
     const {
       isOwned,
@@ -78,7 +102,7 @@ class Profile extends Component {
           <View style={styles.topLeft}>
             <UserImage size={100} />
             {isOwned ? (
-              <TextLink size={12}>Change Image</TextLink>
+              <TextLink onPress={() => this.onPressChangeImage ()} size={12}>Change Image</TextLink>
             ) : (
               <View style={{display: 'none'}} />
             )}
@@ -90,13 +114,13 @@ class Profile extends Component {
               <TextSerif size={24}>{TEST_SCORE}</TextSerif>
             </View>
             {isOwned ? (
-              <TextLink size={12}>Log Out</TextLink>
+              <TextLink onPress={() => this.onPressLogOut ()} size={12}>Log Out</TextLink>
             ) : (
               <View>
                 <View style={styles.spaceBelow}>
-                  <TextLink size={12}>Follow</TextLink>
+                  <TextLink onPress={() => this.onPressFollow ()} size={12}>Follow</TextLink>
                 </View>
-                <TextLink size={12}>Message</TextLink>
+                <TextLink onPress={() => this.onPressMessage ()}size={12}>Message</TextLink>
               </View>
             )}
           </View>
@@ -106,7 +130,7 @@ class Profile extends Component {
             <View style={styles.bioHeader}>
               <TextHeader>Bio&nbsp;&nbsp;</TextHeader>
               {isOwned ? (
-                <TextLink size={12}>Edit</TextLink>
+                <TextLink onPress={() => this.onPressEdit ()} size={12}>Edit</TextLink>
               ) : (
                 <View style={{display: 'none'}} />
               )}
