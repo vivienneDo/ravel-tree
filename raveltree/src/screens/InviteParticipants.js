@@ -15,6 +15,10 @@
 //
 // - 'mode' prop denotes whether this is part of the ravel creation process or
 //   later editing.
+//
+// TODO: onPressByName (): Invite by name functionality
+// TODO: onPressByLink (): Invite by link functionality (Would like to have)
+// TODO: onPressStartRavel (): Save ravel to database.
 
 const TEST_PARTICIPANTS = [
   {name: 'Adam Jesper', score: 9821},
@@ -103,6 +107,14 @@ class InviteParticipants extends Component {
     // TODO: Save to database.
   }
 
+  onPressByName () {
+    // TODO: Invite by name functionality.
+  }
+
+  onPressByLink () {
+    // TODO: Invite by link functionality.
+  }
+
   render (){
     const {
       participants,
@@ -121,15 +133,15 @@ class InviteParticipants extends Component {
           <View style={styles.options}>
             <View style={styles.option}>
               <View style={styles.buttonPlus}>
-                <ButtonPlus size={21} />
+                <ButtonPlus onPress={() => this.onPressByName ()} size={21} />
               </View>
-              <TextLink size={21}>By Name</TextLink>
+              <TextLink onPress={() => this.onPressByName ()} size={21}>By Name</TextLink>
             </View>
             <View style={styles.option}>
               <View style={styles.buttonPlus}>
-                <ButtonPlus size={21} />
+                <ButtonPlus onPress={() => this.onPressByLink ()} size={21} />
               </View>
-              <TextLink size={21}>By Link</TextLink>
+              <TextLink onPress={() => this.onPressByLink ()} size={21}>By Link</TextLink>
             </View>
           </View>
         </View>

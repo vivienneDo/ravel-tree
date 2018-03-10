@@ -1,6 +1,6 @@
-// Author: Frank Fusco (fr@nkfus.co)
-// Created: 02/20/18
-// Modified: 02/21/18
+// Author:   Frank Fusco (fr@nkfus.co)
+// Created:  02/20/18
+// Modified: 03/10/18
 //
 // "Add Tags" screen for RavelTree.
 //
@@ -12,6 +12,7 @@
 //   for each tag, which are used to determine how many tags will fit.
 //
 // TODO: Validate text input.
+// TODO: onChangeSearch (): Search existing tags.
 
 
 import React, { Component } from 'react';
@@ -158,13 +159,13 @@ class AddTags extends Component {
   // }
 
   onChangeSearch (query) {
-    // TODO
+
+    // TODO: Search existing tags
+
     this.setState ({search: query});
   }
 
   onPressBack () {
-    // var screenData = Object.assign ({}, this.props.screenData, );
-    // this.props.setActiveScreen (this.props.previousScreens.pop (), screenData);
     this.props.navigateBack ();
   }
 
