@@ -29,7 +29,7 @@ export default (state = initialState, action) => {
     case types.NAVIGATE_FORWARD:
       var previousScreens = state.previousScreens;
       previousScreens.push (action.current);
-      console.dir (action.screenData);
+      //console.dir (action.screenData);
       return {
         ...state,
         previousScreens: previousScreens,
@@ -40,7 +40,7 @@ export default (state = initialState, action) => {
     case types.NAVIGATE_BACK:
       var previousScreens = state.previousScreens;
       var previousScreen = previousScreens.pop ();
-      console.dir (state.screenData);
+    //  console.dir (state.screenData);
       return {
         ...state,
         previousScreens: previousScreens,

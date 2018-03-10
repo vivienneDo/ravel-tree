@@ -39,6 +39,7 @@ import RadioSet from '../components/RadioSet';
 import TagCloud from '../components/TagCloud';
 import Tag from '../components/Tag';
 import OptionSet from '../components/OptionSet';
+import LinkBack from '../components/LinkBack'
 
 const DEFAULT_ACTIVE = 'title';
 
@@ -93,6 +94,11 @@ class Explore extends Component<{}> {
       tagCloudHeight: TAG_CLOUD_HEIGHT,
       search: undefined,
     };
+  }
+
+
+  onPressBack () {
+    this.props.navigateBack ();
   }
 
   onChangeText (text) {
@@ -261,6 +267,9 @@ class Explore extends Component<{}> {
 
     return (
       <View style={styles.layout}>
+      
+      {/* Back button */}
+      <LinkBack onPress={() => this.onPressBack ()}/>
         {/* RavelTree logo at the top in the center */}
         <View style = {styles.logo}>
           <RTLogoText/>
