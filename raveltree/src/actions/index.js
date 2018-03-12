@@ -1381,17 +1381,15 @@ export const readTermsOfService = () => {
  * @param {*} uid 
  * @returns {*} Will return a state change
  */
-export const addAdminUser = (uid) => {
+export const addAdminUser = (user_uid) => {
 
 
     return (dispatch) => {
 
-        var currentUid = firebase.auth().currentUser.uid;
-
         checkCurrentUserIsAdmin().then(valueOfKey => {
 
             if (valueOfKey) {
-                firebase.database().ref(`/admin/${uid}`).set(true)
+                firebase.database().ref(`/admin/${user_uid}`).set(true)
                 .then(() => {
                     dispatch({type: 'ADD_ADMIN', payload: true})
                 })
