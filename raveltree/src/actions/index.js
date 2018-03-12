@@ -1027,63 +1027,6 @@ export const acceptRavelInvite = (ravel_uid) => {
 }
 
 
-/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
- * @param: 
- * @returns: 
- * 
- */
-export const insertTermsOfService = (terms_of_service) => {
-
-    return (dispatch) => {
-        firebase.database().ref(`terms_of_service`).set({terms_of_service : terms_of_service})
-        .then(() => {
-            firebase.database().ref(`terms_of_service/terms_of_service`).once('value', (snapshot) => {
-                dispatch({type: 'INSERT_TERMS_OF_SERVICE', payload: snapshot.val() })
-
-            })
-        })
-        
-    }
-
-
-    
-}
-
-/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
- * @param: 
- * @returns: 
- * 
- */
-export const updateTermsOfService = (terms_of_service) => {
-
-    firebase.database().ref(`terms_of_service`).update({terms_of_service : terms_of_service});
-    
-}
-
-/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
- * @param: nothing 
- * @returns: the current terms of service 
- * 
- */
-export const readTermsOfService = () => {
-
-    return (dispatch) => {
-        firebase.database().ref(`terms_of_service/terms_of_service`).once('value', (snapshot) => {
-            dispatch({ type: 'GET_TERMS_OF_SERVICE', payload: snapshot.val()})
-        });
-    }
-   
-}
-
-/**
- * 
- */
-export const addAdminUser = (uid) => {
-
-    return (dispatch) => {
-        firebase.database().ref(`/admin`).push({uid:true});
-    }
-}
 
 
 /**
@@ -1177,24 +1120,6 @@ export const createPassage = ({ravel_uid, passage_title, passage_body}) => {
     }
 }
 
-/** TO DO  
-* Function that gets a ravel's particular passage, will do after talking about structure 
-*/
-export const getPassageMetaData = () => {
-    
-}
-
-export const forkPassage = () => {
-
-}
-
-export const mergePassage = () => {
-
-}
-
-export const passageRavelPointCalculation = () => {
-
-}
 
 /**
  * 
@@ -1347,4 +1272,407 @@ export const downVotePassageHelper = (passage_uid) => {
 
     
 
+}
+
+
+/** TO DO  
+* Function that gets a ravel's particular passage, will do after talking about structure 
+*/
+export const getPassageMetaData = () => {
+    
+}
+
+export const forkPassage = () => {
+
+}
+
+export const mergePassage = () => {
+
+}
+
+export const passageRavelPointCalculation = () => {
+
+}
+
+
+/** ADMIN FUNCTIONS  */
+
+/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
+ * @param: terms_of_service
+ * @returns: the current terms of service in a long string....
+ * Actions: Adds a new terms of service, will fail if user is not admin
+ */
+export const insertTermsOfService = (terms_of_service) => {
+
+        return (dispatch) => {
+
+            checkCurrentUserIsAdmin().then(valueOfKey => {
+                if (valueOfKey) {
+                    firebase.database().ref(`terms_of_service`).set({terms_of_service : terms_of_service})
+                    .then(() => {
+                        firebase.database().ref(`terms_of_service/terms_of_service`).once('value', (snapshot) => {
+                        dispatch({type: 'GET_TERMS_OF_SERVICE', payload: snapshot.val() })
+                    })
+                        .catch(() => {
+                            alert('Sorry, you do have no admin rights...')
+                            dispatch({type: 'IS_ADMIN', payload: false})
+                        })
+                    })
+    
+                } else {
+                    alert('Sorry, you do have no admin rights...')
+                    dispatch({type: 'IS_ADMIN', payload: false})
+                }
+            })         
+        }   
+}
+
+/** 
+ * @param: terms_of_service
+ * @returns: the current terms of service 
+ * Actions: Updates the terms of service, will fail if user is not admind
+ */
+export const updateTermsOfService = (terms_of_service) => {
+
+    return (dispatch) => {
+
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+
+            if (valueOfKey) {
+                firebase.database().ref(`terms_of_service`).update({terms_of_service : terms_of_service})
+                .then(() => {
+                    firebase.database().ref(`terms_of_service/terms_of_service`).once('value', (snapshot) => {
+                    dispatch({type: 'GET_TERMS_OF_SERVICE', payload: snapshot.val()})
+                })
+                    .catch(() => {
+                        alert('Sorry, you do have no admin rights...')
+                        dispatch({type: 'IS_ADMIN', payload: false})
+                    })
+                })
+    
+            } else {
+                alert('Sorry, you do have no admin rights...')
+                dispatch({type: 'IS_ADMIN', payload: false})
+            }
+        })      
+    }   
+}
+
+/** 
+ * @param: nothing 
+ * @returns: the current terms of service
+ * Actions: Attempts the get the current terms of service in the database
+ */
+export const readTermsOfService = () => {
+
+    return (dispatch) => {
+        firebase.database().ref(`terms_of_service/terms_of_service`).once('value', (snapshot) => {
+            dispatch({type: 'GET_TERMS_OF_SERVICE', payload: snapshot.val() })
+        })
+        .catch((error) => {
+            alert('Error getting terms of service...')
+        })
+    }
+   
+}
+
+/**
+ * 
+ * @param {*} uid 
+ * @returns {*} Will return a state change
+ */
+export const addAdminUser = (uid) => {
+
+
+    return (dispatch) => {
+
+        var currentUid = firebase.auth().currentUser.uid;
+
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+
+            if (valueOfKey) {
+                firebase.database().ref(`/admin/${uid}`).set(true)
+                .then(() => {
+                    dispatch({type: 'ADD_ADMIN', payload: true})
+                })
+            } else {
+                alert('Sorry, you do have no admin rights...')
+                dispatch({type: 'IS_ADMIN', payload: false})   
+            }
+        })
+        .catch((error) => {
+            alert('Sorry, you do have no admin rights...')
+            dispatch({type: 'IS_ADMIN', payload: false})         
+        })
+
+    }
+}
+
+/**
+ * Helper Function: Checks if the current logged in user is an admin
+ */
+export const checkCurrentUserIsAdmin = () => {
+    
+    return new Promise((resolve,reject) => {
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+
+            firebase.database().ref(`/admin`).orderByKey().once('value', (snapshotKey) => {
+                snapshotKey.forEach((elm) => {
+                    if (elm.key === currentUid) {
+                        valueOfKey = true;                                
+                    }              
+                })               
+            })
+            .then(() => {
+                return valueOfKey
+            })
+            .then((valueOfKey) => {
+                resolve(valueOfKey)
+            })
+            .catch((error) => {
+                reject(error)
+            })
+
+    })
+}
+
+/**
+ * 
+ * @param {*} ravel_uid 
+ * @returns {*} state change
+ */
+export const reportRavel = (ravel_uid) => {
+
+    return (dispatch) => {
+
+        firebase.database().ref(`ravel_report_list/${ravel_uid}`).set(false)
+        .then(() => {
+            dispatch({type:'REPORT_RAVEL_SUCCESS', payload: true})
+        })
+        .catch((error) => {
+            alert('Error reporting ravel')
+            dispatch({type:'REPORT_RAVEL_SUCCESS', payload: false})
+        })
+    }
+}
+
+/**
+ * 
+ * @param {*} user_uid 
+ * @returns {*} state change
+ */
+export const reportUser = (user_uid) => {
+
+    return (dispatch) => {
+
+        firebase.database().ref(`user_report_list/${user_uid}`).set(false)
+        .then(() => {
+            dispatch({type:'REPORT_USER_SUCCESS', payload: true})
+        })
+        .catch((error) => {
+            alert('Error reporting ravel')
+            dispatch({type:'REPORT_USER_SUCCESS', payload: false})
+        })
+    }
+}
+
+/**
+ * Actions: Gets the completed ravel report list
+ */
+export const getCompleteRavelReportList = () => {
+
+    var ravel_report_list_array = []
+
+    return (dispatch) => {
+
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+            if (valueOfKey) {
+                firebase.database().ref(`ravel_report_list`).orderByKey().once('value', function(snapshot) {
+                    snapshot.forEach((childSnapShot) => {
+                        if (childSnapShot.val() === false) {
+                            firebase.database().ref(`/ravels/${childSnapShot.key}`).once('value', function (snapshotChild){
+                            ravel_report_list_array.push(snapshotChild.val());
+                            dispatch( {type: 'GET_RAVEL_REPORT_LIST', payload: ravel_report_list_array})                   
+                        })
+                        }})
+                    
+                })
+                .catch((error) => {
+                    alert('Error getting all reported ravels...')
+                }) 
+            }
+        })
+    }
+
+}
+
+/**
+ * Actions: Gets the completed user report list
+ */
+export const getCompleteUserReportList = () => {
+
+    var user_report_list_array = []
+
+    return (dispatch) => {
+
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+
+            if (valueOfKey) {
+                firebase.database().ref(`user_report_list`).orderByKey().once('value', function(snapshot) {
+                    snapshot.forEach((childSnapShot) => {
+                        if (childSnapShot.val() === false) {
+                            firebase.database().ref(`/users/${childSnapShot.key}/userProfile`).once('value', function (snapshotChild){
+                            user_report_list_array.push(snapshotChild.val());
+                            dispatch( {type: 'GET_USER_REPORT_LIST', payload: user_report_list_array})                   
+                            })
+                        }})
+                    
+                })
+                .catch((error) => {
+                    alert('Error getting all reported users...')
+                }) 
+            }
+        })
+    }
+}
+
+/**
+ * Dismisses a ravel (marks it as okay for user views)
+ */
+export const dismissReportedRavel = (ravel_uid) => {
+
+    return (dispatch) => {
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+            if (valueOfKey) {
+                firebase.database().ref(`ravel_report_list/${ravel_uid}`).remove()
+                .then(() => {
+                    dispatch({type:'DISMISS_REPORT_RAVEL_SUCCESS', payload: true})
+                })              
+            }
+        })
+        .catch((error) => {
+            alert('Cannot dismiss this ravel at this time...')
+            dispatch({type:'DISMISS_REPORT_RAVEL_SUCCESS', payload: false})
+        })
+
+    }
+}
+
+/**
+ * 
+ * @param {*} user_uid 
+ * Dismisses a reported user (marks them as okay for user view)
+ */
+export const dismissReportedUser = (user_uid) => {
+
+    return (dispatch) => {
+        
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+            if (valueOfKey) {
+                firebase.database().ref(`user_report_list/${user_uid}`).remove()
+                .then(() => {
+                    dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: true})
+                })               
+            }
+        })
+        .catch((error) => {
+            alert('Cannot dismiss this user at this time...')
+            dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: false})
+        })
+        
+    }
+}
+
+/** Removes a ravel from:
+ * - ravels/${ravel_uid}
+ * - users/${uid}/ravel_created/${ravel_uid}
+ * - master_ravel_key/${ravel_uid}
+ * @param {*} ravel_uid 
+ */
+export const banReportedRavel = (ravel_uid) => {
+    return (dispatch) => {
+
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+
+            if (valueOfKey) {
+
+                firebase.database().ref(`ravels/${ravel_uid}/user_created`).once('value', (snapshot) => {
+                
+                    firebase.database().ref(`users/${snapshot.val()}/ravel_created/${ravel_uid}`).remove()
+                    .then(() => {
+
+                        firebase.database().ref(`ravels/${ravel_uid}`).remove()
+                        .then(() => {
+                            firebase.database().ref(`master_ravel_key/${ravel_uid}`).remove()
+                            .then(() => {
+                                dispatch({type: 'BAN_RAVEL_SUCCESS', payload: true})
+                            })
+                            .then(() => {
+
+                                firebase.database().ref(`ravel_report_list/${ravel_uid}`).remove()
+                                .then(() => {
+                                    dispatch({type:'DISMISS_REPORT_RAVEL_SUCCESS', payload: true})
+                                })  
+                            })
+                        })
+                    })
+                })          
+            }
+        })       
+    }
+}
+
+export const banReportedUser = () => {
+
+    return (dispatch) => {
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+            if (valueOfKey) {
+                // Do stuff 
+            }
+        })
+        
+    }
+}
+
+/**
+ * Gets the admin stat page 
+ * // Number of Ravels
+ * // Number of Users
+ * // Number of Reported Ravels 
+ * // Number of Reported Users 
+ */
+export const getStats = () => {
+
+    var m_number_ravels = 0;
+    var m_number_users = 0; 
+    var m_number_reported_ravels = 0;
+    var m_number_reported_users = 0; 
+
+    return (dispatch) => {
+
+        firebase.database().ref(`master_ravel_key`).once('value', (snapshot) => {
+            m_number_ravels = snapshot.numChildren()
+        })
+        .then(() => {
+            firebase.database().ref(`master_user_key`).once('value', (snapshot) => {
+                m_number_users = snapshot.numChildren();
+            })
+            .then(() => {
+                firebase.database().ref(`ravel_report_list`).once('value', (snapshot) => {
+                    m_number_reported_ravels = snapshot.numChildren();
+                })
+                .then(() => {
+                    firebase.database().ref(`user_report_list`).once('value', (snapshot) => {
+                        m_number_reported_users = snapshot.numChildren();
+                    })
+                    .then(() => {
+                        dispatch({type: 'GET_ADMIN_STAT', payload: ({ number_ravels: m_number_ravels, number_users : m_number_users,
+                                                                    number_reported_ravels: m_number_reported_ravels, number_reported_users: m_number_reported_users})})
+                    })
+                })
+            })
+
+        })
+    }
 }
