@@ -18,46 +18,7 @@ const TouchableNativeFeedback = require('TouchableNativeFeedback');
 const TouchableOpacity = require('TouchableOpacity');
 const View = require('View');
 
-export default class ButtonSans extends React.Component <{
-  title: string,
-  onPress: () => any,
-  radius?: ?number,
-  color?: ?string,
-  width?: ?number,
-  height?: ?number,
-  accessibilityLabel?: ?string,
-  disabled?: ?boolean,
-  testID?: ?string,
-}> {
-  static propTypes = {
-
-    // Text to display inside the button
-    title: PropTypes.string.isRequired,
-
-    // Handler to be called when the user taps the button
-    onPress: PropTypes.func.isRequired,
-
-    // Magnitude of curve radius for rounded rectangle
-    radius: PropTypes.number,
-
-    // Color of the button
-    color: PropTypes.string,
-
-    // Width of the button
-    width: PropTypes.number,
-
-    // Height of the button (automatically modifies text line height)
-    height: PropTypes.number,
-
-    // Text to display for blindness accessibility features
-    accessibilityLabel: PropTypes.string,
-
-    // If true, disable all interactions for this component.
-    disabled: PropTypes.bool,
-
-    // Used to locate this view in end-to-end tests.
-    testID: PropTypes.string,
-  };
+export default class ButtonSans extends React.Component {
 
   render () {
     const {
