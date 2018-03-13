@@ -1,10 +1,8 @@
-// Author:   Alex Aguirre
-// Created:  01/24/18
-// Modified: 03/13/18 by Frank Fusco (fr@nkfus.co)
+// Author:   Frank Fusco (fr@nkfus.co)
+// Created:  03/13/18
+// Modified: 03/13/18
 //
-// Email login screen for RavelTree.
-//
-// TODO: Password reset function.
+// Password Reset screen for RavelTree.
 
 import React, {Component} from 'react';
 import {
@@ -18,7 +16,6 @@ import {
   Button
 } from 'react-native';
 
-import { MKTextField, MKColor, MKButton } from 'react-native-material-kit';
 import Loader from '../Loader';
 import firebase from 'firebase';
 
@@ -31,62 +28,30 @@ import RTLogoText from '../components/RTLogoText';
 import InputForm from '../components/InputForm';
 import TextSans from '../components/TextSans';
 import TextLink from '../components/TextLink';
+import TextHeader from '../components/TextHeader';
 import ButtonSans from '../components/ButtonSans';
 
-class LoginEmail extends Component {
+class PasswordReset extends Component {
   constructor (props, context) {
     super (props, context);
     this.state = {
       email :  '',
-      password: '',
       error: '',
       loading: false,
+      completed: false,
     };
-  }
-
-  componentWillReceiveProps (newProps) {
-    // If the user has a profile, just send them to the Home screen. Otherwise,
-    // send them to the CreateProfile screen.
-    if (newProps.currentUserProfile) {
-      this.props.setActiveScreen ('Home');
-    } else {
-      this.props.setActiveScreen ('CreateProfile');
-    }
-  }
-
-  onPressLogin () {
-    const {email, password} = this.state;
-    this.setState({error: '', loading: true });
-    this.props.signInWithEmail (email, password);
-  }
-
-  onPressRegister () {
-
-    // TODO: Add email verification step
-
-    const {email, password} = this.state;
-    this.setState({error: '', loading: true });
-    this.props.createUserWithEmail (email, password);
   }
 
   onPressBack () {
     this.props.navigateBack ();
   }
 
-  onPressTermsAndPrivacy () {
-    this.props.setPreviousScreen (this.constructor.name);
-    this.props.setActiveScreen ('TermsAndPrivacy');
-  }
-
-  onPressResetPassword () {
-    this.props.navigateForward ('PasswordReset', this.constructor.name);
+  onPressReset () {
+    this.props.userResetPassword (this.state.email);
+    this.props.navigateBack ();
   }
 
   render() {
-    const {
-      fieldStyles
-    } = styles;
-
     return (
       <View style={styles.layout}>
 
@@ -97,6 +62,9 @@ class LoginEmail extends Component {
         </View>
 
         <View style={styles.content}>
+          <View style={styles.instructions}>
+            <TextSans size={16}>Enter your email address to reset your password:</TextSans>
+          </View>
 
           <View style={styles.inputs}>
             <View style={styles.input}>
@@ -107,41 +75,19 @@ class LoginEmail extends Component {
                 onChangeText={email => this.setState({email: email})}
               />
             </View>
-
-            <View style={styles.input}>
-              <InputForm
-                placeholder = {'Password'}
-                placeholderTextColor = {'#939393'}
-                //text={this.state.password}
-                onChangeText={password => this.setState({password: password})}
-                password={true}
-              />
-            </View>
           </View>
 
           <View style={styles.buttons}>
             <ButtonSans
-              title={'Register'}
+              title={'Reset'}
               color={'#2E8AF7'}
               width={'32%'}
-              disabled={this.state.email == '' || this.state.password == ''}
-              onPress={() => this.onPressRegister ()}
-            />
-            <View style={styles.buttonSpacer} />
-            <ButtonSans
-              title={'Log In'}
-              color={'#3BB54A'}
-              width={'32%'}
-              disabled={this.state.email == '' || this.state.password == ''}
-              onPress={() => this.onPressLogin ()}
+              disabled={this.state.email == ''}
+              onPress={() => this.onPressReset ()}
             />
           </View>
 
-          <View style={styles.forgot}>
-            <TextSans size={16} color={'#969696'}>Forgot your password?</TextSans>
-            <Text>&nbsp;&nbsp;</Text>
-            <TextLink onPress={() => this.onPressResetPassword ()} size={16}>Reset it</TextLink>
-          </View>
+          <View style={styles.bottomSpacer} />
 
           <TextLink size={12} onPress={() => this.onPressTermsAndPrivacy ()}>Terms and Privacy</TextLink>
 
@@ -178,6 +124,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingBottom: 20,
   },
+  instructions: {
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '70%',
+    marginBottom: 20,
+  },
   inputs: {
     width: '100%',
     alignItems: 'center',
@@ -204,6 +157,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: '5%',
   },
+  bottomSpacer: {
+    height: 56,
+  },
 });
 
 const mapStateToProps = (state) => {
@@ -223,4 +179,4 @@ const mapStateToProps = (state) => {
   };
 }
 
-export default connect (mapStateToProps)(LoginEmail);
+export default connect (mapStateToProps)(PasswordReset);

@@ -134,14 +134,14 @@ class Login extends Component {
 
   onFBAuthFailed() {
     this.setState({
-        error: 'Authenticiation Failed',
-        loading: false,
+      error: 'Authenticiation Failed',
+      loading: false,
     });
   }
 
   renderLoader() {
     if (this.state.loading) {
-        return <Loader size="large"/>;
+      return <Loader size="large"/>;
     }
   }
 
@@ -166,6 +166,7 @@ class Login extends Component {
         </View>
         <View style={styles.content}>
           <View style = {styles.buttons}>
+
             {/* Facebook button */}
             <LoginButton
               style = {styles.facebook}
@@ -185,6 +186,7 @@ class Login extends Component {
             <View style = {styles.google}>
               <GLoginButton onPress = {this.onGButtonPress.bind(this)} />
             </View>
+
           </View>
           <View style={styles.or}>
             <TextHeader color={'#969696'}>Or</TextHeader>
@@ -209,11 +211,11 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   debug: {
-      position: 'absolute',
-      top: 10,
-      fontSize: 15,
-      color: 'red',
-      alignSelf: 'center',
+    position: 'absolute',
+    top: 10,
+    fontSize: 15,
+    color: 'red',
+    alignSelf: 'center',
   },
   logo: {
     zIndex: 1,
@@ -259,17 +261,17 @@ const styles = StyleSheet.create({
 
 
   form: {
-      paddingBottom: 10,
-      width: 200,
-      paddingTop: 20
+    paddingBottom: 10,
+    width: 200,
+    paddingTop: 20
   },
   fieldStyles: {
-      height: 40,
-      color: MKColor.Orange,
-      width: 200,
+    height: 40,
+    color: MKColor.Orange,
+    width: 200,
   },
   loginButtonArea: {
-     //marginTop: 20,
+    //marginTop: 20,
   },
 });
 

@@ -72,7 +72,7 @@ export const userLogOff = () => dispatch => {
  * actions: fires an email that will enable a user to reset their password
  *
  */
-export const userResetPassword = (email) => {
+export const userResetPassword = (email) => dispatch => {
     var auth = firebase.auth();
 
     auth.sendPasswordResetEmail(email).then(function() {

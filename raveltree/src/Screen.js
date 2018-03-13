@@ -22,6 +22,7 @@ import Test from './screens/Test';
 
 import Login from './screens/Login';
 import LoginEmail from './screens/LoginEmail'
+import PasswordReset from './screens/PasswordReset'
 import Messages from './screens/Messages';
 import MessageThread from './screens/MessageThread';
 import Notifications from './screens/Notifications';
@@ -64,6 +65,8 @@ class Screen extends Component {
         return <Login {...this.props} />;
       case ('LoginEmail'):
         return <LoginEmail {...this.props} />;
+      case ('PasswordReset'):
+        return <PasswordReset {...this.props} />;
       case ('TermsAndPrivacy'):
         return <TermsAndPrivacy {...this.props} />;
       case ('CreateProfile'):
