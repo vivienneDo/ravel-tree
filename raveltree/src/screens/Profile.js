@@ -1,6 +1,6 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/17/18
-// Modified: 03/10/18
+// Modified: 03/13/18
 //
 // Profile screen for RavelTree.
 //
@@ -26,9 +26,6 @@
 // TODO: Set isOwned locally, checking whether the passed userID matches the
 //       userID of the current user in global Redux state.
 // TODO: Align statistics.
-// TODO: onPressChangeImage ()
-// TODO: onPressLogOut ()
-// TODO: onPressEdit ()
 
 import React, { Component } from 'react';
 import {
@@ -50,6 +47,15 @@ import InputText from '../components/InputText'
 import Button from '../components/Button'
 import UserImage from '../components/UserImage'
 import IconLeaf from '../components/IconLeaf'
+
+import ImagePicker from 'react-native-image-picker';
+import SelectImage from '../utils/CameraPicker.js';
+import RNFetchBlob from 'react-native-fetch-blob';
+
+const Blob = RNFetchBlob.polyfill.Blob;
+const fs = RNFetchBlob.fs;
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+window.Blob = Blob;
 
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -73,9 +79,11 @@ class Profile extends Component {
     this.state = {
       isOwned: this.props.isOwned,
       mode: 'view',
+      //showCameraPicker: false,
       firstName: this.props.currentUserProfile.first_name,
       lastName: this.props.currentUserProfile.last_name,
       score: this.props.currentUserProfile.ravel_points,
+      photoURL: this.props.currentUserProfile.photoURL,
       bio: this.props.currentUserProfile.bio,
       bioEdit: this.props.currentUserProfile.bio,
       ravelsLed: this.props.currentUserProfile.stat_ravel_led,
@@ -89,13 +97,24 @@ class Profile extends Component {
   componentWillReceiveProps (newProps) {
     console.log (newProps);
     if (newProps.currentUserProfile) {
-      this.setState ({bio: newProps.currentUserProfile.bio});
-      this.setState ({mode: 'view'});
+      this.setState ({
+        bio: newProps.currentUserProfile.bio,
+        photoURL: newProps.currentUserProfile.photoURL,
+        mode: 'view',
+      });
     }
   }
 
   onPressChangeImage () {
-    // TODO
+    SelectImage().then((url) => {
+      this.props.updateProfilePicture (url);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+    .then (() => {
+      this.props.getCurrentUserProfile ();
+    });
   }
 
   onPressLogOut () {
@@ -121,7 +140,6 @@ class Profile extends Component {
   }
 
   onPressSaveChanges () {
-    // TODO: bio <- bioEdit, upload to firebase, refresh data
     var firstName = this.state.firstName;
     var lastName = this.state.lastName;
     var bioEdit = this.state.bioEdit;
@@ -145,7 +163,7 @@ class Profile extends Component {
         </View>
         <View style={styles.top}>
           <View style={styles.topLeft}>
-            <UserImage size={100} />
+            <UserImage {...this.props} size={100} />
 
             {this.state.isOwned ? (
               <TextLink onPress={() => this.onPressChangeImage ()} size={12}>Change Image</TextLink>
@@ -176,6 +194,13 @@ class Profile extends Component {
 
           </View>
         </View>
+
+        {/*this.state.showCameraPicker ? (
+          <CameraPicker />
+        ) : (
+          <View style={{display: 'none'}} />
+        )*/}
+
         <ScrollView style={styles.scroll}>
           <View style={styles.bio}>
             <View style={styles.bioHeader}>

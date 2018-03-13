@@ -76,7 +76,6 @@ class Login extends Component {
     // For now, just authenticates a test user automatically.
     this.setState({error: '', loading: true });
     this.props.signInWithEmail ('test@test.com', 'Test123!');
-    this.props.getCurrentUserProfile ();
 
     // const {email, password} = this.state;
     // this.setState({error: '', loading: true });

@@ -57,11 +57,11 @@ class Ravel extends Component {
     return (
       <View style={styles.users}>
         <View style={styles.user}>
-          <UserImage size={40} />
+          <UserImage {...this.props} size={40} />
         </View>
         {TEST_RAVEL.participants.map ((user) =>
           <View key={user} style={styles.user}>
-            <UserImage size={30} />
+            <UserImage {...this.props} size={30} />
           </View>
         )}
       </View>

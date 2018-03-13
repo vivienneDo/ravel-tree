@@ -64,7 +64,7 @@ export default class PassagePopup extends React.Component {
           </View>
           <View style={styles.row2}>
             <TextSans size={13} color={'#95989A'}>{this.props.title}</TextSans>
-            <UserImage size={26}/>
+            <UserImage {...this.props} size={26}/>
           </View>
         </View>
         <ScrollView style={styles.scroll}>

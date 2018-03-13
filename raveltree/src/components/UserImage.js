@@ -1,3 +1,9 @@
+// Author:   Alex Aguirre
+// Created:  01/20/18
+// Modified: 03/13/18 by Frank Fusco (fr@nkfus.co)
+//
+// "User Image" component for RavelTree.
+
 import React, {Component} from 'react';
 import {
   AppRegistry,
@@ -9,21 +15,36 @@ import {
   Image
 } from 'react-native';
 
-// 1-20-18
-// User Image
+import { connect } from 'react-redux'
+import * as actions from '../actions';
+import _ from 'lodash';
 
 const DEFAULT_SIZE = 100;
 
-export default class UserImage extends Component<{}> {
+const PLACEHOLDER_IMAGE = require('./img/user.png');
 
-  // keeps track of whether the user is active or not
+class UserImage extends Component<{}> {
+
+  // Keeps track of whether the user is active or not
   constructor(props) {
     super(props);
-    this.state = { isActive: this.props.active };
+    this.state = {
+      isActive: this.props.active,
+      photoURL: this.props.currentUserProfile.photoURL,
+    };
+  }
+
+  componentWillMount () {
+    this.props.getCurrentUserProfile ();
   }
 
   componentWillReceiveProps (newProps) {
-    this.setState ({isActive: newProps.active});
+    if (newProps.currentUserProfile) {
+      this.setState ({
+        isActive: newProps.active,
+        photoURL: newProps.currentUserProfile.photoURL
+      });
+    }
 }
 
   render() {
@@ -36,7 +57,11 @@ export default class UserImage extends Component<{}> {
 
     // Uses a test image for now – will update later to dynamic image stored
     // in Firebase.
-    var image = require('./img/user.png');
+    var image = this.state.photoURL ? (
+      {uri: this.state.photoURL}
+      ) : (
+      PLACEHOLDER_IMAGE
+    );
 
     const layoutStyles = [styles.layout];
     const imageStyles = [styles.image];
@@ -84,3 +109,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
 });
+
+const mapStateToProps = (state) => {
+  const {
+    currentUserProfile,
+  } = state.current_user;
+
+  return {
+    currentUserProfile,
+  };
+}
+
+export default connect (mapStateToProps)(UserImage);

@@ -90,7 +90,7 @@ class Profile extends Component {
         <TextHeader>Create your Profile</TextHeader>
         <View style={styles.top}>
           <View style={styles.topLeft}>
-            <UserImage size={100} />
+            <UserImage {...this.props} size={100} />
             <TextLink onPress={() => this.onPressAddImage ()} size={12}>Add Image</TextLink>
           </View>
           <View style={styles.topRight}>

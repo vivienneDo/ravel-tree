@@ -52,7 +52,7 @@ export default class ConceptPopup extends React.Component {
         <View style={styles.head}>
           <View style={styles.left}>
             <View style={styles.userImage}>
-              <UserImage size={26}  />
+              <UserImage {...this.props} size={26}  />
             </View>
             <TextSerif size={16}>{this.props.ravel}</TextSerif>
           </View>

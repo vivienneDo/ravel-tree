@@ -141,7 +141,7 @@ class NavBar extends React.Component {
             </Text>
           </Touchable>
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Profile')}>
-            <UserImage size={30} active={this.props.activeTab === 'Profile'} disabled />
+            <UserImage {...this.props} size={30} active={this.props.activeTab === 'Profile'} disabled />
             <Text style = {[styles.text, this.props.activeTab === 'Profile' ? styles.active : styles.inactive]}>
               Profile
             </Text>

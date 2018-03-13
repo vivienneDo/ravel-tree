@@ -132,7 +132,7 @@ class Home extends Component<{}> {
         <View style={styles.searchBox}>
           <View style={styles.user}>
             <View style={styles.userImage}>
-              <UserImage size={20} />
+              <UserImage {...this.props} size={20} />
             </View>
             <TextSerif size={12}>
               {currentUserProfile.first_name + ' ' + currentUserProfile.last_name}

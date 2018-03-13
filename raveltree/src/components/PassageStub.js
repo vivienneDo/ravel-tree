@@ -57,7 +57,7 @@ class PassageStub extends Component<{}> {
       <Touchable onPress={() => this.onPressStub ()} style={containerStyles}>
         <View style={styles.left}>
           <View style={styles.userImage}>
-            <UserImage size={26} />
+            <UserImage {...this.props} size={26} />
           </View>
           <TextSans size={12}>{this.props.name}</TextSans>
         </View>

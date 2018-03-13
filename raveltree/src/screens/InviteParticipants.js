@@ -78,7 +78,7 @@ class InviteParticipants extends Component {
       <View key={user.name} style={styles.participant}>
         <View style={styles.participantLeft}>
           <View style={styles.userImage}>
-            <UserImage size={26} />
+            <UserImage {...this.props} size={26} />
           </View>
           <View style={styles.userName}>
             <TextSans size={14}>{user.name}</TextSans>

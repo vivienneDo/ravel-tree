@@ -73,7 +73,7 @@ export default class ForkPopup extends React.Component {
               </View>
               <View style={styles.row2}>
                 <InputText width={'auto'} placeholder={'Type a passage name (e.g., "The Reckoning").'} />
-                <UserImage size={26}/>
+                <UserImage {...this.props} size={26}/>
               </View>
             </View>
             <View style={styles.passage}>

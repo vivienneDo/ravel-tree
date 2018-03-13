@@ -68,7 +68,7 @@ class MessageCard extends React.Component {
         <View style={styles.content}>
           <View style={styles.head}>
             <View style={styles.userImage}>
-              <UserImage size={26} />
+              <UserImage {...this.props} size={26} />
             </View>
             <Touchable onPress={() => this.onPressUser ()}>
               <TextSans bold size={14}>{this.props.user}</TextSans>

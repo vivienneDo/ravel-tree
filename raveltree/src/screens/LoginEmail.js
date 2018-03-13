@@ -4,7 +4,7 @@
 //
 // Email login screen for RavelTree.
 //
-// TODO: Password reset function.
+// TODO: Add email verification step
 
 import React, {Component} from 'react';
 import {

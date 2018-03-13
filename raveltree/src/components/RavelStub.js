@@ -51,7 +51,7 @@ class RavelStub extends Component<{}> {
       <Touchable onPress={() => this.onPressStub ()} style={styles.container}>
         <View style={styles.left}>
           <View style={styles.userImage}>
-            <UserImage size={26} />
+            <UserImage {...this.props} size={26} />
           </View>
           <TextSerif size={16}>{this.props.ravel}</TextSerif>
         </View>
