@@ -82,7 +82,14 @@ class Ravel extends Component {
     if (!show) {return}
     return (
       <View style={styles.button}>
-        <Button title={'Accept Invitation'} />
+        <Button
+          title={'Accept Invitation'}
+          onPress={() => this.onPressAcceptInvitation ()}
+        />
+        <Button
+          title={'Decline Invitation'}
+          onPress={() => this.onPressDeclineInvitation ()}
+        />
       </View>
     )
   }
@@ -115,6 +122,14 @@ class Ravel extends Component {
 
   onPressBack () {
     this.props.navigateBack ();
+  }
+
+  onPressAcceptInvitation () {
+    // TODO
+  }
+
+  onPressDeclineInvitation () {
+    // TODO
   }
 
   render (){
