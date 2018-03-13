@@ -137,8 +137,23 @@ export const signInWithEmail = (email, password) => dispatch => {
 
 /**
  * @param: an email and password
- * @returns: nothing
- * actions: attempts to create a new user and sets their user profile to null
+ * @returns:
+ * mapStateToProps:
+ * state.current_user:
+ *      'GET_CURRENT_USER_PROFILE' - an entire userProfile object
+ *          - this.props.currentUserProfile.bio
+ *          - this.props.currentUserProfile.first_name
+ *          - this.props.currentUserProfile.last_name
+ *          - this.props.currentUserProfile.photoURL
+ *          - this.props.currentUserProfile.ravel_points
+ *          - this.props.currentUserProfile.stats_passage_written
+ *          - this.props.currentUserProfile.stat_ravel_contributed
+ *          - this.props.currentUserProfile.stat_ravel_led
+ *          - this.props.currentUserProfile.upvotes
+ *          - this.props.currentUserProfile.user_uid
+ * actions: Attempts to create a new user,
+ *          Gets the user profile of the current user,
+ *          Attempts to log a registered user into the db.
  *
  */
 export const createUserWithEmail = (email, password) => dispatch => {
@@ -147,8 +162,8 @@ export const createUserWithEmail = (email, password) => dispatch => {
     .then((user) => {
         firebase.database().ref(`/master_user_key/${user.uid}`).set({ user_uid: true })
 
-        updateUserProfile(user, {first_name:'',last_name:'',bio:'',photoURL:'', stat_ravel_led:0, stat_passage_written:0, stat_ravel_contributed:0,
-                                upvotes:0, ravel_points:0 });
+        //updateUserProfile(user, {first_name:'',last_name:'',bio:'',photoURL:'', stat_ravel_led:0, stat_passage_written:0, stat_ravel_contributed:0,
+        //                        upvotes:0, ravel_points:0 });
     })
     .catch(function(error) {
 
@@ -162,8 +177,37 @@ export const createUserWithEmail = (email, password) => dispatch => {
         alert(errorMessage);
     }
          console.log(error);
-    });
+    })
+    .then (function (user) {
+      firebase.auth().signInWithEmailAndPassword(email, password)
+      .catch(function(error) {
+      var errorCode = error.code;
+      var errorMessage = error.message;
 
+      if (errorCode === 'auth/wrong-password') {
+        alert('Wrong password.');
+      } else if (errorCode === 'auth/user-not-found') {
+        alert('There is no user corresponding to the given email address.');
+      } else {
+        alert(errorMessage);
+      }
+          console.log(error);
+      })
+      .then (function (user) {
+        console.log ('User signed in with email. Getting current user profile...');
+
+        var currentUid = firebase.auth().currentUser.uid;
+
+        firebase.database().ref(`/users/${currentUid}/userProfile`)
+        .once('value', snapshot => {
+            dispatch({ type: 'GET_CURRENT_USER_PROFILE',
+                       payload: snapshot.val() });
+        })
+        .catch((error) => {
+            alert('Error loading user profile at this time...')
+        })
+      });
+    });
 };
 
 /**

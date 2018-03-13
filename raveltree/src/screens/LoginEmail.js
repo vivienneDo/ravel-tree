@@ -66,9 +66,7 @@ class LoginEmail extends Component {
 
     const {email, password} = this.state;
     this.setState({error: '', loading: true });
-
     this.props.createUserWithEmail (email, password);
-    this.props.signInWithEmail (email, password);
   }
 
   onPressBack () {
