@@ -41,6 +41,7 @@ const TEST_RAVELS = [
   {ravel: 'Shallow Waters', users: 1, score: 34},
 ];
 const TEST_RAVELS_IN = [];
+const TEST_RAVELS_INVITED = [];
 
 class YourRavels extends Component {
   constructor (props, context) {
@@ -81,6 +82,16 @@ class YourRavels extends Component {
     }
   }
 
+  getRavelsInvited () {
+    if (TEST_RAVELS_INVITED.length == 0) {
+      return (
+        <View style={styles.text}>
+          <TextSans size={14}>You haven&#39;t been invited to participate in anyone else&#39;s ravels yet.</TextSans>
+        </View>
+      );
+    }
+  }
+
   onPressStartARavel () {
     this.props.navigateForward ('StartARavel', this.constructor.name);
   }
@@ -113,14 +124,20 @@ class YourRavels extends Component {
           <View style={styles.ravels}>
               {this.getRavelsIn ()}
           </View>
-              <View style={styles.buttons}>
-                <View style={styles.button}>
-                  <Button title={'Start a Ravel'} onPress={() => this.onPressStartARavel ()} />
-                </View>
-                <View style={styles.button}>
-                  <ButtonReverse title={'Explore'} onPress={() => this.onPressExplore ()} />
-                </View>
-              </View>
+          <View style={styles.header}>
+            <TextHeader>Ravel Invitations</TextHeader>
+          </View>
+          <View style={styles.ravels}>
+              {this.getRavelsInvited ()}
+          </View>
+          <View style={styles.buttons}>
+            <View style={styles.button}>
+              <Button title={'Start a Ravel'} onPress={() => this.onPressStartARavel ()} />
+            </View>
+            <View style={styles.button}>
+              <ButtonReverse title={'Explore'} onPress={() => this.onPressExplore ()} />
+            </View>
+          </View>
         </ScrollView>
       </View>
     );

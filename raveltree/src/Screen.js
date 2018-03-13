@@ -57,7 +57,7 @@ class Screen extends Component {
   }
 
   showScreen () {
-    //return <Profile {...this.props} />;
+    //return <Ravel {...this.props} />;
     switch (this.props.activeScreen) {
       case ('Splash'):
         return <Splash {...this.props} />;

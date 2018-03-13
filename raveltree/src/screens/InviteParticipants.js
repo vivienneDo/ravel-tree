@@ -102,9 +102,24 @@ class InviteParticipants extends Component {
   }
 
   onPressStartRavel () {
-    this.props.setActiveScreen ('Ravel', this.state);
-
     // TODO: Save to database.
+    this.props.createStartRavel ({
+      ravel_title: this.state.ravelName,
+      ravel_category: this.state.category,
+      passage_length: this.state.passageLength,
+      visibility: this.state.visibility,
+      enable_voting: !this.state.restrictVotingToParticipants,
+      enable_comment: this.state.enablePassageComments,
+      ravel_concept: this.state.concept,
+      m_ravel_participants: this.state.participants,
+      ravel_tags: this.state.tagsSelected,
+    });
+
+    var screenData = Object.assign ({}, {
+      // TODO: Wait for, retrieve, and pass RavelID.
+    });
+
+    this.props.setActiveScreen ('Ravel', screenData);
   }
 
   onPressByName () {
