@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, Image, ScrollView, TouchableOpacity, Linking } 
 import { getTheme } from 'react-native-material-kit';
 import {MKTextField, MKColor, MKButton} from 'react-native-material-kit';
 import * as actions from '../actions';
-//import {acceptRavelInvite} from '../actions';
+import {userLogOff, createUserWithEmail, checkCurrentUserIsAdmin} from '../actions';
 //import { getAllRavelUser, getRavelMetaData, searchUserByName, loadInitialUserCreatedRavel, updateUserProfile, getUserProfile, getCurrentLoggedInUserUid, createStartRavel, userLogOff, getAllUserCreatedRavel} from '../actions';
 import firebase from 'firebase';
 import { connect } from 'react-redux';
@@ -19,8 +19,8 @@ class GetAllUserRavels extends Component {
 
     componentWillMount() {
         // var first_name = 'Vivienne';
-       var ravel_uid = '-L6h7xMoEDjmNOB8FWWb';
-
+       var ravel_uid = '-L7MGJBXjymUV1xdyflA';
+       var user_uid = 'SLnPLeCb1HVRlOg1sRJcpChn3Q22';
         // var ravel_title = "title"
         // var ravel_category = "game"
         // var passage_length = "paragraph"
@@ -68,12 +68,39 @@ class GetAllUserRavels extends Component {
         // var last_name = 'The Great'
         // var bio = 'hello'
 
-        // this.props.getCurrentUserProfile();
-        // this.props.updateCurrentUserProfile({first_name, last_name, bio});
+        //this.props.getCurrentUserProfile();
+        //this.props.updateCurrentUserProfile({first_name, last_name, bio});
 
+        //userLogOff();
+        //var uid = 'testing_admin_uid'
+        //this.props.addAdminUser(uid);
 
-    
-     
+        //actions.checkCurrentUserIsAdmin();
+        
+        //var terms_of_service = 'testing'
+        //this.props.insertTermsOfService(terms_of_service);
+
+        //this.props.updateTermsOfService(terms_of_service);
+
+        //var email = "Dinosaur@gmail.com"
+        //var password = "password123"
+
+        // $uid === auth.uid
+        
+        //createUserWithEmail(element, password);
+        
+      //this.props.reportRavel(ravel_uid);
+      //this.props.reportUser(user_uid);
+      //this.props.getCompleteRavelReportList();
+      //this.props.dismissReportedRavel(ravel_uid);
+        //this.props.getCompleteUserReportList();
+        //this.props.dismissReportedUser(user_uid);
+        //this.props.getStats();
+        //this.props.banReportedRavel(ravel_uid);
+        //this.props.acceptTermsAndAgreement();
+        //this.props.declineRavelInvite(ravel_uid);
+        //this.props.getAllRavelParticipantUserProfile(ravel_uid);
+        this.props.getPendingRavelInvite();
     };
 
   render() {
@@ -87,7 +114,7 @@ class GetAllUserRavels extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log('The state is:' + state.ravel.ravel_uid)
+  console.log('The state is:' + state)
   const { ravel_uid, ravel_meta_data,
     all_child_uid_val } = state.ravel;
   return { ravel_uid, ravel_meta_data,
