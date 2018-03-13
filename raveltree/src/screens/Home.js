@@ -1,6 +1,6 @@
-// Author: Alex Aguirre
-// Created: 02/07/18
-// Modified: 03/08/18 by Frank Fusco (fr@nkfus.co)
+// Author:   Alex Aguirre
+// Created:  02/07/18
+// Modified: 03/13/18 by Frank Fusco (fr@nkfus.co)
 //
 // Home screen for RavelTree.
 //
@@ -64,7 +64,7 @@ class Home extends Component<{}> {
   }
 
   onPressExplore () {
-    this.props.setActiveScreen ('Explore');
+    this.props.navigateForward ('Explore', this.constructor.name);
   }
 
   onPressStartARavel () {

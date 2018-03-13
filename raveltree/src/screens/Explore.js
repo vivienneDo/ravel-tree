@@ -267,9 +267,10 @@ class Explore extends Component<{}> {
 
     return (
       <View style={styles.layout}>
-      
-      {/* Back button */}
-      <LinkBack onPress={() => this.onPressBack ()}/>
+
+        {/* Back button */}
+        <LinkBack onPress={() => this.onPressBack ()}/>
+
         {/* RavelTree logo at the top in the center */}
         <View style = {styles.logo}>
           <RTLogoText/>
