@@ -1,6 +1,7 @@
 const initialState = {
     all_user_created_ravels: [],
-    all_non_created_user_ravel: []
+    all_non_created_user_ravel: [],
+    get_pending_invite_ravel: []
 };
 
 export default (state = initialState, action) => {
@@ -15,6 +16,11 @@ export default (state = initialState, action) => {
                 ...state,
                 all_non_created_user_ravel: action.payload
         }
+        case'GET_PENDING_INVITE_RAVEL':
+            return {
+                ...state,
+                get_pending_invite_ravel: action.payload
+            }
         default:
             return state;
     }

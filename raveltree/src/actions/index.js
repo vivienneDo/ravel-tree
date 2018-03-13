@@ -464,8 +464,7 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
                 firebase.database().ref(`/master_ravel_key/${ravel_uid}`).set({
                     ravel_uid: true
                 })
-            })          
-
+            }) 
         })    
         .catch((error) => {
             alert('Error creating ravel at this time...')
@@ -691,6 +690,7 @@ export const getRavelMetaData = (ravel_uid) => {
  * actions: attempts to get a list of userProfile objects of all participants for a particular ravel
  * 
  */
+
 export const getAllRavelParticipantUserProfile = (ravel_uid) => {
     
     var all_participant_of_a_ravel = [];
@@ -1258,10 +1258,8 @@ export const userRavelPointCalculationHelper = (user_uid) => {
  * actions: function that updates the passage_downvote field for stats purposes
  */
 export const downVotePassageHelper = (passage_uid) => {
-
-    console.log('I am in here')
-
-        var m_down_votes;
+ 
+       var m_down_votes;
 
         firebase.database().ref(`/passages/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
             m_down_votes = snapshot.val() - 1
@@ -1476,7 +1474,7 @@ export const reportUser = (user_uid) => {
 }
 
 /**
- * Actions: Gets the completed ravel report list
+ * Actions: Gets the completed ravel report list (ravels that have been reported for ban)
  */
 export const getCompleteRavelReportList = () => {
 
@@ -1506,7 +1504,7 @@ export const getCompleteRavelReportList = () => {
 }
 
 /**
- * Actions: Gets the completed user report list
+ * Actions: Gets the completed user report list (users that have been reported for ban)
  */
 export const getCompleteUserReportList = () => {
 
@@ -1673,4 +1671,136 @@ export const getStats = () => {
 
         })
     }
+}
+
+/**
+ * Actions: sets the current uid to the terms_of_service accepted list if a user accepts it
+ */
+export const acceptTermsAndAgreement = () => {
+
+    var currentUid = firebase.auth().currentUser.uid; 
+
+    return (dispatch) => {
+        firebase.database().ref(`terms_of_service/accepted_list/${currentUid}`).set(true)
+        .then(() => {
+            dispatch({type: 'USER_ACCEPTED_TERMS_OF_SERVICE', payload: true})
+        })
+        .catch((error) => {
+            alert('There was an error accepting the terms of service at this time...')
+        })
+    }
+}
+
+export const declineRavelInvite = (ravel_uid) => {
+
+    var currentUid = firebase.auth().currentUser.uid;                           
+    
+    return (dispatch) => {
+
+        firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).once('value', (snapshot) => {
+            if (snapshot.val() != null && snapshot.val() === false) {
+                firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).remove()
+                .then(() => {
+                    dispatch({type: 'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE', payload: true})
+                })
+                .catch((error) => {
+                    alert('Error declining ravel...')
+                })
+            } 
+        })
+    }
+}
+
+
+export const getPendingRavelInvite = () => {
+
+    var currentUid = firebase.auth().currentUser.uid; 
+    var get_pending_arr = [];
+
+    return (dispatch) => {
+        console.log('Current UId' + currentUid)
+        firebase.database().ref(`ravels`).orderByChild(`ravel_participants/${currentUid}`).equalTo(false).once('value', (snapshot) => {
+            dispatch({type: 'GET_PENDING_INVITE_RAVEL', payload: snapshot.val()})
+        })
+    }
+}
+
+
+/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
+ * @param: terms_of_service
+ * @returns: the current terms of service in a long string....
+ * Actions: Adds a new terms of service, will fail if user is not admin
+ */
+export const insertPrivacyPolicy = (privacy_policy) => {
+
+    return (dispatch) => {
+
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+            if (valueOfKey) {
+                firebase.database().ref(`privacy_policy`).set({privacy_policy : privacy_policy})
+                .then(() => {
+                    firebase.database().ref(`privacy_policy/privacy_policy`).once('value', (snapshot) => {
+                    dispatch({type: 'GET_PRIVACY_POLICY', payload: snapshot.val() })
+                })
+                    .catch(() => {
+                        alert('Sorry, you do have no admin rights...')
+                        dispatch({type: 'IS_ADMIN', payload: false})
+                    })
+                })
+
+            } else {
+                alert('Sorry, you do have no admin rights...')
+                dispatch({type: 'IS_ADMIN', payload: false})
+            }
+        })         
+    }   
+}
+
+/** 
+* @param: terms_of_service
+* @returns: the current terms of service 
+* Actions: Updates the terms of service, will fail if user is not admind
+*/
+export const updatePrivacyPolicy = (privacy_policy) => {
+
+return (dispatch) => {
+
+    checkCurrentUserIsAdmin().then(valueOfKey => {
+
+        if (valueOfKey) {
+            firebase.database().ref(`privacy_policy`).update({privacy_policy : privacy_policy})
+            .then(() => {
+                firebase.database().ref(`privacy_policy/privacy_policy`).once('value', (snapshot) => {
+                dispatch({type: 'GET_PRIVACY_POLICY', payload: snapshot.val()})
+            })
+                .catch(() => {
+                    alert('Sorry, you do have no admin rights...')
+                    dispatch({type: 'IS_ADMIN', payload: false})
+                })
+            })
+
+        } else {
+            alert('Sorry, you do have no admin rights...')
+            dispatch({type: 'IS_ADMIN', payload: false})
+        }
+    })      
+}   
+}
+
+/** 
+* @param: nothing 
+* @returns: the current terms of service
+* Actions: Attempts the get the current terms of service in the database
+*/
+export const readPrivacyPolicy = () => {
+
+return (dispatch) => {
+    firebase.database().ref(`privacy_policy/privacy_policy`).once('value', (snapshot) => {
+        dispatch({type: 'GET_PRIVACY_POLICY', payload: snapshot.val() })
+    })
+    .catch((error) => {
+        alert('Error getting privacy policy...')
+    })
+}
+
 }
