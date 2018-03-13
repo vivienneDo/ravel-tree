@@ -38,6 +38,7 @@ import {
 } from 'react-native';
 
 import { connect } from 'react-redux'
+import * as actions from '../actions';
 import _ from 'lodash';
 
 import RTLogoText from '../components/RTLogoText'
@@ -45,8 +46,16 @@ import TextSans from '../components/TextSans'
 import TextSerif from '../components/TextSerif'
 import TextLink from '../components/TextLink'
 import TextHeader from '../components/TextHeader'
+import InputText from '../components/InputText'
+import Button from '../components/Button'
 import UserImage from '../components/UserImage'
 import IconLeaf from '../components/IconLeaf'
+
+const FBSDK = require('react-native-fbsdk');
+const {
+  LoginButton,
+  AccessToken
+} = FBSDK;
 
 const TEST_USER = 'Rebecca Bates';
 const TEST_SCORE = 1064;
@@ -61,6 +70,28 @@ const TEST_STATISTICS = {
 class Profile extends Component {
   constructor (props) {
     super (props);
+    this.state = {
+      isOwned: this.props.isOwned,
+      mode: 'view',
+      firstName: this.props.currentUserProfile.first_name,
+      lastName: this.props.currentUserProfile.last_name,
+      score: this.props.currentUserProfile.ravel_points,
+      bio: this.props.currentUserProfile.bio,
+      bioEdit: this.props.currentUserProfile.bio,
+      ravelsLed: this.props.currentUserProfile.stat_ravel_led,
+      ravelsContributedTo: this.props.currentUserProfile.stat_ravel_contributed,
+      passagesWritten: this.props.currentUserProfile.stat_passage_written,
+      upvotesReceived: this.props.currentUserProfile.upvotes,
+      ...this.props.screenData,
+    };
+  }
+
+  componentWillReceiveProps (newProps) {
+    console.log (newProps);
+    if (newProps.currentUserProfile) {
+      this.setState ({bio: newProps.currentUserProfile.bio});
+      this.setState ({mode: 'view'});
+    }
   }
 
   onPressChangeImage () {
@@ -68,7 +99,9 @@ class Profile extends Component {
   }
 
   onPressLogOut () {
-    // TODO
+    this.props.userLogOff ();
+    FBSDK.LoginManager.logOut ();
+    this.props.setActiveScreen ('Login');
   }
 
   onPressFollow () {
@@ -80,12 +113,24 @@ class Profile extends Component {
   }
 
   onPressEdit () {
-    // TODO
+    this.setState ({mode: 'edit'});
+  }
+
+  onChangeBioEdit (bioEdit) {
+    this.setState ({bioEdit: bioEdit});
+  }
+
+  onPressSaveChanges () {
+    // TODO: bio <- bioEdit, upload to firebase, refresh data
+    var firstName = this.state.firstName;
+    var lastName = this.state.lastName;
+    var bioEdit = this.state.bioEdit;
+    this.props.updateCurrentUserProfile ({first_name: firstName, last_name: lastName, bio: bioEdit});
   }
 
   render (){
     const {
-      isOwned,
+      //isOwned,
       user,
       score,
       bio,
@@ -101,19 +146,24 @@ class Profile extends Component {
         <View style={styles.top}>
           <View style={styles.topLeft}>
             <UserImage size={100} />
-            {isOwned ? (
+
+            {this.state.isOwned ? (
               <TextLink onPress={() => this.onPressChangeImage ()} size={12}>Change Image</TextLink>
             ) : (
               <View style={{display: 'none'}} />
             )}
+
           </View>
           <View style={styles.topRight}>
-            <TextSerif size={22}>{TEST_USER}</TextSerif>
+            <TextSerif size={22}>
+              {this.state.firstName + ' ' + this.state.lastName}
+            </TextSerif>
             <View style={styles.score}>
               <IconLeaf size={30} />
-              <TextSerif size={24}>{TEST_SCORE}</TextSerif>
+              <TextSerif size={24}>{this.state.score}</TextSerif>
             </View>
-            {isOwned ? (
+
+            {this.state.isOwned ? (
               <TextLink onPress={() => this.onPressLogOut ()} size={12}>Log Out</TextLink>
             ) : (
               <View>
@@ -123,19 +173,38 @@ class Profile extends Component {
                 <TextLink onPress={() => this.onPressMessage ()}size={12}>Message</TextLink>
               </View>
             )}
+
           </View>
         </View>
         <ScrollView style={styles.scroll}>
           <View style={styles.bio}>
             <View style={styles.bioHeader}>
               <TextHeader>Bio&nbsp;&nbsp;</TextHeader>
-              {isOwned ? (
+
+              {this.state.isOwned ? (
                 <TextLink onPress={() => this.onPressEdit ()} size={12}>Edit</TextLink>
               ) : (
                 <View style={{display: 'none'}} />
               )}
+
             </View>
-            <TextSerif size={16}>{TEST_BIO}</TextSerif>
+
+            {this.state.mode == 'edit' ? (
+              <View style={styles.editBio}>
+                <InputText
+                  text={this.state.bioEdit}
+                  placeholder={'Add your autobiography (e.g., "I was born in a log cabin in Illinois...").'}
+                  onChangeText={(bioEdit) => this.onChangeBioEdit (bioEdit)}
+                  multiline
+                  height={200}
+                />
+                <View style={styles.spaceBelow} />
+                <Button title={'Save Changes'} onPress={() => this.onPressSaveChanges ()} />
+              </View>
+            ) : (
+              <TextSerif size={16}>{this.state.bio}</TextSerif>
+            )}
+
           </View>
           <View style={styles.statistics}>
             <View style={styles.statisticsHeader}>
@@ -158,16 +227,16 @@ class Profile extends Component {
               </View>
               <View style={styles.statisticsRight}>
                 <View style={styles.rightItem}>
-                  <TextSans size={20} bold color={'#3BB54A'}>{TEST_STATISTICS.ravelsLed}</TextSans>
+                  <TextSans size={20} bold color={'#3BB54A'}>{this.state.ravelsLed}</TextSans>
                 </View>
                 <View style={styles.rightItem}>
-                  <TextSans size={20} bold color={'#3BB54A'}>{TEST_STATISTICS.ravelsContributedTo}</TextSans>
+                  <TextSans size={20} bold color={'#3BB54A'}>{this.state.ravelsContributedTo}</TextSans>
                 </View>
                 <View style={styles.rightItem}>
-                  <TextSans size={20} bold color={'#3BB54A'}>{TEST_STATISTICS.passagesWritten}</TextSans>
+                  <TextSans size={20} bold color={'#3BB54A'}>{this.state.passagesWritten}</TextSans>
                 </View>
                 <View style={styles.rightItem}>
-                  <TextSans size={20} bold color={'#3BB54A'}>{TEST_STATISTICS.upvotesReceived}</TextSans>
+                  <TextSans size={20} bold color={'#3BB54A'}>{this.state.upvotesReceived}</TextSans>
                 </View>
               </View>
             </View>
@@ -217,6 +286,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     marginBottom: 10,
   },
+  editBio: {
+    alignItems: 'center',
+  },
   statistics: {
 
   },
@@ -254,10 +326,24 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapStateToProps (state) {
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreens,
+    showNavBar,
+    screenData,
+  } = state.navigation;
+
+  const {
+    currentUserProfile,
+  } = state.current_user;
+
   return {
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreen,
+    activeScreen,
+    previousScreens,
+    showNavBar,
+    screenData,
+    currentUserProfile,
   };
 }
 

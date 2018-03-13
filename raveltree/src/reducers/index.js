@@ -11,6 +11,7 @@ import MasterRavelReducer from './MasterRavelReducer'
 import PassageReducer from './PassageReducer'
 
 import NavigationReducer from './NavigationReducer';
+import HelperReducer from './HelperReducer';
 
 const rootReducer = combineReducers({
   ravel: RavelReducer,
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   notification: NotificationReducer,
   passage: PassageReducer,
   navigation: NavigationReducer,
+  helper: HelperReducer,
 });
 
 export default rootReducer;

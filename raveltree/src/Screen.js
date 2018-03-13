@@ -28,6 +28,7 @@ import Notifications from './screens/Notifications';
 import TermsAndPrivacy from './screens/TermsAndPrivacy';
 import YourRavels from './screens/YourRavels';
 import Profile from './screens/Profile';
+import CreateProfile from './screens/CreateProfile';
 import StartARavel from './screens/StartARavel'
 import AddTags from './screens/AddTags'
 import InviteParticipants from './screens/InviteParticipants'
@@ -35,7 +36,6 @@ import Splash from './screens/Splash'
 import Home from './screens/Home'
 import Explore from './screens/Explore'
 import Ravel from './screens/Ravel'
-
 
 class Screen extends Component {
   constructor (props: any, context: any) {
@@ -46,7 +46,7 @@ class Screen extends Component {
 
   componentWillMount() {
     firebase.auth().onAuthStateChanged((user) => {
-      console.log('Authentication state has changed: ' + (user ? 'True' : 'False'));
+      console.log('Authentication state is: ' + (user ? 'True' : 'False'));
       if (user) {
         this.setState ({loggedIn: true})
       } else {
@@ -56,7 +56,7 @@ class Screen extends Component {
   }
 
   showScreen () {
-    //return <Ravel {...this.props} />;
+    //return <Profile {...this.props} />;
     switch (this.props.activeScreen) {
       case ('Splash'):
         return <Splash {...this.props} />;
@@ -66,6 +66,8 @@ class Screen extends Component {
         return <LoginEmail {...this.props} />;
       case ('TermsAndPrivacy'):
         return <TermsAndPrivacy {...this.props} />;
+      case ('CreateProfile'):
+        return <CreateProfile {...this.props} />;
       case ('Home'):
         return <Home {...this.props} />;
       case ('YourRavels'):

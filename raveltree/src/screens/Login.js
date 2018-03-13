@@ -1,12 +1,8 @@
-// Author: Alex Aguirre and Vivienne Do
-// Created: ?
-// Modified: 03/05/18 by Frank Fusco (fr@nkfus.co)
+// Author:   Alex Aguirre and Vivienne Do
+// Created:  ?
+// Modified: 03/13/18 by Frank Fusco (fr@nkfus.co)
 //
 // Login screen for RavelTree.
-//
-// TODO: Facebook authentication ->
-//       Set global user data via Redux function ->
-//       Navigate to Home screen
 
 import React, { Component } from 'react';
 import {
@@ -35,50 +31,52 @@ const {
   AccessToken
 } = FBSDK;
 
-
-const GeneralLoginButton = MKButton.coloredButton()
-    .withText('LOGIN')
-    .build();
-
-    // google sign in button design
+// Google sign-in button design
 const GLoginButton = MKButton.coloredButton()
-    .withText('Sign in with Google')
-    .withTextStyle({
-        color: 'white',
-        fontWeight: 'bold'
-    })
-    .withBackgroundColor('#1E88E5')
-    .build();
+  .withText('Sign in with Google')
+  .withTextStyle({
+      color: 'white',
+      fontWeight: 'bold'
+  })
+  .withBackgroundColor('#1E88E5')
+  .build();
 
 
 class Login extends Component {
   constructor (props: any, context: any) {
     super (props, context);
     this.state = {
-        email :  '',
-        password: '',
-        error: '',
-        loading: false,
+      email :  '',
+      password: '',
+      error: '',
+      loading: false,
+      loggedIn: false,
     };
   }
 
-  onButtonPress() {
-      const {email, password} = this.state;
-      this.setState({error: '', loading: true });
+  componentDidMount () {
+    if (!firebase.auth ().currentUser) {
+      this.props.userLogOff ();
+      FBSDK.LoginManager.logOut ();
+    }
+  }
 
-      firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(this.onAuthSuccess.bind(this))
-        .catch(() => {
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then(this.onAuthSuccess.bind(this))
-                .catch(this.onAuthFailed.bind(this));
-        });
+  componentWillReceiveProps (nextProps) {
+    // If the user has a profile, just send them to the Home screen. Otherwise,
+    // send them to the CreateProfile screen.
+    if (nextProps.currentUserProfile) {
+      this.props.setActiveScreen ('Home');
+    } else {
+      this.props.setActiveScreen ('CreateProfile');
+    }
   }
 
   onGButtonPress() {
     // TODO: Google Login.
-    // For now, just pretends the user is authenticated.
-    this.props.setActiveScreen ('Home');
+    // For now, just authenticates a test user automatically.
+    this.setState({error: '', loading: true });
+    this.props.signInWithEmail ('test@test.com', 'Test123!');
+    this.props.getCurrentUserProfile ();
 
     // const {email, password} = this.state;
     // this.setState({error: '', loading: true });
@@ -102,76 +100,63 @@ class Login extends Component {
     this.props.setActiveScreen ('TermsAndPrivacy');
   }
 
-  onAuthSuccess() {
-      this.setState({
-        email :  '',
-        password: '',
-        error: '',
-        loading: false,
-      });
-  }
-
-  onAuthFailed() {
-      this.setState({
-          error: 'Authenticiation Failed',
-          loading: false,
-      });
-  }
-
-  onLoginFinished (error, result) {
+  onFBLogin (error, result) {
     if (error) {
-      alert("login has error: " + result.error);
+      alert("Login error: " + result.error);
     } else if (result.isCancelled) {
-      alert("login is cancelled.");
+      alert("Login cancelled.");
     } else {
-    console.log("Attempting to log into firebase");
+    console.log("Attempting to log into Firebase...");
     AccessToken.getCurrentAccessToken().then(
       (data) => {
-          const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
-          firebase.auth().signInWithCredential(credential)
-          .then(this.onAuthSuccess.bind(this))
-          .catch(this.onAuthFailed.bind(this));
-          console.log('Attempting log in with facebook');
+        console.log('Attempting log in with Facebook...');
+        const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
+        firebase.auth().signInWithCredential(credential)
+        .then(this.onFBAuthSuccess.bind(this))
+        .catch(this.onFBAuthFailed.bind(this));
       }, (error) => {
-          console.log(error);
+        console.log(error);
       }
-    )
+    )}
+  }
 
-    // Go to MainPage here
-    console.log("Lol");
-    }
+  onFBAuthSuccess() {
+    this.setState({
+      email :  '',
+      password: '',
+      error: '',
+      loading: false,
+      loggedIn: true,
+    });
+
+    this.props.getCurrentUserProfile ();
+  }
+
+  onFBAuthFailed() {
+    this.setState({
+        error: 'Authenticiation Failed',
+        loading: false,
+    });
   }
 
   renderLoader() {
-      if (this.state.loading) {
-          return <Loader size="large"/>;
-      }
-      else {
-          return (
-          <View style = {styles.google}>
-        {/*  <GeneralLoginButton
-             onPress = {this.onButtonPress.bind(this)}
-        /> */}
-          <GLoginButton
-            onPress = {this.onGButtonPress.bind(this)}
-          />
-           </View>
-          );
-      }
+    if (this.state.loading) {
+        return <Loader size="large"/>;
+    }
   }
 
   render() {
     const {
-        form,
-        fieldStyles,
-        loginButtonArea,
-        errorMessage,
-        container,
-        welcome,
-        loginTest,
-        gStyle,
-        logoStyle
-      } = styles;
+      form,
+      fieldStyles,
+      loginButtonArea,
+      errorMessage,
+      container,
+      welcome,
+      loginTest,
+      gStyle,
+      logoStyle
+    } = styles;
 
     return (
       <View style={styles.layout}>
@@ -186,13 +171,19 @@ class Login extends Component {
               style = {styles.facebook}
               readPermissions = {['public_profile','email']}
               onLoginFinished = {
-                (error, result) => {this.onLoginFinished (error, result)}
+                (error, result) => {this.onFBLogin (error, result)}
               }
-              onLogoutFinished={() => alert("logout.")}
+              onLogoutFinished={() => {
+                this.props.userLogOff ();
+                alert("Logged out.");
+              }}
             />
+
+            {this.renderLoader()}
+
             {/* Google button */}
-            <View>
-              {this.renderLoader()}
+            <View style = {styles.google}>
+              <GLoginButton onPress = {this.onGButtonPress.bind(this)} />
             </View>
           </View>
           <View style={styles.or}>
@@ -288,9 +279,14 @@ const mapStateToProps = (state) => {
     showNavBar,
   } = state.navigation;
 
+  const {
+    currentUserProfile,
+  } = state.current_user;
+
   return {
     activeScreen,
     showNavBar,
+    currentUserProfile,
   };
 }
 

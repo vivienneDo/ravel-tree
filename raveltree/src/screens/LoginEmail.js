@@ -1,6 +1,6 @@
-// Author: Alex Aguirre
-// Created: 01/24/18
-// Modified: 03/05/18 by Frank Fusco (fr@nkfus.co)
+// Author:   Alex Aguirre
+// Created:  01/24/18
+// Modified: 03/13/18 by Frank Fusco (fr@nkfus.co)
 //
 // Email login screen for RavelTree.
 //
@@ -21,7 +21,8 @@ import {
 import { MKTextField, MKColor, MKButton } from 'react-native-material-kit';
 import Loader from '../Loader';
 import firebase from 'firebase';
-import { connect} from 'react-redux';
+
+import { connect } from 'react-redux';
 import * as actions from '../actions';
 import _ from 'lodash';
 
@@ -33,19 +34,44 @@ import TextLink from '../components/TextLink';
 import ButtonSans from '../components/ButtonSans';
 
 class LoginEmail extends Component {
-  state = {
-    email :  '',
-    password: '',
-    error: '',
-    loading: false,
-  };
+  constructor (props, context) {
+    super (props, context);
+    this.state = {
+      email :  '',
+      password: '',
+      error: '',
+      loading: false,
+    };
+  }
+
+  componentWillReceiveProps (newProps) {
+    // If the user has a profile, just send them to the Home screen. Otherwise,
+    // send them to the CreateProfile screen.
+    if (newProps.currentUserProfile) {
+      this.props.setActiveScreen ('Home');
+    } else {
+      this.props.setActiveScreen ('CreateProfile');
+    }
+  }
+
+  onPressLogin () {
+    const {email, password} = this.state;
+    this.setState({error: '', loading: true });
+    this.props.signInWithEmail (email, password);
+  }
 
   onPressRegister () {
 
+    // TODO: Add email verification step
+
+    const {email, password} = this.state;
+    this.setState({error: '', loading: true });
+
+    this.props.createUserWithEmail (email, password);
+    this.props.signInWithEmail (email, password);
   }
 
   onPressBack () {
-    //this.props.setActiveScreen ('Login');
     this.props.navigateBack ();
   }
 
@@ -53,37 +79,6 @@ class LoginEmail extends Component {
     this.props.setPreviousScreen (this.constructor.name);
     this.props.setActiveScreen ('TermsAndPrivacy');
   }
-
-  /* take in and store the user info on Firebase */
-  onButtonPress() {
-      const {email, password} = this.state;
-      this.setState({error: '', loading: true });
-
-      firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(this.onAuthSuccess.bind(this))
-        .catch(() => {
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then(this.onAuthSuccess.bind(this))
-                .catch(this.onAuthFailed.bind(this));
-        });
-  }
-
-  onAuthSuccess() {
-      this.setState({
-        email :  '',
-        password: '',
-        error: '',
-        loading: false,
-      });
-  }
-
-  onAuthFailed() {
-      this.setState({
-          error: 'Authenticiation Failed',
-          loading: false,
-      });
-  }
-
 
   render() {
     const {
@@ -209,11 +204,20 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapStateToProps (state) {
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    showNavBar,
+  } = state.navigation;
+
+  const {
+    currentUserProfile
+  } = state.current_user;
+
   return {
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreen,
-    showNavBar: state.showNavBar,
+    activeScreen,
+    showNavBar,
+    currentUserProfile,
   };
 }
 

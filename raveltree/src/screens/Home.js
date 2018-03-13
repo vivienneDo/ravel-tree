@@ -29,6 +29,7 @@ import {
 } from 'react-native';
 
 import { connect } from 'react-redux'
+import * as actions from '../actions';
 import _ from 'lodash';
 
 import RTLogoText from '../components/RTLogoText';
@@ -54,6 +55,12 @@ class Home extends Component<{}> {
   constructor (props: any, context: any) {
     super (props, context);
     this.props.setShowNavBar (true);
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.userProfile) {
+      console.log (nextProps.userProfile);
+    }
   }
 
   onPressExplore () {
@@ -95,9 +102,9 @@ class Home extends Component<{}> {
 
   render() {
     const {
-      user,
       passages,
       testID,
+      currentUserProfile
     } = this.props;
     return (
       <View style={styles.layout}>
@@ -127,7 +134,9 @@ class Home extends Component<{}> {
             <View style={styles.userImage}>
               <UserImage size={20} />
             </View>
-            <TextSerif size={12}>{user}</TextSerif>
+            <TextSerif size={12}>
+              {currentUserProfile.first_name + ' ' + currentUserProfile.last_name}
+            </TextSerif>
           </View>
           <View style={styles.input}>
             <InputSearch
@@ -219,10 +228,15 @@ const mapStateToProps = (state) => {
     showNavBar,
   } = state.navigation;
 
+  const {
+    currentUserProfile
+  } = state.current_user;
+
   return {
     activeScreen,
     previousScreens,
     showNavBar,
+    currentUserProfile,
   };
 }
 

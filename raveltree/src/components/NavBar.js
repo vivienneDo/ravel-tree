@@ -57,7 +57,14 @@ class NavBar extends React.Component {
   handleSelect (selected) {
     if (this.props.activeTab != selected) {
       this.props.setNavBarTab (selected);
-      this.props.setActiveScreen (selected);
+
+      if (selected == 'Profile') {
+        var screenData = Object.assign ({}, {isOwned: true});
+        this.props.setActiveScreen (selected, screenData);
+      }
+      else {
+        this.props.setActiveScreen (selected);
+      }
     }
   }
 

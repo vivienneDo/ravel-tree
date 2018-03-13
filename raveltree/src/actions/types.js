@@ -5,3 +5,6 @@ export const SET_SHOW_NAVBAR     = 'SET_SHOW_NAVBAR'
 export const SET_NAVBAR_TAB      = 'SET_NAVBAR_TAB'
 export const NAVIGATE_FORWARD    = 'NAV_FORWARD'
 export const NAVIGATE_BACK       = 'NAV_BACK'
+
+// Helper
+export const SET_USER            = 'SET_USER'
