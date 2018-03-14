@@ -9,7 +9,6 @@ import {
   StyleSheet,
   Text,
   View, ScrollView,
-  //ART,
 } from 'react-native';
 
 import { connect } from 'react-redux'
@@ -25,26 +24,6 @@ import IconLeaf from '../components/IconLeaf'
 //import PassageStub from '../components/PassageStub'
 import Button from '../components/Button'
 import ButtonPlus from '../components/ButtonPlus'
-
-// import * as scale from 'd3-scale';
-// import * as shape from 'd3-shape';
-// import * as d3Array from 'd3-array';
-//
-// import { select as d3Select } from 'd3-selection';
-// import * as d3h from 'd3-hierarchy';
-
-//import Tree from 'react-d3-tree';
-
-// const {
-//   Group,
-//   Shape,
-//   Surface,
-// } = ART;
-//
-// const d3 = {
-//   scale,
-//   shape,
-// };
 
 const TEST_RAVEL = {
   title: 'Cassius in Rome',
@@ -64,10 +43,6 @@ const data = [
   {date: new Date(2000, 1, 6), value: 88.47},
   {date: new Date(2000, 1, 7), value: 94.47},
 ];
-
-
-
-
 
 class Ravel extends Component {
   constructor (props) {
@@ -148,6 +123,28 @@ class Ravel extends Component {
           ]}
         ]}
       ]};
+
+    var root = {
+        name: "",
+        id: 1,
+        hidden: true,
+        children: [ {
+                name: "Q",
+                id: 16,
+                no_parent: true
+            }]
+        }
+
+    var siblings = [{
+        source: {
+            id: 3,
+            name: "C"
+        },
+        target: {
+            id: 11,
+            name: "K"
+        }
+     }]
 
 
     return (

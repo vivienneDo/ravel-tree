@@ -38,6 +38,8 @@ import Home from './screens/Home'
 import Explore from './screens/Explore'
 import Ravel from './screens/Ravel'
 
+import GraphicsTest from './screens/GraphicsTest';
+
 class Screen extends Component {
   constructor (props: any, context: any) {
     super (props, context);
@@ -57,7 +59,7 @@ class Screen extends Component {
   }
 
   showScreen () {
-    //return <Ravel {...this.props} />;
+    return <GraphicsTest {...this.props} />;
     switch (this.props.activeScreen) {
       case ('Splash'):
         return <Splash {...this.props} />;
