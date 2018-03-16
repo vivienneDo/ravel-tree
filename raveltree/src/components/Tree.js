@@ -19,6 +19,9 @@ const NODE_WIDTH = 100;
 const SPACING_VERTICAL = 40;
 const SPACING_HORIZONTAL = 20;
 
+TREE_HEIGHT = undefined;
+TREE_WIDTH  = undefined;
+
 class Tree extends Component {
   constructor (props) {
     super (props);
@@ -63,6 +66,8 @@ class Tree extends Component {
       width:         (nodes.length * NODE_WIDTH) +
                      ((nodes.length - 1) * SPACING_HORIZONTAL),
     };
+    TREE_HEIGHT = tree.height;
+    TREE_WIDTH  = tree.width;
     return tree;
   }
 
@@ -128,7 +133,7 @@ class Tree extends Component {
     //      N = node height
     //
     var s = SPACING_VERTICAL;
-    var h = tree.height * NODE_HEIGHT;
+    var h = (tree.height * NODE_HEIGHT) + ((tree.height - 1) * s);
     var m = h / 2;
     var N = NODE_HEIGHT;
     var odd = nodesAtThisLevel % 2 != 0;
@@ -140,7 +145,7 @@ class Tree extends Component {
 
       if (n == 1 && odd) {
         y = m;
-        y = y + (N/2); // TEMP: Correction factor (because views are top-left positioned)
+        y = y - (N/2); // TEMP: Correction factor (because views are top-left positioned)
         if (!tree.nodePositions [level] [centerIndex]) { tree.nodePositions [level] [centerIndex] = {}; }
         tree.nodePositions [level] [centerIndex] = {x: x, y: y};
         continue;
@@ -151,7 +156,7 @@ class Tree extends Component {
 
       if (odd) { y = m + k     * (s + N); }
       else     { y = m + (k/2) * (s + N); }
-      y = y + (N/2); // TEMP: Correction factor (because views are top-left positioned)
+      y = y - (N/2); // TEMP: Correction factor (because views are top-left positioned)
 
       if (odd) { index = centerIndex - k; }
       else     { index = Math.floor (centerIndex) - (n/2 - 1); }
@@ -160,7 +165,7 @@ class Tree extends Component {
 
       if (odd) { y = m - k     * (s + N); }
       else     { y = m - (k/2) * (s + N); }
-      y = y + (N/2); // TEMP: Correction factor (because views are top-left positioned)
+      y = y - (N/2); // TEMP: Correction factor (because views are top-left positioned)
 
       if (odd) { index = centerIndex + k; }
       else     { index = Math.ceil (centerIndex) + (n/2 - 1); }
@@ -175,8 +180,6 @@ class Tree extends Component {
       level--;
     }
 
-    console.log (tree.nodePositions);
-
     // Generate the nodes.
     for (var i = 0; i < tree.nodePositions [level].length; i++) {
       //console.log (tree.nodePositions [i]);
@@ -190,12 +193,14 @@ class Tree extends Component {
     // Analyze the tree. Returns an object with:
     // { data, nodeCounts, depth, height, width }
     var tree = this.analyzeTree (data);
-    console.log (tree);
-    console.log (tree.height * NODE_HEIGHT + (tree.height - 1) * SPACING_VERTICAL);
+    //console.log (tree);
+    //console.log (tree.height * NODE_HEIGHT + (tree.height - 1) * SPACING_VERTICAL);
 
     // Render the tree.
     var nodes = [];
     nodes = this.renderLevel (tree, tree.data, nodes, 0);
+
+    console.log (tree.nodePositions);
 
     return (
       <View style={{backgroundColor: '#dddddd', width: tree.width,}}>
@@ -207,7 +212,7 @@ class Tree extends Component {
   render () {
     const data = this.props.root;
     return (
-      <View style={styles.layout}>
+      <View style={{backgroundColor: '#cccccc'}}>
         {this.renderTree (data)}
       </View>
     );
@@ -216,10 +221,11 @@ class Tree extends Component {
 
 const styles = StyleSheet.create({
   layout: {
-
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   tree: {
-    position: 'absolute',
+    //position: 'absolute',
   },
 });
 
