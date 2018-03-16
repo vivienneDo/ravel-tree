@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   03/14/18
-// Modified:  03/14/18
+// Modified:  03/16/18
 
 // Tree component for RavelTree.
 
@@ -16,8 +16,8 @@ import _ from 'lodash';
 
 const NODE_HEIGHT = 20;
 const NODE_WIDTH = 100;
-const SPACING_VERTICAL = 40;
-const SPACING_HORIZONTAL = 20;
+const SPACING_VERTICAL = 30;
+const SPACING_HORIZONTAL = 40;
 
 TREE_HEIGHT = undefined;
 TREE_WIDTH  = undefined;
@@ -60,9 +60,10 @@ class Tree extends Component {
     var tree = {
       data:          data,
       nodeCounts:    nodes,
-      nodePositions: [],
       depth:         nodes.length,
-      height:        Math.max (...nodes),
+      breadth:       Math.max (...nodes),
+      height:        (Math.max (...nodes) * NODE_HEIGHT) +
+                     ((Math.max (...nodes) - 1) * SPACING_VERTICAL),
       width:         (nodes.length * NODE_WIDTH) +
                      ((nodes.length - 1) * SPACING_HORIZONTAL),
     };
@@ -76,6 +77,7 @@ class Tree extends Component {
       <View
         key={content}
         style={{
+          position: 'absolute',
           left: position.x,
           top: position.y,
           backgroundColor: '#eeeeee',
@@ -101,76 +103,38 @@ class Tree extends Component {
 
     // Get the number of nodes at this level.
     var nodesAtThisLevel = tree.nodeCounts [level];
-    //console.log ("At level " + level + " (" + nodesAtThisLevel + ' nodes)');
 
     // Calculate the positions for each node at this level.
-    if (!tree.nodePositions [level]) { tree.nodePositions [level] = [] };
-    //console.log (tree.nodePositions [level]);
     // --------------------------------------------
     // Horizontal Positioning:
     // --------------------------------------------
-    // x = (kW)/2 + (n-1)s , k = 2n-1
-    //
-    //    where:
-    //      s = horizontal spacing
-    //      W = node width
-    //
-    var n = level + 1;          // n = 1
-    var s = SPACING_HORIZONTAL; // s = 20
-    var W = NODE_WIDTH;         // W = 100
+    var n = level + 1;
+    var s = SPACING_HORIZONTAL;
+    var W = NODE_WIDTH;
     var k = (2 * n - 1);
-    var x = (k * W)/2 + (n-1) * s;
-    x = x - (W/2); // TEMP: Correction factor (because views are top-left positioned)
+    var x = (k * W)/2 + (n-1) * s - (W/2);
+
     // --------------------------------------------
     // Vertical Positioning:
     // --------------------------------------------
-    // n is odd:  y = (h/2) ± k(s+N), k∈[0, floor (n/2)]
-    // n is even: y = (h/2) ± (k/2) * (s+N), k∈[1, n-1], k is odd
-    //
-    //    where:
-    //      s = vertical spacing
-    //      h = total graph height
-    //      N = node height
-    //
     var s = SPACING_VERTICAL;
-    var h = (tree.height * NODE_HEIGHT) + ((tree.height - 1) * s);
-    var m = h / 2;
     var N = NODE_HEIGHT;
     var odd = nodesAtThisLevel % 2 != 0;
-
-    for (var n = odd ? 1 : 2; n <= nodesAtThisLevel; n = n+2) {
-      var index;
-      var centerIndex = (nodesAtThisLevel - 1) / 2;
+    var center = (nodesAtThisLevel - 1)/2;
+    for (var i = 0; i < nodesAtThisLevel; i++) {
       var y;
-
-      if (n == 1 && odd) {
-        y = m;
-        y = y - (N/2); // TEMP: Correction factor (because views are top-left positioned)
-        if (!tree.nodePositions [level] [centerIndex]) { tree.nodePositions [level] [centerIndex] = {}; }
-        tree.nodePositions [level] [centerIndex] = {x: x, y: y};
-        continue;
+      if (i == center) {
+        y = 0;
+      }
+      else if (i < center) {
+        y = - ((center-i) * N + (center-i) * s);
+      }
+      else if (i > center) {
+        y = (i-center) * N + (i-center) * s;
       }
 
-      if (odd) { k = Math.floor (n/2); }
-      else     { k = n - 1 }
-
-      if (odd) { y = m + k     * (s + N); }
-      else     { y = m + (k/2) * (s + N); }
-      y = y - (N/2); // TEMP: Correction factor (because views are top-left positioned)
-
-      if (odd) { index = centerIndex - k; }
-      else     { index = Math.floor (centerIndex) - (n/2 - 1); }
-      if (!tree.nodePositions [level] [index]) { tree.nodePositions [level] [index] = {}; }
-      tree.nodePositions [level] [index] = {x: x, y: y};
-
-      if (odd) { y = m - k     * (s + N); }
-      else     { y = m - (k/2) * (s + N); }
-      y = y - (N/2); // TEMP: Correction factor (because views are top-left positioned)
-
-      if (odd) { index = centerIndex + k; }
-      else     { index = Math.ceil (centerIndex) + (n/2 - 1); }
-      if (!tree.nodePositions [level] [index]) { tree.nodePositions [level] [index] = {}; }
-      tree.nodePositions [level] [index] = {x: x, y: y};
+      // Add position data to the tree.
+      data [i].position = {x: x, y: y};
     }
 
     // Repeat for each child.
@@ -181,29 +145,25 @@ class Tree extends Component {
     }
 
     // Generate the nodes.
-    for (var i = 0; i < tree.nodePositions [level].length; i++) {
-      //console.log (tree.nodePositions [i]);
-      nodes.push (this.renderNode (data [i].name, tree.nodePositions [level] [i]));
+    for (var i = 0; i < nodesAtThisLevel; i++) {
+      nodes.push (this.renderNode (data [i].name, data [i].position));
     }
 
     return nodes;
   }
 
   renderTree (data) {
-    // Analyze the tree. Returns an object with:
-    // { data, nodeCounts, depth, height, width }
+    // Analyze the tree.
     var tree = this.analyzeTree (data);
-    //console.log (tree);
-    //console.log (tree.height * NODE_HEIGHT + (tree.height - 1) * SPACING_VERTICAL);
+    console.log ('Tree:');
+    console.log (tree);
 
     // Render the tree.
     var nodes = [];
     nodes = this.renderLevel (tree, tree.data, nodes, 0);
 
-    console.log (tree.nodePositions);
-
     return (
-      <View style={{backgroundColor: '#dddddd', width: tree.width,}}>
+      <View style={{width: tree.width,}}>
         {nodes}
       </View>
     );
@@ -212,7 +172,7 @@ class Tree extends Component {
   render () {
     const data = this.props.root;
     return (
-      <View style={{backgroundColor: '#cccccc'}}>
+      <View style={{backgroundColor: '#cccccc',}}>
         {this.renderTree (data)}
       </View>
     );
@@ -221,11 +181,10 @@ class Tree extends Component {
 
 const styles = StyleSheet.create({
   layout: {
-    // justifyContent: 'center',
-    // alignItems: 'center',
+
   },
   tree: {
-    //position: 'absolute',
+
   },
 });
 
