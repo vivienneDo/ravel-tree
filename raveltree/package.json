@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@shoutem/ui": "^0.23.4",
+    "art": "^0.10.1",
     "firebase": "^4.8.2",
     "lodash": "^4.17.4",
     "react": "16.2.0",

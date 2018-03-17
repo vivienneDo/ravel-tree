@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Text,
   View, ScrollView,
+  ART,
 } from 'react-native';
 
 import { connect } from 'react-redux'
@@ -26,6 +27,13 @@ import Button from '../components/Button'
 import ButtonPlus from '../components/ButtonPlus'
 
 import Tree from '../components/Tree'
+
+const {
+  Surface,
+  Group,
+  Shape,
+  Path,
+} = ART;
 
 // Test data structure in the form of a tree.
 const DATA = [
