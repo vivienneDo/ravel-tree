@@ -38,7 +38,14 @@ const {
 // Test data structure in the form of a tree.
 const DATA = [
   {"name" : "1", "children" : [
-    {"name" : "1-1" },
+    {"name" : "1-1", children: [
+      {name: '1-1-1', children: [
+        {name: '1-1-1-1', children: [
+          {name: '1-1-1-1-1', children: []},
+        ]},
+        {name: '1-1-1-2', children: []},
+      ]},
+    ]},
     {"name" : "1-2" },
     {"name" : "1-3", "children": [
       {"name" : "1-3-1", "children" :[
@@ -47,10 +54,10 @@ const DATA = [
       ]},
     ]},
     {"name" : "1-4", "children": []},
-    {"name" : "1-5", "children": []},
-    {"name" : "1-6", "children": []},
   ]},
-  {"name" : "2", "children" : []},
+  {"name" : "2", "children" : [
+    {"name" : "2-1", "children": []},
+  ]},
   {"name" : "3", "children" : []},
 ];
 

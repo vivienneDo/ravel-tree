@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   03/14/18
-// Modified:  03/16/18
+// Modified:  03/17/18
 
 // Tree component for RavelTree.
 
@@ -9,14 +9,11 @@ import {
   StyleSheet,
   Text,
   View, ScrollView,
-  //Image,
   ART,
 } from 'react-native';
 
 import { connect } from 'react-redux'
 import _ from 'lodash';
-
-//const arrow = require ('../components/img/line-top-active.png');
 
 const {
   Surface,
@@ -24,6 +21,8 @@ const {
   Shape,
   Path,
 } = ART;
+
+DEBUG = false;
 
 const NODE_HEIGHT = 20;
 const NODE_WIDTH = 100;
@@ -39,9 +38,7 @@ TREE_WIDTH  = undefined;
 var nodesToRender = [];
 var arrowsToRender = [];
 
-// MAGIC_NUMBER = 75;
-
-
+// MAGIC_NUMBER:
 // MaxNodes   Height    Magic Number
 // 1          20        0
 // 2          70        25
@@ -49,9 +46,6 @@ var arrowsToRender = [];
 // 4          170       75
 // 5          220       100
 // 6          270       125
-
-
-//MAGIC_NUMBER = (NODE_HEIGHT + VERTICAL_SPACE) * ;
 
 class Tree extends Component {
   constructor (props) {
@@ -73,10 +67,14 @@ class Tree extends Component {
     if (!nodes [level]) { nodes [level] = 0; }
     nodes [level] += nodesAtThisLevel;
 
-    // For each child...
+    // For each node at this level...
     for (var i = 0; i < nodesAtThisLevel; i++) {
-      // Analyze the child.
+      // Keep track of the number of immediate siblings in this group.
+      data [i].groupCount = nodesAtThisLevel;
+
+      // Analyze each child.
       this.analyzeLevel (data [i].children, nodes, ++level);
+
       // Now that we're back, decrement level.
       level--;
     }
@@ -89,14 +87,15 @@ class Tree extends Component {
     nodes = [];
     nodes = this.analyzeLevel (data, nodes, 0);
     var tree = {
-      data:          data,
-      nodeCounts:    nodes,
-      depth:         nodes.length,
-      breadth:       Math.max (...nodes),
-      height:        (Math.max (...nodes) * NODE_HEIGHT) +
-                     ((Math.max (...nodes) - 1) * SPACING_VERTICAL),
-      width:         (nodes.length * NODE_WIDTH) +
-                     ((nodes.length - 1) * SPACING_HORIZONTAL),
+      data:           data,
+      nodeCounts:     nodes,
+      nodesProcessed: [],
+      depth:          nodes.length,
+      breadth:        Math.max (...nodes),
+      height:         (Math.max (...nodes) * NODE_HEIGHT) +
+                      ((Math.max (...nodes) - 1) * SPACING_VERTICAL),
+      width:          (nodes.length * NODE_WIDTH) +
+                      ((nodes.length - 1) * SPACING_HORIZONTAL),
     };
     TREE_HEIGHT = tree.height;
     TREE_WIDTH  = tree.width;
@@ -107,10 +106,8 @@ class Tree extends Component {
   }
 
   renderArrow (startPosition, endPosition) {
-    // TEMP: WTF is with the 75s???
     startPosition.y += MAGIC_NUMBER;
     endPosition.y += MAGIC_NUMBER;
-    //endPosition.x += 20;
 
     const ctl1 = {x: 0,  y: 0};
     const ctl2 = {x: 0,  y: 0};
@@ -170,11 +167,27 @@ class Tree extends Component {
       !tree.nodeCounts         ||
       !tree.nodeCounts [level] ||
       !data                    ||
-      data.length <1
+      data == undefined        ||
+      data.length < 1
     ) { return nodes; }
+
+    // DEBUG
+    var tabs = '';
+    for (var n = 0; n < level; n++) { tabs += '\t'; }
+    if (DEBUG) console.log (tabs + 'Rendering at level ' + level + '...');
 
     // Get the number of nodes at this level.
     var nodesAtThisLevel = tree.nodeCounts [level];
+
+    // Get the number of siblings in this group.
+    var nodesInThisGroup = data [0].groupCount;
+    if (DEBUG) console.log (tabs + 'Nodes in this group: ' + nodesInThisGroup);
+
+    // Keep track of how many nodes at this level we've processed.
+    if (!tree.nodesProcessed [level]) { tree.nodesProcessed [level] = 0; }
+
+    // DEBUG
+    if (DEBUG) console.log (tabs + 'Already processed ' + tree.nodesProcessed [level] + "/" + nodesAtThisLevel + ' nodes at this level.');
 
     // Calculate the positions for each node at this level.
     // --------------------------------------------
@@ -193,7 +206,12 @@ class Tree extends Component {
     var N = NODE_HEIGHT;
     var odd = nodesAtThisLevel % 2 != 0;
     var center = (nodesAtThisLevel - 1)/2;
-    for (var i = 0; i < nodesAtThisLevel; i++) {
+
+    var j = 0;
+    var groupNodesProcessed = 0;
+    while (groupNodesProcessed < nodesInThisGroup) {
+      var i = tree.nodesProcessed [level];
+
       var y;
       if (i == center) {
         y = 0;
@@ -206,53 +224,47 @@ class Tree extends Component {
       }
 
       // Add position data to the tree.
-      data [i].position = {x: x, y: y};
-    }
+      data [j].position = {x: x, y: y};
 
-    // Repeat for each child.
-    for (var i = 0; i < nodesAtThisLevel; i++) {
-      this.renderLevel (tree, data [i].children, nodes, ++level);
+      // Repeat for each child.
+      this.renderLevel (tree, data [j].children, nodes, ++level);
       // Now that we're back, decrement level.
       level--;
-    }
 
-    // Generate the nodes.
-    for (var i = 0; i < nodesAtThisLevel; i++) {
-      nodes.push (this.renderNode (data [i].name, data [i].position));
-    }
+      // Generate the node.
+      nodes.push (this.renderNode (data [j].name, data [j].position));
 
-    // Generate the arrows.
-    for (var i = 0; i < nodesAtThisLevel; i++) {
-      if (data [i].children) {
-        for (var j = 0; j < data [i].children.length; j++) {
+      // Generate the arrows.
+      if (data [j].children) {
+        for (var k = 0; k < data [j].children.length; k++) {
           // For now, just check whether the first character of the names match.
           // TODO: Generalize? Or dynamically generate a field like this during analysis.
-          if (data [i].name.charAt (0) == data [i].children [j].name.charAt (0)) {
-            // TODO: Draw curve from parent position (data [i].position) to child position (data [i].children [j].position).
+          if (data [j].name.charAt (0) == data [j].children [k].name.charAt (0)) {
+            // TODO: Draw curve from parent position (data [j].position) to child position (data [j].children [k].position).
             var startPosition = {
-              // x: data [i].position.x + (W),
-              // y: data [i].position.y + (N/2),
-              x: data [i].position.x + (W),
-              y: data [i].position.y + (N/2),
+              x: data [j].position.x + (W),
+              y: data [j].position.y + (N/2),
             }
             var endPosition = {
-              // x: data [i].children [j].position.x - (W/4),
-              // y: data [i].children [j].position.y + N/4,
-              x: data [i].children [j].position.x,
-              y: data [i].children [j].position.y + N/2,
+              x: data [j].children [k].position.x,
+              y: data [j].children [k].position.y + N/2,
             }
-            console.log ("Drawing arrow from:");
-            console.log (startPosition);
-            console.log ("to:");
-            console.log (endPosition);
             arrowsToRender.push (this.renderArrow (startPosition, endPosition));
           }
         }
       }
 
+      // DEBUG
+      if (DEBUG) console.log (tabs + 'Processed node ' + data [j].name);
 
-
+      tree.nodesProcessed [level] ++;
+      j++;
+      groupNodesProcessed++;
     }
+
+    // DEBUG
+    var sym = tree.nodesProcessed [level] == nodesAtThisLevel ? '✅' : '❌';
+    if (DEBUG) console.log (tabs + sym + 'Processed ' + tree.nodesProcessed [level] + "/" + nodesAtThisLevel + ' nodes at level ' + level + '.');
 
     return nodes;
   }
@@ -260,18 +272,11 @@ class Tree extends Component {
   renderTree (data) {
     // Analyze the tree.
     var tree = this.analyzeTree (data);
-    console.log ('Tree:');
-    console.log (tree);
+    if (DEBUG) console.log ('Tree:');
+    if (DEBUG) console.log (tree);
 
-    // Render the nodes of the tree.
-    //var nodes = [];
+    // Render the tree.
     nodesToRender = this.renderLevel (tree, tree.data, nodesToRender, 0);
-
-    // Render the arrows of the tree.
-    // var arrows = [];
-    // arrows = this.renderArrows (tree, tree.data, arrows, 0);
-
-    console.log (TREE_HEIGHT);
 
     return (
       <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, top: MAGIC_NUMBER,}}>
@@ -297,7 +302,7 @@ class Tree extends Component {
   render () {
     const data = this.props.root;
     return (
-      <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, backgroundColor: '#aaaaaa', zIndex: 1,}}>
+      <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, /*backgroundColor: '#aaaaaa',*/ zIndex: 1,}}>
         {this.renderTree (data)}
       </View>
     );
