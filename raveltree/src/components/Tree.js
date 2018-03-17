@@ -39,7 +39,19 @@ TREE_WIDTH  = undefined;
 var nodesToRender = [];
 var arrowsToRender = [];
 
-MAGIC_NUMBER = 75;
+// MAGIC_NUMBER = 75;
+
+
+// MaxNodes   Height    Magic Number
+// 1          20        0
+// 2          70        25
+// 3          120       50
+// 4          170       75
+// 5          220       100
+// 6          270       125
+
+
+//MAGIC_NUMBER = (NODE_HEIGHT + VERTICAL_SPACE) * ;
 
 class Tree extends Component {
   constructor (props) {
@@ -88,6 +100,9 @@ class Tree extends Component {
     };
     TREE_HEIGHT = tree.height;
     TREE_WIDTH  = tree.width;
+
+    MAGIC_NUMBER = ((NODE_HEIGHT + SPACING_VERTICAL) / 2) * (tree.breadth - 1);
+
     return tree;
   }
 
