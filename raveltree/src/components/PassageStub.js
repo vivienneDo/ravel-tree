@@ -5,6 +5,10 @@
 // "Passage Stub" component for RavelTree.
 //
 // TODO: Make entire stub link to content (modal).
+// TODO: Truncate text at reasonable character count.
+// TODO: Make a PassageDot component to represent the collapsed version.
+
+NODE_WIDTH = 250;
 
 import React, {Component} from 'react';
 import {
@@ -86,8 +90,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20,
     borderColor: '#8D8D8D',
+    backgroundColor: '#FFFFFF',
     paddingVertical: 2,
     paddingRight: 6,
+    width: NODE_WIDTH,
   },
   left: {
     flexDirection: 'row',

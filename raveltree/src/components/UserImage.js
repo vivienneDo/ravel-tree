@@ -35,7 +35,7 @@ class UserImage extends Component<{}> {
   }
 
   componentWillMount () {
-    this.props.getCurrentUserProfile ();
+    //TODO: Extend for other user images! this.props.getCurrentUserProfile ();
   }
 
   componentWillReceiveProps (newProps) {

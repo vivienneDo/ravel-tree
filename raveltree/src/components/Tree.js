@@ -15,6 +15,11 @@ import {
 import { connect } from 'react-redux'
 import _ from 'lodash';
 
+// Node Component:
+// -----------------------------------------------------------------------------
+import PassageStub from './PassageStub';
+// -----------------------------------------------------------------------------
+
 const {
   Surface,
   Group,
@@ -24,10 +29,16 @@ const {
 
 DEBUG = false;
 
-const NODE_HEIGHT = 20;
-const NODE_WIDTH = 100;
-const SPACING_VERTICAL = 30;
-const SPACING_HORIZONTAL = 40;
+ARROW_MODES = {
+  straight:  'straight',
+  sineCurve: 'sineCurve',
+}
+ARROW_MODE = ARROW_MODES.sineCurve;
+
+const NODE_HEIGHT = 20;                       // Original: 20
+const NODE_WIDTH = 250;                       // Original: 100
+const SPACING_VERTICAL = NODE_WIDTH / 4;      // Original: 30
+const SPACING_HORIZONTAL = NODE_HEIGHT * 4;   // Original: 40
 
 const ARROW_WIDTH = NODE_WIDTH;
 const ARROW_HEIGHT = NODE_HEIGHT;
@@ -56,12 +67,10 @@ class Tree extends Component {
   }
 
   analyzeLevel (data, nodes, level) {
-    if (!data) { return nodes; }
+    if (!data || !data.length || data.length < 1) { return nodes; }
 
     // Get the number of nodes at this level.
     var nodesAtThisLevel = data.length;
-
-    if (!data.length || data.length < 1) { return nodes; }
 
     // Add the number of nodes at this level at the array index.
     if (!nodes [level]) { nodes [level] = 0; }
@@ -71,6 +80,10 @@ class Tree extends Component {
     for (var i = 0; i < nodesAtThisLevel; i++) {
       // Keep track of the number of immediate siblings in this group.
       data [i].groupCount = nodesAtThisLevel;
+
+      // Add a unique internal identifier.
+      var treeID = level + '-' + i;
+      data [i].treeID = treeID;
 
       // Analyze each child.
       this.analyzeLevel (data [i].children, nodes, ++level);
@@ -100,65 +113,102 @@ class Tree extends Component {
     TREE_HEIGHT = tree.height;
     TREE_WIDTH  = tree.width;
 
+    // For the love of god, don't change this. It keeps everything centered.
     MAGIC_NUMBER = ((NODE_HEIGHT + SPACING_VERTICAL) / 2) * (tree.breadth - 1);
 
     return tree;
   }
 
-  renderArrow (startPosition, endPosition) {
+  renderArrow (startPosition, endPosition, optimal) {
+    var arrow;
+
     startPosition.y += MAGIC_NUMBER;
     endPosition.y += MAGIC_NUMBER;
 
-    const ctl1 = {x: 0,  y: 0};
-    const ctl2 = {x: 0,  y: 0};
-    const deltaX = endPosition.x - startPosition.x;
-    const deltaY = endPosition.y - startPosition.y;
+    var color = optimal ? '#2E8AF7' : '#555555';
 
-    const arrow = Path ()
-      .moveTo (startPosition.x, startPosition.y)
-      //.curveTo (ctl1.x, ctl1.y, ctl2.x, ctl2.y, endPosition.x, endPosition.y)
-      .lineTo (endPosition.x, endPosition.y);
-      //.curveTo (ctl1.x, ctl1.y, ctl2.x, ctl2.y, deltaX, deltaY);
+    switch (ARROW_MODE) {
 
-    var startx = startPosition.x;
-    var starty = startPosition.y;
-    var endx   = endPosition.x;
-    var endy   = endPosition.y;
+      case ARROW_MODES.sineCurve: {
+        const ctl1 = {x: startPosition.x - 10, y: endPosition.y};
+        const ctl2 = {x: endPosition.x + 10, y: startPosition.y};
+        const deltaX = endPosition.x - startPosition.x;
+        const deltaY = endPosition.y - startPosition.y;
 
-    //const path = new Path ('M '+startx+','+starty+' C '+startx+','+starty+' '+endx+','+endy+' '+endx+','+endy);
-    const path = new Path ('M '+startx+','+starty+' L '+endx+','+endy);
+        arrow = Path ()
+          .moveTo (startPosition.x - 10, startPosition.y)
+          .curveTo (ctl1.x, ctl1.y, ctl2.x, ctl2.y,
+                    endPosition.x + 10, endPosition.y);
+        break;
+      }
+
+      case ARROW_MODES.straight: {
+        arrow = Path ()
+          .moveTo (startPosition.x - 10, startPosition.y)
+          .lineTo (endPosition.x, endPosition.y);
+        break;
+      }
+
+    }
 
     return (
       <Shape
         key={startPosition.x + ',' + startPosition.y + '-' + endPosition.x + ',' + endPosition.y}
         d={arrow}
-        fill={'#000000'}
-        stroke={'#000000'}
+        //fill={'#bbbbbb'}
+        stroke={color}
+        //stroke={'#53350A'}
         strokeWidth={5}
         strokeCap={'square'}
       />
     );
   }
 
-  renderNode (content, position) {
+  renderNode (content) {
+    var Node = PassageStub;
+
     return (
       <View
-        key={content}
-        style={{
-          position: 'absolute',
-          zIndex: 2,
-          left: position.x,
-          top: position.y,
-          backgroundColor: '#eeeeee',
-          width: NODE_WIDTH,
-          height: NODE_HEIGHT,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
+      key={content.name}
+          style={{
+            position: 'absolute',
+            zIndex: 2,
+            left: content.position.x,
+            top: content.position.y,
+            //backgroundColor: '#eeeeee',
+            width: NODE_WIDTH,
+            height: NODE_HEIGHT,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
       >
-        <Text>{content}</Text>
+        <Node
+          name={content.name}
+          passageIndex={content.passageIndex}
+          score={content.score}
+          active={content.optimal}
+        />
       </View>
     );
+
+    // return (
+    //   <View
+    //     key={content}
+    //     style={{
+    //       position: 'absolute',
+    //       zIndex: 2,
+    //       left: position.x,
+    //       top: position.y,
+    //       backgroundColor: '#eeeeee',
+    //       width: NODE_WIDTH,
+    //       height: NODE_HEIGHT,
+    //       justifyContent: 'center',
+    //       alignItems: 'center',
+    //     }}
+    //   >
+    //     <Text>{content}</Text>
+    //   </View>
+    // );
   }
 
   renderLevel (tree, data, nodes, level) {
@@ -228,29 +278,26 @@ class Tree extends Component {
 
       // Repeat for each child.
       this.renderLevel (tree, data [j].children, nodes, ++level);
+
       // Now that we're back, decrement level.
       level--;
 
       // Generate the node.
-      nodes.push (this.renderNode (data [j].name, data [j].position));
+      nodes.push (this.renderNode (_.omit (data [j], ['children', 'groupCount',])));
 
       // Generate the arrows.
       if (data [j].children) {
         for (var k = 0; k < data [j].children.length; k++) {
-          // For now, just check whether the first character of the names match.
-          // TODO: Generalize? Or dynamically generate a field like this during analysis.
-          if (data [j].name.charAt (0) == data [j].children [k].name.charAt (0)) {
-            // TODO: Draw curve from parent position (data [j].position) to child position (data [j].children [k].position).
-            var startPosition = {
-              x: data [j].position.x + (W),
-              y: data [j].position.y + (N/2),
-            }
-            var endPosition = {
-              x: data [j].children [k].position.x,
-              y: data [j].children [k].position.y + N/2,
-            }
-            arrowsToRender.push (this.renderArrow (startPosition, endPosition));
+          var startPosition = {
+            x: data [j].position.x + (W),
+            y: data [j].position.y + (N/2),
           }
+          var endPosition = {
+            x: data [j].children [k].position.x,
+            y: data [j].children [k].position.y + N/2,
+          }
+          var optimal = data [j].optimal && data [j].children [k].optimal;
+          arrowsToRender.push (this.renderArrow (startPosition, endPosition, optimal));
         }
       }
 
