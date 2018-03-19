@@ -1056,7 +1056,8 @@ export const createPassage = ({ravel_uid, passage_title, passage_body}) => {
     var user_created_photoURL = '';   
     var passage_upvote = 0;
     var passage_downvote = 0;
-    var stat_passage_written;                               
+    var stat_passage_written;
+    var passage_comment = '';                              
 
     return (dispatch) => {
 
@@ -1074,11 +1075,12 @@ export const createPassage = ({ravel_uid, passage_title, passage_body}) => {
         
     })
 
-        firebase.database().ref(`/passages`)
-            .push({ passage_downvote, passage_upvote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
+        firebase.database().ref(`/passages/${ravel_uid}`)
+            .push({ passage_comment, passage_downvote, passage_upvote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
             .then(returnKey => {
                 passage_uid = returnKey.getKey();
                 // Do something with the passage_uid    
+                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_uid : passage_uid})
             })
             .then(() => {  
                 dispatch({ type: 'CREATE_PASSAGE',
@@ -1089,18 +1091,18 @@ export const createPassage = ({ravel_uid, passage_title, passage_body}) => {
                         user_created_photoURL = snapshotPhoto.val();        
                 })
                 .then(() => {
-                    firebase.database().ref(`/passages/${passage_uid}`).update({user_created_photoURL : user_created_photoURL})
+                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({user_created_photoURL : user_created_photoURL})
                 })         
                 firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
                     ravel_title = snapshotPhoto.val();
                 })
                 .then(() => {
-                    firebase.database().ref(`/passages/${passage_uid}`).update({ravel_title : ravel_title})
+                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ravel_title : ravel_title})
                 })
 
             })
             .then(() => {
-                firebase.database().ref(`/passages/${passage_uid}`).once('value', (snapshot) => {
+                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
                     dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
                 })
             })
@@ -1127,29 +1129,38 @@ export const createPassage = ({ravel_uid, passage_title, passage_body}) => {
  * @returns {*} nothing 
  * actions: updates a passage's upvote count, updates the user created userProfile upvote field 
  */
-export const upVotePassage = (passage_uid) => {
+export const upVotePassage = (ravel_uid, passage_uid) => {
 
     var upvotes;
     var passage_creator_uid;
 
-    return () => {
-        firebase.database().ref(`/passages/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
-            upvotes = snapshot.val() + 1
-        })
-        .then(() => {
-            firebase.database().ref(`/passages/${passage_uid}`).update({passage_upvote : upvotes});                  
-        })
-        .then(() => {
-            firebase.database().ref(`passages/${passage_uid}/user_created`).once('value', (snapshot) => {
-                passage_creator_uid = snapshot.val();
-            })
-            .then(() => {
-                firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : upvotes})
-                
-            })
-            .then(() => {
-                userRavelPointCalculationHelper(passage_creator_uid);
-            })
+    return() => {
+
+        
+        checkRavelEnabledVoting(ravel_uid, passage_uid).then(valueOfKey => {
+            if (valueOfKey) {
+                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+                    upvotes = snapshot.val() + 1
+                })
+                .then(() => {
+                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes});                  
+                })
+                .then(() => {
+                    firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
+                        passage_creator_uid = snapshot.val();
+                    })
+                    .then(() => {
+                        firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : upvotes})
+                        
+                    })
+                    .then(() => {
+                        userRavelPointCalculationHelper(passage_creator_uid);
+                    })
+                })
+            } else {
+                alert('This ravel does not have voting enabled...')
+            }
+
         })
     }
 
@@ -1161,7 +1172,7 @@ export const upVotePassage = (passage_uid) => {
  * @returns {*} nothing
  * actions: updates a passage's "upvote" count by decrementing it by 1,  updates the user created userProfile upvote field 
  */
-export const downVotePassage = (passage_uid) => {
+export const downVotePassage = (ravel_uid, passage_uid) => {
 
     var total_votes;
     var passage_creator_uid;
@@ -1171,27 +1182,36 @@ export const downVotePassage = (passage_uid) => {
 
 
     return () => {
-        firebase.database().ref(`/passages/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
-            total_votes = snapshot.val() - 1
-        })
-        .then(() => {
-            firebase.database().ref(`/passages/${passage_uid}`).update({ passage_upvote : total_votes });                    
-        })
-        .then(() => {
-            firebase.database().ref(`passages/${passage_uid}/user_created`).once('value', (snapshot) => {
-                passage_creator_uid = snapshot.val();
-                user_uid = snapshot.val()
-            })
-            .then(() => {
-                firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : total_votes})
+        
+        checkRavelEnabledVoting(ravel_uid, passage_uid).then(valueOfKey => {
 
-            })
-            .then(() => {
-                userRavelPointCalculationHelper(passage_creator_uid);
-            })
-            .then(() => {
-                downVotePassageHelper(passage_uid);
-            })
+            if (valueOfKey) {
+
+                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+                    total_votes = snapshot.val() - 1
+                })
+                .then(() => {
+                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ passage_upvote : total_votes });                    
+                })
+                .then(() => {
+                    firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
+                        passage_creator_uid = snapshot.val();
+                        user_uid = snapshot.val()
+                    })
+                    .then(() => {
+                        firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : total_votes})
+
+                    })
+                    .then(() => {
+                        userRavelPointCalculationHelper(passage_creator_uid);
+                    })
+                    .then(() => {
+                        downVotePassageHelper(ravel_uid, passage_uid);
+                    })
+                })
+            } else {
+                alert('This ravel does not have comment enabled...')
+            }
         })
     }
 
@@ -1257,15 +1277,15 @@ export const userRavelPointCalculationHelper = (user_uid) => {
  * @returns {*} nothing
  * actions: function that updates the passage_downvote field for stats purposes
  */
-export const downVotePassageHelper = (passage_uid) => {
+export const downVotePassageHelper = (ravel_uid, passage_uid) => {
  
        var m_down_votes;
 
-        firebase.database().ref(`/passages/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
             m_down_votes = snapshot.val() - 1
         })
         .then(() => {
-            firebase.database().ref(`/passages/${passage_uid}`).update({ passage_downvote : m_down_votes})
+            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ passage_downvote : m_down_votes})
         })
 
     
@@ -1276,6 +1296,95 @@ export const downVotePassageHelper = (passage_uid) => {
 /** TO DO  
 * Function that gets a ravel's particular passage, will do after talking about structure 
 */
+
+export const writePassageComment = (ravel_uid, passage_uid, comment_body) => {
+
+    return (dispatch) => {
+        var m_first_name = '';
+        var m_photo_URL = ''; 
+
+        checkRavelEnabledComment(ravel_uid, passage_uid).then(valueOfKey => {
+            if (valueOfKey) {
+                var currentUid = firebase.auth().currentUser.uid;
+                firebase.database().ref(`users/${currentUid}/userProfile/first_name`).once('value', (snapshot) =>{
+                    m_first_name = snapshot.val();
+                })
+                .then(() => {
+                    firebase.database().ref(`users/${currentUid}/userProfile/photoURL`).once('value', (snapshot) =>{
+                        m_photo_URL = snapshot.val();
+                    })
+                })
+                .then(() => {
+                    let comment = {
+                        passage_uid : passage_uid,
+                        user_photoURL : m_photo_URL,
+                        user_first_name : m_first_name,
+                        comment_body : comment_body,
+                        time: new Date().toLocaleTimeString(),
+                        user_uid : currentUid
+                    }
+
+                    const newCommentRef = firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_comment`).push();
+                    comment.key = newCommentRef.key; 
+                    newCommentRef.set(comment);
+                    firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_comment`).orderByChild('timestamp').once('value', (snapshot )=> {
+                        dispatch({type: 'GET_PASSAGE_COMMENT', payload: snapshot.val()})
+                    })
+                    
+                })
+
+
+            } else {
+                alert('Sorry, this ravel does not have comments enabled...')
+            }
+        })
+
+    }
+
+}
+
+export const deletePassageComment = (ravel_uid, passage_uid, comment_key) => {
+
+    return (dispatch) => {
+        var currentUid = firebase.auth().currentUser.uid;
+        var m_current_uid = '';
+
+        checkRavelEnabledComment(ravel_uid, passage_uid).then(valueOfKey => {
+            firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_comment/${comment_key}/user_uid`).once('value', (snapshot) => {
+                m_current_uid = snapshot.val()})
+                .then(() => {
+                    if (valueOfKey && (m_current_uid === currentUid)) {
+                
+                        firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_comment/${comment_key}`).remove()
+                        dispatch({type: 'REMOVE_PASSAGE_COMMENT_IS_SUCCESS', payload: true})
+
+                    } else {
+                        alert('Sorry,cannot remove passage comment at this time. Either you do not have permission, or comments are disabled...')
+                    }
+                })
+
+
+        })
+
+    }
+
+}
+
+export const getPassageComment = (ravel_uid, passage_uid) => {
+    return (dispatch) => {
+        checkRavelEnabledComment(ravel_uid, passage_uid).then(valueOfKey => {
+            if (valueOfKey) {
+                firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_comment`).orderByChild('timestamp').once('value', (snapshot) => {
+                    dispatch({type: 'GET_PASSAGE_COMMENT', payload: snapshot.val()})
+                })
+            } else {
+                alert('Sorry, cannot fetch passage comments at this time...')
+            }
+        })
+    }
+}
+
+
 export const getPassageMetaData = () => {
     
 }
@@ -1727,9 +1836,9 @@ export const getPendingRavelInvite = () => {
 
 
 /** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES 
- * @param: terms_of_service
- * @returns: the current terms of service in a long string....
- * Actions: Adds a new terms of service, will fail if user is not admin
+ * @param: privacy_policy
+ * @returns: the current privacy_policy in a long string....
+ * Actions: Adds a new privacy_policy, will fail if user is not admin
  */
 export const insertPrivacyPolicy = (privacy_policy) => {
 
@@ -1757,9 +1866,9 @@ export const insertPrivacyPolicy = (privacy_policy) => {
 }
 
 /** 
-* @param: terms_of_service
-* @returns: the current terms of service 
-* Actions: Updates the terms of service, will fail if user is not admind
+* @param: privacy_policy
+* @returns: the current privacy policy
+* Actions: Updates the privacy policy, will fail if user is not admind
 */
 export const updatePrivacyPolicy = (privacy_policy) => {
 
@@ -1789,8 +1898,8 @@ return (dispatch) => {
 
 /** 
 * @param: nothing 
-* @returns: the current terms of service
-* Actions: Attempts the get the current terms of service in the database
+* @returns: the current privacy_policy
+* Actions: Attempts the get the current privacy policy in the database
 */
 export const readPrivacyPolicy = () => {
 
@@ -1804,3 +1913,75 @@ return (dispatch) => {
 }
 
 }
+
+
+/**
+ * Helper Function: Checks if the current ravel has voting enabled
+ */
+export const checkRavelEnabledVoting = (ravel_uid, passage_uid) => {
+    
+    return new Promise((resolve,reject) => {
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/ravel_uid`).once('value', (snapshot) => {
+            snapShotVal = snapshot.val();
+        })
+        .then(() => {
+            firebase.database().ref(`ravels/${snapShotVal}/enable_voting`).orderByKey().once('value', (snapshotKey) => {
+                if (snapshotKey.val() === true) {
+                    valueOfKey = true;                                
+                }                         
+        })
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+        })
+            
+
+    })
+}
+
+/**
+ * Helper Function: Checks if the current ravel has commenting enabled
+ */
+export const checkRavelEnabledComment = (ravel_uid, passage_uid) => {
+    
+    return new Promise((resolve,reject) => {
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/ravel_uid`).once('value', (snapshot) => {
+            snapShotVal = snapshot.val();
+        })
+        .then(() => {
+            firebase.database().ref(`ravels/${snapShotVal}/enable_comment`).orderByKey().once('value', (snapshotKey) => {
+                if (snapshotKey.val() === true) {
+                    valueOfKey = true;                                
+                }                         
+        })
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+        })
+            
+
+    })
+}
+
