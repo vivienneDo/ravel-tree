@@ -28,6 +28,33 @@ import IconLeaf from '../components/IconLeaf'
 import PassageStub from '../components/PassageStub'
 import Button from '../components/Button'
 import ButtonPlus from '../components/ButtonPlus'
+import Tree from '../components/Tree'
+
+// Test data structure in the form of a tree.
+const DATA = [
+  {passageIndex: '1-A', name: 'The Big Wave', score: 140, /*optimal: true,*/ children: [
+    {passageIndex: '2-A', name: 'Rip Current', score: 40, /*optimal: true,*/ children: [
+      {passageIndex: '3-A', name: 'Crashing Down', score: 20, /*optimal: true,*/ children: [
+        {passageIndex: '4-A', name: 'The Comeback', score: 170, /*optimal: true,*/ children: [
+          {passageIndex: '5-A', name: 'Riptide', score: 100, /*optimal: true,*/ children: []},
+        ]},
+        {passageIndex: '4-B', name: 'A Shore Thing', score: 150, children: []},
+      ]},
+    ]},
+    {passageIndex: '2-B', name: 'The Bite', score: -20, children: []},
+    {passageIndex: '2-C', name: 'Blue Skies', score: 60, children: [
+      {passageIndex : '3-B', name: 'Random Activities', score: 150, children :[
+        {passageIndex : '4-C', name: 'The Longshoreman', score: 10, children: []},
+        {passageIndex : '4-D', name: 'Without a Paddle', score: 20, children: []},
+      ]},
+    ]},
+    {passageIndex: '2-D', name: 'Under the Sea', score: 20, children: []},
+  ]},
+  {passageIndex: '1-B', name: 'Didn\'t See It Coming', score: 30, children: [
+    {passageIndex: '2-E', name: 'The Ultimate Adventure', score: 10, children: []},
+  ]},
+  {passageIndex: '1-C', name: 'The First Test', score: 100, children: []},
+];
 
 const TEST_RAVEL = {
   title: 'Cassius in Rome',
@@ -104,20 +131,27 @@ class Ravel extends Component {
 
   showTree () {
     return (
-      <View style={styles.tree}>
-        <View style={styles.passageStub}>
-          <PassageStub
-            name={'Pacing the Basement'}
-            author={'Rebecca Bates'}
-            passageIndex={'1-A'}
-            score={121}
-            //active
-            {...this.props}
-          />
-          {this.showPlus (this.props.mode == 'owned' || this.props.mode == 'participant')}
-        </View>
-      </View>
+      <Tree
+        root={DATA}
+        mode={this.state.mode}
+      />
     );
+    // return (
+    //   <View style={styles.tree}>
+    //     <View style={styles.passageStub}>
+    //       <PassageStub
+    //         name={'Pacing the Basement'}
+    //         author={'Rebecca Bates'}
+    //         passageIndex={'1-A'}
+    //         score={121}
+    //         //active
+    //         showAddButton
+    //         {...this.props}
+    //       />
+    //       {/*this.showPlus (this.props.mode == 'owned' || this.props.mode == 'participant')*/}
+    //     </View>
+    //   </View>
+    // );
   }
 
   onPressBack () {
@@ -239,7 +273,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   scroll: {
-    width: '100%',
+    // width: '100%',
+    // height: '100%',
+    minWidth: '100%',
     height: '100%',
   },
   scrollContent: {
@@ -247,6 +283,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
+    paddingHorizontal: 20,
   },
   tree: {
     flexDirection: 'row',

@@ -26,6 +26,7 @@ import _ from 'lodash';
 
 import UserImage from './UserImage'
 import TextSerif from './TextSerif'
+import ButtonPlus from './ButtonPlus'
 import TextSans from './TextSans'
 import IconLeaf from './IconLeaf'
 
@@ -39,6 +40,13 @@ class PassageStub extends Component<{}> {
     //       (this.props.passageID)
   }
 
+  showPlus (show) {
+    if (!show) {return}
+    return (
+      <ButtonPlus size={26} />
+    );
+  }
+
   render() {
     const {
       name,
@@ -47,6 +55,7 @@ class PassageStub extends Component<{}> {
       passageID,
       score,
       active,
+      showAddButton,
       testID,
     } = this.props;
 
@@ -58,31 +67,39 @@ class PassageStub extends Component<{}> {
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     return (
-      <Touchable onPress={() => this.onPressStub ()} style={containerStyles}>
-        <View style={styles.left}>
-          <View style={styles.userImage}>
-            <UserImage {...this.props} size={26} />
+      <View style={styles.wrapper}>
+        <Touchable onPress={() => this.onPressStub ()} style={containerStyles}>
+          <View style={styles.left}>
+            <View style={styles.userImage}>
+              <UserImage {...this.props} size={26} />
+            </View>
+            <TextSans size={12}>{this.props.name}</TextSans>
           </View>
-          <TextSans size={12}>{this.props.name}</TextSans>
-        </View>
-        <View style={styles.right}>
-          <View style={styles.passageIndex}>
-            <TextSans size={13} color={'#95989A'}>{passageIndex}</TextSans>
-          </View>
-          <View style={styles.score}>
-            <IconLeaf />
-            <View style={styles.scoreText}>
-              <TextSerif size={16}>{this.props.score}</TextSerif>
+          <View style={styles.right}>
+            <View style={styles.passageIndex}>
+              <TextSans size={13} color={'#95989A'}>{passageIndex}</TextSans>
+            </View>
+            <View style={styles.score}>
+              <IconLeaf />
+              <View style={styles.scoreText}>
+                <TextSerif size={16}>{this.props.score}</TextSerif>
+              </View>
             </View>
           </View>
-        </View>
-      </Touchable>
+        </Touchable>
+        {this.showPlus (this.props.showAddButton)}
+      </View>
     );
   }
 }
 
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
   container: {
     flexDirection: 'row',
     alignItems: 'center',

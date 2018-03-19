@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   03/14/18
-// Modified:  03/17/18
+// Modified:  03/19/18
 
 // Tree component for RavelTree.
 
@@ -85,11 +85,43 @@ class Tree extends Component {
       var treeID = level + '-' + i;
       data [i].treeID = treeID;
 
+      // Calculate and store each node's individual "optimality score" factor.
+      // TODO: More sophisticated algorithm. For now, just sums the branch's scores.
+      data [i].optimalityScore = data [i].score;
+
       // Analyze each child.
       this.analyzeLevel (data [i].children, nodes, ++level);
 
       // Now that we're back, decrement level.
       level--;
+
+      // Which child has the highest optimality score?
+      var optimalChild = undefined;
+      var optimalChildScore = Number.NEGATIVE_INFINITY;
+      for (var j = 0; j < data [i].children.length; j++) {
+        var thisScore = data [i].children [j].optimalityScore;
+        if (thisScore > optimalChildScore) {
+          optimalChildScore = thisScore;
+          optimalChild = j;
+        }
+      }
+      if (optimalChildScore != Number.NEGATIVE_INFINITY) {
+        data [i].optimalityScore += optimalChildScore;
+        data [i].optimalChild = optimalChild;
+      }
+    }
+
+    // If this is the first level, designate the optimal node.
+    var optimalNode = undefined;
+    var optimalScore = Number.NEGATIVE_INFINITY;
+    if (level == 0) {
+      for (var i = 0; i < nodesAtThisLevel; i++) {
+        if (data [i].optimalityScore > optimalScore) {
+          optimalScore = data [i].optimalityScore;
+          optimalNode = i;
+        }
+      }
+      data [optimalNode].optimal = true;
     }
 
     // Return the array of node counts.
@@ -98,6 +130,8 @@ class Tree extends Component {
 
   analyzeTree (data) {
     nodes = [];
+    scores = [];
+    console.log (scores);
     nodes = this.analyzeLevel (data, nodes, 0);
     var tree = {
       data:           data,
@@ -275,6 +309,12 @@ class Tree extends Component {
 
       // Add position data to the tree.
       data [j].position = {x: x, y: y};
+
+      // Designate the optimal child.
+      if (data [j].optimal && data [j].children) {
+        var optimalChild = data [j].optimalChild;
+        (data [j].children [optimalChild] || {}).optimal = true;
+      }
 
       // Repeat for each child.
       this.renderLevel (tree, data [j].children, nodes, ++level);
