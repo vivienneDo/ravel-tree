@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   03/14/18
-// Modified:  03/19/18
+// Modified:  03/20/18
 
 // Tree component for RavelTree.
 //
@@ -207,6 +207,14 @@ class Tree extends Component {
   renderNode (content) {
     var Node = PassageStub;
 
+    var passageMetaData = {
+      ravel_title: this.props.tree.title, // TODO: Change to match structure from backend.
+      passage_index: content.passageIndex,
+      passage_title: content.name,
+      passage_body: content.passage,
+      isOptimal: content.optimal,
+    };
+
     return (
       <View
       key={content.name}
@@ -227,6 +235,8 @@ class Tree extends Component {
           passageIndex={content.passageIndex}
           score={content.score}
           active={content.optimal}
+          //passage={content.passage}
+          onPress={() => this.props.onPressPassage (passageMetaData)}
         />
       </View>
     );

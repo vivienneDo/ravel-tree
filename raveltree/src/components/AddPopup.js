@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/13/18
-// Modified:  03/19/18
+// Modified:  03/20/18
 
 // Standard "Add passge" popup component for RavelTree.
 //
@@ -38,6 +38,7 @@ export default class AddPopup extends React.Component {
   }
 
   componentWillReceiveProps (newProps) {
+    // Triggered after Add button is pressed and the passage is ready.
     if (newProps.passage_meta_data) {
       this.props.onSwitchToPassage (passage_meta_data);
     }
@@ -48,6 +49,7 @@ export default class AddPopup extends React.Component {
     const title = this.state.title;
     const passage = this.state.passage;
 
+    // Will trigger new props containing 'passage_meta_data'.
     this.props.createPassage ({ ravelID, title, passage });
   }
 
@@ -60,15 +62,14 @@ export default class AddPopup extends React.Component {
   }
 
   getNextPassageIndex (current) {
-    // Find next available PassageIndex at the next level.
-    // E.g.: If current is '4-B' and there are already 3 passages at level 5,
-    // then next should be '5-D'.
+    // Find next available PassageIndex at the next level. E.g.: If current is
+    // 4-B and there are already 3 passages at level 5, then next should be 5-D.
     split = current.split ('-');
-    number = split [0];
-    nextNumber = parseInt (number) + 1;
+    number = parseInt (split [0]);
+    nextNumber = number + 1;
 
-    if ((this.props.nodeCounts || {}).nextNumber) {
-      var nodesAtNextLevel = this.props.nodeCounts.nextNumber;
+    if ((this.props.nodeCounts || {}) [nextNumber]) {
+      var nodesAtNextLevel = this.props.nodeCounts [number];
       var nextLetterIndex = nodesAtNextLevel + 1;
       var nextLetters = '';
 
@@ -83,9 +84,11 @@ export default class AddPopup extends React.Component {
       // Reverse the string (because we constructed it backwards).
       nextLetters = nextLetters.split ("").reverse ().join ("");
 
+      // Make sure the letters are uppercase.
+      nextLetters = nextLetters.toUpperCase ();
+
       return nextNumber + '-' + nextLetters;
-    }
-    else {
+    } else {
       return nextNumber + '-A';
     }
   }

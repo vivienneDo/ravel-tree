@@ -3,8 +3,6 @@
 // Modified:  03/19/18
 
 // Standard concept popup component for RavelTree.
-//
-// TODO: Make ravel name touchable and link to respective content.
 
 import React, { Component } from 'react';
 import {
@@ -31,10 +29,6 @@ import IconLeaf from './IconLeaf'
 export default class ConceptPopup extends React.Component {
   constructor (props) {
     super (props);
-  }
-
-  componentWillReceiveProps (newProps) {
-
   }
 
   render () {

@@ -49,11 +49,11 @@ export default class PassagePopup extends React.Component {
   }
 
   render () {
-    const {
-      isActive,
+    var {
       passageMetaData,
       testID,
     } = this.props;
+    isActive = passageMetaData.isOptimal || this.props.isActive;
 
     var ravel = passageMetaData.ravel_title;
     var passageIndex = passageMetaData.passage_index;
@@ -65,7 +65,7 @@ export default class PassagePopup extends React.Component {
     var {height, width} = Dimensions.get ('window');
 
     return (
-      <ModalContainer name='PassagePopup' isActive={this.props.isActive} onPressClose={() => this.props.onPressClose ()}>
+      <ModalContainer name='PassagePopup' isActive={isActive} onPressClose={() => this.props.onPressClose ()}>
         <View style={styles.head}>
           <View style={styles.row1}>
             <TextSerif size={16}>{ravel}</TextSerif>

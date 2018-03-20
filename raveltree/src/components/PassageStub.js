@@ -1,6 +1,6 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/27/18
-// Modified: 03/09/18
+// Modified: 03/20/18
 //
 // "Passage Stub" component for RavelTree.
 //
@@ -36,8 +36,7 @@ class PassageStub extends Component<{}> {
   }
 
   onPressStub () {
-    // TODO: "ShowModal ()" function to display PassagePopup by PassageID?
-    //       (this.props.passageID)
+    this.props.onPress ();
   }
 
   showPlus (show) {

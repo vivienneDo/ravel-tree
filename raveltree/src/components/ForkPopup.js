@@ -35,6 +35,7 @@ export default class ForkPopup extends React.Component {
   }
 
   getNextPassageIndex (current) {
+    // TODO: Change this function to the one in AddPopup, probably.
     if (!current) { return ''; }
 
     var split = current.split ('-');
