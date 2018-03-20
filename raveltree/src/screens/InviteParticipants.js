@@ -21,9 +21,14 @@
 // TODO: onPressStartRavel (): Save ravel to database.
 
 const TEST_PARTICIPANTS = [
-  {name: 'Adam Jesper', score: 9821},
-  {name: 'Brad Hooper', score: 3219},
-  {name: 'Anne Jensen', score: undefined},
+  // {name: 'Adam Jesper', score: 9821},
+  // {name: 'Brad Hooper', score: 3219},
+  // {name: 'Anne Jensen', score: undefined},
+
+  // {0: "Vi0AKa9k5kMoRngvbMs3K4fFw373"},
+  // {1: "EG4lyDlPz4QyM1Ezi89ICY5V4Ok1"},
+  "Vi0AKa9k5kMoRngvbMs3K4fFw373",
+  "EG4lyDlPz4QyM1Ezi89ICY5V4Ok1",
 ];
 
 
@@ -57,6 +62,21 @@ class InviteParticipants extends Component {
       mode: this.props.mode,
       ...this.props.screenData,
     };
+  }
+
+  componentWillReceiveProps (nextProps) {
+    // When the created ravel's metadata is received, go to its Ravel screen.
+    if (nextProps.ravel_meta_data) {
+      const ravelMetaData = nextProps.ravel_meta_data;
+      var screenData = Object.assign ({},
+        ravelMetaData,
+        {
+          showModal: 'add',
+          passageIndex: '1-A',
+        }
+      );
+      this.props.setActiveScreen ('Ravel', screenData);
+    }
   }
 
   onAddUser (user) {
@@ -102,7 +122,6 @@ class InviteParticipants extends Component {
   }
 
   onPressStartRavel () {
-    // TODO: Save to database.
     this.props.createStartRavel ({
       ravel_title: this.state.ravelName,
       ravel_category: this.state.category,
@@ -114,12 +133,6 @@ class InviteParticipants extends Component {
       m_ravel_participants: this.state.participants,
       ravel_tags: this.state.tagsSelected,
     });
-
-    var screenData = Object.assign ({}, {
-      // TODO: Wait for, retrieve, and pass RavelID.
-    });
-
-    this.props.setActiveScreen ('Ravel', screenData);
   }
 
   onPressByName () {
@@ -275,10 +288,15 @@ const mapStateToProps = (state) => {
     screenData,
   } = state.navigation;
 
+  const {
+    ravel_meta_data,
+  } = state.ravel;
+
   return {
     activeScreen,
     previousScreens,
     screenData,
+    ravel_meta_data,
   };
 }
 

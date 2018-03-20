@@ -1,25 +1,25 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/13/18
-// Modified:  02/13/18
+// Modified:  03/19/18
 
 // Standard "Add passge" popup component for RavelTree.
 //
-// TODO: Make ravel and ID touchable and link to respective content.
+// TODO: onPressAdd ()
 
-'use strict';
+import React, { Component } from 'react';
+import {
+  Platform,
+  StyleSheet,
+  Dimensions,
+  Text,
+  View, ScrollView,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+} from 'react-native';
 
-const ColorPropType = require('ColorPropType');
-const Platform = require('Platform');
-const React = require('React');
-const Dimensions = require('Dimensions');
-const AppRegistry = require('AppRegistry');
-const PropTypes = require('prop-types');
-const StyleSheet = require('StyleSheet');
-const Text = require('Text');
-const TouchableNativeFeedback = require('TouchableNativeFeedback');
-const TouchableOpacity = require('TouchableOpacity');
-const View = require('View');
-const ScrollView = require('ScrollView');
+import firebase from 'firebase';
+import { connect } from 'react-redux'
+import _ from 'lodash';
 
 import ModalContainer from './ModalContainer'
 import TextSerif from './TextSerif'
@@ -28,58 +28,120 @@ import UserImage from './UserImage'
 import Button from './Button'
 import InputText from './InputText'
 
-
 export default class AddPopup extends React.Component {
   constructor (props) {
     super (props);
+    this.state = {
+      title: '',
+      passage: '',
+    };
   }
 
-  static propTypes = {
+  componentWillReceiveProps (newProps) {
+    if (newProps.passage_meta_data) {
+      this.props.onSwitchToPassage (passage_meta_data);
+    }
+  }
 
-    // Whether the container is active (will color the border)
-    isActive: PropTypes.bool,
+  onPressAdd () {
+    const ravelID = this.props.ravelID;
+    const title = this.state.title;
+    const passage = this.state.passage;
 
-    // Used to locate this view in end-to-end tests.
-    testID: PropTypes.string,
-  };
+    this.props.createPassage ({ ravelID, title, passage });
+  }
+
+  onChangeTitle (text) {
+    this.setState ({ title: text });
+  }
+
+  onChangePassage (text) {
+    this.setState ({ passage: text });
+  }
+
+  getNextPassageIndex (current) {
+    // Find next available PassageIndex at the next level.
+    // E.g.: If current is '4-B' and there are already 3 passages at level 5,
+    // then next should be '5-D'.
+    split = current.split ('-');
+    number = split [0];
+    nextNumber = parseInt (number) + 1;
+
+    if ((this.props.nodeCounts || {}).nextNumber) {
+      var nodesAtNextLevel = this.props.nodeCounts.nextNumber;
+      var nextLetterIndex = nodesAtNextLevel + 1;
+      var nextLetters = '';
+
+      // Converts the numeric index to base 26.
+      while (nextLetterIndex > 0) {
+        nextLetterIndex--; // 1 -> a, not 0 -> a
+        var remainder = nextLetterIndex % 26;
+        var digit = String.fromCharCode (remainder + 97);
+        nextLetters = nextLetters + digit;
+        nextLetterIndex = (nextLetterIndex - remainder) / 26;
+      }
+      // Reverse the string (because we constructed it backwards).
+      nextLetters = nextLetters.split ("").reverse ().join ("");
+
+      return nextNumber + '-' + nextLetters;
+    }
+    else {
+      return nextNumber + '-A';
+    }
+  }
 
   render () {
-    const {
+    var {
       isActive,
+      passageIndex,
+      nodeCounts,
+      passageMetaData,
       testID,
     } = this.props;
+
+    // If we haven't been passed the passage index for the new passage...
+    if (!passageIndex) {
+      // Check whether we've recieved the metadata from the parent passage.
+      if (passageMetaData) {
+        // If so, generate the next available passage index.
+        passageIndex = this.getNextPassageIndex (passageMetaData.passage_index);
+      } else {
+        // If not, just set it to a blank value.
+        passageIndex = '';
+      }
+    }
+
+    const ravel = this.props.title;
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     var {height, width} = Dimensions.get ('window');
 
     return (
-      <View style={{flex: 1, flexDirection: 'column', justifyContent: 'center'}}>
-        <ModalContainer name='PassagePopup' isActive={this.props.isActive} style={{flex: 1, flexDirection: 'column', backgroundColor: '#000000'}}>
+        <ModalContainer name='PassagePopup' isActive={isActive} style={{flex: 1, flexDirection: 'column', backgroundColor: '#000000'}} onPressClose={() => this.props.onPressClose ()}>
           <View style={styles.container}>
             <View style={styles.head}>
               <View style={styles.row1}>
-                <TextSerif size={16}>{this.props.ravel}</TextSerif>
-                <TextSans size={13} color={'#95989A'}>{this.props.passageID.number}-{this.props.passageID.version}</TextSans>
+                <TextSerif size={16}>{ravel}</TextSerif>
+                <TextSans size={13} color={'#95989A'}>{passageIndex}</TextSans>
               </View>
               <View style={styles.row2}>
-                <InputText width={'auto'} placeholder={'Type a passage name (e.g., "The Reckoning").'} />
+                <InputText width={'auto'} placeholder={'Type a passage name (e.g., "The Reckoning").'} onChangeText={(text) => this.onChangeTitle (name)} />
                 <UserImage {...this.props} size={26}/>
               </View>
             </View>
             <View style={styles.passage}>
-              <InputText height={'100%'} multiline placeholder={'Type your passage (e.g., "It was a dark and stormy night...").'} />
+              <InputText height={'100%'} multiline placeholder={'Type your passage (e.g., "It was a dark and stormy night...").'} onChangeText={(text) => this.onChangePassage (name)}/>
             </View>
             <View style={styles.foot}>
               <View style={styles.footText}>
-                <TextSans size={12} color={'#808080'}>This will be passage {this.props.passageID.number}-{this.props.passageID.version}</TextSans>
-                <TextSans size={12} color={'#808080'}>(Number {this.props.passageID.number}, Version {this.props.passageID.version})</TextSans>
+                <TextSans size={12} color={'#808080'}>This will be passage {passageIndex}</TextSans>
+                <TextSans size={12} color={'#808080'}>(Number {passageIndex.split ('-') [0]}, Version {passageIndex.split ('-') [1]}).</TextSans>
               </View>
               <Button title={'Add'} width={0.30 * width} />
             </View>
           </View>
         </ModalContainer>
-      </View>
     )
   }
 }

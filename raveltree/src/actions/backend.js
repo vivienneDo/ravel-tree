@@ -440,74 +440,74 @@ export const updateCurrentUserProfile = ({ first_name, last_name, bio }) => {
     }
 };
 
-
-/** TODO
- * @param:
- * @returns:
- *
- */
-export const calculatesUserStat = ({ stat_ravel_led, stat_ravel_contributed, stat_passage_written }) => {
-    const { currentUser } = firebase.auth();
-
-    return (dispatch) => {
-        firebase.database().ref(`/users/${currentUser.uid}/userProfile`)
-        .set({ stat_ravel_led, stat_ravel_contributed, stat_passage_written })
-        .then(() => {
-            dispath({type: 'UPDATE_USER_STAT',
-                     payload: {stat_ravel_led, stat_ravel_contributed, stat_passage_written}});
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    };
-};
-
-
-/** TODO
- * @param:
- * @returns:
- *
- *
- */
-export const calculatesUserUpVote = (upvotes) => {
-    const { currentUser } = firebase.auth();
-
-    return (dispatch) => {
-        firebase.database().ref(`/users/${currentUser.uid}/userProfile`)
-        .set(upvotes)
-        .then(() => {
-            dispath({type: 'UPDATE_USER_UPVOTE',
-                    payload: upvotes})
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-
-    };
-};
-
-
-/** TODO
- * @param:
- * @returns:
- *
- *
- */
-export const updateUserRavelPoint = (ravel_points) => {
-    const { currentUser } = firebase.auth();
-
-    return (dispatch) => {
-        firebase.database().ref(`/users/${currentUser.uid}/userProfile`)
-        set(ravel_points)
-        .then(() => {
-            dispatch({type: 'UPDATE_USER_RAVEL_POINT',
-                    payload: ravel_points});
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    };
-};
+//
+// /** TODO
+//  * @param:
+//  * @returns:
+//  *
+//  */
+// export const calculatesUserStat = ({ stat_ravel_led, stat_ravel_contributed, stat_passage_written }) => {
+//     const { currentUser } = firebase.auth();
+//
+//     return (dispatch) => {
+//         firebase.database().ref(`/users/${currentUser.uid}/userProfile`)
+//         .set({ stat_ravel_led, stat_ravel_contributed, stat_passage_written })
+//         .then(() => {
+//             dispath({type: 'UPDATE_USER_STAT',
+//                      payload: {stat_ravel_led, stat_ravel_contributed, stat_passage_written}});
+//         })
+//         .catch((error) => {
+//             console.log(error);
+//         });
+//     };
+// };
+//
+//
+// /** TODO
+//  * @param:
+//  * @returns:
+//  *
+//  *
+//  */
+// export const calculatesUserUpVote = (upvotes) => {
+//     const { currentUser } = firebase.auth();
+//
+//     return (dispatch) => {
+//         firebase.database().ref(`/users/${currentUser.uid}/userProfile`)
+//         .set(upvotes)
+//         .then(() => {
+//             dispath({type: 'UPDATE_USER_UPVOTE',
+//                     payload: upvotes})
+//         })
+//         .catch((error) => {
+//             console.log(error);
+//         });
+//
+//     };
+// };
+//
+//
+// /** TODO
+//  * @param:
+//  * @returns:
+//  *
+//  *
+//  */
+// export const updateUserRavelPoint = (ravel_points) => {
+//     const { currentUser } = firebase.auth();
+//
+//     return (dispatch) => {
+//         firebase.database().ref(`/users/${currentUser.uid}/userProfile`)
+//         set(ravel_points)
+//         .then(() => {
+//             dispatch({type: 'UPDATE_USER_RAVEL_POINT',
+//                     payload: ravel_points});
+//         })
+//         .catch((error) => {
+//             console.log(error);
+//         });
+//     };
+// };
 
 
 /**
@@ -626,6 +626,9 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
                 .then(() => {
                     firebase.database().ref(`/users/${currentUser.uid}/userProfile`).update({
                         stat_ravel_led : ravel_led_stat + ravel_counter,
+                      })
+                      .then(() => {
+                        userRavelPointCalculationHelper(user_created);
                       })
                 })
             })
@@ -1138,43 +1141,6 @@ export const updateRavelParticipant = (ravel_uid, ravel_tags) => {
 
 }
 
-/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES
- * @param:
- * @returns:
- *
- */
-export const insertTermsOfService = (terms_of_service) => {
-
-    firebase.database().ref(`terms_of_service`).set({terms_of_service : terms_of_service});
-
-}
-
-/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES
- * @param:
- * @returns:
- *
- */
-export const updateTermsOfService = (terms_of_service) => {
-
-    firebase.database().ref(`terms_of_service`).update({terms_of_service : terms_of_service});
-
-}
-
-/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES
- * @param: nothing
- * @returns: the current terms of service
- *
- */
-export const readTermsOfService = () => {
-
-    return (dispatch) => {
-        firebase.database().ref(`terms_of_service`).once('value', (snapshot) => {
-            dispatch({ type: 'GET_TERMS_OF_SERVICE', payload: snapshot.val()})
-        });
-    }
-
-}
-
 /**
  *
  * @param {*} ravel_uid
@@ -1214,6 +1180,10 @@ export const acceptRavelInvite = (ravel_uid) => {
                         firebase.database().ref(`/users/${currentUid}/ravel_created/${ravel_uid}`).update({
                             ravel_number_participants: m_ravel_number_participants + ravel_counter
                         })
+                        .then(() => {
+                            userRavelPointCalculationHelper(currentUid);
+                        })
+
                     })
 
                 })
@@ -1226,17 +1196,6 @@ export const acceptRavelInvite = (ravel_uid) => {
         })
     }
 }
-
-/**
- *
- */
-export const addAdminUser = (uid) => {
-
-    return (dispatch) => {
-        firebase.database().ref(`/admin`).push({uid:true});
-    }
-}
-
 
 /**
  *
@@ -1266,6 +1225,7 @@ export const createPassage = ({ravel_uid, passage_title, passage_body}) => {
     var passage_upvote = 0;
     var passage_downvote = 0;
     var stat_passage_written;
+    var passage_comment = '';
 
     return (dispatch) => {
 
@@ -1283,11 +1243,12 @@ export const createPassage = ({ravel_uid, passage_title, passage_body}) => {
 
     })
 
-        firebase.database().ref(`/passages`)
-            .push({ passage_downvote, passage_upvote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
+        firebase.database().ref(`/passages/${ravel_uid}`)
+            .push({ passage_comment, passage_downvote, passage_upvote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
             .then(returnKey => {
                 passage_uid = returnKey.getKey();
                 // Do something with the passage_uid
+                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_uid : passage_uid})
             })
             .then(() => {
                 dispatch({ type: 'CREATE_PASSAGE',
@@ -1298,18 +1259,18 @@ export const createPassage = ({ravel_uid, passage_title, passage_body}) => {
                         user_created_photoURL = snapshotPhoto.val();
                 })
                 .then(() => {
-                    firebase.database().ref(`/passages/${passage_uid}`).update({user_created_photoURL : user_created_photoURL})
+                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({user_created_photoURL : user_created_photoURL})
                 })
                 firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
                     ravel_title = snapshotPhoto.val();
                 })
                 .then(() => {
-                    firebase.database().ref(`/passages/${passage_uid}`).update({ravel_title : ravel_title})
+                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ravel_title : ravel_title})
                 })
 
             })
             .then(() => {
-                firebase.database().ref(`/passages/${passage_uid}`).once('value', (snapshot) => {
+                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
                     dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
                 })
             })
@@ -1330,18 +1291,40 @@ export const createPassage = ({ravel_uid, passage_title, passage_body}) => {
  *
  * @param {*} passage_uid
  * @returns {*} nothing
- * actions: updates a passage's upvote count
+ * actions: updates a passage's upvote count, updates the user created userProfile upvote field
  */
-export const upVotePassage = (passage_uid) => {
+export const upVotePassage = (ravel_uid, passage_uid) => {
 
     var upvotes;
+    var passage_creator_uid;
 
-    return () => {
-        firebase.database().ref(`/passages/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
-            upvotes = snapshot.val() + 1
-        })
-        .then(() => {
-            firebase.database().ref(`/passages/${passage_uid}`).update({passage_upvote : upvotes});
+    return() => {
+
+
+        checkRavelEnabledVoting(ravel_uid, passage_uid).then(valueOfKey => {
+            if (valueOfKey) {
+                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+                    upvotes = snapshot.val() + 1
+                })
+                .then(() => {
+                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes});
+                })
+                .then(() => {
+                    firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
+                        passage_creator_uid = snapshot.val();
+                    })
+                    .then(() => {
+                        firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : upvotes})
+
+                    })
+                    .then(() => {
+                        userRavelPointCalculationHelper(passage_creator_uid);
+                    })
+                })
+            } else {
+                alert('This ravel does not have voting enabled...')
+            }
+
         })
     }
 
@@ -1351,18 +1334,311 @@ export const upVotePassage = (passage_uid) => {
  *
  * @param {*} passage_uid
  * @returns {*} nothing
- * actions: updates a passage's downvote count
+ * actions: updates a passage's "upvote" count by decrementing it by 1,  updates the user created userProfile upvote field
  */
-export const downVotePassage = (passage_uid) => {
+export const downVotePassage = (ravel_uid, passage_uid) => {
 
-    var downvotes;
+    var total_votes;
+    var passage_creator_uid;
+    var user_uid;
+    var m_down_votes;
+
+
 
     return () => {
-        firebase.database().ref(`/passages/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
-            downvotes = snapshot.val() - 1
+
+        checkRavelEnabledVoting(ravel_uid, passage_uid).then(valueOfKey => {
+
+            if (valueOfKey) {
+
+                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+                    total_votes = snapshot.val() - 1
+                })
+                .then(() => {
+                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ passage_upvote : total_votes });
+                })
+                .then(() => {
+                    firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
+                        passage_creator_uid = snapshot.val();
+                        user_uid = snapshot.val()
+                    })
+                    .then(() => {
+                        firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : total_votes})
+
+                    })
+                    .then(() => {
+                        userRavelPointCalculationHelper(passage_creator_uid);
+                    })
+                    .then(() => {
+                        downVotePassageHelper(ravel_uid, passage_uid);
+                    })
+                })
+            } else {
+                alert('This ravel does not have comment enabled...')
+            }
+        })
+    }
+
+}
+
+/** HELPER FUNCTION  */
+
+/**
+ * @param {*} user_uid
+ * @returns {*} nothing
+ * actions: Updates the ravel_points. This is a helper function that is called when a user:
+ * creates a ravel, creates a passage, a passage they wrote become upvoted/downvoted, a user accepts
+ * a ravel invite
+ */
+export const userRavelPointCalculationHelper = (user_uid) => {
+    /**
+     * ravel_points: close
+       stat_passage_written:
+       stat_ravel_contributed:
+       stat_ravel_led:
+       up_votes:
+     */
+    console.log('inside user ravel point calc')
+     /** ravel_points = f(userProfile) = stat_ravel_led + stat_ravel_contributed + stat_passage_written + up_votes*/
+     var m_stat_ravel_led;
+     var m_stat_ravel_contributed;
+     var m_stat_passage_written;
+     var m_upvotes;
+     var m_ravel_points;
+
+         firebase.database().ref(`users/${user_uid}/userProfile/stat_ravel_led`).once('value', (snapshot) => {
+             m_stat_ravel_led = snapshot.val()
+         })
+         .then(() => {
+            firebase.database().ref(`users/${user_uid}/userProfile/stat_ravel_contributed`).once('value', (snapshot) => {
+                m_stat_ravel_contributed = snapshot.val()
+            })
+            .then(() => {
+                firebase.database().ref(`users/${user_uid}/userProfile/stat_passage_written`).once('value', (snapshot) => {
+                    m_stat_passage_written = snapshot.val()
+                })
+                .then(() => {
+                    firebase.database().ref(`users/${user_uid}/userProfile/upvotes`).once('value', (snapshot) => {
+                        m_upvotes = snapshot.val()
+                    })
+                    .then(() => {
+                        m_ravel_points = m_stat_ravel_led + m_stat_ravel_contributed + m_stat_passage_written +
+                                        m_upvotes;
+                        firebase.database().ref(`users/${user_uid}/userProfile`).update({ravel_points : m_ravel_points})
+                    })
+
+                })
+            })
+         })
+
+}
+
+/**
+ *
+ * @param {*} passage_uid
+ * @returns {*} nothing
+ * actions: function that updates the passage_downvote field for stats purposes
+ */
+export const downVotePassageHelper = (ravel_uid, passage_uid) => {
+
+       var m_down_votes;
+
+        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+            m_down_votes = snapshot.val() - 1
         })
         .then(() => {
-            firebase.database().ref(`/passages/${passage_uid}`).update({passage_downvote : downvotes});
+            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ passage_downvote : m_down_votes})
+        })
+
+
+
+}
+
+
+/** TO DO
+* Function that gets a ravel's particular passage, will do after talking about structure
+*/
+
+export const writePassageComment = (ravel_uid, passage_uid, comment_body) => {
+
+    return (dispatch) => {
+        var m_first_name = '';
+        var m_photo_URL = '';
+
+        checkRavelEnabledComment(ravel_uid, passage_uid).then(valueOfKey => {
+            if (valueOfKey) {
+                var currentUid = firebase.auth().currentUser.uid;
+                firebase.database().ref(`users/${currentUid}/userProfile/first_name`).once('value', (snapshot) =>{
+                    m_first_name = snapshot.val();
+                })
+                .then(() => {
+                    firebase.database().ref(`users/${currentUid}/userProfile/photoURL`).once('value', (snapshot) =>{
+                        m_photo_URL = snapshot.val();
+                    })
+                })
+                .then(() => {
+                    let comment = {
+                        passage_uid : passage_uid,
+                        user_photoURL : m_photo_URL,
+                        user_first_name : m_first_name,
+                        comment_body : comment_body,
+                        time: new Date().toLocaleTimeString(),
+                        user_uid : currentUid
+                    }
+
+                    const newCommentRef = firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_comment`).push();
+                    comment.key = newCommentRef.key;
+                    newCommentRef.set(comment);
+                    firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_comment`).orderByChild('timestamp').once('value', (snapshot )=> {
+                        dispatch({type: 'GET_PASSAGE_COMMENT', payload: snapshot.val()})
+                    })
+
+                })
+
+
+            } else {
+                alert('Sorry, this ravel does not have comments enabled...')
+            }
+        })
+
+    }
+
+}
+
+export const deletePassageComment = (ravel_uid, passage_uid, comment_key) => {
+
+    return (dispatch) => {
+        var currentUid = firebase.auth().currentUser.uid;
+        var m_current_uid = '';
+
+        checkRavelEnabledComment(ravel_uid, passage_uid).then(valueOfKey => {
+            firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_comment/${comment_key}/user_uid`).once('value', (snapshot) => {
+                m_current_uid = snapshot.val()})
+                .then(() => {
+                    if (valueOfKey && (m_current_uid === currentUid)) {
+
+                        firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_comment/${comment_key}`).remove()
+                        dispatch({type: 'REMOVE_PASSAGE_COMMENT_IS_SUCCESS', payload: true})
+
+                    } else {
+                        alert('Sorry,cannot remove passage comment at this time. Either you do not have permission, or comments are disabled...')
+                    }
+                })
+
+
+        })
+
+    }
+
+}
+
+export const getPassageComment = (ravel_uid, passage_uid) => {
+    return (dispatch) => {
+        checkRavelEnabledComment(ravel_uid, passage_uid).then(valueOfKey => {
+            if (valueOfKey) {
+                firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_comment`).orderByChild('timestamp').once('value', (snapshot) => {
+                    dispatch({type: 'GET_PASSAGE_COMMENT', payload: snapshot.val()})
+                })
+            } else {
+                alert('Sorry, cannot fetch passage comments at this time...')
+            }
+        })
+    }
+}
+
+
+export const getPassageMetaData = () => {
+
+}
+
+export const forkPassage = () => {
+
+}
+
+export const mergePassage = () => {
+
+}
+
+export const passageRavelPointCalculation = () => {
+
+}
+
+/** ADMIN FUNCTIONS  */
+
+/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES
+ * @param: terms_of_service
+ * @returns: the current terms of service in a long string....
+ * Actions: Adds a new terms of service, will fail if user is not admin
+ */
+export const insertTermsOfService = (terms_of_service) => {
+
+        return (dispatch) => {
+
+            checkCurrentUserIsAdmin().then(valueOfKey => {
+                if (valueOfKey) {
+                    firebase.database().ref(`terms_of_service`).set({terms_of_service : terms_of_service})
+                    .then(() => {
+                        firebase.database().ref(`terms_of_service/terms_of_service`).once('value', (snapshot) => {
+                        dispatch({type: 'GET_TERMS_OF_SERVICE', payload: snapshot.val() })
+                    })
+                        .catch(() => {
+                            alert('Sorry, you do have no admin rights...')
+                            dispatch({type: 'IS_ADMIN', payload: false})
+                        })
+                    })
+
+                } else {
+                    alert('Sorry, you do have no admin rights...')
+                    dispatch({type: 'IS_ADMIN', payload: false})
+                }
+            })
+        }
+}
+
+/**
+ * @param: terms_of_service
+ * @returns: the current terms of service
+ * Actions: Updates the terms of service, will fail if user is not admind
+ */
+export const updateTermsOfService = (terms_of_service) => {
+
+    return (dispatch) => {
+
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+
+            if (valueOfKey) {
+                firebase.database().ref(`terms_of_service`).update({terms_of_service : terms_of_service})
+                .then(() => {
+                    firebase.database().ref(`terms_of_service/terms_of_service`).once('value', (snapshot) => {
+                    dispatch({type: 'GET_TERMS_OF_SERVICE', payload: snapshot.val()})
+                })
+                    .catch(() => {
+                        alert('Sorry, you do have no admin rights...')
+                        dispatch({type: 'IS_ADMIN', payload: false})
+                    })
+                })
+
+            } else {
+                alert('Sorry, you do have no admin rights...')
+                dispatch({type: 'IS_ADMIN', payload: false})
+            }
+        })
+    }
+}
+
+/**
+ * @param: nothing
+ * @returns: the current terms of service
+ * Actions: Attempts the get the current terms of service in the database
+ */
+export const readTermsOfService = () => {
+
+    return (dispatch) => {
+        firebase.database().ref(`terms_of_service/terms_of_service`).once('value', (snapshot) => {
+            dispatch({type: 'GET_TERMS_OF_SERVICE', payload: snapshot.val() })
+        })
+        .catch((error) => {
+            alert('Error getting terms of service...')
         })
     }
 
@@ -1370,27 +1646,500 @@ export const downVotePassage = (passage_uid) => {
 
 /**
  *
- * @param {*} passage_uid
- * @returns {*} nothing*** for stats puposes: upvote + downvote total
+ * @param {*} uid
+ * @returns {*} Will return a state change
  */
-export const calculateTotalVotePassage = (passage_uid) => {
+export const addAdminUser = (user_uid) => {
 
-    var downvotes;
-    var upvotes;
-    var totalVotes;
 
-    firebase.database().ref(`/passages/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
-        downvotes = snapshot.val()
-    })
-    .then(() => {
+    return (dispatch) => {
 
-        firebase.database().ref(`/passages/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
-            upvotes = snapshot.val()
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+
+            if (valueOfKey) {
+                firebase.database().ref(`/admin/${user_uid}`).set(true)
+                .then(() => {
+                    dispatch({type: 'ADD_ADMIN', payload: true})
+                })
+            } else {
+                alert('Sorry, you do have no admin rights...')
+                dispatch({type: 'IS_ADMIN', payload: false})
+            }
+        })
+        .catch((error) => {
+            alert('Sorry, you do have no admin rights...')
+            dispatch({type: 'IS_ADMIN', payload: false})
         })
 
+    }
+}
+
+/**
+ * Helper Function: Checks if the current logged in user is an admin
+ */
+export const checkCurrentUserIsAdmin = () => {
+
+    return new Promise((resolve,reject) => {
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+
+            firebase.database().ref(`/admin`).orderByKey().once('value', (snapshotKey) => {
+                snapshotKey.forEach((elm) => {
+                    if (elm.key === currentUid) {
+                        valueOfKey = true;
+                    }
+                })
+            })
+            .then(() => {
+                return valueOfKey
+            })
+            .then((valueOfKey) => {
+                resolve(valueOfKey)
+            })
+            .catch((error) => {
+                reject(error)
+            })
+
     })
-    .then(() => {
-        totalVotes = upvotes + downvotes
-        console.log('total votes' + totalVotes)
+}
+
+/**
+ *
+ * @param {*} ravel_uid
+ * @returns {*} state change
+ */
+export const reportRavel = (ravel_uid) => {
+
+    return (dispatch) => {
+
+        firebase.database().ref(`ravel_report_list/${ravel_uid}`).set(false)
+        .then(() => {
+            dispatch({type:'REPORT_RAVEL_SUCCESS', payload: true})
+        })
+        .catch((error) => {
+            alert('Error reporting ravel')
+            dispatch({type:'REPORT_RAVEL_SUCCESS', payload: false})
+        })
+    }
+}
+
+/**
+ *
+ * @param {*} user_uid
+ * @returns {*} state change
+ */
+export const reportUser = (user_uid) => {
+
+    return (dispatch) => {
+
+        firebase.database().ref(`user_report_list/${user_uid}`).set(false)
+        .then(() => {
+            dispatch({type:'REPORT_USER_SUCCESS', payload: true})
+        })
+        .catch((error) => {
+            alert('Error reporting ravel')
+            dispatch({type:'REPORT_USER_SUCCESS', payload: false})
+        })
+    }
+}
+
+/**
+ * Actions: Gets the completed ravel report list (ravels that have been reported for ban)
+ */
+export const getCompleteRavelReportList = () => {
+
+    var ravel_report_list_array = []
+
+    return (dispatch) => {
+
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+            if (valueOfKey) {
+                firebase.database().ref(`ravel_report_list`).orderByKey().once('value', function(snapshot) {
+                    snapshot.forEach((childSnapShot) => {
+                        if (childSnapShot.val() === false) {
+                            firebase.database().ref(`/ravels/${childSnapShot.key}`).once('value', function (snapshotChild){
+                            ravel_report_list_array.push(snapshotChild.val());
+                            dispatch( {type: 'GET_RAVEL_REPORT_LIST', payload: ravel_report_list_array})
+                        })
+                        }})
+
+                })
+                .catch((error) => {
+                    alert('Error getting all reported ravels...')
+                })
+            }
+        })
+    }
+
+}
+
+/**
+ * Actions: Gets the completed user report list (users that have been reported for ban)
+ */
+export const getCompleteUserReportList = () => {
+
+    var user_report_list_array = []
+
+    return (dispatch) => {
+
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+
+            if (valueOfKey) {
+                firebase.database().ref(`user_report_list`).orderByKey().once('value', function(snapshot) {
+                    snapshot.forEach((childSnapShot) => {
+                        if (childSnapShot.val() === false) {
+                            firebase.database().ref(`/users/${childSnapShot.key}/userProfile`).once('value', function (snapshotChild){
+                            user_report_list_array.push(snapshotChild.val());
+                            dispatch( {type: 'GET_USER_REPORT_LIST', payload: user_report_list_array})
+                            })
+                        }})
+
+                })
+                .catch((error) => {
+                    alert('Error getting all reported users...')
+                })
+            }
+        })
+    }
+}
+
+/**
+ * Dismisses a ravel (marks it as okay for user views)
+ */
+export const dismissReportedRavel = (ravel_uid) => {
+
+    return (dispatch) => {
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+            if (valueOfKey) {
+                firebase.database().ref(`ravel_report_list/${ravel_uid}`).remove()
+                .then(() => {
+                    dispatch({type:'DISMISS_REPORT_RAVEL_SUCCESS', payload: true})
+                })
+            }
+        })
+        .catch((error) => {
+            alert('Cannot dismiss this ravel at this time...')
+            dispatch({type:'DISMISS_REPORT_RAVEL_SUCCESS', payload: false})
+        })
+
+    }
+}
+
+/**
+ *
+ * @param {*} user_uid
+ * Dismisses a reported user (marks them as okay for user view)
+ */
+export const dismissReportedUser = (user_uid) => {
+
+    return (dispatch) => {
+
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+            if (valueOfKey) {
+                firebase.database().ref(`user_report_list/${user_uid}`).remove()
+                .then(() => {
+                    dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: true})
+                })
+            }
+        })
+        .catch((error) => {
+            alert('Cannot dismiss this user at this time...')
+            dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: false})
+        })
+
+    }
+}
+
+/** Removes a ravel from:
+ * - ravels/${ravel_uid}
+ * - users/${uid}/ravel_created/${ravel_uid}
+ * - master_ravel_key/${ravel_uid}
+ * @param {*} ravel_uid
+ */
+export const banReportedRavel = (ravel_uid) => {
+    return (dispatch) => {
+
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+
+            if (valueOfKey) {
+
+                firebase.database().ref(`ravels/${ravel_uid}/user_created`).once('value', (snapshot) => {
+
+                    firebase.database().ref(`users/${snapshot.val()}/ravel_created/${ravel_uid}`).remove()
+                    .then(() => {
+
+                        firebase.database().ref(`ravels/${ravel_uid}`).remove()
+                        .then(() => {
+                            firebase.database().ref(`master_ravel_key/${ravel_uid}`).remove()
+                            .then(() => {
+                                dispatch({type: 'BAN_RAVEL_SUCCESS', payload: true})
+                            })
+                            .then(() => {
+
+                                firebase.database().ref(`ravel_report_list/${ravel_uid}`).remove()
+                                .then(() => {
+                                    dispatch({type:'DISMISS_REPORT_RAVEL_SUCCESS', payload: true})
+                                })
+                            })
+                        })
+                    })
+                })
+            }
+        })
+    }
+}
+
+export const banReportedUser = () => {
+
+    return (dispatch) => {
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+            if (valueOfKey) {
+                // Do stuff
+            }
+        })
+
+    }
+}
+
+/**
+ * Gets the admin stat page
+ * // Number of Ravels
+ * // Number of Users
+ * // Number of Reported Ravels
+ * // Number of Reported Users
+ */
+export const getStats = () => {
+
+    var m_number_ravels = 0;
+    var m_number_users = 0;
+    var m_number_reported_ravels = 0;
+    var m_number_reported_users = 0;
+
+    return (dispatch) => {
+
+        firebase.database().ref(`master_ravel_key`).once('value', (snapshot) => {
+            m_number_ravels = snapshot.numChildren()
+        })
+        .then(() => {
+            firebase.database().ref(`master_user_key`).once('value', (snapshot) => {
+                m_number_users = snapshot.numChildren();
+            })
+            .then(() => {
+                firebase.database().ref(`ravel_report_list`).once('value', (snapshot) => {
+                    m_number_reported_ravels = snapshot.numChildren();
+                })
+                .then(() => {
+                    firebase.database().ref(`user_report_list`).once('value', (snapshot) => {
+                        m_number_reported_users = snapshot.numChildren();
+                    })
+                    .then(() => {
+                        dispatch({type: 'GET_ADMIN_STAT', payload: ({ number_ravels: m_number_ravels, number_users : m_number_users,
+                                                                    number_reported_ravels: m_number_reported_ravels, number_reported_users: m_number_reported_users})})
+                    })
+                })
+            })
+
+        })
+    }
+}
+
+/**
+ * Actions: sets the current uid to the terms_of_service accepted list if a user accepts it
+ */
+export const acceptTermsAndAgreement = () => {
+
+    var currentUid = firebase.auth().currentUser.uid;
+
+    return (dispatch) => {
+        firebase.database().ref(`terms_of_service/accepted_list/${currentUid}`).set(true)
+        .then(() => {
+            dispatch({type: 'USER_ACCEPTED_TERMS_OF_SERVICE', payload: true})
+        })
+        .catch((error) => {
+            alert('There was an error accepting the terms of service at this time...')
+        })
+    }
+}
+
+export const declineRavelInvite = (ravel_uid) => {
+
+    var currentUid = firebase.auth().currentUser.uid;
+
+    return (dispatch) => {
+
+        firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).once('value', (snapshot) => {
+            if (snapshot.val() != null && snapshot.val() === false) {
+                firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).remove()
+                .then(() => {
+                    dispatch({type: 'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE', payload: true})
+                })
+                .catch((error) => {
+                    alert('Error declining ravel...')
+                })
+            }
+        })
+    }
+}
+
+
+export const getPendingRavelInvite = () => {
+
+    var currentUid = firebase.auth().currentUser.uid;
+    var get_pending_arr = [];
+
+    return (dispatch) => {
+        console.log('Current UId' + currentUid)
+        firebase.database().ref(`ravels`).orderByChild(`ravel_participants/${currentUid}`).equalTo(false).once('value', (snapshot) => {
+            dispatch({type: 'GET_PENDING_INVITE_RAVEL', payload: snapshot.val()})
+        })
+    }
+}
+
+/** ADMIN RIGHTS: TODO: CHANGE THE FIREBASE RULES
+ * @param: privacy_policy
+ * @returns: the current privacy_policy in a long string....
+ * Actions: Adds a new privacy_policy, will fail if user is not admin
+ */
+export const insertPrivacyPolicy = (privacy_policy) => {
+
+    return (dispatch) => {
+
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+            if (valueOfKey) {
+                firebase.database().ref(`privacy_policy`).set({privacy_policy : privacy_policy})
+                .then(() => {
+                    firebase.database().ref(`privacy_policy/privacy_policy`).once('value', (snapshot) => {
+                    dispatch({type: 'GET_PRIVACY_POLICY', payload: snapshot.val() })
+                })
+                    .catch(() => {
+                        alert('Sorry, you do have no admin rights...')
+                        dispatch({type: 'IS_ADMIN', payload: false})
+                    })
+                })
+
+            } else {
+                alert('Sorry, you do have no admin rights...')
+                dispatch({type: 'IS_ADMIN', payload: false})
+            }
+        })
+    }
+}
+
+/**
+* @param: privacy_policy
+* @returns: the current privacy policy
+* Actions: Updates the privacy policy, will fail if user is not admind
+*/
+export const updatePrivacyPolicy = (privacy_policy) => {
+
+return (dispatch) => {
+
+    checkCurrentUserIsAdmin().then(valueOfKey => {
+
+        if (valueOfKey) {
+            firebase.database().ref(`privacy_policy`).update({privacy_policy : privacy_policy})
+            .then(() => {
+                firebase.database().ref(`privacy_policy/privacy_policy`).once('value', (snapshot) => {
+                dispatch({type: 'GET_PRIVACY_POLICY', payload: snapshot.val()})
+            })
+                .catch(() => {
+                    alert('Sorry, you do have no admin rights...')
+                    dispatch({type: 'IS_ADMIN', payload: false})
+                })
+            })
+
+        } else {
+            alert('Sorry, you do have no admin rights...')
+            dispatch({type: 'IS_ADMIN', payload: false})
+        }
+    })
+}
+}
+
+/**
+* @param: nothing
+* @returns: the current privacy_policy
+* Actions: Attempts the get the current privacy policy in the database
+*/
+export const readPrivacyPolicy = () => {
+
+return (dispatch) => {
+    firebase.database().ref(`privacy_policy/privacy_policy`).once('value', (snapshot) => {
+        dispatch({type: 'GET_PRIVACY_POLICY', payload: snapshot.val() })
+    })
+    .catch((error) => {
+        alert('Error getting privacy policy...')
+    })
+}
+
+}
+
+/**
+ * Helper Function: Checks if the current ravel has voting enabled
+ */
+export const checkRavelEnabledVoting = (ravel_uid, passage_uid) => {
+
+    return new Promise((resolve,reject) => {
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/ravel_uid`).once('value', (snapshot) => {
+            snapShotVal = snapshot.val();
+        })
+        .then(() => {
+            firebase.database().ref(`ravels/${snapShotVal}/enable_voting`).orderByKey().once('value', (snapshotKey) => {
+                if (snapshotKey.val() === true) {
+                    valueOfKey = true;
+                }
+        })
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+        })
+
+
+    })
+}
+
+/**
+ * Helper Function: Checks if the current ravel has commenting enabled
+ */
+export const checkRavelEnabledComment = (ravel_uid, passage_uid) => {
+
+    return new Promise((resolve,reject) => {
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/ravel_uid`).once('value', (snapshot) => {
+            snapShotVal = snapshot.val();
+        })
+        .then(() => {
+            firebase.database().ref(`ravels/${snapShotVal}/enable_comment`).orderByKey().once('value', (snapshotKey) => {
+                if (snapshotKey.val() === true) {
+                    valueOfKey = true;
+                }
+        })
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+        })
+
+
     })
 }

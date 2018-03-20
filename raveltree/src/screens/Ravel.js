@@ -1,11 +1,10 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/27/18
-// Modified: 03/09/18
+// Modified: 03/19/18
 //
 // "Ravel" screen for RavelTree.
 //
-// TODO: Firebase lookup by passed RavelID in constructor.
-//       (this.state.ravelID)
+// TODO: Invitation mode.
 
 import React, { Component } from 'react';
 import {
@@ -14,6 +13,7 @@ import {
   View, ScrollView
 } from 'react-native';
 
+import firebase from 'firebase';
 import { connect } from 'react-redux'
 import _ from 'lodash';
 
@@ -29,6 +29,10 @@ import PassageStub from '../components/PassageStub'
 import Button from '../components/Button'
 import ButtonPlus from '../components/ButtonPlus'
 import Tree from '../components/Tree'
+import ConceptPopup from '../components/ConceptPopup'
+import AddPopup from '../components/AddPopup'
+import ForkPopup from '../components/ForkPopup'
+import PassagePopup from '../components/PassagePopup'
 
 // Test data structure in the form of a tree.
 const DATA = [
@@ -60,24 +64,85 @@ const TEST_RAVEL = {
   title: 'Cassius in Rome',
   author: 'Rebecca Bates',
   participants: ['Adam Jesper', 'Brad Hooper', 'Anne Jensen',],
+  concept: 'Now this is a story all about how my life got flipped, turned upside down. And I\'d like to take a minute, just sit right there, I\'ll tell you how I became the prince of a town called Bel-Air. In West Philadelphia, born and raised, on the playground is where I spent most of my days. Chillin\' out, maxin\', relaxin\' all cool, and all shootin\' some b-ball outside of the school, when a couple of guys who were up to no good started makin\' trouble in my neighborhood. I got in one little fight, and my mom got scared, and said "You\'re movin\' with your auntie and uncle in Bel-Air!" I begged and pleaded with her day after day, but she packed my suitcase and sent me on my way. She gave me a kiss and then she gave me my ticket. I put my Walkman on and said "I might as well kick it." First class, yo, this is bad. Drinkin\' orange juice out of a champagne glass. Is this what the people of Bel-Air livin\' like? Hmmm, this might be all right.',
   score: 318,
   mode: 'owned',
-  tree: undefined,
+  roots: DATA,
 }
+
+var nodeCounts = [];
 
 class Ravel extends Component {
   constructor (props) {
     super (props);
+    var screenData = this.props.screenData;
+    console.log ('Ravel constructor called.');
     this.state = {
-      title: '',
-      author: '',
-      participants: [],
-      score: '',
-      mode: '',
-      tree: [],
-      showModal: 'none',
-      ...this.props.screenData,
+      //ravel: screenData.ravel_uid || TEST_RAVEL || [],
+      tree: TEST_RAVEL || [],
+      ravelID: screenData.ravel_uid || '',
+      title: screenData.ravel_title || TEST_RAVEL.title || '',
+      author: screenData.user_created || '',
+      participants: screenData.m_ravel_participants || TEST_RAVEL.participants || [],
+      score: screenData.ravel_points || TEST_RAVEL.score || '',
+      concept: screenData.ravel_concept || TEST_RAVEL.concept || '',
+      mode: firebase.auth ().currentUser == screenData.user_created ? 'owned' : '',
+      showModal: screenData.showModal || '',
+      passageIndex: screenData.passageIndex || '',
+      passageMetaData: '',
     };
+  }
+
+  showModal (modalToShow) {
+    var Popup;
+    switch (modalToShow) {
+      case 'concept':
+        Popup = ConceptPopup;
+        break;
+      case 'add':
+        Popup = AddPopup;
+        break;
+      case 'fork':
+        Popup = ForkPopup;
+        break;
+      case 'passage':
+        Popup = PassagePopup;
+        break;
+      default:
+        return;
+    }
+
+    return (
+      <View style={styles.modal}>
+        <Popup
+          onPressClose={() => this.setState ({ showModal: '' })}
+          onSwitchToPassage={(passageID) => this.onSwitchToPassage (passageMetaData)}
+          onSwitchToAdd={() => this.onSwitchToAdd (passageMetaData)}
+          {...this.state}
+        />
+      </View>
+    );
+  }
+
+  onSwitchToPassage (passageID) {
+    this.setState ({
+      passageMetaData: passageMetaData,
+      showModal: 'passage',
+    });
+  }
+
+  onSwitchToAdd () {
+    this.setState ({
+      passageMetaData: passageMetaData,
+      nodeCounts: nodeCounts,
+      showModal: 'add',
+    });
+  }
+
+  onUpdateNodeCounts (newNodeCounts) {
+    // We can't use state for this because it would trigger a render race.
+    // Just going to use a global variable instead. Don't judge me.
+    nodeCounts = newNodeCounts;
   }
 
   showUsers () {
@@ -86,7 +151,7 @@ class Ravel extends Component {
         <View style={styles.user}>
           <UserImage {...this.props} size={40} />
         </View>
-        {TEST_RAVEL.participants.map ((user) =>
+        {this.state.participants.map ((user) =>
           <View key={user} style={styles.user}>
             <UserImage {...this.props} size={30} />
           </View>
@@ -130,28 +195,15 @@ class Ravel extends Component {
 
 
   showTree () {
+    console.log (this.state);
     return (
       <Tree
-        root={DATA}
+        tree={this.state.tree}
         mode={this.state.mode}
+        onUpdateNodeCounts={(nodeCounts) => this.onUpdateNodeCounts (nodeCounts)}
+        onAnalyzeTree={(tree) => this.setState ({ tree: tree })}
       />
     );
-    // return (
-    //   <View style={styles.tree}>
-    //     <View style={styles.passageStub}>
-    //       <PassageStub
-    //         name={'Pacing the Basement'}
-    //         author={'Rebecca Bates'}
-    //         passageIndex={'1-A'}
-    //         score={121}
-    //         //active
-    //         showAddButton
-    //         {...this.props}
-    //       />
-    //       {/*this.showPlus (this.props.mode == 'owned' || this.props.mode == 'participant')*/}
-    //     </View>
-    //   </View>
-    // );
   }
 
   onPressBack () {
@@ -163,6 +215,14 @@ class Ravel extends Component {
   }
 
   onPressDeclineInvitation () {
+    // TODO
+  }
+
+  onPressConcept () {
+    this.setState ({ showModal: 'concept' });
+  }
+
+  onPressShare () {
     // TODO
   }
 
@@ -178,11 +238,12 @@ class Ravel extends Component {
 
     return (
       <View style={styles.layout}>
+      {this.showModal (this.state.showModal)}
         <LinkBack onPress={() => this.onPressBack ()} />
         <View style={styles.head}>
           <Divider />
           <View style={styles.title}>
-            <TextSerif size={30}>{title}</TextSerif>
+            <TextSerif size={30}>{this.state.title}</TextSerif>
           </View>
           <View style={styles.by}>
             <TextHeader size={12} color={'#6A6A6A'}>By</TextHeader>
@@ -191,12 +252,12 @@ class Ravel extends Component {
           <View style={styles.score}>
             <IconLeaf size={37} />
             <View style={styles.scoreText}>
-              <TextSerif size={28}>{score}</TextSerif>
+              <TextSerif size={28}>{this.state.score}</TextSerif>
             </View>
           </View>
           <View style={styles.links1}>
-            <TextLink size={14}>Concept</TextLink>
-            <TextLink size={14}>Share...</TextLink>
+            <TextLink size={14} onPress={() => this.onPressConcept ()}>Concept</TextLink>
+            <TextLink size={14} onPress={() => this.onPressShare ()}>Share...</TextLink>
           </View>
           <Divider />
           {this.showAdminLinks (mode == 'owned')}
@@ -214,6 +275,13 @@ const styles = StyleSheet.create({
   layout: {
     flexDirection: 'column',
     alignItems: 'flex-start',
+    width: '100%',
+    height: '100%',
+  },
+  modal: {
+    position: 'absolute',
+    zIndex: 10,
+    top: 25,
     width: '100%',
     height: '100%',
   },
@@ -300,11 +368,18 @@ const mapStateToProps = (state) => {
   const {
     activeScreen,
     previousScreens,
+    screenData,
   } = state.navigation;
+
+  const {
+    currentUserProfile,
+  } = state.current_user;
 
   return {
     activeScreen,
     previousScreens,
+    screenData,
+    currentUserProfile
   };
 }
 

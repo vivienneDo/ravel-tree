@@ -3,6 +3,8 @@
 // Modified:  03/19/18
 
 // Tree component for RavelTree.
+//
+// TODO: Handle multiple parents and children.
 
 import React, { Component } from 'react';
 import {
@@ -63,6 +65,7 @@ class Tree extends Component {
     super (props);
     this.state = {
       ...this.props,
+      tree: [],
     };
   }
 
@@ -79,6 +82,7 @@ class Tree extends Component {
     // For each node at this level...
     for (var i = 0; i < nodesAtThisLevel; i++) {
       // Keep track of the number of immediate siblings in this group.
+      // console.log ('Setting groupCount for L' + level + ', i' + i);
       data [i].groupCount = nodesAtThisLevel;
 
       // Add a unique internal identifier.
@@ -111,7 +115,8 @@ class Tree extends Component {
       }
     }
 
-    // If this is the first level, designate the optimal node.
+    // If this is the first level, designate the optimal node and mark the data
+    // as analyzed.
     var optimalNode = undefined;
     var optimalScore = Number.NEGATIVE_INFINITY;
     if (level == 0) {
@@ -130,8 +135,8 @@ class Tree extends Component {
 
   analyzeTree (data) {
     nodes = [];
-    scores = [];
-    console.log (scores);
+    // scores = [];
+    // console.log (scores);
     nodes = this.analyzeLevel (data, nodes, 0);
     var tree = {
       data:           data,
@@ -143,6 +148,7 @@ class Tree extends Component {
                       ((Math.max (...nodes) - 1) * SPACING_VERTICAL),
       width:          (nodes.length * NODE_WIDTH) +
                       ((nodes.length - 1) * SPACING_HORIZONTAL),
+      analyzed:       true,
     };
     TREE_HEIGHT = tree.height;
     TREE_WIDTH  = tree.width;
@@ -356,14 +362,25 @@ class Tree extends Component {
     return nodes;
   }
 
-  renderTree (data) {
-    // Analyze the tree.
-    var tree = this.analyzeTree (data);
-    if (DEBUG) console.log ('Tree:');
-    if (DEBUG) console.log (tree);
+  renderTree (tree) {
+    if (!tree) { return; }
 
-    // Render the tree.
-    nodesToRender = this.renderLevel (tree, tree.data, nodesToRender, 0);
+    // Analyze the tree if it hasn't been already.
+    if (!tree.analyzed) {
+      tree = this.analyzeTree (tree.roots);
+      this.props.onAnalyzeTree (tree);
+
+      if (DEBUG) console.log ('Tree:');
+      if (DEBUG) console.log (tree);
+
+      // Send up the nodeCounts array to the Ravel screen so we can use it to
+      // calculate passage indexes.
+      var nodeCounts = Object.assign ({}, tree.nodeCounts);
+      this.props.onUpdateNodeCounts (nodeCounts);
+
+      // Render the tree.
+      nodesToRender = this.renderLevel (tree, tree.data, nodesToRender, 0);
+    }
 
     return (
       <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, top: MAGIC_NUMBER,}}>
@@ -387,10 +404,14 @@ class Tree extends Component {
   }
 
   render () {
-    const data = this.props.root;
+    // TODO
+    //const data = this.state.tree.length ? this.state.tree.data : this.props.root;
+    //const data = this.props.root;
+    //const tree = this.state.tree.length > 0 ? this.state.tree : this.props.tree;
+    const tree = this.props.tree;
     return (
       <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, /*backgroundColor: '#aaaaaa',*/ zIndex: 1,}}>
-        {this.renderTree (data)}
+        {this.renderTree (tree)}
       </View>
     );
   }

@@ -1,22 +1,18 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/04/18
-// Modified:  02/04/18
+// Modified:  03/19/18
 
 // Standard modal container component for RavelTree.
 
-'use strict';
-
-const ColorPropType = require('ColorPropType');
-const Platform = require('Platform');
-const React = require('React');
-const AppRegistry = require('AppRegistry');
-const PropTypes = require('prop-types');
-const StyleSheet = require('StyleSheet');
-const Text = require('Text');
-const TouchableNativeFeedback = require('TouchableNativeFeedback');
-const TouchableOpacity = require('TouchableOpacity');
-const View = require('View');
-const ScrollView = require('ScrollView');
+import React, { Component } from 'react';
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  View, ScrollView,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+} from 'react-native';
 
 
 export default class ModalContainer extends React.Component {
@@ -24,22 +20,15 @@ export default class ModalContainer extends React.Component {
     super (props);
   }
 
-  static propTypes = {
+  componentWillReceiveProps (newProps) {
 
-    // Name of the toggle (used by parents and/or event listeners)
-    name: PropTypes.string.isRequired,
-
-    // Whether the container is active (will color the border)
-    isActive: PropTypes.bool,
-
-    // Used to locate this view in end-to-end tests.
-    testID: PropTypes.string,
-  };
+  }
 
   render () {
     const {
       name,
       isActive,
+      onPressClose,
       testID,
     } = this.props;
 
@@ -63,7 +52,9 @@ export default class ModalContainer extends React.Component {
             accessibilityTraits={'button'}
             name={name}
             testID={testID}
-            style={styles.xButton}>
+            style={styles.xButton}
+            onPress={() => this.props.onPressClose ()}
+          >
             <Text style={styles.x}>&#215;</Text>
           </Touchable>
         </View>
@@ -78,6 +69,7 @@ const styles = StyleSheet.create ({
     borderRadius: 20,
     borderColor: '#7E7E7E',
     borderWidth: 1,
+    backgroundColor: '#FFFFFF',
     width: '90%',
     alignSelf: 'center',
     margin: 'auto',
