@@ -26,6 +26,7 @@ import _ from 'lodash';
 import LinkBack from '../components/LinkBack'
 import RTLogoText from '../components/RTLogoText'
 import TextSans from '../components/TextSans'
+import * as actions from '../actions'
 
 class TermsAndPrivacy extends Component {
   constructor (props) {
@@ -34,6 +35,11 @@ class TermsAndPrivacy extends Component {
 
   onPressBack () {
     this.props.navigateBack ();
+  }
+
+  showTerms () {
+  //  this.props.insertTermsOfService("testing...");
+    this.props.readTermsOfService();
   }
 
   render (){
@@ -54,7 +60,8 @@ class TermsAndPrivacy extends Component {
             <TextSans size={20}>Terms of Service</TextSans>
           </View>
           <View contentContainerStyle={styles.text}>
-            <TextSans size={12}>{this.props.terms}</TextSans>
+            {/* <TextSans size={12}>{this.props.terms}</TextSans> */}
+            {this.showTerms ()}
           </View>
           <View style={styles.header}>
             <TextSans size={20}>Privacy Policy</TextSans>

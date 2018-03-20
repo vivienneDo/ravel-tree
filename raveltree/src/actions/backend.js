@@ -82,7 +82,6 @@ export const userResetPassword = (email) => dispatch => {
     });
 }
 
-
 /**
  * @param: registered user's email and password
  * @returns:
@@ -164,6 +163,13 @@ export const createUserWithEmail = (email, password) => dispatch => {
 
         //updateUserProfile(user, {first_name:'',last_name:'',bio:'',photoURL:'', stat_ravel_led:0, stat_passage_written:0, stat_ravel_contributed:0,
         //                        upvotes:0, ravel_points:0 });
+
+        // send an email verification to the user
+        if(user && user.emailVerified === false){
+            user.sendEmailVerification().then(function(){
+              console.log("email verification sent to user");
+            });
+          }
     })
     .catch(function(error) {
 
