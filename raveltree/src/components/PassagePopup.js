@@ -18,6 +18,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
+
 import ModalContainer from './ModalContainer'
 import TextSerif from './TextSerif'
 import TextSans from './TextSans'
@@ -27,9 +30,9 @@ import Button from './Button'
 import ButtonPlus from './ButtonPlus'
 
 
-export default class PassagePopup extends React.Component {
-  constructor (props) {
-    super (props);
+class PassagePopup extends React.Component {
+  constructor (props, context) {
+    super (props, context);
   }
 
   componentWillReceiveProps (newProps) {
@@ -37,7 +40,9 @@ export default class PassagePopup extends React.Component {
   }
 
   onPressMerge () {
-    // TODO
+    // We have to navigate from the parent 'Ravel' screen.
+    var screenData = Object.assign({}, this.props.passageMetaData);
+    this.props.onNavigate ('Merge', screenData);
   }
 
   onPressFork () {
@@ -127,3 +132,24 @@ const styles = StyleSheet.create ({
     paddingRight: 21,
   },
 });
+
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreens,
+    screenData,
+  } = state.navigation;
+
+  const {
+    currentUserProfile,
+  } = state.current_user;
+
+  return {
+    activeScreen,
+    previousScreens,
+    screenData,
+    currentUserProfile
+  };
+}
+
+export default connect (mapStateToProps)(PassagePopup);

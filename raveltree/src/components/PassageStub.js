@@ -54,12 +54,14 @@ class PassageStub extends Component<{}> {
       passageID,
       score,
       active,
+      disabled,
       showAddButton,
       testID,
     } = this.props;
 
     var containerStyles = [
       styles.container,
+      disabled ? {borderColor: '#dddddd'} : undefined,
       active ? {borderColor: '#2E8AF7'} : undefined,
     ];
 
@@ -67,12 +69,12 @@ class PassageStub extends Component<{}> {
 
     return (
       <View style={styles.wrapper}>
-        <Touchable onPress={() => this.onPressStub ()} style={containerStyles}>
+        <Touchable disabled={disabled} onPress={() => this.onPressStub ()} style={containerStyles}>
           <View style={styles.left}>
             <View style={styles.userImage}>
               <UserImage {...this.props} size={26} />
             </View>
-            <TextSans size={12}>{this.props.name}</TextSans>
+            <TextSans size={12} color={disabled ? '#95989A' : '#282828'}>{this.props.name}</TextSans>
           </View>
           <View style={styles.right}>
             <View style={styles.passageIndex}>
@@ -81,7 +83,7 @@ class PassageStub extends Component<{}> {
             <View style={styles.score}>
               <IconLeaf />
               <View style={styles.scoreText}>
-                <TextSerif size={16}>{this.props.score}</TextSerif>
+                <TextSerif size={16} color={disabled ? '#95989A' : '#282828'}>{this.props.score}</TextSerif>
               </View>
             </View>
           </View>

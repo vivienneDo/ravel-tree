@@ -11,6 +11,7 @@ import {
   StyleSheet,
   Text,
   View, ScrollView,
+  Dimensions,
   ART,
 } from 'react-native';
 
@@ -82,7 +83,6 @@ class Tree extends Component {
     // For each node at this level...
     for (var i = 0; i < nodesAtThisLevel; i++) {
       // Keep track of the number of immediate siblings in this group.
-      // console.log ('Setting groupCount for L' + level + ', i' + i);
       data [i].groupCount = nodesAtThisLevel;
 
       // Add a unique internal identifier.
@@ -135,8 +135,6 @@ class Tree extends Component {
 
   analyzeTree (data) {
     nodes = [];
-    // scores = [];
-    // console.log (scores);
     nodes = this.analyzeLevel (data, nodes, 0);
     var tree = {
       data:           data,
@@ -235,6 +233,7 @@ class Tree extends Component {
           passageIndex={content.passageIndex}
           score={content.score}
           active={content.optimal}
+          disabled={content.disabled}
           //passage={content.passage}
           onPress={() => this.props.onPressPassage (passageMetaData)}
         />
@@ -338,6 +337,20 @@ class Tree extends Component {
       // Now that we're back, decrement level.
       level--;
 
+      // If we're on the Merge screen, we want to exclude all levels before the
+      // node specifed by 'this.props.mergeFrom'.
+      if (this.props.mergeFrom) {
+        var mergeFromLevel = parseInt (this.props.mergeFrom.split ('-') [0]);
+        var thisLevel = level + 1;
+        if (thisLevel <= mergeFromLevel) {
+          data [j].disabled = true;
+        }
+      }
+
+      // We also want to exclude any of the node's existing children.
+      // TODO
+
+
       // Generate the node.
       nodes.push (this.renderNode (_.omit (data [j], ['children', 'groupCount',])));
 
@@ -377,6 +390,7 @@ class Tree extends Component {
 
     // Analyze the tree if it hasn't been already.
     if (!tree.analyzed) {
+      if (DEBUG) console.log ('Tree needs to be analyzed. Analyzing...');
       tree = this.analyzeTree (tree.roots);
       this.props.onAnalyzeTree (tree);
 
@@ -390,6 +404,36 @@ class Tree extends Component {
 
       // Render the tree.
       nodesToRender = this.renderLevel (tree, tree.data, nodesToRender, 0);
+    } else {
+      if (DEBUG) console.log ('Tree already processed. Skipping analysis.');
+    }
+
+    // If we're on the Merge screen, scroll to the appropriate level.
+    if (this.props.mergeFrom) {
+      var mergeFromLevel = parseInt (this.props.mergeFrom.split ('-') [0]);
+      var nextLevel = mergeFromLevel + 1;
+      var {height, width} = Dimensions.get('window');
+
+      // TODO: Verify for various sized screens.
+
+      // Screen Width: 375
+      // NODE_WIDTH = 250;
+      // SPACING_HORIZONTAL = 80
+      // Initial padding = 20
+
+      // Level  x       Diff
+      // --------------------
+      // 2      ~285    ...
+      // 3      ~620    335
+      // 4      ~945    325
+      // 5      ~1275   330
+
+      // For a screen width of 375 and initial offset of 20, the equation is:
+      // x = 330L - 375
+      // x = (N+S) * (level) - width
+
+      var x = (NODE_WIDTH + SPACING_HORIZONTAL) * nextLevel - width;
+      this.props.setScrollParams ({x: x, y:0, animated: true});
     }
 
     return (
@@ -414,10 +458,6 @@ class Tree extends Component {
   }
 
   render () {
-    // TODO
-    //const data = this.state.tree.length ? this.state.tree.data : this.props.root;
-    //const data = this.props.root;
-    //const tree = this.state.tree.length > 0 ? this.state.tree : this.props.tree;
     const tree = this.props.tree;
     return (
       <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, /*backgroundColor: '#aaaaaa',*/ zIndex: 1,}}>

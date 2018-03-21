@@ -37,6 +37,7 @@ import Splash from './screens/Splash'
 import Home from './screens/Home'
 import Explore from './screens/Explore'
 import Ravel from './screens/Ravel'
+import Merge from './screens/Merge'
 
 import GraphicsTest from './screens/GraphicsTest';
 
@@ -59,7 +60,8 @@ class Screen extends Component {
   }
 
   showScreen () {
-    return <Ravel {...this.props} />;
+    return <Merge {...this.props} />;
+    //return <Ravel {...this.props} />;
     switch (this.props.activeScreen) {
       case ('Splash'):
         return <Splash {...this.props} />;
@@ -95,6 +97,8 @@ class Screen extends Component {
         return <InviteParticipants {...this.props} />;
       case ('Ravel'):
         return <Ravel {...this.props} />;
+      case ('Merge'):
+        return <Merge {...this.props} />;
       default:
         return <Login {...this.props} />;
     }

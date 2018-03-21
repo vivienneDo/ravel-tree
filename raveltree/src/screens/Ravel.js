@@ -85,7 +85,6 @@ class Ravel extends Component {
   constructor (props) {
     super (props);
     var screenData = this.props.screenData;
-    console.log ('Ravel constructor called.');
     this.state = {
       //ravel: screenData.ravel_uid || TEST_RAVEL || [],
       tree: TEST_RAVEL || [],
@@ -127,6 +126,8 @@ class Ravel extends Component {
           onPressClose={() => this.setState ({ showModal: '' })}
           onSwitchToPassage={(passageMetaData) => this.onSwitchToPassage (passageMetaData)}
           onSwitchToAdd={(passageMetaData) => this.onSwitchToAdd (passageMetaData)}
+          onNavigate={(screen, screenData) => this.onNavigate (screen, screenData)}
+          {...this.props}
           {...this.state}
         />
       </View>
@@ -146,6 +147,12 @@ class Ravel extends Component {
       nodeCounts: nodeCounts,
       showModal: 'add',
     });
+  }
+
+  onNavigate (screen, screenData) {
+    console.log ('Trying to navigate...');
+    // TODO: What do we need to navigate back properly? var screenData = ...
+    this.props.navigateForward ('Merge', screenData);
   }
 
   onUpdateNodeCounts (newNodeCounts) {
@@ -204,7 +211,6 @@ class Ravel extends Component {
 
 
   showTree () {
-    console.log (this.state);
     return (
       <Tree
         tree={this.state.tree}
