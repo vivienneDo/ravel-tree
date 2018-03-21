@@ -62,9 +62,11 @@ class LoginEmail extends Component {
 
   onPressRegister () {
 
-    // TODO: Add email verification step
-
     const {email, password} = this.state;
+
+    // TODO: Add email verification step
+   // this has been added to the "createUserWithEmail" function
+
     this.setState({error: '', loading: true });
     this.props.createUserWithEmail (email, password);
   }
