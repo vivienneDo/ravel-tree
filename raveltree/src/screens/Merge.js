@@ -46,7 +46,7 @@ const DATA = [
     ]},
     {passageIndex: '2-B', name: 'The Bite', score: -20, passage: TEST_PASSAGE, children: []},
     {passageIndex: '2-C', name: 'Blue Skies', score: 60, passage: TEST_PASSAGE, children: [
-      {passageIndex : '3-B', name: 'Random Activities', score: 150, passage: TEST_PASSAGE, children :[
+      {passageIndex : '3-B', name: 'Random Activities', score: 150, passage: TEST_PASSAGE, parents: [{passageIndex: '2-C'}], children :[
         {passageIndex : '4-C', name: 'The Longshoreman', score: 10, passage: TEST_PASSAGE, children: []},
         {passageIndex : '4-D', name: 'Without a Paddle', score: 20, passage: TEST_PASSAGE, children: []},
       ]},
@@ -69,6 +69,8 @@ const TEST_RAVEL = {
   roots: DATA,
 }
 
+const TREE_HORIZONTAL_PADDING = 20;
+
 var scrollView = undefined;
 var scrollParams = undefined;
 
@@ -77,7 +79,7 @@ class Merge extends Component {
     super (props);
     var screenData = this.props.screenData;
     this.state = {
-      passageIndex: '2-E', // TEMP
+      passageIndex: '2-C', // TEMP
       ...this.props.screenData,
     };
   }
@@ -100,7 +102,6 @@ class Merge extends Component {
   }
 
   showTree () {
-    //console.log (this._scrollView);
     return (
       <Tree
         tree={this.state.tree || TEST_RAVEL}
@@ -109,6 +110,7 @@ class Merge extends Component {
         onUpdateNodeCounts={(nodeCounts) => {;}/*this.onUpdateNodeCounts (nodeCounts)*/}
         onAnalyzeTree={(tree) => this.setState ({ tree: tree })}
         onPressPassage={(passageMetaData) => this.onSelectPassage (passageMetaData)}
+        horizontalPadding={TREE_HORIZONTAL_PADDING}
       />
     );
   }
@@ -169,7 +171,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
-    paddingHorizontal: 20,
+    paddingHorizontal: TREE_HORIZONTAL_PADDING,
   },
   tree: {
     flexDirection: 'row',

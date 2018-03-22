@@ -79,6 +79,8 @@ const TEST_PASSAGE_METADATA = {
   passage_body:  TEST_RAVEL.roots [0].passage,
 }
 
+TREE_HORIZONTAL_PADDING = 20;
+
 var nodeCounts = [];
 
 class Ravel extends Component {
@@ -218,6 +220,7 @@ class Ravel extends Component {
         onUpdateNodeCounts={(nodeCounts) => this.onUpdateNodeCounts (nodeCounts)}
         onAnalyzeTree={(tree) => this.setState ({ tree: tree })}
         onPressPassage={(passageMetaData) => this.onSwitchToPassage (passageMetaData)}
+        horizontalPadding={TREE_HORIZONTAL_PADDING}
       />
     );
   }

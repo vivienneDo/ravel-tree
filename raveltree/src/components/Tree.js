@@ -30,7 +30,7 @@ const {
   Path,
 } = ART;
 
-DEBUG = false;
+DEBUG = true;
 
 ARROW_MODES = {
   straight:  'straight',
@@ -68,6 +68,8 @@ class Tree extends Component {
       ...this.props,
       tree: [],
     };
+
+    TREE_HORIZONTAL_PADDING = this.props.horizontalPadding || 20;
   }
 
   analyzeLevel (data, nodes, level) {
@@ -337,19 +339,31 @@ class Tree extends Component {
       // Now that we're back, decrement level.
       level--;
 
-      // If we're on the Merge screen, we want to exclude all levels before the
-      // node specifed by 'this.props.mergeFrom'.
+      // If we're on the Merge screen...
       if (this.props.mergeFrom) {
+        // We want to exclude all levels <= the specified passage index.
         var mergeFromLevel = parseInt (this.props.mergeFrom.split ('-') [0]);
         var thisLevel = level + 1;
         if (thisLevel <= mergeFromLevel) {
           data [j].disabled = true;
         }
+
+        // We also want to exclude any of the node's existing children. We have
+        // to do this from the child node to be excluded, not the parent.
+        for (var k = 0; k < (data [j].parents || {}).length; k++) {
+          // If the parent node is the mergeFrom node, disable the current node.
+          if (data [j].parents [k].passageIndex == this.props.mergeFrom) {
+            data [j].disabled = true;
+          }
+        }
+
+        if (data [j].passageIndex == this.props.mergeFrom && data [j].children) {
+          for (var k = 0; k < data [j].children.length; k++) {
+            data [j].children [k].disabled = true;
+            data [j].children [k].SHOULD_BE_DISABLED = true; // TEMP
+          }
+        }
       }
-
-      // We also want to exclude any of the node's existing children.
-      // TODO
-
 
       // Generate the node.
       nodes.push (this.renderNode (_.omit (data [j], ['children', 'groupCount',])));
@@ -411,28 +425,9 @@ class Tree extends Component {
     // If we're on the Merge screen, scroll to the appropriate level.
     if (this.props.mergeFrom) {
       var mergeFromLevel = parseInt (this.props.mergeFrom.split ('-') [0]);
-      var nextLevel = mergeFromLevel + 1;
-      var {height, width} = Dimensions.get('window');
-
-      // TODO: Verify for various sized screens.
-
-      // Screen Width: 375
-      // NODE_WIDTH = 250;
-      // SPACING_HORIZONTAL = 80
-      // Initial padding = 20
-
-      // Level  x       Diff
-      // --------------------
-      // 2      ~285    ...
-      // 3      ~620    335
-      // 4      ~945    325
-      // 5      ~1275   330
-
-      // For a screen width of 375 and initial offset of 20, the equation is:
-      // x = 330L - 375
-      // x = (N+S) * (level) - width
-
-      var x = (NODE_WIDTH + SPACING_HORIZONTAL) * nextLevel - width;
+      var {height, width} = Dimensions.get ('window');
+      var centeringFactor = ((width - NODE_WIDTH) / 2);
+      var x = TREE_HORIZONTAL_PADDING + mergeFromLevel * (NODE_WIDTH + SPACING_HORIZONTAL) - centeringFactor;
       this.props.setScrollParams ({x: x, y:0, animated: true});
     }
 
