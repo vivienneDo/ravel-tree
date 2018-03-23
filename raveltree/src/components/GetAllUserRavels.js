@@ -56,9 +56,9 @@ class GetAllUserRavels extends Component {
         // this.props.acceptRavelInvite(ravel_uid);
         //this.props.getRavelMetaData(ravel_uid);
         // this.props.getAllRavelParticipantUserProfile(ravel_uid);
-        // var passage_title = 'passage title'
-        // var passage_body = 'passage body'
-        // this.props.createPassage({ravel_uid, passage_title, passage_body});
+        var passage_title = 'passage title'
+        var passage_body = 'passage body'
+        this.props.createPassage({ravel_uid, passage_title, passage_body});
         //this.props.upVotePassage('-L6esHnah1z8XwnTXLfL');
         //this.props.downVotePassage('-L6esHnah1z8XwnTXLfL');
 
@@ -100,7 +100,14 @@ class GetAllUserRavels extends Component {
         //this.props.acceptTermsAndAgreement();
         //this.props.declineRavelInvite(ravel_uid);
         //this.props.getAllRavelParticipantUserProfile(ravel_uid);
-        this.props.getPendingRavelInvite();
+        //this.props.getPendingRavelInvite();
+
+        // var passage_uid = '-L7pxykkrpzqrtjME6qe';
+        // var comment_body = 'this is another comment'
+        // var comment_key = '-L7pouZstEs1LhyGi3uN'
+        // this.props.downVotePassage(passage_uid);
+        //this.props.writePassageComment(ravel_uid, passage_uid, comment_body);
+        //this.props.deletePassageComment(passage_uid, comment_key)
     };
 
   render() {
