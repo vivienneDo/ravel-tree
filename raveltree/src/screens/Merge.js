@@ -80,16 +80,26 @@ class Merge extends Component {
     var screenData = this.props.screenData;
     this.state = {
       passageIndex: '2-C', // TEMP
+      showMergeButton: false,
+      selectedPassageMetaData: undefined,
       ...this.props.screenData,
     };
   }
 
   onSelectPassage (passageMetaData) {
-    // TODO
+    // Show the merge button and store the selected passage's metadata.
+    this.setState ({
+      showMergeButton: true,
+      selectedPassageMetaData: passageMetaData,
+    });
+
   }
 
   onPressMerge () {
-    // TODO
+    // TODO: Backend call.
+
+
+    
   }
 
   setScrollParams (params) {
@@ -115,6 +125,16 @@ class Merge extends Component {
     );
   }
 
+  showMergeButton (show) {
+    if (!show) { return; }
+
+    return (
+      <View style={styles.mergeButton}>
+        <Button title={'Merge'} onPress={() => this.onPressMerge ()}/>
+      </View>
+    );
+  }
+
   onPressBack () {
     this.props.navigateBack ();
   }
@@ -136,6 +156,7 @@ class Merge extends Component {
         <ScrollView ref={(c) => (this._scrollView = c)} {...this.props} onContentSizeChange={this._onScrollViewContentSizeChange} style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           {this.showTree ()}
         </ScrollView>
+        {this.showMergeButton (this.state.showMergeButton)}
       </View>
     );
   }
@@ -180,6 +201,13 @@ const styles = StyleSheet.create({
   },
   passageStub: {
     flexDirection: 'row',
+    alignItems: 'center',
+  },
+  mergeButton: {
+    position: 'absolute',
+    bottom: 30,
+    width: '100%',
+    justifyContent: 'center',
     alignItems: 'center',
   },
 });

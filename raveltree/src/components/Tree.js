@@ -1,10 +1,12 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   03/14/18
-// Modified:  03/20/18
+// Modified:  03/23/18
 
 // Tree component for RavelTree.
 //
 // TODO: Handle multiple parents and children.
+// TODO: Adjust spacing and positioning for when an arrow spans more than one level.
+// TODO: Animations. All the animations.
 
 import React, { Component } from 'react';
 import {
@@ -67,9 +69,96 @@ class Tree extends Component {
     this.state = {
       ...this.props,
       tree: [],
+      selectedNodeIndex: undefined,
+      connectingArrow: {},
     };
 
     TREE_HORIZONTAL_PADDING = this.props.horizontalPadding || 20;
+  }
+
+  findPosition (index) {
+    // Returns the screen position of the node with the passed passage index.
+    return this._findPosition (index, this.props.tree.data, 0, this.props.tree.data.length);
+  }
+
+  _findPosition (index, tree, level, groupCount) {
+    if (!index || !tree) { return null; }
+
+    var position;
+
+    // Tree levels are zero-indexed; Passage indexes are 1-indexed.
+    var targetLevel = parseInt (index.split ('-') [0]) - 1;
+
+    if (level < targetLevel) {
+      // For each node in this group, try to get to the target level.
+      for (var i = 0; i < tree.length; i++) {
+
+        position = this._findPosition (index, tree [i].children, level + 1, tree [i].children.length);
+        if (position) { return position; }
+      }
+      return null;
+    }
+
+    // If we're deeper than the target level, don't go any further.
+    if (level > targetLevel) { return null; }
+
+    // We're at the target level. Check this group for the node.
+    for (var i = 0; i < groupCount; i++) {
+      if (tree [i].passageIndex == index) {
+        if (DEBUG) { console.log ('FOUND:'); }
+        if (DEBUG) { console.log (tree [i]); }
+        return tree [i].position;
+      }
+    }
+    return null;
+  }
+
+  onPressPassage (passageMetaData) {
+    // If we're on the Merge screen, render an arrow from the node we're merging
+    // from to the node we're merging to.
+    if (this.props.mergeFrom) {
+      // Mark the node as selected.
+      this.setState ({ selectedNodeIndex: passageMetaData.passage_index });
+
+      // Get the position of the 'this.props.mergeFrom' index node
+      var from = this.findPosition (this.props.mergeFrom);
+
+      // Get the position of the 'passageMetaData' node
+      var to = this.findPosition (passageMetaData.passage_index);
+
+      // Adjust the stored coordinates for centering.
+      var N = NODE_HEIGHT;
+      var W = NODE_WIDTH;
+      var start = {
+        x: from.x + (W),
+        y: from.y + (N/2),
+      }
+      var end = {
+        x: to.x,
+        y: to.y + N/2,
+      }
+
+      // Render a new connecting arrow.
+      if (DEBUG) { console.log ('Drawing arrow:'); }
+      if (DEBUG) { console.log (from);             }
+      if (DEBUG) { console.log (to);               }
+      this.setState ({
+        connectingArrow: { from: start, to: end }
+      });
+    }
+    this.props.onPressPassage (passageMetaData);
+  }
+
+  showConnectingArrow () {
+    var positions = this.state.connectingArrow;
+    if (!(positions || {}).from || !(positions.to || {})) { return; }
+
+    from = positions.from;
+    to   = positions.to;
+
+    // Render the arrow.
+    // TODO: Add parameter to make it a different color...
+    return (this.renderArrow (from, to, false, true));
   }
 
   analyzeLevel (data, nodes, level) {
@@ -159,13 +248,13 @@ class Tree extends Component {
     return tree;
   }
 
-  renderArrow (startPosition, endPosition, optimal) {
+  renderArrow (startPosition, endPosition, optimal, connecting) {
     var arrow;
 
     startPosition.y += MAGIC_NUMBER;
     endPosition.y += MAGIC_NUMBER;
 
-    var color = optimal ? '#2E8AF7' : '#555555';
+    var color = optimal ? '#2E8AF7' : connecting ? '#3BB54A' : '#555555';
 
     switch (ARROW_MODE) {
 
@@ -237,7 +326,8 @@ class Tree extends Component {
           active={content.optimal}
           disabled={content.disabled}
           //passage={content.passage}
-          onPress={() => this.props.onPressPassage (passageMetaData)}
+          onPress={() => this.onPressPassage (passageMetaData)}
+          highlighted={this.state.selectedNodeIndex = content.passagIndex}
         />
       </View>
     );
@@ -360,7 +450,6 @@ class Tree extends Component {
         if (data [j].passageIndex == this.props.mergeFrom && data [j].children) {
           for (var k = 0; k < data [j].children.length; k++) {
             data [j].children [k].disabled = true;
-            data [j].children [k].SHOULD_BE_DISABLED = true; // TEMP
           }
         }
       }
@@ -447,6 +536,7 @@ class Tree extends Component {
           }}
         >
           {arrowsToRender}
+          {this.showConnectingArrow ()}
         </Surface>
       </View>
     );

@@ -55,6 +55,7 @@ class PassageStub extends Component<{}> {
       score,
       active,
       disabled,
+      highlighted,
       showAddButton,
       testID,
     } = this.props;
@@ -63,6 +64,7 @@ class PassageStub extends Component<{}> {
       styles.container,
       disabled ? {borderColor: '#dddddd'} : undefined,
       active ? {borderColor: '#2E8AF7'} : undefined,
+      highlighted ? {backgroundColor: '#dddddd'} : undefined,
     ];
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
