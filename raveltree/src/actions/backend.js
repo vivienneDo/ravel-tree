@@ -2,9 +2,20 @@
  * Note to reader: Please go to ../function_prototype/indexPrototype.js and read all of the parameter and
  * state returns for each function
  */
+/**
+ * LOGS
+   - 3/24/2018 - VD Do - Added: createRavel() these fields:   
+    var roots = {root:true}; 
+    var level_count = 0; 
+    var nodeCount = { 0:0 }; 
+    var has_children = false; 
+
+   - 3/25/2017 - VD Do - 
+ */
 
 import firebase from 'firebase';
 import _ from 'lodash';
+
 
 /* CREATE USER/LOGIN FUNCTIONS */
 
@@ -242,21 +253,27 @@ export const createUserWithEmail = (email, password) => dispatch => {
 
 /**
 * @param:
-  user, {
-    first_name
-    last_name
-    bio
-    photoURL
-  }
+    user, {
+        first_name
+        last_name
+        bio
+        photoURL
+    }
 * @returns: nothing
 * actions: attempts to create a new user via a federated identity and sets
 * their user profile to the values provided (or null if none).
 *
 */
 export const createUser = (firstName, lastName, bio, photoURL = '') => dispatch => {
+
  var user = firebase.auth().currentUser;
+
  firebase.database ().ref (`/master_user_key/${user.uid}`).set ({ user_uid: true })
-   .catch ((error) => {alert('Error creating profile.')});
+ .then(() => {
+
+    firebase.database().ref(`notification_list/${user.uid}`).set(true)
+ })
+ .catch ((error) => {alert('Error creating profile.')});
 
  updateUserProfile (user, {
    first_name: firstName,
@@ -715,6 +732,11 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
     var public_cat_fiction = false; 
     var public_cat_nonfiction = false;
     var public_cat_other = false;
+    var roots = {root:true}; 
+    var level_count = 0; 
+    var nodeCount = { 0:0 }; 
+    var has_children = false; 
+
 
     if (visibility === true) {
 
@@ -750,10 +772,10 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
         .then(() => {
 
             firebase.database().ref(`/ravels`)
-            .push({ has_passage, user_created, user_created_photoURL, ravel_title, ravel_category, passage_length,
+            .push({ user_created, user_created_photoURL, ravel_title, ravel_category, passage_length,
                 visibility, enable_voting, enable_comment, ravel_concept, ravel_status,ravel_number_participants,
                 ravel_participants, m_ravel_participants, ravel_create_date, public_tag_set, ravel_points, public_ravel_title,
-                public_cat_fiction, public_cat_nonfiction, public_cat_other })
+                public_cat_fiction, public_cat_nonfiction, public_cat_other, roots, level_count, nodeCount, has_children})
             .then(returnKey => {
                 ravel_uid = returnKey.getKey();
                 firebase.database().ref(`/ravels/${ravel_uid}/ravel_uid`).set(ravel_uid);
@@ -1345,6 +1367,9 @@ export const searchRavelByCategory = (category) => {
  *                  - this.props.passage_meta_data.ravel_uid
  *                  - this.props.passage_meta_data.user_created
  *                  - this.props.passage_meta_data.user_created_photoURL
+ *                  - this.props.passage_meta_data.level
+ *                  - this.props.passage_meta_data.parent{}
+ *                  - this.props.passage_meta_data.children{}
  * 
  * mapStateToProps => state = passage_meta_data_fetch_is_success = 
  * state.passage 
@@ -1355,7 +1380,7 @@ export const searchRavelByCategory = (category) => {
  *          field to be +1 what is currently stored. Fires an update function that will re-calc the userProfile : ravel_points field 
  *          to reflect these changes. Returns the meta data for the newly added passage. 
  */
-export const addPassage = ({ravel_uid, passage_title, passage_body}) => {
+export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
 
     const { currentUser } = firebase.auth();
     var user_created = currentUser.uid;
@@ -1366,7 +1391,10 @@ export const addPassage = ({ravel_uid, passage_title, passage_body}) => {
     var passage_downvote = 0;
     var passage_combined_vote = 0;
     var stat_passage_written;
-    var passage_comment = '';                              
+    var passage_comment = '';    
+    var level = 1;   
+    var parent = {empty:true};  
+    var children = {empty:true};                      
 
     return (dispatch) => {
 
@@ -1438,6 +1466,39 @@ export const addPassage = ({ravel_uid, passage_title, passage_body}) => {
     })
 
     }
+}
+
+// TODO
+export const checkParticipantExistRavel = (ravel_uid) => {
+    
+    return new Promise((resolve,reject) => {
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`ravels/${ravel_uid}/${currentUid}`).equalTo().once('value', (snapshot) => {
+            snapShotVal = snapshot.val();
+        })
+        .then(() => {
+            firebase.database().ref(`ravels/${snapShotVal}/enable_comment`).orderByKey().once('value', (snapshotKey) => {
+                if (snapshotKey.val() === true) {
+                    valueOfKey = true;                                
+                }                         
+        })
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+        })
+            
+
+    })
 }
 
 /**
@@ -1725,7 +1786,6 @@ export const getPassageComment = (ravel_uid, passage_uid) => {
         })
     }
 }
-
 
 // TODO AFTER STRUCTURE CHANGES 
 

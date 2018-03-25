@@ -83,7 +83,7 @@ class FBLoginComponent extends Component {
                                         firebase.database().ref(`/master_user_key/${user.uid}`).set({
                                             user_uid: true})
                                             .then(() => {
-                                                firebase.database().ref(`notification_list/${user.uid}`).push({ type:'CREATE USER SUCCESS', passage: '', user: '', upvotes: 0})
+                                                firebase.database().ref(`notification_list/${user.uid}`).set(true)
                                             })
                                 }
                             });
