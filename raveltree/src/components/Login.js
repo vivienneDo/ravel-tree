@@ -16,6 +16,7 @@ import MainPage from './MainPage';
 import RavelPage from './RavelPage';
 import FBLoginComponent from '../utils/FBLoginComponent';
 import {searchUserByName, userResetPassword, signInWithEmail, createUserWithEmail, updateUserProfile} from '../actions';
+import sendNotification, {userAcceptRavelInviteNotif} from '../notifications/index.js';
 
 // import fbsdk and use LoginButton and AccessToken
 const FBSDK = require('react-native-fbsdk');
@@ -33,6 +34,10 @@ const GeneralLoginButton = MKButton.coloredButton()
 const GLoginButton = MKButton.coloredButton()
     .withText('Create user')
     .build();
+
+const OneSignalButton = MKButton.coloredButton()
+    .withText('Test Push')
+    .build();    
 
 const styles = StyleSheet.create({
     form: {
@@ -125,6 +130,15 @@ onGButtonPress() {
           <View style={styles.form}> 
           <GeneralLoginButton onPress={this.onButtonPress.bind(this)} /> 
           <GLoginButton onPress={this.onGButtonPress.bind(this)} /> 
+          <OneSignalButton onPress={() => {
+              var message = { 
+                app_id: "cdbe1c6e-a1a1-4303-9f5b-e2be1a1f317b",
+                contents: {"en": "English Message"},
+                included_segments: ["All"]
+              };
+              
+              userAcceptRavelInviteNotif('blah', message);
+          }} />
            </View> 
           );
           
