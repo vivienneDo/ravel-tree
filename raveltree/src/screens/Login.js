@@ -1,12 +1,17 @@
 // Author: Alex Aguirre and Vivienne Do
 // Created: ?
-// Modified: 03/05/18 by Frank Fusco (fr@nkfus.co)
+// 
 //
 // Login screen for RavelTree.
 //
 // TODO: Facebook authentication ->
 //       Set global user data via Redux function ->
 //       Navigate to Home screen
+/**
+ * LOGS
+ * 03/05/18 - Modified by Frank Fusco (fr@nkfus.co) 
+ * 03/25/18 - VD Do - Changed Facebook button to use FBLoginComponent 
+ */
 
 import React, { Component } from 'react';
 import {
@@ -28,6 +33,7 @@ import _ from 'lodash';
 import RTLogoText from '../components/RTLogoText';
 import TextLink from '../components/TextLink';
 import TextHeader from '../components/TextHeader'
+import FBLoginComponent from '../utils/FBLoginComponent';
 
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -182,13 +188,13 @@ class Login extends Component {
         <View style={styles.content}>
           <View style = {styles.buttons}>
             {/* Facebook button */}
-            <LoginButton
-              style = {styles.facebook}
-              readPermissions = {['public_profile','email']}
-              onLoginFinished = {
-                (error, result) => {this.onLoginFinished (error, result)}
-              }
-              onLogoutFinished={() => alert("logout.")}
+            <FBLoginComponent
+              // style = {styles.facebook}
+              // readPermissions = {['public_profile','email']}
+              // onLoginFinished = {
+              //   (error, result) => {this.onLoginFinished (error, result)}
+              // }
+              // onLogoutFinished={() => alert("logout.")}
             />
             {/* Google button */}
             <View>
