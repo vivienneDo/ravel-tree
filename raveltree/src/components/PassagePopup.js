@@ -1,11 +1,10 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/13/18
-// Modified:  03/19/18
+// Modified:  03/26/18
 
 // Standard passage popup component for RavelTree.
 //
 // TODO: Make ravel, title, and ID touchable and link to respective content.
-// TODO: Add VoteBar
 
 import React, { Component } from 'react';
 import {
@@ -16,6 +15,7 @@ import {
   View, ScrollView,
   TouchableNativeFeedback,
   TouchableOpacity,
+  Alert
 } from 'react-native';
 
 import { connect } from 'react-redux'
@@ -28,7 +28,7 @@ import UserImage from './UserImage'
 import ButtonReverse from './ButtonReverse'
 import Button from './Button'
 import ButtonPlus from './ButtonPlus'
-
+import VoteBar from './VoteBar'
 
 class PassagePopup extends React.Component {
   constructor (props, context) {
@@ -51,6 +51,42 @@ class PassagePopup extends React.Component {
 
   onPressAdd () {
     this.props.onSwitchToAdd (this.props.passageMetaData);
+  }
+
+  onPressEllipsis () {
+    var title = this.props.passageMetaData.passage_title;
+    var message = 'Choose an action:';
+    var buttons = [
+      {text: 'Report', onPress: () => this.onPressReport ()},
+      {text: 'Share...', onPress: () => this.onPressShare ()},
+      {text: 'Cancel', style: 'cancel'},
+    ];
+    var options = { cancelable: false };
+    Alert.alert (title, message, buttons, options);
+  }
+
+  onPressReport () {
+    var passageTitle = this.props.passageMetaData.passage_title;
+    var title = 'Confirm Report';
+    var message = 'Are you sure you want to report ' + passageTitle + ' for violating RavelTree\'s Terms of Use? You can\'t undo this.';
+    var buttons = [
+      {text: 'Cancel', style: 'cancel'},
+      {text: 'Report', onPress: () => this.onPressConfirmReport ()},
+    ]
+    var options = { cancelable: false };
+    Alert.alert (title, message, buttons, options);
+  }
+
+  onPressConfirmReport () {
+    var passageTitle = this.props.passageMetaData.passage_title;
+    var ravelID = this.props.passageMetaData.ravel_uid;
+    console.log ('Reporting ' + passageTitle + '...');
+    this.props.reportRavel (ravelID); // TODO: 'Report passage' functionality on backend.
+  }
+
+  onPressShare () {
+    var passageTitle = this.props.passageMetaData.passage_title;
+    console.log ('Opening share menu for ' + passageTitle);
   }
 
   render () {
@@ -93,6 +129,14 @@ class PassagePopup extends React.Component {
           <ButtonPlus size={36} onPress={() => this.onPressAdd ()} />
           <Button title={'Fork'} width={0.30 * width} onPress={() => this.onPressFork ()} />
         </View>
+        <View style={styles.bottom}>
+          <Touchable onPress={() => this.onPressEllipsis ()}>
+            <TextSans size={40} color={'#95989A'}>...</TextSans>
+          </Touchable>
+          <View style={styles.voteBar}>
+            <VoteBar />
+          </View>
+        </View>
       </ModalContainer>
     )
   }
@@ -130,6 +174,20 @@ const styles = StyleSheet.create ({
     justifyContent: 'space-between',
     paddingLeft: 21,
     paddingRight: 21,
+    paddingBottom: 10,
+  },
+  bottom: {
+    zIndex: 100,
+    position: 'absolute',
+    bottom: 7,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 17,
+  },
+  voteBar: {
+    top: 10,
   },
 });
 

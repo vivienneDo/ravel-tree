@@ -1,6 +1,6 @@
 // Author:    Alex Aguirre
 // Created:   02/5/18
-// Modified:  03/09/18 by Frank Fusco (fr@nkfus.co)
+// Modified:  03/26/18 by Frank Fusco (fr@nkfus.co)
 
 // Standard passage card component for RavelTree.
 //
@@ -69,7 +69,6 @@ class PassageCard extends React.Component {
   }
 
   onPressEllipsis () {
-    // TODO: Modal options menu ("Share," etc.)
     var title = this.props.title;
     var message = 'Choose an action:';
     var buttons = [
