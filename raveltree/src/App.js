@@ -25,7 +25,16 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore (rootReducer, composeEnhancers (applyMiddleware (Thunk)));
 
 export default class App extends Component {
+
   render () {
+
+    // TEMP: Remove for testing and production.
+    // Temporarlity hide specified warnings.
+    console.ignoredYellowBox = [
+      'Warning: Cannot update during',
+      'FIREBASE WARNING: Using',
+    ];
+
     return (
       <Provider store={store}>
         <AppContainer />
