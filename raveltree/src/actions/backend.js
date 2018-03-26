@@ -719,7 +719,6 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
     var ravel_number_participants = 0;
     var ravel_participants = {};
     m_ravel_participants.forEach(function(elm) { ravel_participants[elm] = false })
-    var has_passage = false
     
     // Update the user's ravel created count
     var ravel_led_stat;                               
@@ -1393,97 +1392,268 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
     var stat_passage_written;
     var passage_comment = '';    
     var level = 1;   
-    var parent = {empty:true};  
-    var children = {empty:true};                      
+    var parent = {root:true};  
+    var children = '';                      
 
     return (dispatch) => {
 
-    var passage_uid;
 
-    firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
-        m_ravel_title = snapshotPhoto.val();
-    })
-    .then(() => {
-        firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
-            m_ravel_title = snapshotPhoto.val();
-        })
-    })
-    .then(() => {
+    checkParticipantExistRavel(ravel_uid).then(valueOfKey => {
+
+        if (valueOfKey) {
+
+            checkRavelHasChild(ravel_uid).then(valueOfKey => {
+                if (valueOfKey) {
+
+                    console.log('ravel has child value' + valueOfKey); 
+                    alert('Ravel has an initial passage, please use add passage function...');
+
+                } else {
+
+                    var passage_uid;
+
+                    firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
+                        m_ravel_title = snapshotPhoto.val();
+                    })
+                    .then(() => {
+                        firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
+                            m_ravel_title = snapshotPhoto.val();
+                        })
+                    })
+                    .then(() => {
+                        firebase.database().ref(`/passages/${ravel_uid}`)
+                            .push({parent, level, passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
+                            .then(returnKey => {
+                                passage_uid = returnKey.getKey();
         
-
-        firebase.database().ref(`/passages/${ravel_uid}`)
-            .push({ passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
-            .then(returnKey => {
-                passage_uid = returnKey.getKey();
-
-                // Do something with the passage_uid    
-                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_uid : passage_uid})
-            })
-            .then(() => {  
-                dispatch({ type: 'CREATE_PASSAGE',
-                           payload: {passage_uid} });
-            })
-            .then(() => {
-                firebase.database().ref(`/users/${user_created}/userProfile/photoURL`).once('value', snapshotPhoto => {
-                        user_created_photoURL = snapshotPhoto.val();        
-                })
-                .then(() => {
-                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({user_created_photoURL : user_created_photoURL})
-                })         
-                firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
-                    ravel_title = snapshotPhoto.val();
-                })
-                .then(() => {
-                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ravel_title : ravel_title})
-                })
-
-            })
-            .then(() => {
-                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
-                    dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
-                })
-            })
-            .then(() => {
-                firebase.database().ref(`users/${user_created}/userProfile/stat_passage_written`).once('value', (snapshot) => {
-                    stat_passage_written = snapshot.val() + 1
+                                // Do something with the passage_uid    
+                                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_uid : passage_uid})
+                            })
+                            .then(() => {  
+                                dispatch({ type: 'CREATE_PASSAGE',
+                                        payload: {passage_uid} });
+                            })
+                            .then(() => {
+                                firebase.database().ref(`/users/${user_created}/userProfile/photoURL`).once('value', snapshotPhoto => {
+                                        user_created_photoURL = snapshotPhoto.val();        
+                                })
+                                .then(() => {
+                                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({user_created_photoURL : user_created_photoURL})
+                                })         
+                                firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
+                                    ravel_title = snapshotPhoto.val();
+                                })
+                                .then(() => {
+                                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ravel_title : ravel_title})
+                                })
+        
+                            })
+                            .then(() => {
+                                firebase.database().ref(`ravels/${ravel_uid}`).update({has_child : true});
+                            })
+                            .then(() => {
+                                updateRavelLevelCountByIncrementOne(ravel_uid);
+                            })
+                            .then(() => {
+                                addPassageToRavelRootList(ravel_uid, passage_uid); 
+                            })
+                            .then(() => {
+                                addPassageToRavelLevelTree(ravel_uid, level, passage_uid);
+                            })
+                            .then(() => {
+                                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
+                                    dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
+                                })
+                            })
+                            .then(() => {
+                                firebase.database().ref(`users/${user_created}/userProfile/stat_passage_written`).once('value', (snapshot) => {
+                                    stat_passage_written = snapshot.val() + 1
+                                    
+                                })
+                                .then(() => { // Update the number of passages a user has written 
+                                    firebase.database().ref(`users/${user_created}/userProfile`).update({stat_passage_written : stat_passage_written});                    
+                                })
+                                .then(() => {
+                                    userRavelPointCalculationHelper(user_created);
+                                })
+                            })
+                            .then(() => {
+                                dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
+                            })
+        
+                    })
+                    .catch(() => {
+                        dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
+                        alert('Failure adding a new passage...')
+                    })
                     
-                })
-                .then(() => { // Update the number of passages a user has written 
-                    firebase.database().ref(`users/${user_created}/userProfile`).update({stat_passage_written : stat_passage_written});                    
-                })
-                .then(() => {
-                    userRavelPointCalculationHelper(user_created);
-                })
+                }
             })
-            .then(() => {
-                dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
-            })
+    
+            
 
+
+        } else {
+            dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
+            alert('Current user is not a part of this ravel...Cannot add passage.')
+        }
     })
-    .catch(() => {
-        dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
-        alert('Failure adding a new passage...')
-    })
+
+    
 
     }
 }
 
-// TODO
+export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passage_body}) => {
+
+    const { currentUser } = firebase.auth();
+    var user_created = currentUser.uid;
+    var ravel_title = '';
+    var passage_create_date = new Date().toLocaleTimeString();
+    var user_created_photoURL = '';   
+    var passage_upvote = 0;
+    var passage_downvote = 0;
+    var passage_combined_vote = 0;
+    var stat_passage_written;
+    var passage_comment = '';    
+    var level = 0;  // calculate this by function  
+    var parent = '';  // add parent_passage_uid to this {} 
+    var children = '';      // update parent_passage_uid children{} to have this new passage_uid                 
+
+    return (dispatch) => {
+
+
+    checkParticipantExistRavel(ravel_uid).then(valueOfKey => {
+
+        if (valueOfKey) {
+
+            checkRavelHasChild(ravel_uid).then(valueOfKey => {
+                if (valueOfKey != true ) {
+
+                    console.log('ravel has child value' + valueOfKey); 
+                    alert('Ravel does not have initial child, please use initial add passage function...');
+
+                } else {
+
+                    // updateRavelLevelCountByIncrementOne(ravel_uid).then(valueOfKey => {
+                    //     if (valueOfKey) {
+
+                    //     }
+                    // })
+
+                    var passage_uid;
+
+                    firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
+                        m_ravel_title = snapshotPhoto.val();
+                    })
+                    .then(() => {
+                        firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
+                            m_ravel_title = snapshotPhoto.val();
+                        })
+                    })
+                    .then(() => {
+                        firebase.database().ref(`/passages/${ravel_uid}`)
+                            .push({level, passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
+                            .then(returnKey => {
+                                passage_uid = returnKey.getKey();
+        
+                                // Do something with the passage_uid    
+                                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_uid : passage_uid})
+                            })
+                            .then(() => {  
+                                dispatch({ type: 'CREATE_PASSAGE',
+                                        payload: {passage_uid} });
+                            })
+                            .then(() => {
+                                firebase.database().ref(`/users/${user_created}/userProfile/photoURL`).once('value', snapshotPhoto => {
+                                        user_created_photoURL = snapshotPhoto.val();        
+                                })
+                                .then(() => {
+                                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({user_created_photoURL : user_created_photoURL})
+                                })         
+                                firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
+                                    ravel_title = snapshotPhoto.val();
+                                })
+                                .then(() => {
+                                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ravel_title : ravel_title})
+                                })
+        
+                            })
+                            .then(() => {
+                                firebase.database().ref(`ravels/${ravel_uid}`).update({has_child : true});
+                            })
+                                                            .then(() => {
+                                    addChildPassageToParentPassage(ravel_uid, parent_passage_uid, passage_uid)
+                                    
+                                })
+                                .then(() => {
+                                    addParentPassageToChildPassage(ravel_uid, parent_passage_uid, passage_uid);
+                                })
+                                .then(() => {
+                                    updateRavelLevelCountByIncrementOne(ravel_uid);
+                                })
+                                .then(() => {
+                                    updateAddPassageLevel(ravel_uid, parent_passage_uid, passage_uid).then(valueOfKey => {
+                                        addPassageToRavelLevelTree(ravel_uid, valueOfKey, passage_uid);
+                                    });
+                                })
+                            .then(() => {
+                                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
+                                    dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
+                                })
+                            })
+                            .then(() => {
+                                firebase.database().ref(`users/${user_created}/userProfile/stat_passage_written`).once('value', (snapshot) => {
+                                    stat_passage_written = snapshot.val() + 1
+                                    
+                                })
+                                .then(() => { // Update the number of passages a user has written 
+                                    firebase.database().ref(`users/${user_created}/userProfile`).update({stat_passage_written : stat_passage_written});                    
+                                })
+                                .then(() => {
+                                    userRavelPointCalculationHelper(user_created);
+                                })
+                            })
+                            .then(() => {
+                                dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
+                            })
+        
+                    })
+                    .catch(() => {
+                        dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
+                        alert('Failure adding a new passage...')
+                    })
+                    
+                }
+            })
+    
+            
+
+
+        } else {
+            dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
+            alert('Current user is not a part of this ravel...Cannot add passage.')
+        }
+    })
+
+    
+
+    }
+}
+
+
 export const checkParticipantExistRavel = (ravel_uid) => {
     
     return new Promise((resolve,reject) => {
+
         var valueOfKey = false;
         var currentUid = firebase.auth().currentUser.uid;
         var snapShotVal;
+        firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).orderByKey().once('value', (snapshot) => {
 
-        firebase.database().ref(`ravels/${ravel_uid}/${currentUid}`).equalTo().once('value', (snapshot) => {
-            snapShotVal = snapshot.val();
-        })
-        .then(() => {
-            firebase.database().ref(`ravels/${snapShotVal}/enable_comment`).orderByKey().once('value', (snapshotKey) => {
-                if (snapshotKey.val() === true) {
-                    valueOfKey = true;                                
-                }                         
+            if (snapshot.val() === true) {
+                valueOfKey = true
+            }                   
         })
         .then(() => {
             return valueOfKey
@@ -1495,11 +1665,305 @@ export const checkParticipantExistRavel = (ravel_uid) => {
             reject(error)
         })
 
-        })
             
 
     })
 }
+
+
+export const checkRavelHasChild = (ravel_uid) => {
+    
+    return new Promise((resolve,reject) => {
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`ravels/${ravel_uid}/has_child`).orderByKey().once('value', (snapshot) => {
+
+            if (snapshot.val() === true ) {
+                valueOfKey = true
+            }                   
+        })
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+            
+
+    })
+}
+
+// Returns level_count on a ravel 
+export const checkRavelLevel = (ravel_uid) => {
+    
+    return new Promise((resolve,reject) => {
+        var valueOfKey = 0;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`ravels/${ravel_uid}/level_count`).once('value', (snapshot) => {
+
+            if (snapshot.val() != null ) {
+                valueOfKey = snapshot.val()
+            }                   
+        })
+        .then(() => {
+            return valueOfKey;
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+            
+
+    })
+}
+
+// Return false if FAIL, true if success
+export const addPassageToRavelRootList = (ravel_uid, passage_uid) => {
+    
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`ravels/${ravel_uid}/roots/${passage_uid}`).set(true)
+        .then(() => {
+            valueOfKey = true;
+        })                        
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+            
+
+    })
+}
+
+// Return false if FAIL, true if success
+// passage_uid indicates child_passage_uid 
+export const addChildPassageToParentPassage = (ravel_uid, parent_passage_uid, passage_uid) => {
+    
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`passages/${ravel_uid}/${parent_passage_uid}/child/${passage_uid}`).set(true)
+        .then(() => {
+            valueOfKey = true;
+        })                        
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+            
+
+    })
+}
+
+// Return false if FAIL, true if success
+// passage_uid indicates child_passage_uid 
+export const addParentPassageToChildPassage = (ravel_uid, parent_passage_uid, passage_uid) => {
+    
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/parent/${parent_passage_uid}`).set(true)
+        .then(() => {
+            valueOfKey = true;
+        })                        
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+            
+
+    })
+}
+
+
+// Return false if FAIL, true if success
+// Updates ravel level_count by 1 on addPassage() function call!! Do not call when initialPassage() is called 
+export const updateRavelLevelCountByIncrementOne = (ravel_uid) => {
+    
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+        var m_level_count = 0; 
+
+        firebase.database().ref(`ravels/${ravel_uid}/level_count`).once('value', (snapshot) => {
+            if ( snapshot.val() != null ) {
+
+                m_level_count = snapshot.val() + 1; 
+            } else {
+                alert('Error getting ravel level count, was not set in database...')
+            }
+        })
+        .then(() => {
+            firebase.database().ref(`ravels/${ravel_uid}`).update({level_count : m_level_count})
+        })
+        .then(() => {
+            valueOfKey = true;
+        })                        
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+            
+
+    })
+}
+
+// Return 0 if false, number if success
+// Add passage takes the parent_passage_uid and +1 the child's
+export const updateAddPassageLevel = (ravel_uid, parent_passage_uid, passage_uid) => {
+    
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = 0;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+        var m_level_count = 0; 
+
+        firebase.database().ref(`passages/${ravel_uid}/${parent_passage_uid}/level`).once('value', (snapshot) => {
+            if ( snapshot.val() != null ) {
+
+                m_level_count = snapshot.val() + 1; 
+                valueOfKey = snapshot.val() + 1;
+
+            } else {
+                alert('Error getting parent passage level at this time...')
+            }
+        })
+        .then(() => {
+            firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({level : m_level_count})
+        })                      
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+            
+
+    })
+}
+
+// Return false if FAIL, true if success
+// set a new passage_uid under ravel_level_passsage/${ravel_uid}/${level}/${passage_uid}
+export const addPassageToRavelLevelTree = (ravel_uid, level, passage_uid) => {
+    
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`ravel_level_passage/${ravel_uid}/${level}/${passage_uid}`).set(true)
+        .then(() => {
+            valueOfKey = true;
+        })                        
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+            
+
+    })
+}
+
+// TODO
+// Return false if FAIL, true if success
+// if a user forks on level 1, then you must add the new passage_uid to ravel root{} 
+export const forkOnLevelOne = (ravel_uid) => {
+    
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+        var m_level_count = 0; 
+
+        firebase.database().ref(`ravels/${ravel_uid}/level_count`).once('value', (snapshot) => {
+            if ( snapshot.val() != null ) {
+
+                m_level_count = snapshot.val() + 1; 
+            } else {
+                alert('Error getting ravel level count, was not set in database...')
+            }
+        })
+        .then(() => {
+            firebase.database().ref(`ravels/${ravel_uid}`).update({level_count : m_level_count})
+        })
+        .then(() => {
+            valueOfKey = true;
+        })                        
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+            
+
+    })
+}
+
 
 /**
  * TODO: TRACK THE USER_UID IF THEY UPVOTED THE PASSAGE_UID ALREADY
