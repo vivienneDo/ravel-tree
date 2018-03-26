@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/13/18
-// Modified:  03/20/18
+// Modified:  03/26/18
 
 // Standard "Add passge" popup component for RavelTree.
 //
@@ -141,7 +141,7 @@ export default class AddPopup extends React.Component {
                 <TextSans size={12} color={'#808080'}>This will be passage {passageIndex}</TextSans>
                 <TextSans size={12} color={'#808080'}>(Number {passageIndex.split ('-') [0]}, Version {passageIndex.split ('-') [1]}).</TextSans>
               </View>
-              <Button title={'Add'} width={0.30 * width} />
+              <Button title={'Add'} width={0.30 * width} disabled={!this.state.title || !this.state.passage} />
             </View>
           </View>
         </ModalContainer>
