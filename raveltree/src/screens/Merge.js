@@ -79,7 +79,7 @@ class Merge extends Component {
     super (props);
     var screenData = this.props.screenData;
     this.state = {
-      passageIndex: '2-C', // TEMP
+      passageIndex: '2-C', // TEMP: Will inherent from screenData
       showMergeButton: false,
       selectedPassageMetaData: undefined,
       ...this.props.screenData,
@@ -99,7 +99,7 @@ class Merge extends Component {
     // TODO: Backend call.
 
 
-    
+
   }
 
   setScrollParams (params) {

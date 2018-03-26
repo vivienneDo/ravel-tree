@@ -7,9 +7,6 @@
 // TODO: Ellipsis modal menu.
 // TODO: Truncate text (8 lines?)
 // TODO: Limit voting power to 1 per user per passage.
-// TODO: navigateToRavel () and navigateToPassage (): Replace
-//       this.constructor.name with the name of the parent screen. Will have to
-//       retrieve this through props.
 
 'use strict';
 
@@ -57,12 +54,12 @@ class PassageCard extends React.Component {
 
   navigateToRavel (id) {
     var screenData = Object.assign ({}, {ravelID: id});
-    this.props.navigateForward ('Ravel', this.constructor.name, screenData);
+    this.props.navigateForward ('Ravel', this.props.parentScreen, screenData);
   }
 
   navigateToPassage (ravelID, passageID) {
     var screenData = Object.assign ({}, {ravelID: ravelID, passageID: passageID, showModal: 'PassagePopup'});
-    this.props.navigateForward ('Ravel', this.constructor.name, screenData);
+    this.props.navigateForward ('Ravel', this.props.parentScreen, screenData);
   }
 
   onPressEllipsis () {
@@ -79,6 +76,7 @@ class PassageCard extends React.Component {
       passage,
       upvotes,
       downvotes,
+      parentScreen,
       testID,
     } = this.props;
 

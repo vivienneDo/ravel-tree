@@ -1,20 +1,9 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/17/18
-// Modified: 03/13/18
+// Modified: 03/23/18
 //
 // "Your Ravels" screen for RavelTree.
-//
-// Pass in a "ravels" array prop like so:
-//
-// <YourRavels
-//    ravels={[
-//      {ravel: 'Shakespeare on Ice', users: 61, score: 324},
-//      {ravel: 'Where's the Beef?', users: 4, score: 14},
-//      {ravel: 'The Sound of Violins', users: 2, score: 10},
-//      {ravel: 'Something Special', users: 19, score: 123},
-//      {ravel: 'Shallow Waters', users: 1, score: 34},
-//    ]}
-// />
+
 
 import React, { Component } from 'react';
 import {
@@ -46,24 +35,42 @@ const TEST_RAVELS_INVITED = [];
 class YourRavels extends Component {
   constructor (props, context) {
     super (props, context);
+    this.state = {
+      userCreatedRavels: {},
+      ravelsIn:          {},
+      ravelsInvited:     {},
+    };
+
+    this.props.loadInitialCurrentUserCreatedRavel ();
+    this.props.loadNonCreatedCurrentUserRavel ();
+    this.props.getPendingRavelInvite ();
   }
 
-  getRavels () {
-    if (TEST_RAVELS.length == 0) {
-      return (
-        <View style={styles.text}>
-          <TextSans size={14}>You haven&#39;t started any ravels yet.</TextSans>
-        </View>
-      );
+  componentWillReceiveProps (newProps) {
+    if (newProps.all_user_created_ravels) {
+      this.setState ({ userCreatedRavels: newProps.all_user_created_ravels });
     }
+    if (newProps.all_non_created_user_ravel) {
+      this.setState ({ ravelsIn: newProps.all_non_created_user_ravel });
+    }
+    if (newProps.get_pending_invite_ravel) {
+      this.setState ({ ravelsInvited: newProps.get_pending_invite_ravel });
+    }
+  }
+
+  renderRavelStubs (ravels) {
+    console.log (ravels);
     return (
       <View>
-        {TEST_RAVELS.map ((ravel) =>
-          <View key={ravel.ravel} style={styles.ravel}>
+        {ravels.map ((ravel) =>
+          <View key={ravel.ravel_uid} style={styles.ravel}>
             <RavelStub
-               ravel={ravel.ravel}
-               users={ravel.users}
-               score={ravel.score}
+               ravel={ravel.ravel_title}
+               ravelID={ravel.ravel_uid}
+               users={ravel.ravel_number_participants + 1}
+               score={ravel.ravel_points}
+               //author={ravel.user_created} // TODO: Get userID?
+               parentScreen={this.constructor.name}
                {...this.props}
             />
           </View>
@@ -72,24 +79,43 @@ class YourRavels extends Component {
     );
   }
 
+  getRavels () {
+    var userCreatedRavels = Object.values (this.state.userCreatedRavels);
+
+    if (userCreatedRavels.length == 0) {
+      return (
+        <View style={styles.text}>
+          <TextSans size={14}>You haven&#39;t started any ravels yet.</TextSans>
+        </View>
+      );
+    }
+    return (this.renderRavelStubs (userCreatedRavels));
+  }
+
   getRavelsIn () {
-    if (TEST_RAVELS_IN.length == 0) {
+    var ravelsIn = Object.values (this.state.ravelsIn);
+
+    if (ravelsIn.length == 0) {
       return (
         <View style={styles.text}>
           <TextSans size={14}>You&#39;re not participating in anyone else&#39;s ravels yet.</TextSans>
         </View>
       );
     }
+    return (this.renderRavelStubs (ravelsIn));
   }
 
   getRavelsInvited () {
-    if (TEST_RAVELS_INVITED.length == 0) {
+    var ravelsInvited = Object.values (this.state.ravelsInvited);
+
+    if (ravelsInvited.length == 0) {
       return (
         <View style={styles.text}>
           <TextSans size={14}>You haven&#39;t been invited to participate in anyone else&#39;s ravels yet.</TextSans>
         </View>
       );
     }
+    return (this.renderRavelStubs (ravelsInvited));
   }
 
   onPressStartARavel () {
@@ -189,9 +215,17 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps (state) {
+
+  const {
+    all_user_created_ravels,
+    all_non_created_user_ravel,
+    get_pending_invite_ravel,
+  } = state.current_user_ravel;
+
   return {
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreen,
+    all_user_created_ravels,
+    all_non_created_user_ravel,
+    get_pending_invite_ravel,
   };
 }
 

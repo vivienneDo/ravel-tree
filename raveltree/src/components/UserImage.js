@@ -1,6 +1,6 @@
 // Author:   Alex Aguirre
 // Created:  01/20/18
-// Modified: 03/13/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/23/18 by Frank Fusco (fr@nkfus.co)
 //
 // "User Image" component for RavelTree.
 
@@ -30,27 +30,56 @@ class UserImage extends Component<{}> {
     super(props);
     this.state = {
       isActive: this.props.active,
-      photoURL: this.props.currentUserProfile.photoURL,
+      profile: this.props.profile,
+      userID: '',
+      photoURL: undefined,
     };
   }
 
   componentWillMount () {
-    //TODO: Extend for other user images! this.props.getCurrentUserProfile ();
+    if (this.props.profile) {
+      this.setState ({
+        userID: this.props.profile.user_uid,
+        photoURL: this.props.profile.photoURL,
+      });
+    }
+    // else {
+    //   if (this.props.photoURL) {
+    //     this.setState ({ photoURL: this.props.photoURL });
+    //   }
+    //   if (this.props.userID) {
+    //     // Get the profile associated with the user id.
+    //     this.props.getUserProfile (this.props.userID);
+    //   }
+    // }
   }
 
   componentWillReceiveProps (newProps) {
-    if (newProps.currentUserProfile) {
-      this.setState ({
-        isActive: newProps.active,
-        photoURL: newProps.currentUserProfile.photoURL
-      });
+    if (!this.props.photoURL) {
+      if (newProps.userProfile) {
+        if (!this.state.photoURL) {
+          this.setState ({
+            photoURL: newProps.userProfile.photoURL
+          });
+        }
+        this.setState ({
+          userProfile: newProps.userProfile,
+        });
+      }
     }
-}
+  }
+
+  onPressImage () {
+    // Navigate to user profile.
+    var screenData = Object.assign ({}, ...this.state);
+    this.props.navigateForward ('Profile', this.props.activeScreen, screenData);
+  }
 
   render() {
 
     const {
       size,
+      userProfile,
       active,
       disabled,
     } = this.props;
@@ -79,7 +108,7 @@ class UserImage extends Component<{}> {
     ]);
 
     return (
-      <Touchable style={layoutStyles} disabled={disabled} >
+      <Touchable style={layoutStyles} disabled={disabled} onPress={() => this.onPressImage ()}>
 
         <Image
           style = {[imageStyles, this.state.isActive ? styles.active : styles.inactive]}
@@ -112,11 +141,21 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   const {
+    activeScreen,
+  } = state.navigation;
+
+  const {
     currentUserProfile,
   } = state.current_user;
 
+  const {
+    userProfile,
+  } = state.user;
+
   return {
+    activeScreen,
     currentUserProfile,
+    userProfile,
   };
 }
 

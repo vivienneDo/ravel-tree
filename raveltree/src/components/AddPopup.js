@@ -129,12 +129,12 @@ export default class AddPopup extends React.Component {
                 <TextSans size={13} color={'#95989A'}>{passageIndex}</TextSans>
               </View>
               <View style={styles.row2}>
-                <InputText width={'auto'} placeholder={'Type a passage name (e.g., "The Reckoning").'} onChangeText={(text) => this.onChangeTitle (name)} />
+                <InputText width={'auto'} placeholder={'Type a passage name (e.g., "The Reckoning").'} onChangeText={(text) => this.onChangeTitle (text)} />
                 <UserImage {...this.props} size={26}/>
               </View>
             </View>
             <View style={styles.passage}>
-              <InputText height={'100%'} multiline placeholder={'Type your passage (e.g., "It was a dark and stormy night...").'} onChangeText={(text) => this.onChangePassage (name)}/>
+              <InputText height={'100%'} multiline placeholder={'Type your passage (e.g., "It was a dark and stormy night...").'} onChangeText={(text) => this.onChangePassage (text)}/>
             </View>
             <View style={styles.foot}>
               <View style={styles.footText}>

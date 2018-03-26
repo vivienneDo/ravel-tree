@@ -1,18 +1,11 @@
 // Author: Alex Aguirre
 // Created: 02/07/18
-// Modified: 03/09/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/24/18 by Frank Fusco (fr@nkfus.co)
 //
 // "Explore" screen for RavelTree.
 //
-// Pass in an array of ravels as a prop like so:
-//
-// <Explore
-//    ravels={[
-//      {ravel: 'The Tycoon', author: 'Malcolm Masters', users: 6, score: 311, concept: 'A tale of travel, deceit, and unannounced visitors. W.K. Smithson, young heir to a burgeoning furniture import/export empire, must decide between prosperity and his heart when he encounters Millie J., a waitress at an Indonesian beach bar.'},
-//      {ravel: 'Lonely Conclusions', author: 'Anne Jensen', users: 2, score: 128, concept: 'A visitor to a yellow-cake uranium refinery finds that the international regulatory framework for nuclear development is sorely lacking in specificity.'},
-//      {ravel: 'The End of the Road', author: 'Anne Jensen', users: 9, score: 90, concept: 'When the Joneses receive an unexpected visitor, they decide to take matters into their own hands.'},
-//    ]}
-// />
+// TODO: Trending algorithm.
+// TODO: Regular expression-based Firebase queries?
 
 import React, {Component} from 'react';
 import {
@@ -93,9 +86,21 @@ class Explore extends Component<{}> {
       tagCloudWidth: 0,
       tagCloudHeight: TAG_CLOUD_HEIGHT,
       search: undefined,
+      results: {},
     };
   }
 
+  componentWillReceiveProps (newProps) {
+    if (this.state.active == 'title' && newProps.ravel_title_search) {
+      this.setState ({ results: newProps.ravel_title_search });
+    }
+    if (this.state.active == 'tag' && newProps.ravel_tag_search) {
+      this.setState ({ results: newProps.ravel_tag_search });
+    }
+    if (this.state.active == 'category' && newProps.ravel_category_search) {
+      this.setState ({ results: newProps.ravel_category_search });
+    }
+  }
 
   onPressBack () {
     this.props.navigateBack ();
@@ -104,7 +109,22 @@ class Explore extends Component<{}> {
   onChangeText (text) {
     this.setState ({search: text});
 
-    // TODO: Search.
+    switch (this.state.active) {
+      case 'title':
+        this.props.searchRavelByTitle (text);
+        break;
+      case 'tag':
+        this.props.searchRavelByTag ([text]);
+        break;
+      case 'category':
+        this.props.searchRavelByCategory (text);
+        break;
+      case 'trending':
+        // TODO
+        break;
+      default:
+        console.log ('Something\'s wrong.');
+    }
   }
 
   onSetFormState (newState) {
@@ -125,6 +145,7 @@ class Explore extends Component<{}> {
         <View style={styles.input}>
           <InputSearch
             placeholder={this.getPlaceholder ()}
+            autoCapitalize={'none'}
             text={this.state.search}
             onChangeText={(text) => this.onChangeText (text)}
           />
@@ -235,16 +256,20 @@ class Explore extends Component<{}> {
   }
 
   getRavels () {
+    if (!this.state.results) { return; }
+    var results = Object.values (this.state.results);
+
     return (
       <View style={{width: '100%'}}>
-        {TEST_RAVELS.map ((ravel) =>
-          <View key={ravel.ravel} style={styles.ravelCard}>
+        {results.map ((ravel) =>
+          <View key={ravel} style={styles.ravelCard}>
             <RavelCard
-              ravel={ravel.ravel}
+              ravel={ravel.ravel_title}
               author={ravel.author}
-              users={ravel.users}
-              score={ravel.score}
-              concept={ravel.concept}
+              authorImage={ravel.user_created_photoURL}
+              users={ravel.m_ravel_participants.length}
+              score={ravel.ravel_points}
+              concept={ravel.ravel_concept}
               {...this.props}
             />
           </View>
@@ -367,9 +392,17 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps (state) {
+
+  const {
+    ravel_title_search,
+    ravel_tag_search,
+    ravel_category_search,
+  } = state.search;
+
   return {
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreen,
+    ravel_title_search,
+    ravel_tag_search,
+    ravel_category_search,
   };
 }
 

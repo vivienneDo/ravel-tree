@@ -1,6 +1,6 @@
 // Author:   Alex Aguirre
 // Created:  02/03/18
-// Modified: 03/09/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/24/18 by Frank Fusco (fr@nkfus.co)
 //
 // "Ravel Stub" component for RavelTree.
 //
@@ -30,11 +30,30 @@ import IconLeaf from './IconLeaf'
 class RavelStub extends Component<{}> {
   constructor (props) {
     super (props);
+    this.state = {
+      profile: undefined,
+      ravelID: this.props.ravelID,
+      ravelMetaData: undefined,
+    };
+    // Get user profile of author of ravel...
+    this.props.getRavelMetaData (this.props.ravelID);
+  }
+
+  componentWillReceiveProps (newProps) {
+    if (!this.state.ravelMetaData && newProps.ravel_meta_data) {
+      console.log (newProps.ravel_meta_data);
+      this.setState ({ ravelMetaData: newProps.ravel_meta_data });
+      this.props.getUserProfile (newProps.ravel_meta_data.user_created);
+    }
+    if (!this.state.profile && newProps.userProfile) {
+      console.log (newProps.userProfile);
+      this.setState ({ profile: newProps.userProfile });
+    }
   }
 
   onPressStub () {
     var screenData = Object.assign ({}, {ravelID: this.props.ravelID});
-    this.props.navigateForward ('Ravel', this.constructor.name, screenData);
+    this.props.navigateForward ('Ravel', this.props.parentScreen, screenData);
   }
 
   render() {
@@ -43,6 +62,9 @@ class RavelStub extends Component<{}> {
       ravelID,
       users,
       score,
+      author,
+      parentScreen,
+      testID,
     } = this.props;
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
@@ -51,7 +73,7 @@ class RavelStub extends Component<{}> {
       <Touchable onPress={() => this.onPressStub ()} style={styles.container}>
         <View style={styles.left}>
           <View style={styles.userImage}>
-            <UserImage {...this.props} size={26} />
+            <UserImage {...this.props} profile={this.state.profile} /*userID={author}*/ size={26} />
           </View>
           <TextSerif size={16}>{this.props.ravel}</TextSerif>
         </View>
@@ -118,9 +140,27 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps (state) {
+  const {
+    activeScreen,
+  } = state.navigation;
+
+  const {
+    currentUserProfile,
+  } = state.current_user;
+
+  const {
+    userProfile,
+  } = state.user;
+
+  const {
+    ravel_meta_data,
+  } = state.ravel;
+
   return {
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreen,
+    activeScreen,
+    currentUserProfile,
+    userProfile,
+    ravel_meta_data,
   };
 }
 

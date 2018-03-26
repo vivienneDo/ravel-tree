@@ -1,30 +1,13 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/17/18
-// Modified: 03/13/18
+// Modified: 03/24/18
 //
 // Profile screen for RavelTree.
-//
-// Pass in user data as props like so:
-//
-// <Profile
-//    isOwned
-//    user={'Rebecca Bates'}
-//    score={1064}
-//    bio={'Rebecca Bates was born on a dairy farm in upstate New York. Her parents made it a point to rear her with a thorough appreciation of manual labor. She seeks to bring all that appreciation into her writing—though it usually finds its way in there pretty much on its own.\n\nRebecca earned an MFA from Georgetown in 2015. She lives in Manhattan with six pugs.'}
-//    statistics={{
-//      ravelsLed: 5,
-//      ravelsContributedTo: 29,
-//      passagesWritten: 213,
-//      upvotesReceived: 731,
-//    }}
-// />
 //
 // Note: "isOwned" displays the active user's profile, including links to log
 // out and edit content. If false, these elements will be omitted, and
 // "message" and "follow" functions will be added.
 //
-// TODO: Set isOwned locally, checking whether the passed userID matches the
-//       userID of the current user in global Redux state.
 // TODO: Align statistics.
 
 import React, { Component } from 'react';
@@ -76,34 +59,94 @@ const TEST_STATISTICS = {
 class Profile extends Component {
   constructor (props) {
     super (props);
+    // this.state = {
+    //   isOwned: false,
+    //   mode: 'view',
+    //   //showCameraPicker: false,
+    //   //
+    //   // firstName: this.props.currentUserProfile.first_name,
+    //   // lastName: this.props.currentUserProfile.last_name,
+    //   // score: this.props.currentUserProfile.ravel_points,
+    //   // photoURL: this.props.currentUserProfile.photoURL,
+    //   // bio: this.props.currentUserProfile.bio,
+    //   // bioEdit: this.props.currentUserProfile.bio,
+    //   // ravelsLed: this.props.currentUserProfile.stat_ravel_led,
+    //   // ravelsContributedTo: this.props.currentUserProfile.stat_ravel_contributed,
+    //   // passagesWritten: this.props.currentUserProfile.stat_passage_written,
+    //   // upvotesReceived: this.props.currentUserProfile.upvotes,
+    //   //
+    //   ...this.props.screenData,
+    // };
+
+    var profile = this.props.profile || this.props.currentUserProfile;
+
     this.state = {
-      isOwned: this.props.isOwned,
+      profile: profile,
+      isOwned: profile.user_uid == this.props.currentUserProfile.user_uid,
       mode: 'view',
-      //showCameraPicker: false,
-      firstName: this.props.currentUserProfile.first_name,
-      lastName: this.props.currentUserProfile.last_name,
-      score: this.props.currentUserProfile.ravel_points,
-      photoURL: this.props.currentUserProfile.photoURL,
-      bio: this.props.currentUserProfile.bio,
-      bioEdit: this.props.currentUserProfile.bio,
-      ravelsLed: this.props.currentUserProfile.stat_ravel_led,
-      ravelsContributedTo: this.props.currentUserProfile.stat_ravel_contributed,
-      passagesWritten: this.props.currentUserProfile.stat_passage_written,
-      upvotesReceived: this.props.currentUserProfile.upvotes,
+      firstName: profile.first_name,
+      lastName: profile.last_name,
+      score: profile.ravel_points,
+      photoURL: profile.photoURL,
+      bio: profile.bio,
+      bioEdit: profile.bio,
+      ravelsLed: profile.stat_ravel_led,
+      ravelsContributedTo: profile.stat_ravel_contributed,
+      passagesWritten: profile.stat_passage_written,
+      upvotesReceived: profile.upvotes,
       ...this.props.screenData,
     };
+
+
+
+
+    // if (this.props.userID == this.props.currentUserProfile.user_uid) {
+    //   this.state = {
+    //     isOwned: true,
+    //     mode: 'view',
+    //     firstName: this.props.currentUserProfile.first_name,
+    //     lastName: this.props.currentUserProfile.last_name,
+    //     score: this.props.currentUserProfile.ravel_points,
+    //     photoURL: this.props.currentUserProfile.photoURL,
+    //     bio: this.props.currentUserProfile.bio,
+    //     bioEdit: this.props.currentUserProfile.bio,
+    //     ravelsLed: this.props.currentUserProfile.stat_ravel_led,
+    //     ravelsContributedTo: this.props.currentUserProfile.stat_ravel_contributed,
+    //     passagesWritten: this.props.currentUserProfile.stat_passage_written,
+    //     upvotesReceived: this.props.currentUserProfile.upvotes,
+    //     ...this.props.screenData,
+    //   };
+    // } else {
+    //   this.state = {
+    //     isOwned: false,
+    //     mode: 'view',
+    //     firstName: this.props.userProfile.first_name,
+    //     lastName: this.props.userProfile.last_name,
+    //     score: this.props.userProfile.ravel_points,
+    //     photoURL: this.props.userProfile.photoURL,
+    //     bio: this.props.userProfile.bio,
+    //     bioEdit: this.props.userProfile.bio,
+    //     ravelsLed: this.props.userProfile.stat_ravel_led,
+    //     ravelsContributedTo: this.props.userProfile.stat_ravel_contributed,
+    //     passagesWritten: this.props.userProfile.stat_passage_written,
+    //     upvotesReceived: this.props.userProfile.upvotes,
+    //     ...this.props.screenData,
+    //   };
+    // }
   }
 
-  componentWillReceiveProps (newProps) {
-    console.log (newProps);
-    if (newProps.currentUserProfile) {
-      this.setState ({
-        bio: newProps.currentUserProfile.bio,
-        photoURL: newProps.currentUserProfile.photoURL,
-        mode: 'view',
-      });
-    }
-  }
+  // componentWillReceiveProps (newProps) {
+  //   if (newProps.currentUserProfile) {
+  //     this.setState ({
+  //       bio: newProps.currentUserProfile.bio,
+  //       photoURL: newProps.currentUserProfile.photoURL,
+  //       mode: 'view',
+  //     });
+  //   }
+  //   else if (newProps.userProfile) {
+  //
+  //   }
+  // }
 
   onPressChangeImage () {
     SelectImage().then((url) => {
@@ -148,7 +191,6 @@ class Profile extends Component {
 
   render (){
     const {
-      //isOwned,
       user,
       score,
       bio,
@@ -163,7 +205,7 @@ class Profile extends Component {
         </View>
         <View style={styles.top}>
           <View style={styles.topLeft}>
-            <UserImage {...this.props} size={100} />
+            <UserImage {...this.props} profile={this.state.profile} size={100} />
 
             {this.state.isOwned ? (
               <TextLink onPress={() => this.onPressChangeImage ()} size={12}>Change Image</TextLink>
@@ -363,12 +405,17 @@ const mapStateToProps = (state) => {
     currentUserProfile,
   } = state.current_user;
 
+  const {
+    userProfile,
+  } = state.user;
+
   return {
     activeScreen,
     previousScreens,
     showNavBar,
     screenData,
     currentUserProfile,
+    userProfile
   };
 }
 

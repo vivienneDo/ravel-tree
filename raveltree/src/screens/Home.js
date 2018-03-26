@@ -91,6 +91,7 @@ class Home extends Component<{}> {
               upvotes={passage.upvotes}
               downvotes={passage.downvotes}
               testID={passage.testID}
+              parentScreen={this.constructor.name}
               {...this.props}
             />
           </View>
@@ -126,7 +127,7 @@ class Home extends Component<{}> {
           />
         </View>
 
-        <Divider/>
+        <Divider />
 
         {/* User image, profile name, search for a concept, and new ravels */}
         <View style={styles.searchBox}>
@@ -146,7 +147,7 @@ class Home extends Component<{}> {
           </View>
         </View>
 
-        <Divider/>
+        {/*<Divider />*/}
 
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
 
@@ -183,6 +184,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   searchBox: {
+    display: 'none', // TODO: 'Would like to have' search function here...
     width: '100%',
     paddingTop: 12,
     paddingBottom: 6,
