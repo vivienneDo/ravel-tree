@@ -4,23 +4,21 @@
 
 // Standard passage card component for RavelTree.
 //
-// TODO: Ellipsis modal menu.
-// TODO: Truncate text (8 lines?)
+// TODO: 'Report passage' functionality on backend.
 // TODO: Limit voting power to 1 per user per passage.
 
-'use strict';
-
-const ColorPropType = require('ColorPropType');
-const Platform = require('Platform');
-const React = require('React');
-const Dimensions = require('Dimensions');
-const AppRegistry = require('AppRegistry');
-const PropTypes = require('prop-types');
-const StyleSheet = require('StyleSheet');
-const Text = require('Text');
-const TouchableNativeFeedback = require('TouchableNativeFeedback');
-const TouchableOpacity = require('TouchableOpacity');
-const View = require('View');
+import React, {Component} from 'react';
+import {
+  Platform,
+  StyleSheet,
+  Dimensions,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  TouchableNativeFeedback,
+  Alert,
+} from 'react-native';
 
 import { connect } from 'react-redux'
 import _ from 'lodash';
@@ -30,10 +28,18 @@ import TextSans from './TextSans'
 import UserImage from './UserImage'
 import VoteBar from './VoteBar'
 
+// Number of characters of passage text to display on the card.
+PASSAGE_TRUNCATION = 330;
 
 class PassageCard extends React.Component {
   constructor (props, context) {
     super (props, context);
+  }
+
+  componentWillReceiveProps (newProps) {
+    if (newProps.ravel_report_success) {
+      Alert.alert ('Reported', 'Thank you for reporting a violation of RavelTree\'s Terms of Use. We\'ll review your report and take action as necessary.');
+    }
   }
 
   onPressRavel () {
@@ -64,6 +70,40 @@ class PassageCard extends React.Component {
 
   onPressEllipsis () {
     // TODO: Modal options menu ("Share," etc.)
+    var title = this.props.title;
+    var message = 'Choose an action:';
+    var buttons = [
+      {text: 'Report', onPress: () => this.onPressReport ()},
+      {text: 'Share...', onPress: () => this.onPressShare ()},
+      {text: 'Cancel', style: 'cancel'},
+    ];
+    var options = { cancelable: false };
+    Alert.alert (title, message, buttons, options);
+  }
+
+  onPressReport () {
+    var title = 'Confirm Report';
+    var message = 'Are you sure you want to report ' + this.props.title + ' for violating RavelTree\'s Terms of Use? You can\'t undo this.';
+    var buttons = [
+      {text: 'Cancel', style: 'cancel'},
+      {text: 'Report', onPress: () => this.onPressConfirmReport ()},
+    ]
+    var options = { cancelable: false };
+    Alert.alert (title, message, buttons, options);
+  }
+
+  onPressConfirmReport () {
+    console.log ('Reporting ' + this.props.title + '...');
+    this.props.reportRavel (this.props.ravelID); // TODO: 'Report passage' functionality on backend.
+  }
+
+  onPressShare () {
+    console.log ('Opening share menu for ' + this.props.title);
+  }
+
+  shorten (str, maxLen, separator = ' ') {
+    if (!str || str.length <= maxLen) { return str; }
+    return str.substr(0, str.lastIndexOf(separator, maxLen));
   }
 
   render () {
@@ -81,6 +121,8 @@ class PassageCard extends React.Component {
     } = this.props;
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
+
+    var truncatedPassage = this.shorten (passage, PASSAGE_TRUNCATION) + '...';
 
     return (
       <View style={styles.container}>
@@ -102,7 +144,7 @@ class PassageCard extends React.Component {
         </View>
         <Touchable onPress={() => this.onPressPassage ()} style={styles.passage}>
           <TextSerif>
-            {this.props.passage}
+            {truncatedPassage}
           </TextSerif>
         </Touchable>
         <View style={styles.buttons}>
@@ -164,6 +206,10 @@ const mapStateToProps = (state) => {
     activeScreen,
     previousScreens,
   } = state.navigation;
+
+  const {
+    ravel_report_success,
+  } = state.report_status;
 
   return {
     activeScreen,
