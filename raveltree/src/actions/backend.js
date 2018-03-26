@@ -10,7 +10,7 @@
     var nodeCount = { 0:0 }; 
     var has_children = false; 
 
-   - 3/25/2017 - VD Do - 
+   - 3/25/2017 - VD Do - Added passage functions 
  */
 
 import firebase from 'firebase';
@@ -731,10 +731,10 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
     var public_cat_fiction = false; 
     var public_cat_nonfiction = false;
     var public_cat_other = false;
-    var roots = {root:true}; 
+    //var roots = {root:true}; 
     var level_count = 0; 
     var nodeCount = { 0:0 }; 
-    var has_children = false; 
+    var has_child = false; 
 
 
     if (visibility === true) {
@@ -774,7 +774,7 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
             .push({ user_created, user_created_photoURL, ravel_title, ravel_category, passage_length,
                 visibility, enable_voting, enable_comment, ravel_concept, ravel_status,ravel_number_participants,
                 ravel_participants, m_ravel_participants, ravel_create_date, public_tag_set, ravel_points, public_ravel_title,
-                public_cat_fiction, public_cat_nonfiction, public_cat_other, roots, level_count, nodeCount, has_children})
+                public_cat_fiction, public_cat_nonfiction, public_cat_other, level_count, nodeCount, has_child})
             .then(returnKey => {
                 ravel_uid = returnKey.getKey();
                 firebase.database().ref(`/ravels/${ravel_uid}/ravel_uid`).set(ravel_uid);
@@ -842,8 +842,14 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
  */
 export const getRavelMetaData = (ravel_uid) => {
     return (dispatch) => {
-        firebase.database().ref(`/ravels/${ravel_uid}`).once('value', function (snapshot) {
-            dispatch({ type: 'GET_RAVEL_META_DATA', payload: snapshot.val()})
+
+        calculateNodeCountOnRavelFetch(ravel_uid)
+        .then(() => {
+
+            firebase.database().ref(`/ravels/${ravel_uid}`).once('value', function (snapshot) {
+                dispatch({ type: 'GET_RAVEL_META_DATA', payload: snapshot.val()})
+            })
+
         })
         .catch((error) => {
             alert('Error getting metadata for ravels...')
@@ -1422,7 +1428,7 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
                     })
                     .then(() => {
                         firebase.database().ref(`/passages/${ravel_uid}`)
-                            .push({parent, level, passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
+                            .push({level, passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
                             .then(returnKey => {
                                 passage_uid = returnKey.getKey();
         
@@ -1649,8 +1655,9 @@ export const checkParticipantExistRavel = (ravel_uid) => {
         var valueOfKey = false;
         var currentUid = firebase.auth().currentUser.uid;
         var snapShotVal;
-        firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).orderByKey().once('value', (snapshot) => {
-
+        firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).once('value', (snapshot) => {
+            console.log('ravel uid = ' + ravel_uid);
+            console.log('Current uid = ' + currentUid);
             if (snapshot.val() === true) {
                 valueOfKey = true
             }                   
@@ -1922,6 +1929,94 @@ export const addPassageToRavelLevelTree = (ravel_uid, level, passage_uid) => {
 
     })
 }
+
+/** CALCULATE NODECOUNT{} in ravel */
+export const calculateNodeCountOnRavelFetch= (ravel_uid) => {
+    
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        var m_level_count = 0;
+             
+
+        firebase.database().ref(`ravels/${ravel_uid}/level_count`).once('value', (snapshot) => {
+            m_level_count = snapshot.val()
+        })
+        .then(() => {
+
+            if (m_level_count <= 0) {
+
+                valueOfKey = true;
+
+            } else {
+                var m_nodeCount = [];
+                var m_numChildOnLevel = [];
+                
+
+                for( var i = 0; i < m_level_count; i++) {
+
+                    console.log('level count = ' + i);
+
+                    
+                    firebase.database().ref(`ravel_level_passage/${ravel_uid}/${i + 1}`).once('value', (snapshot) => {
+    
+                        m_numChildOnLevel.push(snapshot.numChildren());
+                        
+                    })
+                    .then(() => {
+                        var i = 0; 
+
+                        m_numChildOnLevel.forEach(elm => {
+                            firebase.database().ref(`ravels/${ravel_uid}/nodeCount/${i + 1} `).set(elm);
+                            i++;
+                        })
+                    })
+                   
+    
+                }
+
+                valueOfKey = true;
+
+            }
+
+        })                      
+        .then(() => {
+            console.log('At the end return');
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+            
+
+    })
+}
+
+export const getPassageUidOnLevel = (ravel_uid, level) => {
+
+    var currentUid = firebase.auth().currentUser.uid;
+
+    return (dispatch) => {
+
+        firebase.database().ref(`ravel_level_passage/${ravel_uid}/${level}`).orderByKey().once('value', (snapshot) => {
+            dispatch({ type: 'FETCH_ALL_PASSAGE_UID_ON_LEVEL', payload: snapshot.val()})
+        })
+        .catch((error) => {
+            alert('Error loading user participated ravels...')
+        }) 
+
+    }
+
+   
+}
+
 
 // TODO
 // Return false if FAIL, true if success

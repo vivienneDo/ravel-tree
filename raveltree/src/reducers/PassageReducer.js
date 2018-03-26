@@ -5,7 +5,8 @@ const initialState = {
     passage_remove_comment_is_succcess: false,
     passage_vote_is_success: false,
     passage_comment_fetch_is_success: false,
-    passage_meta_data_fetch_is_success: false
+    passage_meta_data_fetch_is_success: false,
+    passage_uid_on_level: []
 };
 
 export default (state = initialState, action) => {
@@ -44,6 +45,11 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 passage_meta_data_fetch_is_success: action.payload
+            }
+        case 'FETCH_ALL_PASSAGE_UID_ON_LEVEL':
+            return {
+                ...state,
+                passage_uid_on_level: action.payload
             }
         default:
             return state;
