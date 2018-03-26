@@ -1347,10 +1347,10 @@ export const searchRavelByCategory = (category) => {
 /** PASSAGE FUNCTIONS */
 
 /**
- * TODO: RE-WORK TO SUPPORT LEVEL FIELD, PARENT[], CHILD[] AND ADD PASSAGE_UID TO PARAMS, where 
+ * 
  *       level: level that the passage is on 
- *       parent[]: list of parent_passage_uid 
- *       child[]: list of child_passage_uid
+ *       parent{}: list of parent_passage_uid 
+ *       child{}: list of child_passage_uid
  * @param {*} {ravel_uid, passage_title, passage_body}
  * @returns {*} 
  * 
@@ -1374,14 +1374,15 @@ export const searchRavelByCategory = (category) => {
  *                  - this.props.passage_meta_data.user_created_photoURL
  *                  - this.props.passage_meta_data.level
  *                  - this.props.passage_meta_data.parent{}
- *                  - this.props.passage_meta_data.children{}
+ *                  - this.props.passage_meta_data.child{}
  * 
  * mapStateToProps => state = passage_meta_data_fetch_is_success = 
  * state.passage 
  *              <3>'ON_GET_PASSAGE_META_DATA_SUCCESS' - returns true on success, false on fail 
  *                  - this.props.passage.passage_meta_data_fetch_is_success
  *          
- * actions: adds a new passage to the db and sets all of the meta data field. Updates the current userProfile : stat_passage_written
+ * actions: Checks if current user is in ravel participant field. Checks if this is the first passage 
+ *          to be added to this ravel. If so, adds a new initial passage to the db and sets all of the meta data field. Updates the current userProfile : stat_passage_written
  *          field to be +1 what is currently stored. Fires an update function that will re-calc the userProfile : ravel_points field 
  *          to reflect these changes. Returns the meta data for the newly added passage. 
  */
@@ -1409,6 +1410,7 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
         if (valueOfKey) {
 
             checkRavelHasChild(ravel_uid).then(valueOfKey => {
+
                 if (valueOfKey) {
 
                     console.log('ravel has child value' + valueOfKey); 
@@ -1510,6 +1512,45 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
     }
 }
 
+/**
+ * 
+ *       level: level that the passage is on 
+ *       parent{}: list of parent_passage_uid 
+ *       child{}: list of child_passage_uid
+ * @param {*} {ravel_uid, parent_passage_uid, passage_title, passage_body}
+ * @returns {*} 
+ * 
+ * mapStateToProps = state => passage_uid =
+ * state.passage
+ *              <1> 'CREATE_PASSAGE' - returns the passage_uid that was just created
+ *                  - this.props.passage.passage_uid
+ * 
+ * mapStateToProps = state => passage_meta_data =
+ * state.passage
+ *              <2> 'GET_PASSAGE_META_DATA' - attempts to get the metadata from a passage just created
+ *                  - this.props.passage_meta_data.passage_body
+ *                  - this.props.passage_meta_data.passage_create_date
+ *                  - this.props.passage_meta_data.passage_downvote
+ *                  - this.props.passage_meta_data.passage_combined_vote
+ *                  - this.props.passage_meta_data.passage_title
+ *                  - this.props.passage_meta_data.passage_upvote
+ *                  - this.props.passage_meta_data.ravel_title
+ *                  - this.props.passage_meta_data.ravel_uid
+ *                  - this.props.passage_meta_data.user_created
+ *                  - this.props.passage_meta_data.user_created_photoURL
+ *                  - this.props.passage_meta_data.level
+ *                  - this.props.passage_meta_data.parent{}
+ *                  - this.props.passage_meta_data.child{}
+ * 
+ * mapStateToProps => state = passage_meta_data_fetch_is_success = 
+ * state.passage 
+ *              <3>'ON_GET_PASSAGE_META_DATA_SUCCESS' - returns true on success, false on fail 
+ *                  - this.props.passage.passage_meta_data_fetch_is_success
+ *          
+ * actions: adds a new passage to the db and sets all of the meta data field. Updates the current userProfile : stat_passage_written
+ *          field to be +1 what is currently stored. Fires an update function that will re-calc the userProfile : ravel_points field 
+ *          to reflect these changes. Returns the meta data for the newly added passage. 
+ */
 export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passage_body}) => {
 
     const { currentUser } = firebase.auth();
@@ -1648,6 +1689,12 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
 }
 
 
+/**
+ * 
+ * @param {*} ravel_uid
+ * @returns {*} promise, true on success, false on fail 
+ * actions: Checks if current user that is attempting to add new passage is a participant in a particular ravel
+ */
 export const checkParticipantExistRavel = (ravel_uid) => {
     
     return new Promise((resolve,reject) => {
@@ -1678,6 +1725,12 @@ export const checkParticipantExistRavel = (ravel_uid) => {
 }
 
 
+/**
+ * 
+ * @param {*} ravel_uid
+ * @returns {*} promise, true on success, false on fail 
+ * actions: Checks if ravel has initial passage yet. 
+ */
 export const checkRavelHasChild = (ravel_uid) => {
     
     return new Promise((resolve,reject) => {
@@ -1706,7 +1759,12 @@ export const checkRavelHasChild = (ravel_uid) => {
     })
 }
 
-// Returns level_count on a ravel 
+/**
+ * 
+ * @param {*} ravel_uid
+ * @returns {*} promise, number of levels a ravel has 
+ * actions: Checks the level_count of a ravel 
+ */
 export const checkRavelLevel = (ravel_uid) => {
     
     return new Promise((resolve,reject) => {
@@ -1735,7 +1793,12 @@ export const checkRavelLevel = (ravel_uid) => {
     })
 }
 
-// Return false if FAIL, true if success
+/**TODO: CALL THIS FUNCTION ON onPassageForkLevelOne() 
+ * 
+ * @param {*} ravel_uid
+ * @returns {*} promise, true on success, false on fail 
+ * actions: Attempts to add initial passage to root list 
+ */
 export const addPassageToRavelRootList = (ravel_uid, passage_uid) => {
     
     return new Promise((resolve,reject) => {
@@ -1763,8 +1826,12 @@ export const addPassageToRavelRootList = (ravel_uid, passage_uid) => {
     })
 }
 
-// Return false if FAIL, true if success
-// passage_uid indicates child_passage_uid 
+/**
+ * 
+ * @param {*} ravel_uid, parent_passage_uid, passage_uid
+ * @returns {*} promise, true on success, false on fail 
+ * actions: Attempts to add the child passage uid to the parent passage uid 'child{}' field 
+ */
 export const addChildPassageToParentPassage = (ravel_uid, parent_passage_uid, passage_uid) => {
     
     return new Promise((resolve,reject) => {
@@ -1792,8 +1859,12 @@ export const addChildPassageToParentPassage = (ravel_uid, parent_passage_uid, pa
     })
 }
 
-// Return false if FAIL, true if success
-// passage_uid indicates child_passage_uid 
+/**
+ * 
+ * @param {*} ravel_uid, parent_passage_uid, passage_uid
+ * @returns {*} promise, true on success, false on fail 
+ * actions: Attempts to add the parent passage uid to the child passage uid 'parent{}' field 
+ */
 export const addParentPassageToChildPassage = (ravel_uid, parent_passage_uid, passage_uid) => {
     
     return new Promise((resolve,reject) => {
@@ -1822,8 +1893,14 @@ export const addParentPassageToChildPassage = (ravel_uid, parent_passage_uid, pa
 }
 
 
-// Return false if FAIL, true if success
-// Updates ravel level_count by 1 on addPassage() function call!! Do not call when initialPassage() is called 
+/**
+ * 
+ * @param {*} ravel_uid
+ * @returns {*} promise, true on success, false on fail 
+ * actions: Attempts to updates ravel level_count by 1 on addPassage() or addInitialPassage()
+ *          
+ */
+
 export const updateRavelLevelCountByIncrementOne = (ravel_uid) => {
     
     return new Promise((resolve,reject) => {
@@ -1862,8 +1939,13 @@ export const updateRavelLevelCountByIncrementOne = (ravel_uid) => {
     })
 }
 
-// Return 0 if false, number if success
-// Add passage takes the parent_passage_uid and +1 the child's
+/**
+ * 
+ * @param {*} ravel_uid, parent_passage_uid, passage_uid
+ * @returns {*} promise, true on success, false on fail 
+ * actions: Attempts to Add passage takes the parent_passage_uid and +1 the child's
+ *          
+ */
 export const updateAddPassageLevel = (ravel_uid, parent_passage_uid, passage_uid) => {
     
     return new Promise((resolve,reject) => {
@@ -1901,8 +1983,12 @@ export const updateAddPassageLevel = (ravel_uid, parent_passage_uid, passage_uid
     })
 }
 
-// Return false if FAIL, true if success
-// set a new passage_uid under ravel_level_passsage/${ravel_uid}/${level}/${passage_uid}
+
+/**
+ * @param {*} ravel_uid, parent_passage_uid, passage_uid
+ * @returns {*} promise, true on success, false on fail 
+ * actions: Attempts to set a new passage_uid under ravel_level_passsage/${ravel_uid}/${level}/${passage_uid}         
+ */
 export const addPassageToRavelLevelTree = (ravel_uid, level, passage_uid) => {
     
     return new Promise((resolve,reject) => {
@@ -1931,6 +2017,14 @@ export const addPassageToRavelLevelTree = (ravel_uid, level, passage_uid) => {
 }
 
 /** CALCULATE NODECOUNT{} in ravel */
+
+/**
+ * 
+ * @param {*} ravel_uid
+ * @returns {*} promise, true on success, false on fail 
+ * actions: Attempts to calculate nodeCount field on getRavelMetaData()
+ *          
+ */
 export const calculateNodeCountOnRavelFetch= (ravel_uid) => {
     
     return new Promise((resolve,reject) => {
@@ -1958,8 +2052,6 @@ export const calculateNodeCountOnRavelFetch= (ravel_uid) => {
 
                 for( var i = 0; i < m_level_count; i++) {
 
-                    console.log('level count = ' + i);
-
                     
                     firebase.database().ref(`ravel_level_passage/${ravel_uid}/${i + 1}`).once('value', (snapshot) => {
     
@@ -1984,7 +2076,6 @@ export const calculateNodeCountOnRavelFetch= (ravel_uid) => {
 
         })                      
         .then(() => {
-            console.log('At the end return');
             return valueOfKey
         })
         .then((valueOfKey) => {
@@ -1999,6 +2090,21 @@ export const calculateNodeCountOnRavelFetch= (ravel_uid) => {
     })
 }
 
+/**
+ * @param {*} ravel_uid, level
+ * @returns {*} DISPATCH 'FETCH_ALL_PASSAGE_UID_ON_LEVEL' 
+ * mapStateToProps => state = passage_uid_level_list
+ * state.passages 
+ *                  <1> FETCH_ALL_PASSAGE_UID_ON_LEVEL - list of passage uids in the form of key,pair : <uid:true>
+ *                  this.props.passages.passage_uid_level_list
+ * 
+ * mapStateToProps => state = passage_level_fetch_is_success
+ * state.passages 
+ *                  <2> 'FETCH_ALL_PASSAGE_UID_ON_LEVEL_ON_SUCCESS' - true on success, false on fail 
+ * 
+ * 
+ * actions: Attempts to get a list of passage uids on the passed in level         
+ */
 export const getPassageUidOnLevel = (ravel_uid, level) => {
 
     var currentUid = firebase.auth().currentUser.uid;
@@ -2007,8 +2113,13 @@ export const getPassageUidOnLevel = (ravel_uid, level) => {
 
         firebase.database().ref(`ravel_level_passage/${ravel_uid}/${level}`).orderByKey().once('value', (snapshot) => {
             dispatch({ type: 'FETCH_ALL_PASSAGE_UID_ON_LEVEL', payload: snapshot.val()})
+            
+        })
+        .then(() => {
+            dispatch({ type: 'FETCH_ALL_PASSAGE_UID_ON_LEVEL_ON_SUCCESS', payload: true})
         })
         .catch((error) => {
+            dispatch({ type: 'FETCH_ALL_PASSAGE_UID_ON_LEVEL_ON_SUCCESS', payload: false})
             alert('Error loading user participated ravels...')
         }) 
 
