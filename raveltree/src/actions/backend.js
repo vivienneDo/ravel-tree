@@ -2309,6 +2309,102 @@ export const downVotePassageHelper = (ravel_uid, passage_uid) => {
 
 }
 
+
+export const userUpVoteTrackerHelper = (ravel_uid, passage_uid) => {
+    
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`track_user_vote/${ravel_uid}/${passage_uid}/${currentUid}`).set(true)
+        .then(() => {
+            valueOfKey = true;
+        })                        
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+            
+
+    })
+}
+
+export const checkUserVoteTrackerHelper = (ravel_uid, passage_uid) => {
+    
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`track_user_vote/${ravel_uid}/${passage_uid}/${currentUid}`).once('value', (snapshot) => {
+
+            if (snapshot.val()) {
+
+                // User has upvoted
+                valueOfKey = true;
+
+            } else if (snapshot.val() === false) {
+                valueOfKey = false;
+                // User has downvoted 
+            } else {
+                // User has never voted before 
+                valueOfKey = true; 
+            }
+        })                       
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+            
+
+    })
+}
+
+
+export const userDownVoteTrackerHelper = (ravel_uid, passage_uid) => {
+    
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`track_user_vote/${ravel_uid}/${passage_uid}/${currentUid}`).set(false)
+        .then(() => {
+            valueOfKey = true;
+        })                        
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+            
+
+    })
+}
+
+
+
 /** TO DO  
 * Function that gets a ravel's particular passage, will do after talking about structure 
 */
