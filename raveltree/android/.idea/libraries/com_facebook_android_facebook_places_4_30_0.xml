@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="com.facebook.android:facebook-places-4.30.0">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../node_modules/react-native-fbsdk/android/build/intermediates/exploded-aar/com.facebook.android/facebook-places/4.30.0/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../node_modules/react-native-fbsdk/android/build/intermediates/exploded-aar/com.facebook.android/facebook-places/4.30.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/facebook-places-4.30.0.aar/440c741637e076ece241e0dd57b0efa1/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/facebook-places-4.30.0.aar/440c741637e076ece241e0dd57b0efa1/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

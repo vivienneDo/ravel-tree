@@ -4,16 +4,8 @@
             "outputFile": "C:\\Users\\joe45\\Desktop\\GitHub\\ravel-tree\\raveltree\\android\\app\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values-v12\\values-v12.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\joe45\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-23.0.1.aar\\6b1793bfdd7645c2dfc0dee2ec697523\\res\\values-v12\\values-v12.xml",
+                    "source": "C:\\Users\\joe45\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\118bb617c43e70f572b638f3a4daace1\\res\\values-v12\\values-v12.xml",
                     "from": {
-                        "startLines": "4,7,10,11",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "285,509,709,828",
-                        "endLines": "6,9,10,11",
-                        "endColumns": "12,12,118,94",
-                        "endOffsets": "504,704,823,918"
-                    },
-                    "to": {
                         "startLines": "2,5,8,9",
                         "startColumns": "4,4,4,4",
                         "startOffsets": "55,279,479,598",

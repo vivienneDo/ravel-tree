@@ -8,16 +8,20 @@ package com.facebook.fbui.textlayoutbuilder;
 
 public final class R {
     public static final class styleable {
-        public static final int[] TextAppearance = { 0x01010095, 0x01010096, 0x01010097, 0x01010098, 0x01010161, 0x01010162, 0x01010163, 0x01010164, 0x7f0200c2 };
+        public static final int[] TextAppearance = { 0x01010095, 0x01010096, 0x01010097, 0x01010098, 0x0101009a, 0x0101009b, 0x01010161, 0x01010162, 0x01010163, 0x01010164, 0x010103ac, 0x7f03008e, 0x7f030103 };
         public static final int TextAppearance_android_textSize = 0;
         public static final int TextAppearance_android_typeface = 1;
         public static final int TextAppearance_android_textStyle = 2;
         public static final int TextAppearance_android_textColor = 3;
-        public static final int TextAppearance_android_shadowColor = 4;
-        public static final int TextAppearance_android_shadowDx = 5;
-        public static final int TextAppearance_android_shadowDy = 6;
-        public static final int TextAppearance_android_shadowRadius = 7;
-        public static final int TextAppearance_textAllCaps = 8;
+        public static final int TextAppearance_android_textColorHint = 4;
+        public static final int TextAppearance_android_textColorLink = 5;
+        public static final int TextAppearance_android_shadowColor = 6;
+        public static final int TextAppearance_android_shadowDx = 7;
+        public static final int TextAppearance_android_shadowDy = 8;
+        public static final int TextAppearance_android_shadowRadius = 9;
+        public static final int TextAppearance_android_fontFamily = 10;
+        public static final int TextAppearance_fontFamily = 11;
+        public static final int TextAppearance_textAllCaps = 12;
         public static final int[] TextStyle = { 0x01010034, 0x01010095, 0x01010097, 0x01010098, 0x010100ab, 0x01010153, 0x0101015d, 0x01010161, 0x01010162, 0x01010163, 0x01010164 };
         public static final int TextStyle_android_textAppearance = 0;
         public static final int TextStyle_android_textSize = 1;

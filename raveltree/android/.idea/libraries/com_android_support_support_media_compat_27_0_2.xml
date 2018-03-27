@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="com.android.support:support-media-compat-27.0.2">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../node_modules/react-native-fbsdk/android/build/intermediates/exploded-aar/com.android.support/support-media-compat/27.0.2/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../node_modules/react-native-fbsdk/android/build/intermediates/exploded-aar/com.android.support/support-media-compat/27.0.2/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/e28d5939f550976d2ab7b4f9adc0c86b/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/e28d5939f550976d2ab7b4f9adc0c86b/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

@@ -4,20 +4,13 @@
             "outputFile": "C:\\Users\\joe45\\Desktop\\GitHub\\ravel-tree\\raveltree\\android\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-xlarge-v4\\values-xlarge-v4.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\joe45\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-23.0.1.aar\\6b1793bfdd7645c2dfc0dee2ec697523\\res\\values-xlarge\\values-xlarge.xml",
+                    "source": "C:\\Users\\joe45\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\118bb617c43e70f572b638f3a4daace1\\res\\values-xlarge-v4\\values-xlarge-v4.xml",
                     "from": {
-                        "startLines": "4,7,8,9,10,11,12",
-                        "startColumns": "4,4,4,4,4,4,4",
-                        "startOffsets": "282,587,651,718,785,851,917",
-                        "endColumns": "76,63,66,66,65,65,54",
-                        "endOffsets": "354,646,713,780,846,912,967"
-                    },
-                    "to": {
-                        "startLines": "2,3,4,5,6,7,8",
-                        "startColumns": "4,4,4,4,4,4,4",
-                        "startOffsets": "55,132,196,263,330,396,462",
-                        "endColumns": "76,63,66,66,65,65,54",
-                        "endOffsets": "127,191,258,325,391,457,512"
+                        "startLines": "2,3,4,5,6,7",
+                        "startColumns": "4,4,4,4,4,4",
+                        "startOffsets": "55,126,197,267,337,405",
+                        "endColumns": "70,70,69,69,67,67",
+                        "endOffsets": "121,192,262,332,400,468"
                     }
                 }
             ]
