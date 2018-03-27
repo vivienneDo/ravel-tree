@@ -18,8 +18,8 @@ import {
 import { MKTextField, MKColor, MKButton } from 'react-native-material-kit';
 import firebase from 'firebase';
 import { connect} from 'react-redux';
-import * as actions from '../actions';
-import { updateUserProfile } from '../actions';
+import * as actions from '../actions/backend';
+import { updateUserProfile } from '../actions/backend';
 import RTLogoText from '../components/RTLogoText';
 import TextLink from '../components/TextLink';
 import TextHeader from '../components/TextHeader'
@@ -79,8 +79,12 @@ class FBLoginComponent extends Component {
                                     firebase.database().ref(`/users/${firebase.auth().currentUser.uid}/userProfile`)
                                     updateUserProfile(user, {first_name:results['first_name'],last_name:results['last_name'],bio:'',photoURL:'', stat_ravel_led:0, stat_passage_written:0, stat_ravel_contributed:0, 
                                         upvotes:0, ravel_points:0 });
+                                        console.log('NEW UPDATE')
                                         firebase.database().ref(`/master_user_key/${user.uid}`).set({
                                             user_uid: true})
+                                            .then(() => {
+                                                firebase.database().ref(`notification_list/${user.uid}`).set(true)
+                                            })
                                 }
                             });
                             
