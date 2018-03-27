@@ -1,0 +1,4 @@
+#Wed Feb 07 12:47:02 EST 2018
+base.0=C\:\\Users\\joe45\\Desktop\\GitHub\\ravel-tree\\raveltree\\android\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\3
+path.0=classes.dex
+renamed.0=classes.dex

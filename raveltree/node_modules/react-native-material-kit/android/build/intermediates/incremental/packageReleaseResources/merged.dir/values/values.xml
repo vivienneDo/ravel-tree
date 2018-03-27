@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="mk_spinner_stroke_colors">
+        <item>@color/mdl_palette_blue_400</item>
+        <item>@color/mdl_palette_red_500</item>
+        <item>@color/mdl_palette_yellow_600</item>
+        <item>@color/mdl_palette_green_500</item>
+    </integer-array>
+    <color name="mdl_indigo">#3F51B5</color>
+    <color name="mdl_palette_blue_400">#42a5f5</color>
+    <color name="mdl_palette_green_500">#4caf50</color>
+    <color name="mdl_palette_red_500">#f44336</color>
+    <color name="mdl_palette_yellow_600">#fdd835</color>
+    <declare-styleable name="MKSpinner"><attr format="reference" localization="suggested" name="mk_spinnerStrokeColors"/><attr format="dimension" localization="suggested" name="mk_spinnerStrokeWidth"/><attr format="integer" localization="suggested" name="mk_spinnerAniDuration"/></declare-styleable>
+    <declare-styleable name="TickView"><attr format="color" localization="suggested" name="mk_tickFillColor"/><attr format="dimension" localization="suggested" name="mk_tickInset"/></declare-styleable>
+    <dimen name="mk_spinner_height">28dp</dimen>
+    <dimen name="mk_spinner_stroke_width">3dp</dimen>
+    <dimen name="mk_spinner_width">28dp</dimen>
+    <dimen name="mk_tick_inset">1dp</dimen>
+    <integer name="mk_spinner_ani_duration">1333</integer>
+</resources>
