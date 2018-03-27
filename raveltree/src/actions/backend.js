@@ -2193,29 +2193,75 @@ export const upVotePassage = (ravel_uid, passage_uid) => {
         
         checkRavelEnabledVoting(ravel_uid, passage_uid).then(valueOfKey => {
 
-            if (valueOfKey) {
-                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+            
 
-                    upvotes = snapshot.val() + 1
+            if (valueOfKey) {
+
+                checkUserVoteTrackerHelper(ravel_uid, passage_uid).then(valueOfKey => {
+
+                    if (valueOfKey) {
+                        // Ask Frank what he wants set back 
+                        alert('User has already upvoted this passage...')
+
+    
+                    } else if(valueOfKey === false) {
+
+                        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+
+                            upvotes = snapshot.val() + 1
+                        })
+                        .then(() => {
+                            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes, passage_combined_vote: upvotes});                  
+                        })
+                        .then(() => {
+                            firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
+                                passage_creator_uid = snapshot.val();
+                            })
+                            .then(() => {
+                                firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : upvotes})
+                                
+                            })
+                            .then(() => {
+                                userRavelPointCalculationHelper(passage_creator_uid);
+                            })
+                            .then(() => {
+                                dispatch({type: 'ON_VOTE_SUCCESS', payload: true})
+                            })
+                        })
+                    } else {
+
+                        // Add them to upvote tracker list 
+
+                            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+
+                                upvotes = snapshot.val() + 1
+                            })
+                            .then(() => {
+                                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes, passage_combined_vote: upvotes});                  
+                            })
+                            .then(() => {
+                                firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
+                                    passage_creator_uid = snapshot.val();
+                                })
+                                .then(() => {
+                                    firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : upvotes})
+                                    
+                                })
+                                .then(() => {
+                                    userRavelPointCalculationHelper(passage_creator_uid);
+                                })
+                                .then(() => {
+
+                                    userUpVoteTrackerHelper(ravel_uid, passage_uid);
+                                })
+                                .then(() => {
+                                    dispatch({type: 'ON_VOTE_SUCCESS', payload: true})
+                                })
+                            })
+
+                    }
                 })
-                .then(() => {
-                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes, passage_combined_vote: upvotes});                  
-                })
-                .then(() => {
-                    firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
-                        passage_creator_uid = snapshot.val();
-                    })
-                    .then(() => {
-                        firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : upvotes})
-                        
-                    })
-                    .then(() => {
-                        userRavelPointCalculationHelper(passage_creator_uid);
-                    })
-                    .then(() => {
-                        dispatch({type: 'ON_VOTE_SUCCESS', payload: true})
-                    })
-                })
+
             } else {
                 dispatch({type: 'ON_VOTE_SUCCESS', payload: false})
                 alert('This ravel does not have voting enabled...')
@@ -2253,32 +2299,78 @@ export const downVotePassage = (ravel_uid, passage_uid) => {
 
             if (valueOfKey) {
 
-                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_combined_vote`).once('value', (snapshot) => {
+                checkUserVoteTrackerHelper(ravel_uid, passage_uid).then(valueOfKey => {
+                    if (valueOfKey === false) {
+                        // Add return value for Frank to know user has already downvoted and is attempting to re-downvote 
+                        alert('User has already voted for this ravel')
+                    } else if (valueOfKey) {
 
-                    total_votes = snapshot.val() - 1
-                })
-                .then(() => {
-                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ passage_combined_vote : total_votes });                    
-                })
-                .then(() => {
-                    firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
-                        passage_creator_uid = snapshot.val();
-                        user_uid = snapshot.val()
-                    })
-                    .then(() => {
-                        firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : total_votes})
+                        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_combined_vote`).once('value', (snapshot) => {
 
-                    })
-                    .then(() => {
-                        userRavelPointCalculationHelper(passage_creator_uid);
-                    })
-                    .then(() => {
-                        downVotePassageHelper(ravel_uid, passage_uid);
-                    })
-                    .then(() => {
-                        dispatch({type: 'ON_VOTE_SUCCESS', payload: true})
-                    })
+                            total_votes = snapshot.val() - 1
+                        })
+                        .then(() => {
+                            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ passage_combined_vote : total_votes });                    
+                        })
+                        .then(() => {
+                            firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
+                                passage_creator_uid = snapshot.val();
+                                user_uid = snapshot.val()
+                            })
+                            .then(() => {
+                                firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : total_votes})
+        
+                            })
+                            .then(() => {
+                                userRavelPointCalculationHelper(passage_creator_uid);
+                            })
+                            .then(() => {
+                                downVotePassageHelper(ravel_uid, passage_uid);
+                            })
+                            .then(() => {
+                                userDownVoteTrackerHelper(ravel_uid, passage_uid);
+                            })
+                            .then(() => {
+                                dispatch({type: 'ON_VOTE_SUCCESS', payload: true})
+                            })
+                        })
+                    } else {
+                        
+                        // First time downvoting, add them to tracker downvote list  
+
+                        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_combined_vote`).once('value', (snapshot) => {
+
+                            total_votes = snapshot.val() - 1
+                        })
+                        .then(() => {
+                            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ passage_combined_vote : total_votes });                    
+                        })
+                        .then(() => {
+                            firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
+                                passage_creator_uid = snapshot.val();
+                                user_uid = snapshot.val()
+                            })
+                            .then(() => {
+                                firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : total_votes})
+        
+                            })
+                            .then(() => {
+                                userRavelPointCalculationHelper(passage_creator_uid);
+                            })
+                            .then(() => {
+                                downVotePassageHelper(ravel_uid, passage_uid);
+                            })
+                            .then(() => {
+                                userDownVoteTrackerHelper(ravel_uid, passage_uid);
+                            })
+                            .then(() => {
+                                dispatch({type: 'ON_VOTE_SUCCESS', payload: true})
+                            })
+                        })
+                    }
                 })
+
+                
             } else {
                 dispatch({type: 'ON_VOTE_SUCCESS', payload: false})
                 alert('This ravel does not have comment enabled...')
@@ -2349,15 +2441,18 @@ export const checkUserVoteTrackerHelper = (ravel_uid, passage_uid) => {
 
             if (snapshot.val()) {
 
-                // User has upvoted
+                // User has upvoted already 
                 valueOfKey = true;
 
             } else if (snapshot.val() === false) {
+
+                // User has downvoted already 
                 valueOfKey = false;
-                // User has downvoted 
+                
             } else {
+                valueOfKey = 0; 
                 // User has never voted before 
-                valueOfKey = true; 
+                
             }
         })                       
         .then(() => {
@@ -2383,7 +2478,7 @@ export const userDownVoteTrackerHelper = (ravel_uid, passage_uid) => {
         var valueOfKey = false;
         var currentUid = firebase.auth().currentUser.uid;
         var snapShotVal;
-
+        console.log('i am here')
         firebase.database().ref(`track_user_vote/${ravel_uid}/${passage_uid}/${currentUid}`).set(false)
         .then(() => {
             valueOfKey = true;
