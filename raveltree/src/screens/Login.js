@@ -14,6 +14,8 @@ import {
   TouchableOpacity
 } from 'react-native';
 
+import {GoogleSignin} from 'react-native-google-signin'
+
 import { MKTextField, MKColor, MKButton } from 'react-native-material-kit';
 import Loader from '../Loader';
 import firebase from 'firebase';
@@ -59,6 +61,17 @@ class Login extends Component {
       this.props.userLogOff ();
       FBSDK.LoginManager.logOut ();
     }
+
+    // used for Google Sigin
+    // this.unsubscriber = firebase.auth().onAuthStateChanged((changedUser) => {
+    //   this.setState({ user: changedUser});
+    // });
+    // GoogleSignin.configure({
+    //   iosClientId: '107870538404-i9qkip1s7k55q2jbaviqttk9bagjltrc.apps.googleusercontent.com', // only for iOS
+    // })
+    // .then(() => {
+    //   // you can now call currentUserAsync()
+    // });
   }
 
   componentWillReceiveProps (nextProps) {
@@ -73,20 +86,30 @@ class Login extends Component {
 
   onGButtonPress() {
     // TODO: Google Login.
-    // For now, just authenticates a test user automatically.
-    this.setState({error: '', loading: true });
-    this.props.signInWithEmail ('test@test.com', 'Test123!');
 
-    // const {email, password} = this.state;
-    // this.setState({error: '', loading: true });
-    //
-    // firebase.auth().signInWithEmailAndPassword(email, password)
-    //   .then(this.onAuthSuccess.bind(this))
-    //   .catch(() => {
-    //       firebase.auth().createUserWithEmailAndPassword(email, password)
-    //           .then(this.onAuthSuccess.bind(this))
-    //           .catch(this.onAuthFailed.bind(this));
-    //   });
+    // For now, just authenticates a test user automatically.
+     this.setState({error: '', loading: true });
+     this.props.signInWithEmail ('test@test.com', 'Test123!');
+  }
+
+  // Google Login function
+  // almost there
+  onLoginGoogle = () => {
+    // sign in successfully
+    GoogleSignin.signIn().then((data) => {
+      // create a new firebase credential with the token
+      const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken);
+
+      // login with credential
+      return firebase.auth().signInWithCredential(credential);
+    })
+    .then((currentUser) => {
+      // signin firebase successfully
+      console.log(`Google Login with user : ${JSON.stringify(currentUser.toJSON())}`);
+    })
+    .catch((error) => {
+      console.log(`Login fail with error: ${error}`);
+    });
   }
 
   onPressSignInWithAnEmailAddress () {
@@ -183,7 +206,8 @@ class Login extends Component {
 
             {/* Google button */}
             <View style = {styles.google}>
-              <GLoginButton onPress = {this.onGButtonPress.bind(this)} />
+            <GLoginButton onPress = {this.onGButtonPress.bind(this)} />
+              {/* <GLoginButton onPress = {this.onLoginGoogle} /> */}
             </View>
 
           </View>

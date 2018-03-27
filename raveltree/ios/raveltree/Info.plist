@@ -65,6 +65,26 @@
 				<string>fb1513136905467741</string>
 			</array>
 		</dict>
+    <dict>
+      <key>CFBundleTypeRole</key>
+      <string>Editor</string>
+      <key>CFLBundleURLName</key>
+      <string>com.googleusercontent.apps.107870538404-i9qkip1s7k55q2jbaviqttk9bagjltrc</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>com.googleusercontent.apps.107870538404-i9qkip1s7k55q2jbaviqttk9bagjltrc</string>
+      </array>
+    </dict>
+    <dict>
+      <key>CFBundleTypeRole</key>
+      <string>Editor</string>
+      <key>CFLBundleURLName</key>
+      <string>org.reactjs.native.example.raveltree</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>org.reactjs.native.example.raveltree</string>
+      </array>
+    </dict>
 	</array>
 	<key>FacebookAppID</key>
 	<string>1513136905467741</string>

@@ -14,6 +14,7 @@
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00E356F31AD99517003FC87E /* raveltreeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* raveltreeTests.m */; };
 		0196B98B205C26B500F89864 /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0196B988205C26A800F89864 /* libART.a */; };
+		0220D6ADDA1946D58B6177B6 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F10BE52BA5444DFB85656461 /* libz.tbd */; };
 		05F7592E4F1342E58B74BF60 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 72E6C28C71554207B661C034 /* Octicons.ttf */; };
 		060BD71AC82D4539BE5873F7 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 35203A2BFFFA4C4AAD53B05D /* libRNSVG.a */; };
 		0F0C464C1C9A4BC18DCFC599 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8AB0813095C84693B36234D2 /* SimpleLineIcons.ttf */; };
@@ -26,6 +27,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+		1B62551994CB458DB5A74B41 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C712842EC9E4C1AAC891EEF /* AddressBook.framework */; };
 		1B712F03F2374717903E4C9B /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 60F6D022B40D4E67A7EDDE28 /* Feather.ttf */; };
 		1C502BB36FDC42B3AA3110E0 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5FDB942AA7DD492D9EC80C7D /* Entypo.ttf */; };
 		26F986A299BF4FF9869EA0DA /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE3042A80CFE43BB91B5C1B3 /* FontAwesome.ttf */; };
@@ -43,6 +45,7 @@
 		2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */; };
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* raveltreeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* raveltreeTests.m */; };
+		3FF6BB39F3AA1CD32BE52CF8 /* libPods-raveltree.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DCD8DC4E31FE37C2F9C4307 /* libPods-raveltree.a */; };
 		402877D163604D88897B4A27 /* Rubik-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5C1BA92AA9B1404B9D040987 /* Rubik-Italic.ttf */; };
 		4204ED7F445D48608A8C9190 /* Rubik-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1EB4A0E90BDB4DCF8AF8B983 /* Rubik-BoldItalic.ttf */; };
 		43EBDCA018B04F8A837F0D0D /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDC3A9541EEE4B55911EF969 /* libRNFetchBlob.a */; };
@@ -50,12 +53,14 @@
 		5C929D7F6EDB463AA6C9E8B9 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 766079FB339D41D29F4AC895 /* Foundation.ttf */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		62033473693E4D6CBE4A39F7 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74D7D6B9FE61478FBDC54D78 /* libBVLinearGradient.a */; };
+		6E38BA1DB0AD5EA15FDD074A /* libPods-raveltreeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 75621BBDBAC027DA3197AB5A /* libPods-raveltreeTests.a */; };
 		747D711403384F67A45F8F69 /* libRCTMaterialKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA49A9BB9994483D944A02DA /* libRCTMaterialKit.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		858B95E79115472D962E8890 /* libRNPhotoView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C2E7A69A7F9D4D77B3145BA5 /* libRNPhotoView.a */; };
 		8F0F0322BC394FE8B820C6DB /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 12A175EFABE24D0FB80ED2E1 /* MaterialIcons.ttf */; };
 		8F54E4A021714AFFAFE5DE2A /* libRCTFBSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 23CBB6C702A04150AB6FB94F /* libRCTFBSDK.a */; };
 		96DD342C382B43A5BE26A054 /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ED205A976FE34616A8268CB8 /* rubicon-icon-font.ttf */; };
+		99E360A5D9A84A14A9DCCA47 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 918B7CA642EB44479E17606B /* SafariServices.framework */; };
 		9E62085B78934D878920A847 /* Rubik-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D33ECBF2846042518081CED1 /* Rubik-Light.ttf */; };
 		A804BC539E044193ACC2C11A /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 439639DA543A4F9EB19408CC /* Rubik-Medium.ttf */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
@@ -82,10 +87,15 @@
 		BF150455204B53EE007B0C6B /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BF150446204B53EE007B0C6B /* Roboto-Medium.ttf */; };
 		BFC2881E99BC4D93804DCE1D /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ADFA571EF5C544FE81260FBD /* EvilIcons.ttf */; };
 		C2C6AB6508134B698355779E /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C0076B7357B146E08C6F5324 /* Zocial.ttf */; };
+		D105C488045849E7B8F5275D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B978F6B20A6E4BEFBF148DFA /* SystemConfiguration.framework */; };
 		D10D5638EFEC4BD1917F2683 /* Rubik-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CCE324A229F74F78B60C4506 /* Rubik-Bold.ttf */; };
 		D37EF0339CB547B8BE979530 /* Rubik-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 613B600D877A445FAA87CB37 /* Rubik-LightItalic.ttf */; };
 		D7DD4DEA1A6F4F6CB05FA2EE /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F3EA48278AC34B28AE600CA7 /* MaterialCommunityIcons.ttf */; };
 		E289BEC26C63443FAB056849 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DBABFBD63744F94BE3EF529 /* libRNVectorIcons.a */; };
+		E92ABC40CB584618824AE80C /* libRNGoogleSignin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E56760A334C4CF499BD25BA /* libRNGoogleSignin.a */; };
+		EB81A71B20698C070086320B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB81A6EB20698C070086320B /* GoogleService-Info.plist */; };
+		EB81A71D20698C1B0086320B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB81A71C20698C1B0086320B /* GoogleService-Info.plist */; };
+		EBF84749206989E8008A209C /* GoogleSdk in Resources */ = {isa = PBXBuildFile; fileRef = EBF84719206989E7008A209C /* GoogleSdk */; };
 		F6AC9345E89643AB8544B4C5 /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 87550BA43A9A4B5BB6C71CE2 /* Rubik-Regular.ttf */; };
 /* End PBXBuildFile section */
 
@@ -426,6 +436,13 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = BVLinearGradient;
 		};
+		EB46214B20697E2F008CD4F3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D3EC711649741EE916AECA5 /* RNGoogleSignin.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9FD355121D3E4A2900D06170;
+			remoteInfo = RNGoogleSignin;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -440,6 +457,7 @@
 		00E356F21AD99517003FC87E /* raveltreeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = raveltreeTests.m; sourceTree = "<group>"; };
 		0196B982205C26A800F89864 /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
 		0B2688B6BB5A4C0B844C3332 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
+		0DCD8DC4E31FE37C2F9C4307 /* libPods-raveltree.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-raveltree.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0EC9BDBBA0824140BEAF7FD5 /* Rubik-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-BlackItalic.ttf"; path = "../node_modules/@shoutem/ui/fonts/Rubik-BlackItalic.ttf"; sourceTree = "<group>"; };
 		12A175EFABE24D0FB80ED2E1 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
@@ -460,27 +478,36 @@
 		2D02E4901E0B4A5D006451C7 /* raveltree-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "raveltree-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		35203A2BFFFA4C4AAD53B05D /* libRNSVG.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSVG.a; sourceTree = "<group>"; };
+		3E56760A334C4CF499BD25BA /* libRNGoogleSignin.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNGoogleSignin.a; sourceTree = "<group>"; };
 		422A939D902941DCBE8AF253 /* Rubik-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-MediumItalic.ttf"; path = "../node_modules/@shoutem/ui/fonts/Rubik-MediumItalic.ttf"; sourceTree = "<group>"; };
 		439639DA543A4F9EB19408CC /* Rubik-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Medium.ttf"; path = "../node_modules/@shoutem/ui/fonts/Rubik-Medium.ttf"; sourceTree = "<group>"; };
+		4D3EC711649741EE916AECA5 /* RNGoogleSignin.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGoogleSignin.xcodeproj; path = "../node_modules/react-native-google-signin/ios/RNGoogleSignin.xcodeproj"; sourceTree = "<group>"; };
 		5938B5685E674F6BA99149D2 /* RCTMaterialKit.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTMaterialKit.xcodeproj; path = "../node_modules/react-native-material-kit/iOS/RCTMaterialKit.xcodeproj"; sourceTree = "<group>"; };
 		5C1BA92AA9B1404B9D040987 /* Rubik-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Italic.ttf"; path = "../node_modules/@shoutem/ui/fonts/Rubik-Italic.ttf"; sourceTree = "<group>"; };
+		5C712842EC9E4C1AAC891EEF /* AddressBook.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		5FDB942AA7DD492D9EC80C7D /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		60F6D022B40D4E67A7EDDE28 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		613B600D877A445FAA87CB37 /* Rubik-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-LightItalic.ttf"; path = "../node_modules/@shoutem/ui/fonts/Rubik-LightItalic.ttf"; sourceTree = "<group>"; };
+		685C816B4DA136749F756764 /* Pods-raveltree.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-raveltree.debug.xcconfig"; path = "Pods/Target Support Files/Pods-raveltree/Pods-raveltree.debug.xcconfig"; sourceTree = "<group>"; };
 		7179977058AE44EC90501400 /* Rubik-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Black.ttf"; path = "../node_modules/@shoutem/ui/fonts/Rubik-Black.ttf"; sourceTree = "<group>"; };
 		72E6C28C71554207B661C034 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		74D7D6B9FE61478FBDC54D78 /* libBVLinearGradient.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libBVLinearGradient.a; sourceTree = "<group>"; };
+		75621BBDBAC027DA3197AB5A /* libPods-raveltreeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-raveltreeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		766079FB339D41D29F4AC895 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		87550BA43A9A4B5BB6C71CE2 /* Rubik-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Regular.ttf"; path = "../node_modules/@shoutem/ui/fonts/Rubik-Regular.ttf"; sourceTree = "<group>"; };
 		8A262BDCA6EF497A935BE11F /* RNPhotoView.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNPhotoView.xcodeproj; path = "../node_modules/react-native-photo-view/ios/RNPhotoView.xcodeproj"; sourceTree = "<group>"; };
 		8AB0813095C84693B36234D2 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		8FDD64330580EFAEEFFBA2C9 /* Pods-raveltree.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-raveltree.release.xcconfig"; path = "Pods/Target Support Files/Pods-raveltree/Pods-raveltree.release.xcconfig"; sourceTree = "<group>"; };
+		918B7CA642EB44479E17606B /* SafariServices.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
 		9AD7C677456C4EAABF468B17 /* RNSVG.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSVG.xcodeproj; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		ADFA571EF5C544FE81260FBD /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
+		B32C4B983AF6972CC3AB17A7 /* Pods-raveltreeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-raveltreeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-raveltreeTests/Pods-raveltreeTests.release.xcconfig"; sourceTree = "<group>"; };
 		B35D307A3F1841ECAE709AE7 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
+		B978F6B20A6E4BEFBF148DFA /* SystemConfiguration.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		BF038F96200C24210042071C /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		BF038F97200C24210042071C /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
 		BF038F98200C24210042071C /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
@@ -509,7 +536,12 @@
 		D33ECBF2846042518081CED1 /* Rubik-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Light.ttf"; path = "../node_modules/@shoutem/ui/fonts/Rubik-Light.ttf"; sourceTree = "<group>"; };
 		DB62A6260B3D4DDDA0034AE3 /* RCTFBSDK.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTFBSDK.xcodeproj; path = "../node_modules/react-native-fbsdk/ios/RCTFBSDK.xcodeproj"; sourceTree = "<group>"; };
 		DE3042A80CFE43BB91B5C1B3 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
+		EB81A6EB20698C070086320B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		EB81A71C20698C1B0086320B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		EBF84719206989E7008A209C /* GoogleSdk */ = {isa = PBXFileReference; lastKnownFileType = folder; name = GoogleSdk; path = "../node_modules/react-native-google-signin/ios/GoogleSdk"; sourceTree = "<group>"; };
 		ED205A976FE34616A8268CB8 /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/@shoutem/ui/fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
+		F10BE52BA5444DFB85656461 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		F3CBA49510CA7CD01928A01D /* Pods-raveltreeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-raveltreeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-raveltreeTests/Pods-raveltreeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F3EA48278AC34B28AE600CA7 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		FA32004D051A4FA2AA12E0FA /* RNFetchBlob.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFetchBlob.xcodeproj; path = "../node_modules/react-native-fetch-blob/ios/RNFetchBlob.xcodeproj"; sourceTree = "<group>"; };
 		FA49A9BB9994483D944A02DA /* libRCTMaterialKit.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTMaterialKit.a; sourceTree = "<group>"; };
@@ -521,6 +553,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */,
+				6E38BA1DB0AD5EA15FDD074A /* libPods-raveltreeTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -554,6 +587,12 @@
 				62033473693E4D6CBE4A39F7 /* libBVLinearGradient.a in Frameworks */,
 				858B95E79115472D962E8890 /* libRNPhotoView.a in Frameworks */,
 				060BD71AC82D4539BE5873F7 /* libRNSVG.a in Frameworks */,
+				E92ABC40CB584618824AE80C /* libRNGoogleSignin.a in Frameworks */,
+				0220D6ADDA1946D58B6177B6 /* libz.tbd in Frameworks */,
+				99E360A5D9A84A14A9DCCA47 /* SafariServices.framework in Frameworks */,
+				D105C488045849E7B8F5275D /* SystemConfiguration.framework in Frameworks */,
+				1B62551994CB458DB5A74B41 /* AddressBook.framework in Frameworks */,
+				3FF6BB39F3AA1CD32BE52CF8 /* libPods-raveltree.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -673,6 +712,7 @@
 		13B07FAE1A68108700A75B9A /* raveltree */ = {
 			isa = PBXGroup;
 			children = (
+				EB81A6EB20698C070086320B /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -727,8 +767,23 @@
 			isa = PBXGroup;
 			children = (
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
+				F10BE52BA5444DFB85656461 /* libz.tbd */,
+				918B7CA642EB44479E17606B /* SafariServices.framework */,
+				B978F6B20A6E4BEFBF148DFA /* SystemConfiguration.framework */,
+				5C712842EC9E4C1AAC891EEF /* AddressBook.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3BDCBFF658E9772BE609A568 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				685C816B4DA136749F756764 /* Pods-raveltree.debug.xcconfig */,
+				8FDD64330580EFAEEFFBA2C9 /* Pods-raveltree.release.xcconfig */,
+				F3CBA49510CA7CD01928A01D /* Pods-raveltreeTests.debug.xcconfig */,
+				B32C4B983AF6972CC3AB17A7 /* Pods-raveltreeTests.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		5E91572E1DD0AC6500FF2AA8 /* Products */ = {
@@ -817,6 +872,7 @@
 				B35D307A3F1841ECAE709AE7 /* BVLinearGradient.xcodeproj */,
 				8A262BDCA6EF497A935BE11F /* RNPhotoView.xcodeproj */,
 				9AD7C677456C4EAABF468B17 /* RNSVG.xcodeproj */,
+				4D3EC711649741EE916AECA5 /* RNGoogleSignin.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -833,6 +889,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				EB81A71C20698C1B0086320B /* GoogleService-Info.plist */,
+				EBF84719206989E7008A209C /* GoogleSdk */,
 				BF038F95200C23EF0042071C /* Frameworks */,
 				13B07FAE1A68108700A75B9A /* raveltree */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -841,6 +899,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				6963A2B4A44B449396E4C848 /* Resources */,
 				BF038F50200C23B80042071C /* Recovered References */,
+				3BDCBFF658E9772BE609A568 /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -878,6 +937,7 @@
 				74D7D6B9FE61478FBDC54D78 /* libBVLinearGradient.a */,
 				C2E7A69A7F9D4D77B3145BA5 /* libRNPhotoView.a */,
 				35203A2BFFFA4C4AAD53B05D /* libRNSVG.a */,
+				3E56760A334C4CF499BD25BA /* libRNGoogleSignin.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -913,6 +973,8 @@
 				BF038F98200C24210042071C /* FBSDKCoreKit.framework */,
 				BF038F96200C24210042071C /* FBSDKLoginKit.framework */,
 				BF038F97200C24210042071C /* FBSDKShareKit.framework */,
+				0DCD8DC4E31FE37C2F9C4307 /* libPods-raveltree.a */,
+				75621BBDBAC027DA3197AB5A /* libPods-raveltreeTests.a */,
 			);
 			path = Frameworks;
 			sourceTree = "<group>";
@@ -933,6 +995,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		EB46214820697E2D008CD4F3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EB46214C20697E2F008CD4F3 /* libRNGoogleSignin.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -940,9 +1010,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "raveltreeTests" */;
 			buildPhases = (
+				D9C982730847985506D37C1B /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
+				3016173539D7F085E136603A /* [CP] Embed Pods Frameworks */,
+				5612376186803B2FD84DA12A /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -958,10 +1031,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "raveltree" */;
 			buildPhases = (
+				FCB6DE3AEDABB8568647E29B /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				848C51CB3F63C4CF7B0B56DE /* [CP] Embed Pods Frameworks */,
+				6BEC7C4908EB03B7EA8371EF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1111,6 +1187,10 @@
 				{
 					ProductGroup = 1CF69FC0202AA21300E89810 /* Products */;
 					ProjectRef = FA32004D051A4FA2AA12E0FA /* RNFetchBlob.xcodeproj */;
+				},
+				{
+					ProductGroup = EB46214820697E2D008CD4F3 /* Products */;
+					ProjectRef = 4D3EC711649741EE916AECA5 /* RNGoogleSignin.xcodeproj */;
 				},
 				{
 					ProductGroup = 1CF69FC2202AA21300E89810 /* Products */;
@@ -1458,6 +1538,13 @@
 			remoteRef = BF452BFD204A737800F8071A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		EB46214C20697E2F008CD4F3 /* libRNGoogleSignin.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNGoogleSignin.a;
+			remoteRef = EB46214B20697E2F008CD4F3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1504,13 +1591,16 @@
 				402877D163604D88897B4A27 /* Rubik-Italic.ttf in Resources */,
 				9E62085B78934D878920A847 /* Rubik-Light.ttf in Resources */,
 				D37EF0339CB547B8BE979530 /* Rubik-LightItalic.ttf in Resources */,
+				EBF84749206989E8008A209C /* GoogleSdk in Resources */,
 				A804BC539E044193ACC2C11A /* Rubik-Medium.ttf in Resources */,
 				BF15044A204B53EE007B0C6B /* Roboto-Italic.ttf in Resources */,
 				BF15044C204B53EE007B0C6B /* EBGaramond-Regular.ttf in Resources */,
 				BF150454204B53EE007B0C6B /* Roboto-LightItalic.ttf in Resources */,
 				2AA78E1249D543E1B20E49AF /* Rubik-MediumItalic.ttf in Resources */,
 				BF150453204B53EE007B0C6B /* Roboto-Thin.ttf in Resources */,
+				EB81A71B20698C070086320B /* GoogleService-Info.plist in Resources */,
 				F6AC9345E89643AB8544B4C5 /* Rubik-Regular.ttf in Resources */,
+				EB81A71D20698C1B0086320B /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1559,6 +1649,107 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+		};
+		3016173539D7F085E136603A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-raveltreeTests/Pods-raveltreeTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5612376186803B2FD84DA12A /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-raveltreeTests/Pods-raveltreeTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6BEC7C4908EB03B7EA8371EF /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-raveltree/Pods-raveltree-resources.sh",
+				"${PODS_ROOT}/GTMOAuth2/Source/Touch/GTMOAuth2ViewTouch.xib",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GTMOAuth2ViewTouch.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-raveltree/Pods-raveltree-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		848C51CB3F63C4CF7B0B56DE /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-raveltree/Pods-raveltree-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D9C982730847985506D37C1B /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-raveltreeTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FCB6DE3AEDABB8568647E29B /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-raveltree-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1627,6 +1818,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F3CBA49510CA7CD01928A01D /* Pods-raveltreeTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1643,12 +1835,14 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-photo-view/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = raveltreeTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1669,6 +1863,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B32C4B983AF6972CC3AB17A7 /* Pods-raveltreeTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -1682,12 +1877,14 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-photo-view/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = raveltreeTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1708,6 +1905,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 685C816B4DA136749F756764 /* Pods-raveltree.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1726,6 +1924,7 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-photo-view/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = raveltree/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1741,6 +1940,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8FDD64330580EFAEEFFBA2C9 /* Pods-raveltree.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1758,6 +1958,7 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-photo-view/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = raveltree/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1793,11 +1994,13 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-photo-view/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = "raveltree-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1841,11 +2044,13 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-photo-view/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = "raveltree-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1890,6 +2095,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.raveltree-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1914,6 +2120,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
