@@ -81,22 +81,30 @@ const TEST_PASSAGE_METADATA = {
 
 TREE_HORIZONTAL_PADDING = 20;
 
-var nodeCounts = [];
+// var nodeCounts = [];
 
 class Ravel extends Component {
   constructor (props) {
     super (props);
     var screenData = this.props.screenData;
     this.state = {
-      //ravel: screenData.ravel_uid || TEST_RAVEL || [],
-      tree: screenData.roots || /*TEST_RAVEL ||*/ {},
+      tree: {
+        data: screenData.roots || {},
+        nodeCounts: screenData.nodeCount || {},
+        nodesProcessed: {},
+        depth: screenData.level_count /*_.size (screenData.nodeCount)*/,
+        breadth: Math.max (...Object.values (screenData.nodeCount)),
+        height: 0,
+        width: 0,
+        analyzed: false,
+      },
       ravelID: screenData.ravel_uid || '',
       title: screenData.ravel_title || /*TEST_RAVEL.title ||*/ '',
       author: screenData.user_created || '',
       participants: screenData.ravel_participants || /*TEST_RAVEL.participants ||*/ [],
       score: screenData.ravel_points,
       concept: screenData.ravel_concept || /*TEST_RAVEL.concept ||*/ '',
-      mode: firebase.auth ().currentUser == screenData.user_created ? 'owned' : '',
+      mode: firebase.auth ().currentUser.uid == screenData.user_created ? 'owned' : '',
       showModal: screenData.showModal || '',
       passageIndex: screenData.passageIndex || '',
       passageMetaData: /*TEST_PASSAGE_METADATA ||*/ '',
@@ -148,7 +156,7 @@ class Ravel extends Component {
   onSwitchToAdd (passageMetaData) {
     this.setState ({
       passageMetaData: passageMetaData,
-      nodeCounts: nodeCounts,
+      nodeCounts: this.state.tree.nodeCounts,
       showModal: 'add',
     });
   }
@@ -159,11 +167,11 @@ class Ravel extends Component {
     this.props.navigateForward ('Merge', screenData);
   }
 
-  onUpdateNodeCounts (newNodeCounts) {
-    // We can't use state for this because it would trigger a render race.
-    // Just going to use a global variable instead. Don't judge me.
-    nodeCounts = newNodeCounts;
-  }
+  // onUpdateNodeCounts (newNodeCounts) {
+  //   // We can't use state for this because it would trigger a render race.
+  //   // Just going to use a global variable instead. Don't judge me.
+  //   nodeCounts = newNodeCounts;
+  // }
 
   showUsers () {
     var participants;
@@ -229,10 +237,12 @@ class Ravel extends Component {
       <Tree
         tree={this.state.tree}
         mode={this.state.mode}
-        onUpdateNodeCounts={(nodeCounts) => this.onUpdateNodeCounts (nodeCounts)}
+        //onUpdateNodeCounts={(nodeCounts) => this.onUpdateNodeCounts (nodeCounts)}
         onAnalyzeTree={(tree) => this.setState ({ tree: tree })}
         onPressPassage={(passageMetaData) => this.onSwitchToPassage (passageMetaData)}
         horizontalPadding={TREE_HORIZONTAL_PADDING}
+        ravelID={this.state.ravelID}
+        {...this.props}
       />
     );
   }
@@ -291,7 +301,7 @@ class Ravel extends Component {
             <TextLink size={14} onPress={() => this.onPressShare ()}>Share...</TextLink>
           </View>
           <Divider />
-          {this.showAdminLinks (mode == 'owned')}
+          {this.showAdminLinks (this.state.mode == 'owned')}
           {this.showButton (mode == 'invitation')}
         </View>
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>

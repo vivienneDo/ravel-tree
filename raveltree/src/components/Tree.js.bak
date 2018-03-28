@@ -68,32 +68,12 @@ class Tree extends Component {
     super (props);
     this.state = {
       ...this.props,
-      //tree: {},
+      tree: [],
       selectedNodeIndex: undefined,
       connectingArrow: {},
     };
 
     TREE_HORIZONTAL_PADDING = this.props.horizontalPadding || 20;
-  }
-
-  componentWillReceiveProps (newProps) {
-    var tree = this.state.tree;
-
-    // Passage Metadata
-    if (newProps.passage_meta_data) {
-      var passage = newProps.passage_meta_data;
-
-      if (!((tree.nodesProcessed || {}) [passage.level] || {}) [passage.passage_uid]) {
-        console.log ("Received passage metadata.");
-        tree.data [passage.passage_uid] = passage;
-        if (!tree.nodesProcessed [passage.level]) { tree.nodesProcessed [passage.level] = {}; }
-        tree.nodesProcessed [passage.level] [passage.passage_uid] = true;
-        console.log (tree);
-        this.setState ({ tree: tree });
-
-        nodesToRender.push (this.renderNode (tree.data [passage.passage_uid]));
-      }
-    }
   }
 
   findPosition (index) {
@@ -181,6 +161,93 @@ class Tree extends Component {
     return (this.renderArrow (from, to, false, true));
   }
 
+  analyzeLevel (data, nodes, level) {
+    if (!data || !data.length || data.length < 1) { return nodes; }
+
+    // Get the number of nodes at this level.
+    var nodesAtThisLevel = data.length;
+
+    // Add the number of nodes at this level at the array index.
+    if (!nodes [level]) { nodes [level] = 0; }
+    nodes [level] += nodesAtThisLevel;
+
+    // For each node at this level...
+    for (var i = 0; i < nodesAtThisLevel; i++) {
+      // Keep track of the number of immediate siblings in this group.
+      data [i].groupCount = nodesAtThisLevel;
+
+      // Add a unique internal identifier.
+      var treeID = level + '-' + i;
+      data [i].treeID = treeID;
+
+      // Calculate and store each node's individual "optimality score" factor.
+      // TODO: More sophisticated algorithm. For now, just sums the branch's scores.
+      data [i].optimalityScore = data [i].score;
+
+      // Analyze each child.
+      this.analyzeLevel (data [i].children, nodes, ++level);
+
+      // Now that we're back, decrement level.
+      level--;
+
+      // Which child has the highest optimality score?
+      var optimalChild = undefined;
+      var optimalChildScore = Number.NEGATIVE_INFINITY;
+      for (var j = 0; j < data [i].children.length; j++) {
+        var thisScore = data [i].children [j].optimalityScore;
+        if (thisScore > optimalChildScore) {
+          optimalChildScore = thisScore;
+          optimalChild = j;
+        }
+      }
+      if (optimalChildScore != Number.NEGATIVE_INFINITY) {
+        data [i].optimalityScore += optimalChildScore;
+        data [i].optimalChild = optimalChild;
+      }
+    }
+
+    // If this is the first level, designate the optimal node and mark the data
+    // as analyzed.
+    var optimalNode = undefined;
+    var optimalScore = Number.NEGATIVE_INFINITY;
+    if (level == 0) {
+      for (var i = 0; i < nodesAtThisLevel; i++) {
+        if (data [i].optimalityScore > optimalScore) {
+          optimalScore = data [i].optimalityScore;
+          optimalNode = i;
+        }
+      }
+      data [optimalNode].optimal = true;
+    }
+
+    // Return the array of node counts.
+    return nodes;
+  }
+
+  analyzeTree (data) {
+    nodes = [];
+    nodes = this.analyzeLevel (data, nodes, 0);
+    var tree = {
+      data:           data,
+      nodeCounts:     nodes,
+      nodesProcessed: [],
+      depth:          nodes.length,
+      breadth:        Math.max (...nodes),
+      height:         (Math.max (...nodes) * NODE_HEIGHT) +
+                      ((Math.max (...nodes) - 1) * SPACING_VERTICAL),
+      width:          (nodes.length * NODE_WIDTH) +
+                      ((nodes.length - 1) * SPACING_HORIZONTAL),
+      analyzed:       true,
+    };
+    TREE_HEIGHT = tree.height;
+    TREE_WIDTH  = tree.width;
+
+    // For the love of god, don't change this. It keeps everything centered.
+    MAGIC_NUMBER = ((NODE_HEIGHT + SPACING_VERTICAL) / 2) * (tree.breadth - 1);
+
+    return tree;
+  }
+
   renderArrow (startPosition, endPosition, optimal, connecting) {
     var arrow;
 
@@ -226,45 +293,20 @@ class Tree extends Component {
     );
   }
 
-  getXPosition (node) {
-    var n = node.level;
-    var s = SPACING_HORIZONTAL;
-    var W = NODE_WIDTH;
-    var k = (2 * n - 1);
-    return ((k * W)/2 + (n-1) * s - (W/2));
-  }
-
-  getYPosition (node) {
-    var s = SPACING_VERTICAL;
-    var N = NODE_HEIGHT;
-    var nodesAtThisLevel = this.state.tree.nodeCounts [node.level];
-    var odd = nodesAtThisLevel % 2 != 0;
-    var center = (nodesAtThisLevel - 1)/2;
-    var i = _.size (this.state.tree.nodesProcessed [node.level]);
-    var y;
-    if (i == center) {
-      y = 0;
-    }
-    else if (i < center) {
-      y = - ((center-i) * N + (center-i) * s);
-    }
-    else if (i > center) {
-      y = (i-center) * N + (i-center) * s;
-    }
-    return y;
-  }
-
   renderNode (content) {
     var Node = PassageStub;
 
-    // Position
-    if (!content.position) { content.position = {}; }
-    content.position.x = this.getXPosition (content);
-    content.position.y = this.getYPosition (content);
+    var passageMetaData = {
+      ravel_title: this.props.tree.title, // TODO: Change to match structure from backend.
+      passage_index: content.passageIndex,
+      passage_title: content.name,
+      passage_body: content.passage,
+      isOptimal: content.optimal,
+    };
 
     return (
       <View
-      key={content.passage_uid}
+      key={content.name}
           style={{
             position: 'absolute',
             zIndex: 2,
@@ -278,17 +320,36 @@ class Tree extends Component {
           }}
       >
         <Node
-          name={content.passage_title}
-          passageIndex={content.passage_index}
-          score={content.passage_combined_vote}
+          name={content.name}
+          passageIndex={content.passageIndex}
+          score={content.score}
           active={content.optimal}
           disabled={content.disabled}
           //passage={content.passage}
-          onPress={() => this.onPressPassage (content)}
-          highlighted={this.state.selectedNodeIndex == content.passage_index}
+          onPress={() => this.onPressPassage (passageMetaData)}
+          highlighted={this.state.selectedNodeIndex = content.passagIndex}
         />
       </View>
     );
+
+    // return (
+    //   <View
+    //     key={content}
+    //     style={{
+    //       position: 'absolute',
+    //       zIndex: 2,
+    //       left: position.x,
+    //       top: position.y,
+    //       backgroundColor: '#eeeeee',
+    //       width: NODE_WIDTH,
+    //       height: NODE_HEIGHT,
+    //       justifyContent: 'center',
+    //       alignItems: 'center',
+    //     }}
+    //   >
+    //     <Text>{content}</Text>
+    //   </View>
+    // );
   }
 
   renderLevel (tree, data, nodes, level) {
@@ -427,47 +488,28 @@ class Tree extends Component {
     return nodes;
   }
 
-  analyzeTree (tree) {
-    var nodes = Object.values (tree.nodeCounts);
-
-    tree.height =   (Math.max (...nodes) * NODE_HEIGHT) +
-                    ((Math.max (...nodes) - 1) * SPACING_VERTICAL);
-    tree.width =    (nodes.length * NODE_WIDTH) +
-                    ((nodes.length - 1) * SPACING_HORIZONTAL);
-    tree.analyzed = true;
-
-    TREE_HEIGHT = tree.height;
-    TREE_WIDTH  = tree.width;
-
-    // For the love of god, don't change this. It keeps everything centered.
-    MAGIC_NUMBER = ((NODE_HEIGHT + SPACING_VERTICAL) / 2) * (tree.breadth - 1);
-
-    return tree;
-  }
-
   renderTree (tree) {
     if (!tree) { return; }
 
     // Analyze the tree if it hasn't been already.
     if (!tree.analyzed) {
       if (DEBUG) console.log ('Tree needs to be analyzed. Analyzing...');
-      tree = this.analyzeTree (tree);
+      tree = this.analyzeTree (tree.roots);
       this.props.onAnalyzeTree (tree);
-      this.setState ({ tree: tree });
 
       if (DEBUG) console.log ('Tree:');
       if (DEBUG) console.log (tree);
 
-      // Download the passages at the root level.
-      Object.keys (tree.data).map (id =>
-        this.props.getPassageMetaData (this.props.ravelID, id)
-      );
+      // Send up the nodeCounts array to the Ravel screen so we can use it to
+      // calculate passage indexes.
+      var nodeCounts = Object.assign ({}, tree.nodeCounts);
+      this.props.onUpdateNodeCounts (nodeCounts);
+
+      // Render the tree.
+      nodesToRender = this.renderLevel (tree, tree.data, nodesToRender, 0);
     } else {
       if (DEBUG) console.log ('Tree already processed. Skipping analysis.');
     }
-
-    // Render the tree.
-    //nodesToRender = this.renderLevel (tree, tree.data, nodesToRender, 0);
 
     // If we're on the Merge screen, scroll to the appropriate level.
     if (this.props.mergeFrom) {
@@ -525,14 +567,9 @@ const mapStateToProps = (state) => {
     previousScreens,
   } = state.navigation;
 
-  const {
-    passage_meta_data,
-  } = state.passage
-
   return {
     activeScreen,
     previousScreens,
-    passage_meta_data
   };
 }
 

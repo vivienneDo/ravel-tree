@@ -95,6 +95,9 @@ const styles = StyleSheet.create ({
     alignSelf: 'center',
   },
   x: {
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: 0,
     fontFamily: 'Roboto-Thin',
     fontWeight: '100',
     fontSize: 36,

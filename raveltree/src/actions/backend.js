@@ -1755,7 +1755,7 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
  *
  * actions: Attempts to get the metadata for a particular ravel
  */
-export const getPassageMetaData = (passage_uid) => {
+export const getPassageMetaData = (ravel_uid, passage_uid) => {
 
     return (dispatch) => {
 

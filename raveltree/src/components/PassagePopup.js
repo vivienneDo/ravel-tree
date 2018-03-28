@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/13/18
-// Modified:  03/26/18
+// Modified:  03/28/18
 
 // Standard passage popup component for RavelTree.
 //
@@ -177,7 +177,6 @@ const styles = StyleSheet.create ({
     paddingBottom: 10,
   },
   bottom: {
-    zIndex: 100,
     position: 'absolute',
     bottom: 7,
     width: '100%',
