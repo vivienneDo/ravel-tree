@@ -60,6 +60,7 @@ class Screen extends Component {
   }
 
   showScreen () {
+    //return <InviteParticipants {...this.props} />;
     //return <Merge {...this.props} />;
     //return <Ravel {...this.props} />;
     switch (this.props.activeScreen) {

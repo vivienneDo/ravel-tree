@@ -1,22 +1,19 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/19/18
-// Modified: 03/19/18
+// Modified: 03/27/18
 //
 // "Start a Ravel" screen for RavelTree.
-//
-// TODO: Validate text input (including checking against existing ravel names).
-// TODO: When "Visibility" is set to Private, disable the "Restict voting to
-// participants" option (may have to make disabled toggles and options more
-// clearly distinguishable from inactive ones).
 
 import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  View, ScrollView
+  View, ScrollView,
+  Alert,
 } from 'react-native';
 
-import { connect } from 'react-redux'
+import firebase from 'firebase';
+import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import LinkBack from '../components/LinkBack'
@@ -42,9 +39,9 @@ class StartARavel extends Component {
     super (props);
     this.state = {
         ravelName: '',
-        category: '',
-        passageLength: '',
-        visibility: '',
+        category: DEFAULT_CATEGORY,
+        passageLength: DEFAULT_PASSAGE_LENGTH,
+        visibility: DEFAULT_VISIBILITY,
         enableEmbeddedMultimedia: DEFAULT_ENABLE_EMBEDDED_MEDIA,
         enablePassageComments: DEFAULT_ENABLE_PASSAGE_COMMENTS,
         restrictVotingToParticipants: DEFAULT_RESTRICT_VOTING_TO_PARTICIPANTS,
@@ -53,13 +50,45 @@ class StartARavel extends Component {
     };
   }
 
+  componentWillReceiveProps (newProps) {
+    // Check to see if the typed ravel name already exists.
+    var ravelExists = false;
+    var ravels = newProps.all_ravel;
+    if (ravels) {
+      for (var key in ravels) {
+        if (ravels [key].ravel_title == this.state.ravelName) {
+          // If so, check to see if that ravel was created by this user.
+          if (ravels [key].user_created == firebase.auth().currentUser.uid) {
+            // If so, alert the user to choose another title.
+            ravelExists = true;
+            Alert.alert (
+              'Sorry, you already have a ravel by that name.',
+              'Please choose a different name for this ravel.'
+            );
+          }
+        }
+      }
+      // Otherwise, navigate to the next screen.
+      if (!ravelExists) {
+        var screenData = Object.assign ({}, this.state, {mode: 'add'});
+        this.props.navigateForward ('AddTags', this.constructor.name, screenData);
+      }
+    }
+  }
+
+  navigateAddTags () {
+
+  }
+
+
   onPressBack () {
     this.props.navigateBack ();
   }
 
   onPressContinue () {
-    var screenData = Object.assign ({}, this.state, {mode: 'add'});
-    this.props.navigateForward ('AddTags', this.constructor.name, screenData);
+    // Check whether the typed ravel name already exists before continuing (see
+    // componentWillReceiveProps (...)).
+    this.props.loadAllRavel ();
   }
 
   onChangeRavelName (data) {
@@ -117,6 +146,7 @@ class StartARavel extends Component {
           <View style={styles.headInput}>
             <InputSearch
               placeholder={'Ravel name'}
+              autoCapitalize={'none'}
               text={this.state.ravelName == '' ? undefined : this.state.ravelName}
               onChangeText={newText => this.onChangeRavelName (newText)}
             />
@@ -168,7 +198,7 @@ class StartARavel extends Component {
               <View style={styles.toggleLabel}>
                 <TextSans color={'#7F7F7F'}>Enable passage comments</TextSans>
               </View>
-              <View style={styles.toggleLabel}>
+              <View style={[styles.toggleLabel, {display: this.state.visibility == 'private' ? 'none' : 'flex'}]}>
                 <TextSans color={'#7F7F7F'}>Restrict voting to participants</TextSans>
               </View>
             </View>
@@ -187,7 +217,7 @@ class StartARavel extends Component {
                   onChange={value => this.onChangeEnablePassageComments (value)}
                 />
               </View>
-              <View style={styles.toggleSwitch}>
+              <View style={[styles.toggleSwitch, {display: this.state.visibility == 'private' ? 'none' : 'flex'}]}>
                 <Toggle
                   name="restrictVotingToParticipants"
                   active={this.state.restrictVotingToParticipants}
@@ -296,10 +326,19 @@ const mapStateToProps = (state) => {
     screenData,
   } = state.navigation;
 
+  const {
+    all_ravel,
+  } = state.master_ravel;
+
+  const {
+    currentUserProfile,
+  } = state.current_user;
+
   return {
     activeScreen,
     previousScreens,
     screenData,
+    all_ravel,
   };
 }
 

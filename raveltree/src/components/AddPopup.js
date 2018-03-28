@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/13/18
-// Modified:  03/26/18
+// Modified:  03/27/18
 
 // Standard "Add passge" popup component for RavelTree.
 //
@@ -28,7 +28,7 @@ import UserImage from './UserImage'
 import Button from './Button'
 import InputText from './InputText'
 
-export default class AddPopup extends React.Component {
+class AddPopup extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
@@ -40,7 +40,7 @@ export default class AddPopup extends React.Component {
   componentWillReceiveProps (newProps) {
     // Triggered after Add button is pressed and the passage is ready.
     if (newProps.passage_meta_data) {
-      this.props.onSwitchToPassage (passage_meta_data);
+      this.props.onSwitchToPassage (newProps.passage_meta_data);
     }
   }
 
@@ -50,7 +50,20 @@ export default class AddPopup extends React.Component {
     const passage = this.state.passage;
 
     // Will trigger new props containing 'passage_meta_data'.
-    this.props.createPassage ({ ravelID, title, passage });
+    if (this.props.passageIndex == '1-A') {
+      this.props.addInitialPassage ({
+        ravel_uid: ravelID,
+        passage_title: title,
+        passage_body: passage,
+      });
+    } else {
+      this.props.addPassage ({
+        ravel_uid: ravelID,
+        parent_passage_uid: this.props.passageMetaData.passage_uid,
+        passage_title: title,
+        passage_body: passage,
+      });
+    }
   }
 
   onChangeTitle (text) {
@@ -141,7 +154,12 @@ export default class AddPopup extends React.Component {
                 <TextSans size={12} color={'#808080'}>This will be passage {passageIndex}</TextSans>
                 <TextSans size={12} color={'#808080'}>(Number {passageIndex.split ('-') [0]}, Version {passageIndex.split ('-') [1]}).</TextSans>
               </View>
-              <Button title={'Add'} width={0.30 * width} disabled={!this.state.title || !this.state.passage} />
+              <Button
+                title={'Add'}
+                width={0.30 * width}
+                disabled={!this.state.title || !this.state.passage}
+                onPress={() => this.onPressAdd ()}
+              />
             </View>
           </View>
         </ModalContainer>
@@ -188,3 +206,22 @@ const styles = StyleSheet.create ({
     paddingRight: 21,
   },
 });
+
+const mapStateToProps = (state) => {
+  const {
+    currentUserProfile,
+  } = state.current_user;
+
+  const {
+    passage,
+    passage_meta_data,
+  } = state.passage;
+
+  return {
+    currentUserProfile,
+    passage,
+    passage_meta_data,
+  };
+}
+
+export default connect (mapStateToProps)(AddPopup);
