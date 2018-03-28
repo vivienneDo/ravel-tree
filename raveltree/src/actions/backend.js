@@ -2552,7 +2552,7 @@ export const addAllParentPassageToChildPassageOnFork = (ravel_uid, parent_passag
         })
         .then(() => {
             // Update child_passage_uid : parent{} to have the same parent as parent_passage_uid 
-            firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({parent:p})
+            firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/parent`).set(p)
         })                        
         .then((valueOfKey) => {
             resolve(valueOfKey)
@@ -3102,9 +3102,7 @@ export const getPassageComment = (ravel_uid, passage_uid) => {
 
 // }
 
-export const mergePassage = () => {
 
-}
 
 export const passageRavelPointCalculation = () => {
 
