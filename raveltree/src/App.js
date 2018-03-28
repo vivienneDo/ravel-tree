@@ -33,6 +33,7 @@ export default class App extends Component {
     console.ignoredYellowBox = [
       'Warning: Cannot update during',
       'FIREBASE WARNING: Using',
+      'Remote debugger',
     ];
 
     return (

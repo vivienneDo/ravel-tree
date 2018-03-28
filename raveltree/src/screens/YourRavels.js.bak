@@ -1,8 +1,9 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/17/18
-// Modified: 03/27/18
+// Modified: 03/23/18
 //
 // "Your Ravels" screen for RavelTree.
+
 
 import React, { Component } from 'react';
 import {
@@ -36,145 +37,41 @@ class YourRavels extends Component {
   constructor (props, context) {
     super (props, context);
     this.state = {
-      userCreatedRavels:   {},
-      ravelsIn:            {},
-      ravelsInvited:       {},
-      stubs: {
-        userCreatedRavels: {},
-        ravelsIn:          {},
-        ravelsInvited:     {},
-      },
-      loading: {
-        userCreatedRavels: true,
-        ravelsIn:          true,
-        ravelsInvited:     true,
-      },
-      retrieved: {
-        userCreatedRavels: false,
-        ravelsIn:          false,
-        ravelsInvited:     false,
-      },
+      userCreatedRavels: {},
+      ravelsIn:          {},
+      ravelsInvited:     {},
+      ravelMetaData:     {},
+      loading:         true,
     };
 
     this.props.loadInitialCurrentUserCreatedRavel ();
+    this.props.loadNonCreatedCurrentUserRavel ();
+    this.props.getPendingRavelInvite ();
   }
 
   componentWillReceiveProps (newProps) {
-    var retrieved = this.state.retrieved;
-    var stubs = this.state.stubs;
-    var loading = this.state.loading;
-    var metaData = newProps.ravel_meta_data;
-
-    // User-Created Ravels
-    if (!retrieved.userCreatedRavels) {
-      if (newProps.all_user_created_ravels) {
-        retrieved.userCreatedRavels = true;
-        this.setState ({
-          userCreatedRavels: newProps.all_user_created_ravels,
-          retrieved: retrieved,
-        });
-        if (_.size (newProps.all_user_created_ravels) > 0) {
-          this.getMetaData (newProps.all_user_created_ravels);
-        } else {
-          loading.userCreatedRavels = false;
-          this.setState ({ loading: loading });
-          this.props.loadNonCreatedCurrentUserRavel ();
-        }
-        return;
-      }
+    if (newProps.all_user_created_ravels) {
+      this.setState ({ userCreatedRavels: newProps.all_user_created_ravels });
+      Object.keys (newProps.all_user_created_ravels).map (ravelID =>
+        this.props.getRavelMetaData (ravelID)
+      );
     }
-
-    // User-Created Ravel Metadata
-    if (loading.userCreatedRavels) {
-      if ((newProps.ravel_meta_data || []).length != 0) {
-        stubs.userCreatedRavels [metaData.ravel_uid] = this.renderRavelStub (metaData);
-        this.setState ({ stubs: stubs });
-        if (_.size (stubs.userCreatedRavels) == _.size (this.state.userCreatedRavels)) {
-          loading.userCreatedRavels = false;
-          this.setState ({ loading: loading });
-          this.props.loadNonCreatedCurrentUserRavel ();
-        }
-        return;
-      }
+    if (newProps.all_non_created_user_ravel) {
+      this.setState ({ ravelsIn: newProps.all_non_created_user_ravel });
+      Object.keys (newProps.all_non_created_user_ravel).map (ravelID =>
+        this.props.getRavelMetaData (ravelID)
+      );
     }
-
-    // Ravels In
-    if (!retrieved.ravelsIn) {
-      if (newProps.all_non_created_user_ravel) {
-        retrieved.ravelsIn = true;
-        this.setState ({
-          ravelsIn: newProps.all_non_created_user_ravel,
-          retrieved: retrieved,
-        });
-        if (_.size (newProps.all_non_created_user_ravel) > 0) {
-          this.getMetaData (newProps.all_non_created_user_ravel);
-        } else {
-          loading.ravelsIn = false;
-          this.setState ({ loading: loading });
-          this.props.getPendingRavelInvite ();
-        }
-      }
+    if (newProps.get_pending_invite_ravel) {
+      this.setState ({ ravelsInvited: newProps.get_pending_invite_ravel });
+      Object.keys (newProps.get_pending_invite_ravel).map (ravelID =>
+        this.props.getRavelMetaData (ravelID)
+      );
     }
-
-    // Ravels In Metadata
-    if (loading.ravelsIn) {
-      if ((newProps.ravel_meta_data || []).length != 0) {
-        stubs.ravelsIn [metaData.ravel_uid] = this.renderRavelStub (metaData);
-        this.setState ({ stubs: stubs });
-        if (_.size (stubs.ravelsIn) == _.size (this.state.ravelsIn)) {
-          loading.ravelsIn = false;
-          this.setState ({ loading: loading });
-          this.props.getPendingRavelInvite ();
-        }
-        return;
-      }
+    if (newProps.ravel_meta_data) {
+      var ravelMetaData = this.state.ravelMetaData;
+      ravelMetaData [newProps.ravel_meta_data.ravel_uid] = newProps.ravel_meta_data;
     }
-
-    // Ravels Invited
-    if (!retrieved.ravelsInvited) {
-      if (newProps.get_pending_invite_ravel) {
-        retrieved.ravelsInvited = true;
-        this.setState ({
-          ravelsInvited: newProps.get_pending_invite_ravel,
-          retrieved: retrieved,
-        });
-        if (_.size (newProps.get_pending_invite_ravel) > 0) {
-          this.getMetaData (newProps.get_pending_invite_ravel);
-        } else {
-          loading.ravelsInvited = false;
-          this.setState ({ loading: loading });
-        }
-      }
-    }
-
-    // Ravels Invited Metadata
-    if (loading.ravelsInvited) {
-      stubs.ravelsInvited [metaData.ravel_uid] = this.renderRavelStub (metaData);
-      this.setState ({ stubs: stubs });
-      if (_.size (stubs.ravelsInvited) == _.size (this.state.ravelsInvited)) {
-        loading.ravelsInvited = false;
-        this.setState ({ loading: loading });
-      }
-      return;
-    }
-  }
-
-  getMetaData (ravels) {
-    Object.keys (ravels).map (ravel =>
-      this.props.getRavelMetaData (ravel)
-    );
-  }
-
-  renderRavelStub (ravel) {
-    return (
-      <View key={ravel.ravel_uid} style={styles.ravel}>
-        <RavelStub
-          ravel={ravel}
-          parentScreen={this.constructor.name}
-          {...this.props}
-        />
-      </View>
-    );
   }
 
   showLoader () {
@@ -185,55 +82,71 @@ class YourRavels extends Component {
     );
   }
 
+  renderRavelStubs (ravels) {
+    metaData = this.state.ravelMetaData;
+    return (
+      <View>
+        {ravels.map ((ravel) =>
+          <View key={ravel.ravel_uid} style={styles.ravel}>
+            <RavelStub
+               ravel={ravel.ravel_title}
+               ravelID={ravel.ravel_uid}
+               author={(metaData [ravel.ravel_uid] || {}).user_created}
+               authorPhotoURL={(metaData [ravel.ravel_uid] || {}).user_created}
+               users={ravel.ravel_number_participants}
+               score={ravel.ravel_points}
+               parentScreen={this.constructor.name}
+               {...this.props}
+            />
+          </View>
+        )}
+      </View>
+    );
+  }
+
   getRavels () {
-    if (this.state.loading.userCreatedRavels) {
-      return (this.showLoader ());
-    }
+    if (this.state.loading) { return this.showLoader (); }
 
     var userCreatedRavels = Object.values (this.state.userCreatedRavels);
 
-    if (_.size (userCreatedRavels) == 0) {
+    if (userCreatedRavels.length == 0) {
       return (
         <View style={styles.text}>
           <TextSans size={14}>You haven&#39;t started any ravels yet.</TextSans>
         </View>
       );
     }
-    return (Object.values (this.state.stubs.userCreatedRavels));
+    return (this.renderRavelStubs (userCreatedRavels));
   }
 
   getRavelsIn () {
-    if (this.state.loading.ravelsIn) {
-      return (this.showLoader ());
-    }
+    if (this.state.loading) { return this.showLoader (); }
 
     var ravelsIn = Object.values (this.state.ravelsIn);
 
-    if (_.size (ravelsIn) == 0) {
+    if (ravelsIn.length == 0) {
       return (
         <View style={styles.text}>
           <TextSans size={14}>You&#39;re not participating in anyone else&#39;s ravels yet.</TextSans>
         </View>
       );
     }
-    return (Object.values (this.state.stubs.ravelsIn));
+    return (this.renderRavelStubs (ravelsIn));
   }
 
   getRavelsInvited () {
-    if (this.state.loading.ravelsInvited) {
-      return (this.showLoader ());
-    }
-
+    if (this.state.loading) { return this.showLoader (); }
+    
     var ravelsInvited = Object.values (this.state.ravelsInvited);
 
-    if (_.size (ravelsInvited) == 0) {
+    if (ravelsInvited.length == 0) {
       return (
         <View style={styles.text}>
           <TextSans size={14}>You haven&#39;t been invited to participate in anyone else&#39;s ravels yet.</TextSans>
         </View>
       );
     }
-    return (Object.values (this.state.stubs.ravelsInvited));
+    return (this.renderRavelStubs (ravelsInvited));
   }
 
   onPressStartARavel () {

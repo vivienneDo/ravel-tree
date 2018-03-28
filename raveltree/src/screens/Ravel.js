@@ -1,6 +1,6 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/27/18
-// Modified: 03/20/18
+// Modified: 03/28/18
 //
 // "Ravel" screen for RavelTree.
 //
@@ -89,18 +89,20 @@ class Ravel extends Component {
     var screenData = this.props.screenData;
     this.state = {
       //ravel: screenData.ravel_uid || TEST_RAVEL || [],
-      tree: TEST_RAVEL || [],
+      tree: screenData.roots || /*TEST_RAVEL ||*/ {},
       ravelID: screenData.ravel_uid || '',
-      title: screenData.ravel_title || TEST_RAVEL.title || '',
+      title: screenData.ravel_title || /*TEST_RAVEL.title ||*/ '',
       author: screenData.user_created || '',
-      participants: screenData.m_ravel_participants || TEST_RAVEL.participants || [],
-      score: screenData.ravel_points || TEST_RAVEL.score || '',
-      concept: screenData.ravel_concept || TEST_RAVEL.concept || '',
+      participants: screenData.ravel_participants || /*TEST_RAVEL.participants ||*/ [],
+      score: screenData.ravel_points,
+      concept: screenData.ravel_concept || /*TEST_RAVEL.concept ||*/ '',
       mode: firebase.auth ().currentUser == screenData.user_created ? 'owned' : '',
       showModal: screenData.showModal || '',
       passageIndex: screenData.passageIndex || '',
-      passageMetaData: TEST_PASSAGE_METADATA || '',
+      passageMetaData: /*TEST_PASSAGE_METADATA ||*/ '',
     };
+
+    console.log (screenData);
   }
 
   showModal (modalToShow) {
@@ -164,16 +166,25 @@ class Ravel extends Component {
   }
 
   showUsers () {
+    var participants;
+    if (this.state.participants) {
+      var ids = Object.keys (this.state.participants).filter (id =>
+        this.state.participants [id] == true
+      );
+
+      participants = ids.map ((userID) =>
+        <View key={userID} style={styles.user}>
+          <UserImage {...this.props} userID={userID} size={30} />
+        </View>
+      );
+    }
+
     return (
       <View style={styles.users}>
         <View style={styles.user}>
-          <UserImage {...this.props} size={40} />
+          <UserImage {...this.props} userID={this.state.author} size={40} />
         </View>
-        {this.state.participants.map ((user) =>
-          <View key={user} style={styles.user}>
-            <UserImage {...this.props} size={30} />
-          </View>
-        )}
+        {participants}
       </View>
     );
   }
@@ -213,6 +224,7 @@ class Ravel extends Component {
 
 
   showTree () {
+    if (!this.state.tree || _.size (this.state.tree) == 0) { return; }
     return (
       <Tree
         tree={this.state.tree}
@@ -247,10 +259,10 @@ class Ravel extends Component {
 
   render (){
     const {
-      title,
-      author,
-      participants,
-      score,
+      // title,
+      // author,
+      // participants,
+      // score,
       mode,
       testID,
     } = this.props;

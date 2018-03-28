@@ -1,6 +1,6 @@
 // Author:   Alex Aguirre
 // Created:  01/20/18
-// Modified: 03/23/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/28/18 by Frank Fusco (fr@nkfus.co)
 //
 // "User Image" component for RavelTree.
 
@@ -23,7 +23,7 @@ const DEFAULT_SIZE = 100;
 
 const PLACEHOLDER_IMAGE = require('./img/user.png');
 
-class UserImage extends Component<{}> {
+class UserImage extends Component {
 
   // Keeps track of whether the user is active or not
   constructor(props) {
@@ -31,7 +31,7 @@ class UserImage extends Component<{}> {
     this.state = {
       isActive: this.props.active,
       profile: this.props.profile,
-      userID: '',
+      userID: this.props.userID,
       photoURL: undefined,
     };
   }
@@ -43,27 +43,25 @@ class UserImage extends Component<{}> {
         photoURL: this.props.profile.photoURL,
       });
     }
-    // else {
-    //   if (this.props.photoURL) {
-    //     this.setState ({ photoURL: this.props.photoURL });
-    //   }
-    //   if (this.props.userID) {
-    //     // Get the profile associated with the user id.
-    //     this.props.getUserProfile (this.props.userID);
-    //   }
-    // }
+    else {
+      if (this.props.photoURL) {
+        this.setState ({ photoURL: this.props.photoURL });
+      }
+      if (this.props.userID) {
+        // Get the profile associated with the user id.
+        console.log ("Getting user profile for " + this.props.userID);
+        this.props.getUserProfile (this.props.userID);
+      }
+    }
   }
 
   componentWillReceiveProps (newProps) {
-    if (!this.props.photoURL) {
-      if (newProps.userProfile) {
-        if (!this.state.photoURL) {
-          this.setState ({
-            photoURL: newProps.userProfile.photoURL
-          });
-        }
+    if (!this.state.profile) {
+      if (newProps.userProfile && newProps.userProfile.user_uid == this.props.userID) {
         this.setState ({
-          userProfile: newProps.userProfile,
+          profile: newProps.userProfile,
+          userID: this.props.userID,
+          photoURL: newProps.userProfile.photoURL,
         });
       }
     }
@@ -84,8 +82,6 @@ class UserImage extends Component<{}> {
       disabled,
     } = this.props;
 
-    // Uses a test image for now – will update later to dynamic image stored
-    // in Firebase.
     var image = this.state.photoURL ? (
       {uri: this.state.photoURL}
       ) : (

@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/13/18
-// Modified:  03/19/18
+// Modified:  03/28/18
 
 // Standard concept popup component for RavelTree.
 
@@ -34,14 +34,21 @@ export default class ConceptPopup extends React.Component {
   render () {
     const {
       title,
+      author,
       ravelID,
       score,
       concept,
+      participants,
       onPressClose,
       testID,
     } = this.props;
 
-    const participantCount = this.props.participants.length;
+    const participantCount = Object.keys (participants).filter (id =>
+        participants [id] == true
+    ).length + 1;
+
+
+    participants.length;
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
@@ -52,7 +59,7 @@ export default class ConceptPopup extends React.Component {
         <View style={styles.head}>
           <View style={styles.left}>
             <View style={styles.userImage}>
-              <UserImage {...this.props} size={26}  />
+              <UserImage {...this.props} userID={author} size={26}  />
             </View>
             <TextSerif size={16}>{title}</TextSerif>
           </View>
