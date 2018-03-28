@@ -137,6 +137,9 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-fcm')
+    compile 'com.google.firebase:firebase-core:10.2.1' //this decides your firebase SDK version
+    compile 'com.google.firebase:firebase-messaging:10.2.1'
     compile project(':react-native-photo-view')
     compile project(':react-native-linear-gradient')
     compile project(':react-native-image-picker')
@@ -155,3 +158,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+apply plugin: 'com.google.gms.google-services'
