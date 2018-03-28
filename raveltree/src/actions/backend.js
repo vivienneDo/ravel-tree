@@ -16,6 +16,7 @@
                          Updated createStartRavel() push roots:false, nodeCount: false on initi 
                          Updated addInitiPassage() to push  var parent = {root:true} and var children = false on start 
                          Added getPassageMetaData()
+                         Added calculatePassageIndexField() and updated addPassage() and addInitiPassage() to update passage_index 
                                                               
 
  */
@@ -1414,7 +1415,7 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
     var passage_comment = '';    
     var level = 1;   
     var parent = {root:true};  
-    var children = false;  
+    var child = false;  
     var checkUserCreator = '';                    
 
     return (dispatch) => {
@@ -1485,8 +1486,17 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
                                     addPassageToRavelRootList(ravel_uid, passage_uid); 
                                 })
                                 .then(() => {
-                                    addPassageToRavelLevelTree(ravel_uid, level, passage_uid);
+                                    console.log('before index calc')
+                                    calculatePassageIndexField(ravel_uid,level,passage_uid).then(passage_index => {
+                                        console.log(passage_index)
+                                        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_index`).set(passage_index)
+                                    })
+                                    .then(() => {
+                                        addPassageToRavelLevelTree(ravel_uid, level, passage_uid);
+         
+                                    })
                                 })
+
                                 .then(() => {
                                     firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
                                         dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
@@ -1663,7 +1673,16 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
                                     })
                                     .then(() => {
                                         updateAddPassageLevel(ravel_uid, parent_passage_uid, passage_uid).then(valueOfKey => {
-                                            addPassageToRavelLevelTree(ravel_uid, valueOfKey, passage_uid);
+
+                                            var level = valueOfKey;
+                                            calculatePassageIndexField(ravel_uid, level, passage_uid).then(passage_index => {
+                                                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_index`).set(passage_index);
+                                            })
+                                            .then(() => {
+                                                addPassageToRavelLevelTree(ravel_uid, valueOfKey, passage_uid)
+                                            })
+
+                                            
                                         });
                                     })
                                 .then(() => {
@@ -1738,19 +1757,98 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
  */
 export const getPassageMetaData = (passage_uid) => {
 
-    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
-        dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
-    })
-    .then(() => {
-        // dispatch a success state
-        dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
-    })
-    .catch((error) => {
-        // dispatch an error
-        dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
-        alert('Could get fetch particular passage meta data at this time...')
-    })
+    return (dispatch) => {
+
+        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
+            dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
+        })
+        .then(() => {
+            // dispatch a success state
+            dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
+        })
+        .catch((error) => {
+            // dispatch an error
+            dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
+            alert('Could get fetch particular passage meta data at this time...')
+        })
+
+    }
+
+
     
+}
+
+export const testerPromiseHelper = (ravel_uid,passage_uid,level) => {
+
+    return (dispatch) => {
+        calculatePassageIndexField(ravel_uid,passage_uid,level)
+        dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
+    }
+
+    
+}
+
+
+/**
+ * 
+ * @param {*} ravel_uid, level, passage_uid
+ * @returns {*} promise, returns 'passage_index' field in the format 'level-alphaversion'
+ * actions: Attempts to create a new passage index field for a ravel 
+ */
+export const calculatePassageIndexField = (ravel_uid, level, passage_uid) => {
+
+    // Get the level the passage_uid is on 
+    // Get the number of children currently on the passage's level 
+    // +1 that number and convert it to alpha 
+
+    var numChild = 0;
+    var passageNum_Pre_Alpha = 0; 
+    var nodesAtNextLevel = 0;
+    var nextLetterIndex = 0;
+    var nextLetters = '';
+    var passage_index = '';
+
+    return new Promise((resolve,reject) => {
+
+        firebase.database().ref(`ravel_level_passage/${ravel_uid}/${level}`).once('value', (snapshot) => {
+            
+            // If no child exist for that level, default to level-A
+            if (snapshot.exists() === false) {
+
+                passage_index = level + '-' + 'A'
+
+            } else {
+                nodesAtNextLevel = snapshot.numChildren(); 
+                nextLetterIndex = nodesAtNextLevel + 1; 
+
+                // Converts the numeric index to base 26.
+                while (nextLetterIndex > 0) {
+                    nextLetterIndex--; // 1 -> a, not 0 -> a
+                    var remainder = nextLetterIndex % 26;
+                    var digit = String.fromCharCode (remainder + 97);
+                    nextLetters = nextLetters + digit;
+                    nextLetterIndex = (nextLetterIndex - remainder) / 26;
+                 }
+                // Reverse the string (because we constructed it backwards).
+                nextLetters = nextLetters.split ("").reverse ().join ("");
+            
+                // Make sure the letters are uppercase.
+                nextLetters = nextLetters.toUpperCase ();
+                
+                passage_index = level + '-' + nextLetters;
+            }
+
+        })
+        .then(() => {
+            return passage_index;
+        })
+        .then(() => {
+            resolve(passage_index);
+        })
+        .catch((error) => {
+            reject(error);
+        })
+    })
 }
 
 
