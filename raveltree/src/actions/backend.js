@@ -18,7 +18,8 @@
                          Added getPassageMetaData()
                          Added calculatePassageIndexField() and updated addPassage() and addInitiPassage() to update passage_index 
                                                               
-
+  - 3/28/2018 - VD Do - Added forkPassage() and mergeTwoPassage() and helper functions. 
+                        Updated getPassageMetaData() to accept ravel_uid as a param                    
  */
 
 import firebase from 'firebase';
@@ -1389,7 +1390,7 @@ export const searchRavelByCategory = (category) => {
  *                  - this.props.passage_meta_data.user_created_photoURL
  *                  - this.props.passage_meta_data.level
  *                  - this.props.passage_meta_data.parent{root:true}
- *                  - this.props.passage_meta_data.child{} // false if none 
+ *                  - this.props.passage_meta_data.child{} // false if none , otherwise a key:value list  
  * 
  * mapStateToProps => state = passage_meta_data_fetch_is_success = 
  * state.passage 
@@ -1527,9 +1528,6 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
                     }
                 })
         
-                
-    
-    
             } else {
                 dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
                 alert('Current user is not a part of this ravel...Cannot add passage.')
@@ -1538,13 +1536,25 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
     
     })
     
-    
-
-
-    
-
     }
 }
+
+// Maybe this function is not needed, if forking, simply update the root{} in the ravel. 
+// export const setRootPassageOnRavelCreate = (ravel_uid) => {
+
+//     const { currentUser } = firebase.auth();
+
+//     var user_created = currentUser.uid;
+//     var passage_create_date = new Date().toLocaleTimeString();  
+//     var level = 0;   
+//     var parent = false;  
+//     var child = false;  
+    
+//     firebase.database().ref(`/passages/${ravel_uid}/root`)
+//         .set({ parent: parent, child: child , level : level , user_created : user_created, passage_create_date: passage_create_date})
+
+
+// }
 
 /**
  * 
@@ -1574,7 +1584,7 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
  *                  - this.props.passage_meta_data.user_created_photoURL
  *                  - this.props.passage_meta_data.level
  *                  - this.props.passage_meta_data.parent{} // {root:0} if root if parent, otherwise, key:value pair of parent_passage_uids
- *                  - this.props.passage_meta_data.child{} // false if none 
+ *                  - this.props.passage_meta_data.child{} // false if none , otherwise a key:value list  
  * 
  * mapStateToProps => state = passage_meta_data_fetch_is_success = 
  * state.passage 
@@ -1658,10 +1668,10 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
                                     })
             
                                 })
-                                .then(() => {
-                                    firebase.database().ref(`ravels/${ravel_uid}`).update({has_child : true});
-                                })
-                                                                .then(() => {
+                                    .then(() => {
+                                        firebase.database().ref(`ravels/${ravel_uid}`).update({has_child : true});
+                                    })
+                                        .then(() => {
                                         addChildPassageToParentPassage(ravel_uid, parent_passage_uid, passage_uid)
                                         
                                     })
@@ -1672,6 +1682,7 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
                                         updateRavelLevelCountByIncrementOne(ravel_uid);
                                     })
                                     .then(() => {
+
                                         updateAddPassageLevel(ravel_uid, parent_passage_uid, passage_uid).then(valueOfKey => {
 
                                             var level = valueOfKey;
@@ -1728,7 +1739,7 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
 
 /**
  * 
- * @param {*} {passage_uid}
+ * @param {*} {passage_uid, ravel_uid}
  * @returns {*} DISPATCHES 
 
  * mapStateToProps = state => passage_meta_data =
@@ -1746,7 +1757,7 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
  *                  - this.props.passage_meta_data.user_created_photoURL
  *                  - this.props.passage_meta_data.level
  *                  - this.props.passage_meta_data.parent{} // {root:0} if root if parent, otherwise, key:value pair of parent_passage_uids
- *                  - this.props.passage_meta_data.child{} // false if none 
+ *                  - this.props.passage_meta_data.child{} // false if none , otherwise a key:value list  
  * 
  * mapStateToProps => state = passage_meta_data_fetch_is_success = 
  * state.passage 
@@ -1755,9 +1766,10 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
  *          
  * actions: Attempts to get the metadata for a particular ravel 
  */
-export const getPassageMetaData = (passage_uid) => {
+export const getPassageMetaData = (passage_uid, ravel_uid) => {
 
     return (dispatch) => {
+
 
         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
             dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
@@ -2051,6 +2063,7 @@ export const addChildPassageToParentPassage = (ravel_uid, parent_passage_uid, pa
     })
 }
 
+
 /**
  * 
  * @param {*} ravel_uid, parent_passage_uid, passage_uid
@@ -2083,6 +2096,8 @@ export const addParentPassageToChildPassage = (ravel_uid, parent_passage_uid, pa
 
     })
 }
+
+
 
 
 /**
@@ -2152,6 +2167,50 @@ export const updateAddPassageLevel = (ravel_uid, parent_passage_uid, passage_uid
 
                 m_level_count = snapshot.val() + 1; 
                 valueOfKey = snapshot.val() + 1;
+
+            } else {
+                alert('Error getting parent passage level at this time...')
+            }
+        })
+        .then(() => {
+            firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({level : m_level_count})
+        })                      
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+            
+
+    })
+}
+
+/**
+ * 
+ * @param {*} ravel_uid, parent_passage_uid, passage_uid
+ * @returns {*} promise, true on success, false on fail 
+ * actions: Updates child passage_uid to have same level as parent 
+ *          
+ */
+export const updatePassageLevelOnFork = (ravel_uid, parent_passage_uid, passage_uid) => {
+    
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = 0;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+        var m_level_count = 0; 
+
+        firebase.database().ref(`passages/${ravel_uid}/${parent_passage_uid}/level`).once('value', (snapshot) => {
+            if ( snapshot.val() != null ) {
+
+                m_level_count = snapshot.val(); 
+                valueOfKey = snapshot.val();
 
             } else {
                 alert('Error getting parent passage level at this time...')
@@ -2321,35 +2380,180 @@ export const getPassageUidOnLevel = (ravel_uid, level) => {
 }
 
 
-// TODO
-// Return false if FAIL, true if success
-// if a user forks on level 1, then you must add the new passage_uid to ravel root{} 
-export const forkOnLevelOne = (ravel_uid) => {
+/**
+ * Forking means you add all parent{} passage_uid inside of parent_passage_uid into the new passage_uid child{} 
+ * @param {*} Object of vars - {ravel_uid, parent_passage_uid, passage_title, passage_body}
+ * @returns {*} DISPATCHES 
+ * 
+ * mapStateToProps = state => passage_uid =
+ * state.passage
+ *              <1> 'CREATE_PASSAGE' - returns the passage_uid that was just created
+ *                  - this.props.passage.passage_uid
+ * 
+ * mapStateToProps = state => passage_meta_data =
+ * state.passage
+ *              <2> 'GET_PASSAGE_META_DATA' - attempts to get the metadata from a passage just created
+ *                  - this.props.passage_meta_data.passage_body
+ *                  - this.props.passage_meta_data.passage_create_date
+ *                  - this.props.passage_meta_data.passage_downvote
+ *                  - this.props.passage_meta_data.passage_combined_vote
+ *                  - this.props.passage_meta_data.passage_title
+ *                  - this.props.passage_meta_data.passage_upvote
+ *                  - this.props.passage_meta_data.ravel_title
+ *                  - this.props.passage_meta_data.ravel_uid
+ *                  - this.props.passage_meta_data.user_created
+ *                  - this.props.passage_meta_data.user_created_photoURL
+ *                  - this.props.passage_meta_data.level
+ *                  - this.props.passage_meta_data.parent{} // {root:0} if root if parent, otherwise, key:value pair of parent_passage_uids
+ *                  - this.props.passage_meta_data.child{} // false if none, otherwise a key:value list  
+ * 
+ * mapStateToProps => state = passage_meta_data_fetch_is_success = 
+ * state.passage 
+ *              <3>'ON_GET_PASSAGE_META_DATA_SUCCESS' - returns true on success, false on fail 
+ *                  - this.props.passage.passage_meta_data_fetch_is_success
+ *          
+ * actions: Attempts to add a new passage to the db and sets all of the meta data field. Updates the current userProfile : stat_passage_written
+ *          field to be +1 what is currently stored. Fires an update function that will re-calc the userProfile : ravel_points field 
+ *          to reflect these changes. Returns the meta data for the newly added passage where the newly created passage_uid: parent{} has 
+ *          all of parent_passage_uid:parent{}. 
+ */
+export const forkPassage = ({ravel_uid, parent_passage_uid, passage_title, passage_body}) => {
+
+    const { currentUser } = firebase.auth();
+    var user_created = currentUser.uid;
+    var ravel_title = '';
+    var passage_create_date = new Date().toLocaleTimeString();
+    var user_created_photoURL = '';   
+    var passage_upvote = 0;
+    var passage_downvote = 0;
+    var passage_combined_vote = 0;
+    var stat_passage_written;
+    var passage_comment = '';    
+    var level = 0;  // calculate this by function  
+    var parent = '';  // add parent_passage_uid to this {} 
+    var children = '';      // update parent_passage_uid children{} to have this new passage_uid   
+    var checkUserCreator = '';              
+
+    return (dispatch) => {
+
+    checkUserCreatedPassage(ravel_uid).then(valueOfKey => {
+
+    checkUserCreator = valueOfKey
+
+        checkParticipantExistRavel(ravel_uid).then(valueOfKey => {
+
+            if (checkUserCreator || valueOfKey) {
+
+                        var passage_uid;
+
+                        firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
+                            m_ravel_title = snapshotPhoto.val();
+                        })
+                        .then(() => {
+                            firebase.database().ref(`/passages/${ravel_uid}`)
+                                    .push({level, passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
+                                    .then(returnKey => {
+                                        passage_uid = returnKey.getKey();
+                
+                                        // Do something with the passage_uid    
+                                        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_uid : passage_uid})
+                                    })
+                                    .then(() => {  
+                                        dispatch({ type: 'CREATE_PASSAGE',
+                                                payload: {passage_uid} });
+                                    })
+                                    .then(() => {
+                                    firebase.database().ref(`/users/${user_created}/userProfile/photoURL`).once('value', snapshotPhoto => {
+                                            user_created_photoURL = snapshotPhoto.val();        
+                                    })
+                                    .then(() => {
+                                        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({user_created_photoURL : user_created_photoURL})
+                                    })         
+                                    firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
+                                        ravel_title = snapshotPhoto.val();
+                                    })
+                                    .then(() => {
+                                        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ravel_title : ravel_title})
+                                    })
+            
+                                    })
+                                    .then(() => {
+                                        addAllParentPassageToChildPassageOnFork(ravel_uid, parent_passage_uid, passage_uid);
+                                    })
+                                    .then(() => {
+
+                                        updatePassageLevelOnFork(ravel_uid, parent_passage_uid, passage_uid).then(valueOfKey => {
+
+                                            var level = valueOfKey;
+                                            calculatePassageIndexField(ravel_uid, level, passage_uid).then(passage_index => {
+                                                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_index`).set(passage_index);
+                                            })
+                                            .then(() => {
+                                                addPassageToRavelLevelTree(ravel_uid, valueOfKey, passage_uid)
+                                            })
+
+                                            
+                                        });
+                                    })
+                                .then(() => {
+                                    firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
+                                        dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
+                                    })
+                                })
+                                .then(() => {
+                                    firebase.database().ref(`users/${user_created}/userProfile/stat_passage_written`).once('value', (snapshot) => {
+                                        stat_passage_written = snapshot.val() + 1
+                                        
+                                    })
+                                    .then(() => { // Update the number of passages a user has written 
+                                        firebase.database().ref(`users/${user_created}/userProfile`).update({stat_passage_written : stat_passage_written});                    
+                                    })
+                                    .then(() => {
+                                        userRavelPointCalculationHelper(user_created);
+                                    })
+                                })
+                                .then(() => {
+                                    dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
+                                })
+            
+                        })
+                        .catch(() => {
+                            dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
+                            alert('Failure adding a new passage...')
+                        })
+                        
+                    }
+                })
+        
+
+    })
+
+    }
+}
+
+/**
+ * 
+ * @param {*} ravel_uid, parent_passage_uid, passage_uid
+ * @returns {*} promise, true on success, false on fail 
+ * actions: Attempts to add all parent{} from parent_passage_uid to the child passage uid 'parent{}' field 
+ */
+export const addAllParentPassageToChildPassageOnFork = (ravel_uid, parent_passage_uid, passage_uid) => {
     
     return new Promise((resolve,reject) => {
 
         var valueOfKey = false;
         var currentUid = firebase.auth().currentUser.uid;
         var snapShotVal;
-        var m_level_count = 0; 
+        var p;
 
-        firebase.database().ref(`ravels/${ravel_uid}/level_count`).once('value', (snapshot) => {
-            if ( snapshot.val() != null ) {
-
-                m_level_count = snapshot.val() + 1; 
-            } else {
-                alert('Error getting ravel level count, was not set in database...')
-            }
-        })
-        .then(() => {
-            firebase.database().ref(`ravels/${ravel_uid}`).update({level_count : m_level_count})
-        })
-        .then(() => {
+        firebase.database().ref(`passages/${ravel_uid}/${parent_passage_uid}/parent`).once('value', (snapshot) => {
+            p = snapshot.val(); 
             valueOfKey = true;
-        })                        
-        .then(() => {
-            return valueOfKey
         })
+        .then(() => {
+            // Update child_passage_uid : parent{} to have the same parent as parent_passage_uid 
+            firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({parent:p})
+        })                        
         .then((valueOfKey) => {
             resolve(valueOfKey)
         })
@@ -2364,7 +2568,60 @@ export const forkOnLevelOne = (ravel_uid) => {
 
 
 /**
- * TODO: TRACK THE USER_UID IF THEY UPVOTED THE PASSAGE_UID ALREADY
+ * 
+ * @param {*} ravel_uid, Object of vars {ravel_uid, parent_passage_uid, child_passage_uid}
+ * @returns {*} dispatch ON_MERGE_SUCCESS
+ * mapStateToProps => state = passage_merge_is_success = 
+ * state.passage 
+ *              <1>'ON_MERGE_SUCCESS' - returns true on success, false on fail 
+ *                  - this.props.passage.passage_merge_is_success
+ * 
+ * actions: Merging means to merge two passages together. The parent_passage_uid is the initial clicked passage. 
+   The child_passage is the passage that will suceed the parent. 
+   Go to parent_passage_uid: child{} and add child_passage_uid to it. 
+   Go to child_passage_uid:parent and add parent_passage_uid to it. 
+ */
+export const mergeTwoPassage = ({ravel_uid, parent_passage_uid, child_passage_uid}) => {
+  
+        var checkUserCreator = '';              
+    
+        return (dispatch) => {
+    
+        checkUserCreatedPassage(ravel_uid).then(valueOfKey => {
+    
+        checkUserCreator = valueOfKey
+    
+            checkParticipantExistRavel(ravel_uid).then(valueOfKey => {
+    
+                if (checkUserCreator || valueOfKey) {
+            
+                    addChildPassageToParentPassage(ravel_uid, parent_passage_uid, child_passage_uid)
+                    .then(() => {
+                        addParentPassageToChildPassage(ravel_uid, parent_passage_uid, child_passage_uid);
+                    })
+                    .then(() => {
+                        dispatch({type:'ON_MERGE_SUCCESS', payload: true})
+                    })
+                    .catch(() => {
+                        dispatch({type:'ON_MERGE_SUCCESS', payload: false})
+                        alert('Failure merging passages...')
+                    })
+                            
+                    } else {
+                        dispatch({type:'ON_MERGE_SUCCESS', payload: false})
+                        alert('Current user is not a part of this ravel...Cannot merge passage.')
+                    }
+                              
+                
+            })
+    
+        })
+    
+        }
+    }
+
+/**
+ * 
  * @param {*} ravel_uid, passage_uid 
  * @returns {*} dispatch ON_VOTE_SUCCESS
  * mapStateToProps => state = passage_vote_is_success = 
@@ -2690,8 +2947,6 @@ export const userDownVoteTrackerHelper = (ravel_uid, passage_uid) => {
     })
 }
 
-
-
 /** TO DO  
 * Function that gets a ravel's particular passage, will do after talking about structure 
 */
@@ -2843,9 +3098,9 @@ export const getPassageComment = (ravel_uid, passage_uid) => {
 // TODO AFTER STRUCTURE CHANGES 
 
 
-export const forkPassage = () => {
+// export const forkPassage = () => {
 
-}
+// }
 
 export const mergePassage = () => {
 
