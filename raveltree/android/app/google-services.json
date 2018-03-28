@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "107870538404",
+    "firebase_url": "https://crmlinkedln2-81204.firebaseio.com",
+    "project_id": "crmlinkedln2-81204",
+    "storage_bucket": "crmlinkedln2-81204.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107870538404:android:ba986dcdf59b2418",
+        "android_client_info": {
+          "package_name": "com.raveltree"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "107870538404-c7nl79cqhhik5044g67dma12tqlim3hq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB26dISKFcDm3NIYh6euVBxx2bxWh2FTJs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
