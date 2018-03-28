@@ -4,11 +4,25 @@ Instructions to use: import FBLoginComponent from '../utils/FBLoginComponent'; i
 Then, use the component as any other component 
 ex: <FBLoginComponent/> 
 */ 
+
 import React, { Component } from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
+    ScrollView,
+    Button,
+    TouchableOpacity
+  } from 'react-native';
+
+import { MKTextField, MKColor, MKButton } from 'react-native-material-kit';
 import firebase from 'firebase';
 import { connect} from 'react-redux';
 import * as actions from '../actions';
 import { updateUserProfile } from '../actions';
+import RTLogoText from '../components/RTLogoText';
+import TextLink from '../components/TextLink';
+import TextHeader from '../components/TextHeader'
 
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -21,8 +35,20 @@ const {
 class FBLoginComponent extends Component {
 
     render = () => {
+        const {
+            form,
+            fieldStyles,
+            loginButtonArea,
+            errorMessage,
+            container,
+            welcome,
+            loginTest,
+            gStyle,
+            logoStyle
+          } = styles;
+
         return (
-            <LoginButton readPermissions = {['public_profile','email']}
+            <LoginButton style = {styles.facebook} readPermissions = {['public_profile','email']}
             onLoginFinished = {
             (error, result) => {
                 if (error) {
@@ -93,5 +119,16 @@ class FBLoginComponent extends Component {
       }
 
 }
+const styles = StyleSheet.create({
+
+  facebook: {
+    height: 35,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    width: 300,
+  },
+
+});
+
 
 export default FBLoginComponent;

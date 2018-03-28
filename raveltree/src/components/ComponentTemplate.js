@@ -4,7 +4,7 @@ import { Text, View, StyleSheet, Image, ScrollView, TouchableOpacity, Linking } 
 import { getTheme } from 'react-native-material-kit';
 import {MKTextField, MKColor, MKButton} from 'react-native-material-kit';
 
-// TODO: import these to use the functions and reducers 
+// TODO: Always import these to use the functions and reducers 
 import * as actions from '../actions';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -44,12 +44,12 @@ class ComponentTemplate extends Component {
   }
 }
 
-// // TODO: set up mapStateToProps 
+// // TODO: set up mapStateToProps
 const mapStateToProps = state => {
 
     console.log('State' + state.current_user.currentUserProfile.first_name)
 
-    const { currentUserProfile } = state.current_user;
+    const { currentUserProfile } = state.current_user; // Refer back to indexPrototype header example
 
       return { currentUserProfile };
 

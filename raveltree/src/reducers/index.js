@@ -12,6 +12,8 @@ import PassageReducer from './PassageReducer'
 import AdminReducer from './AdminReducer'
 import ReportReducer from './ReportReducer'
 
+import NavigationReducer from './NavigationReducer';
+
 const rootReducer = combineReducers({
     ravel: RavelReducer,
     master_ravel: MasterRavelReducer,
@@ -24,7 +26,9 @@ const rootReducer = combineReducers({
     notification: NotificationReducer,
     passage: PassageReducer,
     admin_functions: AdminReducer,
-    report_status: ReportReducer
-})
+    report_status: ReportReducer,
+    navigation: NavigationReducer,
+});
 
 export default rootReducer;
+

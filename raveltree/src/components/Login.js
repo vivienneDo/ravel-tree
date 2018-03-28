@@ -1,43 +1,219 @@
+// Author: Alex Aguirre and Vivienne Do
+// Created: ?
+// Modified: 02/23/18 by Frank Fusco (fr@nkfus.co)
+//
+// Login screen for RavelTree.
+
 import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  View, 
+  View,
   ScrollView,
-  Image,
-  Platform
+  Button,
+  TouchableOpacity
 } from 'react-native';
+
 import { MKTextField, MKColor, MKButton } from 'react-native-material-kit';
 import Loader from './Loader';
 import firebase from 'firebase';
 import { connect} from 'react-redux';
 import * as actions from '../actions';
 import MainPage from './MainPage';
-import RavelPage from './RavelPage';
-import FBLoginComponent from '../utils/FBLoginComponent';
-import {searchUserByName, userResetPassword, signInWithEmail, createUserWithEmail, updateUserProfile} from '../actions';
-import sendNotification, {userAcceptRavelInviteNotif} from '../notifications/index.js';
 
-// import fbsdk and use LoginButton and AccessToken
 const FBSDK = require('react-native-fbsdk');
 const {
   LoginButton,
-  AccessToken,
-  GraphRequest,
-  GraphRequestManager
+  AccessToken
 } = FBSDK;
+
 
 const GeneralLoginButton = MKButton.coloredButton()
     .withText('LOGIN')
     .build();
 
+    // google sign in button design
 const GLoginButton = MKButton.coloredButton()
-    .withText('Create user')
+    .withText('Sign in with Google')
+    .withTextStyle({
+        color: 'white',
+        fontWeight: 'bold'
+    })
+    .withBackgroundColor('#1E88E5')
     .build();
 
-const OneSignalButton = MKButton.coloredButton()
-    .withText('Test Push')
-    .build();    
+export default class Login extends Component {
+  state = {
+      email :  '',
+      password: '',
+      error: '',
+      loading: false,
+  };
+
+  onButtonPress() {
+      const {email, password} = this.state;
+      this.setState({error: '', loading: true });
+
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(this.onAuthSuccess.bind(this))
+        .catch(() => {
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then(this.onAuthSuccess.bind(this))
+                .catch(this.onAuthFailed.bind(this));
+        });
+  }
+
+onGButtonPress() {
+    const {email, password} = this.state;
+    this.setState({error: '', loading: true });
+
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(this.onAuthSuccess.bind(this))
+      .catch(() => {
+          firebase.auth().createUserWithEmailAndPassword(email, password)
+              .then(this.onAuthSuccess.bind(this))
+              .catch(this.onAuthFailed.bind(this));
+      });
+}
+
+  onAuthSuccess() {
+      this.setState({
+        email :  '',
+        password: '',
+        error: '',
+        loading: false,
+      });
+  }
+
+  onAuthFailed() {
+      this.setState({
+          error: 'Authenticiation Failed',
+          loading: false,
+      });
+  }
+
+  renderLoader() {
+      if (this.state.loading) {
+          return <Loader size="large"/>;
+      }
+      else {
+          return (
+          <View style = {styles.gStyle}>
+        {/*  <GeneralLoginButton
+             onPress = {this.onButtonPress.bind(this)}
+        /> */}
+          <GLoginButton
+            onPress = {this.onGButtonPress.bind(this)}
+          />
+           </View>
+          );
+      }
+  }
+
+  render() {
+    const {
+        form,
+        fieldStyles,
+        loginButtonArea,
+        errorMessage,
+        container,
+        welcome,
+        loginTest,
+        gStyle,
+        logoStyle
+      } = styles;
+
+    return (
+    <ScrollView showsVerticalScrollIndicator = {false}>
+
+    <Text></Text>
+      <View >
+
+        <Text></Text>
+
+        {/* Logo */}
+        <Text style = {{alignSelf: 'center', paddingBottom: 50, paddingTop: 250}}>
+            <Text style = {styles.logoStyleBlue}>
+                ravel
+            </Text>
+            <Text style = {styles.logoStyleGreen}>
+                tree
+            </Text>
+        </Text>
+
+        {/* login buttons */}
+        <View style = {styles.loginTest}>
+
+            {/* Facebook Login */}
+            <LoginButton
+            style = {styles.fbStyle}
+            readPermissions = {['public_profile','email']}
+
+            onLoginFinished = {
+            (error, result) => {
+                if (error)
+                {
+                alert("login has error: " + result.error);
+                }
+                else if (result.isCancelled) {
+                alert("login is cancelled.");
+                }
+                else {
+                console.log("Attempting to log into firebase");
+                AccessToken.getCurrentAccessToken().then(
+                    (data) => {
+                        const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
+                        firebase.auth().signInWithCredential(credential)
+                        .then(this.onAuthSuccess.bind(this))
+                        .catch(this.onAuthFailed.bind(this));
+
+                        console.log('Attempting log in with facebook');
+                    }, (error) => {
+                        console.log(error);
+                    }
+                )
+                    // Go to MainPage here
+                    console.log("Lol");
+                }
+                }
+            }
+            onLogoutFinished={() => alert("logout.")}/>
+
+            {/* moved the google login to be with the facebook login  */}
+            <View>
+                {this.renderLoader()}
+            </View>
+
+          </View>
+
+          <Text
+          style = {{alignSelf: 'center',
+          color: '#969696', fontWeight: 'bold'}}>
+                OR
+            </Text>
+
+        {/* takes the user to the email login page */}
+        <Button
+            title = "Sign in with an email address"
+        />
+
+        {/* the terms and privacy */}
+        <TouchableOpacity
+        style = {{alignItems: 'center', paddingTop: 80}}>
+            <Text style = {{fontSize: 12, color: '#2e8af7'}}>
+                Terms and Privacy
+            </Text>
+        </TouchableOpacity>
+
+        <Text style={errorMessage}>
+            {this.state.error}
+        </Text>
+
+      </View>
+    </ScrollView>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
     form: {
@@ -45,221 +221,44 @@ const styles = StyleSheet.create({
         width: 200,
         paddingTop: 20
     },
-
     fieldStyles: {
-        height: 40, 
+        height: 40,
         color: MKColor.Orange,
         width: 200,
     },
-
     loginButtonArea: {
-        marginTop: 20,
+       // marginTop: 20,
     },
-
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
-      },
     errorMessage: {
-        marginTop: 15, 
-        fontSize: 15, 
-        color: 'red', 
+        marginTop: 15,
+        fontSize: 15,
+        color: 'red',
         alignSelf: 'center',
-    }, 
+    },
+    loginTest : {
+        alignItems: 'center',
+    },
+    gStyle: {
+        paddingVertical: 15,
+        paddingHorizontal: 15,
+        width: 330
+    },
+    logoStyleBlue: {
+        color: '#2e8af7',
+        textAlign: 'center',
+        fontSize: 50,
+        fontFamily: 'Iowan Old Style',
+    },
+    logoStyleGreen: {
+        color: '#3bb54a',
+        textAlign: 'center',
+        fontSize: 50,
+        fontFamily: 'Iowan Old Style',
+    },
+    fbStyle: {
+        height: 35,
+        paddingVertical: 15,
+        paddingHorizontal: 15,
+        width: 300
+    }
 });
-
-// The uploadImage function that you are going to use:
-
-export default class Login extends Component { 
-  state = {
-      email :  '',
-      password: '',  
-      error: '',
-      loading: false,    
-  };
-
-onButtonPress() {
-    const {email, password} = this.state;
-    this.setState({error: '', loading: true });
-
-    signInWithEmail(email,password);
-    this.onAuthSuccess.bind(this);
-    this.onAuthFailed.bind(this);
-
-  };
-
-onGButtonPress() {
-
-    const {email, password} = this.state;
-    this.setState({error: '', loading: true });
-
-    createUserWithEmail(email,password);
-
-    this.onAuthSuccess.bind(this);
-    this.onAuthFailed.bind(this);
-    
-
-};
-
-  onAuthSuccess() {
-      this.setState({
-
-        email :  '',
-        password: '',  
-        error: '',
-        loading: false, 
-      });
-  }
-
-  onAuthFailed() {
-
-      this.setState({
-          error: 'Authenticiation Failed',
-          loading: false,
-      });
-        
-  }
-  
-  renderLoader() {
-      if (this.state.loading) {
-          return <Loader size="large"/>;
-      } else {
-          return (
-          <View style={styles.form}> 
-          <GeneralLoginButton onPress={this.onButtonPress.bind(this)} /> 
-          <GLoginButton onPress={this.onGButtonPress.bind(this)} /> 
-          <OneSignalButton onPress={() => {
-              var message = { 
-                app_id: "cdbe1c6e-a1a1-4303-9f5b-e2be1a1f317b",
-                contents: {"en": "English Message"},
-                included_segments: ["All"]
-              };
-              
-              userAcceptRavelInviteNotif('blah', message);
-          }} />
-           </View> 
-          );
-          
-      }
-  }
-
-  render() {
-
-      const { form, fieldStyles, loginButtonArea, errorMessage, container, welcome } = styles;
-    return (
-    <ScrollView showsVerticalScrollIndicator = {false}>
-      <View style={styles.form}>
-        <Text> Login or create an account
-        </Text>
-        <MKTextField
-            text={this.state.email}
-            onTextChange={email => this.setState({email})}
-            textInputStyle={fieldStyles}
-            placeholder={'Email...'}
-            tintColor={MKColor.Teal}
-
-        />
-        <MKTextField
-            text={this.state.password}
-            onTextChange={password => this.setState({password})}
-            textInputStyle={fieldStyles}
-            placeholder={'Password...'}
-            tintColor={MKColor.Teal}
-            password={true}
-            paddingBottom = "50"
-
-        />
-
-        <MKTextField
-            text={this.state.password}
-            onTextChange={password => this.setState({password})}
-            textInputStyle={fieldStyles}
-            placeholder={'test'}
-            tintColor={MKColor.Teal}
-            password={true}
-            paddingBottom = "50"
-
-        />
-
-        <View>
-        {/* <LoginButton readPermissions = {['public_profile','email']}
-          onLoginFinished = {
-            (error, result) => {
-              if (error) {
-                alert("facebook login has error: " + result.error);
-              } else if (result.isCancelled) {
-                alert("facebook login is cancelled.");
-              } else {
-                console.log("Attempting to log into firebase through facebook");
-                AccessToken.getCurrentAccessToken().then(
-                    (data) => {
-                         const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
-                         firebase.auth().signInWithCredential(credential)
-                          .then((user) => {
-                            let accessToken = data.accessToken;
-                                const responseInfoCallback = (error, results) => {
-                        if (error) {
-                            console.log('Error fetching data from ' + error.toString());
-                        }
-
-                        else {
-                            firebase.database().ref(`/users`).child(user.uid).once('value', function(snapshot) {
-                                // Check null values if first time logging in with FB
-                                if ((snapshot.val() === null)) {
-                                    console.log('Success fetching data' + result.toString());
-                                    console.log(results['first_name']);  
-                                    firebase.database().ref(`/users/${firebase.auth().currentUser.uid}/userProfile`)
-                                    updateUserProfile(user, {first_name:results['first_name'],last_name:results['last_name'],bio:'',photoURL:'', stat_ravel_led:'', stat_passage_written:'', stat_ravel_contributed:'', 
-                                        upvotes:'', ravel_points:'' });
-                                }
-                            });
-                            
-                        }
-                    }
-                    const infoRequest = new GraphRequest(
-                        '/me',
-                        {
-                            accessToken: accessToken,
-                            parameters: {
-                                fields: {
-                                    string: 'first_name, last_name'
-                                }
-                            }
-                        },
-                        responseInfoCallback
-                        
-                    );
-
-                    new GraphRequestManager().addRequest(infoRequest).start();
-                          })
-                          .catch(this.onAuthFailed.bind(this));
-  
-                      console.log('Attempting log in with facebook');
-        
-                }, (error) => {
-                    console.log(error);
-                    }
-                )
-              }
-            }
-          }
-          onLogoutFinished={() => alert("logout.")}/> */}
-          <FBLoginComponent/>
-          </View>
-
-        <Text style={errorMessage}>
-        {this.state.error}
-        </Text>
-        <View style={loginButtonArea}>
-            {this.renderLoader()}
-        </View>
-      </View>   
-    </ScrollView>   
-    );
-  }
-}
-
-
-
