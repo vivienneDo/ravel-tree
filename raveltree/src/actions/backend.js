@@ -19,7 +19,12 @@
                          Added calculatePassageIndexField() and updated addPassage() and addInitiPassage() to update passage_index 
                                                               
   - 3/28/2018 - VD Do - Added forkPassage() and mergeTwoPassage() and helper functions. 
-                        Updated getPassageMetaData() to accept ravel_uid as a param                    
+                        Updated getPassageMetaData() to accept ravel_uid as a param         
+                        <2>Refactored addAdminUser() to create a new user when called
+                        Added email field to user's userProfile when new account is created.
+                        Added searchUserByEmail() 
+                        Refactored forkPassage() to add passage_uid to roots array if level === 1 
+
  */
 
 import firebase from 'firebase';
@@ -79,12 +84,12 @@ export const getCurrentLoggedInUser = () => {
 */
 export const updateUserProfile = (userProfile, {first_name, last_name, bio,
                                photoURL, stat_ravel_led, stat_passage_written,
-                               stat_ravel_contributed, upvotes, ravel_points}) => {
+                               stat_ravel_contributed, upvotes, ravel_points, email}) => {
 
    var user_uid = userProfile.uid;
    firebase.database().ref(`/users/${userProfile.uid}/userProfile`)
    .set({ user_uid, first_name, last_name, bio, photoURL,stat_ravel_led, stat_passage_written,
-   stat_ravel_contributed, upvotes, ravel_points })
+   stat_ravel_contributed, upvotes, ravel_points,email })
    .catch((error) => {
        alert('Error Updating Profile...')
    })
@@ -276,6 +281,7 @@ export const createUserWithEmail = (email, password) => dispatch => {
 export const createUser = (firstName, lastName, bio, photoURL = '') => dispatch => {
 
  var user = firebase.auth().currentUser;
+ var m_email = firebase.auth().currentUser.email;
 
  firebase.database ().ref (`/master_user_key/${user.uid}`).set ({ user_uid: true })
  .then(() => {
@@ -293,7 +299,8 @@ export const createUser = (firstName, lastName, bio, photoURL = '') => dispatch 
    stat_passage_written: 0,
    stat_ravel_contributed: 0,
    upvotes: 0,
-   ravel_points: 0
+   ravel_points: 0,
+   email: m_email
  });
 }
 
@@ -1213,6 +1220,36 @@ export const searchUserByName = (first_name) => {
     return (dispatch) => {
         firebase.database().ref(`/users`).orderByChild("userProfile/first_name").equalTo(first_name).once('value', function(snapshot) {
             dispatch({type : 'SEARCH_USER_FIRST_NAME', payload: snapshot.val()});
+        })
+        .catch((error) => {
+            alert('Error search for users at this...')
+        })    
+    } 
+}
+
+/**
+ * @param: email
+ * @returns: 
+ * mapStateToProps = state => user_email_search =
+ * state.search
+ *      'SEARCH_USER_FIRST_NAME': a list of userProfile object with the same first name
+ *          - this.props.user_email_search.bio
+ *          - this.props.user_email_search.first_name 
+ *          - this.props.user_email_search.last_name 
+ *          - this.props.user_email_search.photoURL
+ *          - this.props.user_email_search.ravel_points
+ *          - this.props.user_email_search.stats_passage_written
+ *          - this.props.user_email_search.stat_ravel_contributed
+ *          - this.props.user_email_search.stat_ravel_led
+ *          - this.props.user_email_search.upvotes
+ *          - this.props.user_email_search.user_uid
+ * actions: filters all user profiles by email 
+ * 
+ */
+export const searchUserByEmail = (email) => {
+    return (dispatch) => {
+        firebase.database().ref(`/users`).orderByChild("userProfile/email").equalTo(email).once('value', function(snapshot) {
+            dispatch({type : 'SEARCH_USER_EMAIL', payload: snapshot.val()});
         })
         .catch((error) => {
             alert('Error search for users at this...')
@@ -2485,11 +2522,20 @@ export const forkPassage = ({ravel_uid, parent_passage_uid, passage_title, passa
                                         updatePassageLevelOnFork(ravel_uid, parent_passage_uid, passage_uid).then(valueOfKey => {
 
                                             var level = valueOfKey;
+
                                             calculatePassageIndexField(ravel_uid, level, passage_uid).then(passage_index => {
                                                 firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_index`).set(passage_index);
                                             })
                                             .then(() => {
                                                 addPassageToRavelLevelTree(ravel_uid, valueOfKey, passage_uid)
+                                            })
+                                            .then(() => {
+                                                if (level === 1 ) {
+                                                   
+                                                    // add to roots object 
+                                                    firebase.database().ref(`/ravels/${ravel_uid}/roots/${passage_uid}`).set(true);
+                                                    
+                                                }
                                             })
 
                                             
@@ -2522,6 +2568,9 @@ export const forkPassage = ({ravel_uid, parent_passage_uid, passage_title, passa
                             alert('Failure adding a new passage...')
                         })
                         
+                    } else {
+                        dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
+                        alert('User is not apart of ravel..')
                     }
                 })
         
@@ -3372,37 +3421,31 @@ export const readTermsOfService = () => {
  * state.admin_functions 
  *                       <1> 'ADD_ADMIN' 
  *                           - this.props.admin_functions.add_admin
- * 
- * mapStateToProps => state = is_admin
- * state.admin_functions 
- *                       <2> 'IS_ADMIN' 
- *                           - this.props.admin_functions.is_admin
- * Actions: Attemps to add a new user as an admin
+ * Actions: Attempts to create a new user account and add their uid to admin node 
  */
-export const addAdminUser = (user_uid) => {
 
+export const addAdminUser = (email, password) => dispatch => {
 
-    return (dispatch) => {
-
-        checkCurrentUserIsAdmin().then(valueOfKey => {
-
-            if (valueOfKey) {
-                firebase.database().ref(`/admin/${user_uid}`).set(true)
-                .then(() => {
-                    dispatch({type: 'ADD_ADMIN', payload: true})
-                })
-            } else {
-                alert('Sorry, you do have admin rights...')
-                dispatch({type: 'IS_ADMIN', payload: false})   
-            }
-        })
-        .catch((error) => {
-            alert('Sorry, you do have admin rights...')
-            dispatch({type: 'IS_ADMIN', payload: false})         
-        })
-
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then((user) => {
+        firebase.database().ref(`/admin/${user.uid}`).set(true)
+        dispatch({type: 'ADD_ADMIN', payload: true})
+    })
+    .catch(function(error) {
+ 
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    if (errorCode == 'auth/weak-password') {
+        alert('The password is too weak.');
+    } else if (errorCode === 'auth/email-already-in-use') {
+        alert('There already exists an account with the given email address');
+    } else {
+        alert(errorMessage);
     }
-}
+         console.log(error);
+    })
+
+ };
 
 
 /**
