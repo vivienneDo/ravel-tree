@@ -1,0 +1,3 @@
+[submodule "okta-react-widget-sample"]
+	path = okta-react-widget-sample
+	url = https://github.com/leebrandt/okta-react-widget-sample
