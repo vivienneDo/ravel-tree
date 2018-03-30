@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/13/18
-// Modified:  03/27/18
+// Modified:  03/28/18
 
 // Standard "Add passge" popup component for RavelTree.
 //
@@ -119,7 +119,7 @@ class AddPopup extends React.Component {
     if (!passageIndex) {
       // Check whether we've recieved the metadata from the parent passage.
       if (passageMetaData) {
-        // If so, generate the next available passage index.
+        // If so, generate the next available passage index (for display purposes only).
         passageIndex = this.getNextPassageIndex (passageMetaData.passage_index);
       } else {
         // If not, just set it to a blank value.

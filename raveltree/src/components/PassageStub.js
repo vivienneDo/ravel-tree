@@ -1,10 +1,9 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/27/18
-// Modified: 03/20/18
+// Modified: 03/28/18
 //
 // "Passage Stub" component for RavelTree.
 //
-// TODO: Make entire stub link to content (modal).
 // TODO: Truncate text at reasonable character count.
 // TODO: Make a PassageDot component to represent the collapsed version.
 
@@ -42,7 +41,7 @@ class PassageStub extends Component<{}> {
   showPlus (show) {
     if (!show) {return}
     return (
-      <ButtonPlus size={26} />
+      <ButtonPlus size={26} onPress={() => this.props.onPressAdd ()}/>
     );
   }
 
@@ -74,7 +73,7 @@ class PassageStub extends Component<{}> {
         <Touchable disabled={disabled} onPress={() => this.onPressStub ()} style={containerStyles}>
           <View style={styles.left}>
             <View style={styles.userImage}>
-              <UserImage {...this.props} size={26} />
+              <UserImage {...this.props} userID={author} size={26} />
             </View>
             <TextSans size={12} color={disabled ? '#95989A' : '#282828'}>{this.props.name}</TextSans>
           </View>

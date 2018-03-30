@@ -41,6 +41,7 @@ import InputSearch from '../components/InputSearch';
 import TextSerif from '../components/TextSerif';
 import TextHeader from '../components/TextHeader';
 import PassageCard from '../components/PassageCard';
+import Loader from '../components/Loader';
 
 const TEST_USER = 'Rebecca Bates';
 const TEST_PASSAGES =[
@@ -50,15 +51,53 @@ const TEST_PASSAGES =[
   {ravel: 'Endless Smirk', passageIndex: '67-D', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I\'m going to need if I\'m going to fill up more space to ensure that this gets truncated after a certain number of lines.', upvotes: 11, downvotes: 0},
 ];
 
+const PASSAGE_LOAD_COUNT = 10;
 
 class Home extends Component<{}> {
   constructor (props: any, context: any) {
     super (props, context);
+    this.state = {
+      gotPassageIDs: false,
+      //gotPassages: false,
+      passages: [],
+    }
     this.props.setShowNavBar (true);
+    this.getPassages ();
   }
 
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.userProfile) {
+  componentWillReceiveProps (newProps) {
+    var ravels = newProps.all_ravel;
+
+    if (!this.state.gotPassageIDs && _.size (ravels) > 0) {
+      var passageIds = [];
+      Object.values (ravels).map (ravel => {
+        if (_.size (ravel.roots || {}) > 0) {
+          Object.keys (ravel.roots).map (passageID =>
+            passageIds.push ({
+              ravelID: ravel.ravel_uid,
+              passageID: passageID,
+            })
+          );
+        }
+      });
+      this.setState ({ gotPassageIDs: true });
+      passageIds.map (passage =>
+        // For now, just get all of them. Will have to restrict size or pick at
+        // random soon. Eventually, this will be an actual algorithm.
+        this.props.getPassageMetaData (passage.passageID, passage.ravelID)
+      );
+    }
+
+    var passage = newProps.passage_meta_data;
+
+    if (passage && _.size (passage) > 0) {
+      var passages = this.state.passages;
+      passages.push (passage);
+      this.setState ({ passages: passages });
+      console.log (passages);
+    }
+
+    if (newProps.userProfile) {
       console.log (nextProps.userProfile);
     }
   }
@@ -76,20 +115,39 @@ class Home extends Component<{}> {
   }
 
   getPassages () {
-
     // TODO: "Newsfeed" algorithm, Firebase retrieval.
+    // For now, our newsfeed algorithm just gets all the passages.
+    // TODO: Select a subset at random and get more on scroll end.
+    this.props.loadAllRavel ();
+  }
+
+  renderPassages () {
+    if (_.size (this.state.passages) == 0) {
+      // Alternative message:
+      // No passages to display right now. You can search for ravels using
+      // Explore—or start your own ravel!
+      return (
+        <View style={styles.passages}>
+          <Text>Loading newsfeed...</Text>
+          <View style={styles.loader}><Loader /></View>
+        </View>
+      );
+    }
+
+    var passages = this.state.passages;
 
     return (
       <View style={styles.passages}>
-        {TEST_PASSAGES.map ((passage) =>
-          <View key={passage.ravel + passage.passageIndex} style={styles.passageCard}>
+        {passages.map ((passage) =>
+          <View key={passage.ravel_uid + '_' + passage.passage_uid} style={styles.passageCard}>
             <PassageCard
-              ravel={passage.ravel}
-              passageIndex={passage.passageIndex}
-              title={passage.title}
-              passage={passage.passage}
-              upvotes={passage.upvotes}
-              downvotes={passage.downvotes}
+              ravelID={passage.ravel_uid}
+              ravel={passage.ravel_title}
+              passageIndex={passage.passage_index}
+              title={passage.passage_title}
+              passage={passage.passage_body}
+              upvotes={passage.passage_upvote}
+              downvotes={passage.passage_downvote}
               testID={passage.testID}
               parentScreen={this.constructor.name}
               {...this.props}
@@ -156,7 +214,7 @@ class Home extends Component<{}> {
             <TextHeader>New for You</TextHeader>
           </View>
 
-          {this.getPassages ()}
+          {this.renderPassages ()}
 
         </ScrollView>
 
@@ -213,6 +271,9 @@ const styles = StyleSheet.create({
   textHeader: {
     marginBottom: 14,
   },
+  loader: {
+    marginTop: 20,
+  },
   passages: {
     justifyContent: 'center',
     width: '100%',
@@ -231,14 +292,24 @@ const mapStateToProps = (state) => {
   } = state.navigation;
 
   const {
-    currentUserProfile
+    currentUserProfile,
   } = state.current_user;
+
+  const {
+    all_ravel,
+  } = state.master_ravel;
+
+  const {
+    passage_meta_data,
+  } = state.passage
 
   return {
     activeScreen,
     previousScreens,
     showNavBar,
     currentUserProfile,
+    all_ravel,
+    passage_meta_data,
   };
 }
 

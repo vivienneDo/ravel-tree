@@ -96,10 +96,13 @@ class PassagePopup extends React.Component {
     } = this.props;
     isActive = passageMetaData.isOptimal || this.props.isActive;
 
+    console.log (passageMetaData);
+
     var ravel = passageMetaData.ravel_title;
     var passageIndex = passageMetaData.passage_index;
     var title = passageMetaData.passage_title;
     var passage = passageMetaData.passage_body;
+    var author = passageMetaData.user_created;
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
@@ -114,7 +117,7 @@ class PassagePopup extends React.Component {
           </View>
           <View style={styles.row2}>
             <TextSans size={13} color={'#95989A'}>{title}</TextSans>
-            <UserImage {...this.props} size={26}/>
+            <UserImage {...this.props} userID={author} size={26}/>
           </View>
         </View>
         <ScrollView style={styles.scroll}>

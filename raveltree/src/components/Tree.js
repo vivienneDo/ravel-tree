@@ -17,7 +17,8 @@ import {
   ART,
 } from 'react-native';
 
-import { connect } from 'react-redux'
+import firebase from 'firebase';
+import { connect } from 'react-redux';
 import _ from 'lodash';
 
 // Node Component:
@@ -78,11 +79,10 @@ class Tree extends Component {
 
   componentWillReceiveProps (newProps) {
     var tree = this.state.tree;
+    var passage = newProps.passage_meta_data;
 
     // Passage Metadata
-    if (newProps.passage_meta_data) {
-      var passage = newProps.passage_meta_data;
-
+    if (passage) {
       if (!((tree.nodesProcessed || {}) [passage.level] || {}) [passage.passage_uid]) {
         console.log ("Received passage metadata.");
         tree.data [passage.passage_uid] = passage;
@@ -92,6 +92,11 @@ class Tree extends Component {
         this.setState ({ tree: tree });
 
         nodesToRender.push (this.renderNode (tree.data [passage.passage_uid]));
+
+        // TODO: Check whether we're done rendering all the nodes at this level.
+        //  - If so, get the current nodes' children.
+        //  - If not, keep waiting.
+        // Loading indicator somewhere?
       }
     }
   }
@@ -264,27 +269,34 @@ class Tree extends Component {
 
     return (
       <View
-      key={content.passage_uid}
-          style={{
-            position: 'absolute',
-            zIndex: 2,
-            left: content.position.x,
-            top: content.position.y,
-            //backgroundColor: '#eeeeee',
-            width: NODE_WIDTH,
-            height: NODE_HEIGHT,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
+        key={content.passage_uid}
+        style={{
+          position: 'absolute',
+          zIndex: 2,
+          left: content.position.x,
+          top: content.position.y,
+          //backgroundColor: '#eeeeee',
+          width: NODE_WIDTH,
+          height: NODE_HEIGHT,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
       >
         <Node
+          key={content.passage_uid + '_' + content.passage_title}
+          {...this.props}
           name={content.passage_title}
           passageIndex={content.passage_index}
           score={content.passage_combined_vote}
           active={content.optimal}
           disabled={content.disabled}
-          //passage={content.passage}
+          author={content.user_created}
           onPress={() => this.onPressPassage (content)}
+          onPressAdd={() => this.props.onPressAdd (content)}
+          showAddButton={
+            (this.state.screenData.ravel_participants [firebase.auth ().currentUser.uid]) ||
+            (this.props.screenData.user_created == firebase.auth ().currentUser.uid)
+          }
           highlighted={this.state.selectedNodeIndex == content.passage_index}
         />
       </View>

@@ -240,6 +240,7 @@ class Ravel extends Component {
         //onUpdateNodeCounts={(nodeCounts) => this.onUpdateNodeCounts (nodeCounts)}
         onAnalyzeTree={(tree) => this.setState ({ tree: tree })}
         onPressPassage={(passageMetaData) => this.onSwitchToPassage (passageMetaData)}
+        onPressAdd={(passageMetaData) => this.onSwitchToAdd (passageMetaData)}
         horizontalPadding={TREE_HORIZONTAL_PADDING}
         ravelID={this.state.ravelID}
         {...this.props}
