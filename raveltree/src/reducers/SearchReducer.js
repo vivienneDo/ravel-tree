@@ -2,7 +2,8 @@ const initialState = {
     users_first_name_search: [],
     ravel_tag_search: [],
     ravel_title_search: [],
-    ravel_category_search: []
+    ravel_category_search: [],
+    user_email_name: []
 };
 
 export default (state = initialState, action) => {
@@ -13,6 +14,11 @@ export default (state = initialState, action) => {
                 ...state,
                 users_first_name_search: action.payload
             };
+        case 'SEARCH_USER_EMAIL':
+            return {
+                ...state,
+                user_email_search: action.payload
+            }
         case 'SEARCH_RAVEL_BY_TAG':
             return {
                 ...state,

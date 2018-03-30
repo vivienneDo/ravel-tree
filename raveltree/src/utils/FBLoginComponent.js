@@ -76,9 +76,10 @@ class FBLoginComponent extends Component {
                                 // along with FB first name, last name 
                                 if ((snapshot.val() === null)) {
                                     console.log('Success fetching data' + result.toString());  
+                                    var m_email = firebase.auth().currentUser.email;
                                     firebase.database().ref(`/users/${firebase.auth().currentUser.uid}/userProfile`)
                                     updateUserProfile(user, {first_name:results['first_name'],last_name:results['last_name'],bio:'',photoURL:'', stat_ravel_led:0, stat_passage_written:0, stat_ravel_contributed:0, 
-                                        upvotes:0, ravel_points:0 });
+                                        upvotes:0, ravel_points:0, email:m_email });
                                         console.log('NEW UPDATE')
                                         firebase.database().ref(`/master_user_key/${user.uid}`).set({
                                             user_uid: true})
