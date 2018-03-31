@@ -24,6 +24,7 @@
                         Added email field to user's userProfile when new account is created.
                         Added searchUserByEmail() 
                         Refactored forkPassage() to add passage_uid to roots array if level === 1 
+  - 3/31/2018 - VD Do - Refactored downVotePassage() to reset user_track_vote field on downVotePassage()
 
  */
 
@@ -2685,6 +2686,7 @@ export const upVotePassage = (ravel_uid, passage_uid) => {
 
     var upvotes;
     var passage_creator_uid;
+    var downvote;
 
     return(dispatch) => {
 
@@ -2697,6 +2699,8 @@ export const upVotePassage = (ravel_uid, passage_uid) => {
 
                 checkUserVoteTrackerHelper(ravel_uid, passage_uid).then(valueOfKey => {
 
+                    console.log('Before checking vote tracker value: ' + valueOfKey)
+
                     if (valueOfKey) {
                         // Ask Frank what he wants set back 
                         dispatch({type: 'ON_VOTE_SUCCESS', payload: false})
@@ -2704,12 +2708,18 @@ export const upVotePassage = (ravel_uid, passage_uid) => {
     
                     } else if(valueOfKey === false) {
 
+                        console.log('Inside false')
+
                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
 
                             upvotes = snapshot.val() + 1
                         })
+                        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+
+                            downvote = snapshot.val()
+                        })
                         .then(() => {
-                            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes, passage_combined_vote: upvotes});                  
+                            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes, passage_combined_vote: (upvotes + downvote)});                  
                         })
                         .then(() => {
                             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
@@ -2721,6 +2731,10 @@ export const upVotePassage = (ravel_uid, passage_uid) => {
                             })
                             .then(() => {
                                 userRavelPointCalculationHelper(passage_creator_uid);
+                            })
+                            .then(() => {
+
+                                userUpVoteTrackerHelper(ravel_uid, passage_uid);
                             })
                             .then(() => {
                                 dispatch({type: 'ON_VOTE_SUCCESS', payload: true})
@@ -2790,6 +2804,8 @@ export const downVotePassage = (ravel_uid, passage_uid) => {
     var passage_creator_uid;
     var user_uid;
     var m_down_votes;
+    var upvotes;
+    var downvote;
 
     return (dispatch) => {
         
@@ -2798,17 +2814,26 @@ export const downVotePassage = (ravel_uid, passage_uid) => {
             if (valueOfKey) {
 
                 checkUserVoteTrackerHelper(ravel_uid, passage_uid).then(valueOfKey => {
+
+                    console.log('Before checking vote tracker value: ' + valueOfKey)
                     if (valueOfKey === false) {
+                        //console.log('After checking vote tracker value: ' + valueOfKey)
                         // Add return value for Frank to know user has already downvoted and is attempting to re-downvote 
                         dispatch({type: 'ON_VOTE_SUCCESS', payload: false})
                     } else if (valueOfKey) {
 
-                        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_combined_vote`).once('value', (snapshot) => {
+                        //console.log('After checking vote tracker value: ' + valueOfKey)
 
-                            total_votes = snapshot.val() - 1
+                        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+
+                            upvotes = snapshot.val();
+                        })
+                        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+
+                            downvote = snapshot.val() - 1;
                         })
                         .then(() => {
-                            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ passage_combined_vote : total_votes });                    
+                            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_downvote : downvote, passage_combined_vote: (upvotes + downvote)});                  
                         })
                         .then(() => {
                             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
@@ -2816,15 +2841,15 @@ export const downVotePassage = (ravel_uid, passage_uid) => {
                                 user_uid = snapshot.val()
                             })
                             .then(() => {
-                                firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : total_votes})
+                                firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : (upvotes + downvote)})
         
                             })
                             .then(() => {
                                 userRavelPointCalculationHelper(passage_creator_uid);
                             })
-                            .then(() => {
-                                downVotePassageHelper(ravel_uid, passage_uid);
-                            })
+                            // .then(() => {
+                            //     downVotePassageHelper(ravel_uid, passage_uid);
+                            // })
                             .then(() => {
                                 userDownVoteTrackerHelper(ravel_uid, passage_uid);
                             })
@@ -2937,8 +2962,8 @@ export const checkUserVoteTrackerHelper = (ravel_uid, passage_uid) => {
 
         firebase.database().ref(`track_user_vote/${ravel_uid}/${passage_uid}/${currentUid}`).once('value', (snapshot) => {
 
-            if (snapshot.val()) {
-
+            if (snapshot.val() === true) {
+                console.log('I am in if statement' + snapshot.val())
                 // User has upvoted already 
                 valueOfKey = true;
 
@@ -2952,6 +2977,8 @@ export const checkUserVoteTrackerHelper = (ravel_uid, passage_uid) => {
                 // User has never voted before 
                 
             }
+
+            console.log('Snapshot value:' + snapshot.val())
         })                       
         .then(() => {
             return valueOfKey
