@@ -1,6 +1,6 @@
 // Author:   Alex Aguirre
 // Created:  01/20/18
-// Modified: 03/28/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/31/18 by Frank Fusco (fr@nkfus.co)
 //
 // "User Image" component for RavelTree.
 
@@ -56,14 +56,18 @@ class UserImage extends Component {
   }
 
   componentWillReceiveProps (newProps) {
-    if (!this.state.profile) {
-      if (newProps.userProfile && newProps.userProfile.user_uid == this.props.userID) {
-        this.setState ({
-          profile: newProps.userProfile,
-          userID: this.props.userID,
-          photoURL: newProps.userProfile.photoURL,
-        });
-      }
+    if (newProps.userID && !this.props.userID) {
+      // Get the profile associated with the user id.
+      console.log ("Getting user profile for " + newProps.userID);
+      this.props.getUserProfile (newProps.userID);
+    }
+
+    if (newProps.userProfile && newProps.userProfile.user_uid == this.props.userID) {
+      this.setState ({
+        profile: newProps.userProfile,
+        userID: this.props.userID,
+        photoURL: newProps.userProfile.photoURL,
+      });
     }
   }
 

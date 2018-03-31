@@ -14,7 +14,7 @@ export default (state = initialState, action) => {
                 ...state,
                 ravel_uid: action.payload.ravel_uid,
             };
-        case 'GET_RAVEL_META_DATA': 
+        case 'GET_RAVEL_META_DATA':
             return {
                 ...state,
                 ravel_meta_data: action.payload
@@ -29,11 +29,16 @@ export default (state = initialState, action) => {
                 ...state,
                 ravel_tag_update: action.payload
             };
-        
+
         case 'UPDATE_RAVEL_PARTICIPANTS':
             return {
                 ...state,
                 ravel_participants_update: action.payload
+            }
+        case 'RESET_STATE_RAVEL':
+            return {
+                ...state,
+                ...initialState,
             }
         default:
             return state;

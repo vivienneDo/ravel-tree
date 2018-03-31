@@ -39,7 +39,34 @@ import * as Test from '../test/Test'
 
 TREE_HORIZONTAL_PADDING = 20;
 
-// var nodeCounts = [];
+// this.state.loading is set to true by default. We're loading until the ravel's
+// metadata comes back.
+
+// State: {
+//   loading: true,
+//   tree: {
+//     data: {},
+//     nodeCounts: {},
+//     nodesProcessed: {},
+//     depth: 0,
+//     breadth: 0,
+//     height: 0,
+//     width: 0,
+//     analyzed: false,
+//   },
+//   ravelID: screenData.ravel_uid || '',
+//   title: '',
+//   author: '',
+//   participants: [],
+//   score: 0,
+//   concept: '',
+//   mode: /*firebase.auth ().currentUser.uid == (screenData.user_created || '') ? 'owned' :*/ '',
+//   showModal: '',
+//   loadPassage: screenData.loadPassage || false,
+//   passageID: screenData.passage_uid || '',
+//   //passageIndex: screenData.passageIndex || '',
+//   passageMetaData: screenData.passageMetaData || {},
+// };
 
 class Ravel extends Component {
   constructor (props) {
@@ -47,41 +74,23 @@ class Ravel extends Component {
     var screenData = this.props.screenData;
     this.state = {
       loading: true,
-      tree: {
-        data: screenData.roots || {},
-        nodeCounts: screenData.nodeCount || {},
-        nodesProcessed: {},
-        depth: screenData.level_count /*_.size (screenData.nodeCount)*/ || 0,
-        breadth: screenData.nodeCount ? Math.max (...Object.values (screenData.nodeCount)) : 0,
-        height: 0,
-        width: 0,
-        analyzed: false,
-      },
       ravelID: screenData.ravel_uid || '',
-      title: screenData.ravel_title || /*TEST_RAVEL.title ||*/ '',
-      author: screenData.user_created || '',
-      participants: screenData.ravel_participants || /*TEST_RAVEL.participants ||*/ [],
-      score: screenData.ravel_points || 0,
-      concept: screenData.ravel_concept || /*TEST_RAVEL.concept ||*/ '',
-      mode: firebase.auth ().currentUser.uid == (screenData.user_created || '') ? 'owned' : '',
-      showModal: screenData.showModal || '',
+      mode: this.props.mode || '',
+      showModal: '',
       loadPassage: screenData.loadPassage || false,
-      passageID: screenData.passage_uid || '',
-      passageIndex: screenData.passageIndex || '',
-      passageMetaData: screenData.passageMetaData || /*TEST_PASSAGE_METADATA ||*/ {},
+      // passageID: screenData.passage_uid || '',
+      // passageMetaData: screenData.passageMetaData || {},
     };
 
     console.log (screenData);
 
-    // If we don't have the ravel's metadata already, we have to retrieve it.
-    if (!screenData.ravel_title) {
-      this.props.getRavelMetaData (screenData.ravel_uid);
-    }
+    // Retrieve the ravel's metadata.
+    this.props.getRavelMetaData (screenData.ravel_uid);
   }
 
   componentWillReceiveProps (newProps) {
     var ravel = newProps.ravel_meta_data;
-    if (this.state.loading && ravel) {
+    if (this.state.loading && (ravel || {}).ravel_uid == this.props.screenData.ravel_uid) {
       var tree = {
         data: ravel.roots,
         nodeCounts: ravel.nodeCount,
@@ -110,11 +119,10 @@ class Ravel extends Component {
         // ...then we need to get the passage metadata as well.
         this.props.getPassageMetaData (this.state.passageID, this.state.ravelID);
       }
-
     }
 
     var passage = newProps.passage_meta_data;
-    if (passage) {
+    if (!this.state.loading && this.state.loadPassage && passage) {
       this.setState ({
         passageMetaData: passage,
         loadPassage: false,
@@ -124,6 +132,7 @@ class Ravel extends Component {
   }
 
   showModal (modalToShow) {
+    return;                               // TODO: REMOVE
     var Popup;
     switch (modalToShow) {
       case 'concept':
@@ -177,11 +186,9 @@ class Ravel extends Component {
     this.props.navigateForward ('Merge', screenData);
   }
 
-  // onUpdateNodeCounts (newNodeCounts) {
-  //   // We can't use state for this because it would trigger a render race.
-  //   // Just going to use a global variable instead. Don't judge me.
-  //   nodeCounts = newNodeCounts;
-  // }
+  showLoader () {
+    return <Loader />;
+  }
 
   showUsers () {
     var participants;
@@ -200,7 +207,9 @@ class Ravel extends Component {
     return (
       <View style={styles.users}>
         <View style={styles.user}>
-          <UserImage {...this.props} userID={this.state.author} size={40} />
+          <UserImage {...this.props} userID={this.state.author}
+            size={40}
+          />
         </View>
         {participants}
       </View>
@@ -242,18 +251,15 @@ class Ravel extends Component {
 
   showTree () {
     if (this.state.loading) {
-      return (
-        <Loader />
-      );
+      this.showLoader ();
     }
 
     if (!this.state.tree || _.size (this.state.tree) == 0) { return; }
-    
+
     return (
       <Tree
         tree={this.state.tree}
         mode={this.state.mode}
-        //onUpdateNodeCounts={(nodeCounts) => this.onUpdateNodeCounts (nodeCounts)}
         onAnalyzeTree={(tree) => this.setState ({ tree: tree })}
         onPressPassage={(passageMetaData) => this.onSwitchToPassage (passageMetaData)}
         onPressAdd={(passageMetaData) => this.onSwitchToAdd (passageMetaData)}
@@ -286,10 +292,6 @@ class Ravel extends Component {
 
   render (){
     const {
-      // title,
-      // author,
-      // participants,
-      // score,
       mode,
       testID,
     } = this.props;
@@ -319,7 +321,7 @@ class Ravel extends Component {
           </View>
           <Divider />
           {this.showAdminLinks (this.state.mode == 'owned')}
-          {this.showButton (mode == 'invitation')}
+          {this.showButton (this.state.mode == 'invitation')}
         </View>
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           {this.showTree ()}
@@ -399,8 +401,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   scroll: {
-    // width: '100%',
-    // height: '100%',
     minWidth: '100%',
     height: '100%',
   },

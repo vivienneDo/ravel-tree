@@ -17,6 +17,36 @@ export const setActiveScreen = (screen, screenData) => {
       screen,
       screenData,
     });
+    dispatch ({
+      type: types.RESET_STATE_PASSAGE,
+    });
+    dispatch ({
+      type: types.RESET_STATE_CURRENT_USER_RAVEL_FETCH,
+    });
+    dispatch ({
+      type: types.RESET_STATE_REPORT,
+    });
+    dispatch ({
+      type: types.RESET_STATE_ADMIN,
+    });
+    dispatch ({
+      type: types.RESET_STATE_USER,
+    });
+    dispatch ({
+      type: types.RESET_STATE_SEARCH,
+    });
+    dispatch ({
+      type: types.RESET_STATE_RAVEL,
+    });
+    dispatch ({
+      type: types.RESET_STATE_NOTIFICATION,
+    });
+    dispatch ({
+      type: types.RESET_STATE_MASTER_USER_FETCH,
+    });
+    dispatch ({
+      type: types.RESET_STATE_MASTER_RAVEL,
+    });
   };
 }
 
@@ -58,6 +88,36 @@ export const navigateForward = (next, current, screenData) => {
       current,
       screenData
     });
+    dispatch ({
+      type: types.RESET_STATE_PASSAGE,
+    });
+    dispatch ({
+      type: types.RESET_STATE_CURRENT_USER_RAVEL_FETCH,
+    });
+    dispatch ({
+      type: types.RESET_STATE_REPORT,
+    });
+    dispatch ({
+      type: types.RESET_STATE_ADMIN,
+    });
+    dispatch ({
+      type: types.RESET_STATE_USER,
+    });
+    dispatch ({
+      type: types.RESET_STATE_SEARCH,
+    });
+    dispatch ({
+      type: types.RESET_STATE_RAVEL,
+    });
+    dispatch ({
+      type: types.RESET_STATE_NOTIFICATION,
+    });
+    dispatch ({
+      type: types.RESET_STATE_MASTER_USER_FETCH,
+    });
+    dispatch ({
+      type: types.RESET_STATE_MASTER_RAVEL,
+    });
   }
 }
 
@@ -75,6 +135,36 @@ export const navigateBack = () => {
     console.log ("Navigating back...");
     dispatch ({
       type: types.NAVIGATE_BACK,
+    });
+    dispatch ({
+      type: types.RESET_STATE_PASSAGE,
+    });
+    dispatch ({
+      type: types.RESET_STATE_CURRENT_USER_RAVEL_FETCH,
+    });
+    dispatch ({
+      type: types.RESET_STATE_REPORT,
+    });
+    dispatch ({
+      type: types.RESET_STATE_ADMIN,
+    });
+    dispatch ({
+      type: types.RESET_STATE_USER,
+    });
+    dispatch ({
+      type: types.RESET_STATE_SEARCH,
+    });
+    dispatch ({
+      type: types.RESET_STATE_RAVEL,
+    });
+    dispatch ({
+      type: types.RESET_STATE_NOTIFICATION,
+    });
+    dispatch ({
+      type: types.RESET_STATE_MASTER_USER_FETCH,
+    });
+    dispatch ({
+      type: types.RESET_STATE_MASTER_RAVEL,
     });
   }
 }

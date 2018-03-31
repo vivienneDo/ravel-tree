@@ -113,6 +113,7 @@ class PassageCard extends React.Component {
       passageIndex,
       passageID,
       title,
+      author,
       passage,
       upvotes,
       downvotes,
@@ -143,7 +144,7 @@ class PassageCard extends React.Component {
             <Touchable onPress={() => this.onPressTitle ()}>
               <TextSans size={13} color={'#95989A'}>{this.props.title}</TextSans>
             </Touchable>
-            <UserImage {...this.props} size={26}/>
+            <UserImage {...this.props} userID={author} size={26}/>
           </View>
         </View>
         <Touchable onPress={() => this.onPressPassage ()} style={styles.passage}>

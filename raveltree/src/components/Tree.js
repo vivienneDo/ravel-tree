@@ -82,7 +82,7 @@ class Tree extends Component {
     var passage = newProps.passage_meta_data;
 
     // Passage Metadata
-    if (passage) {
+    if (passage && false) { // TODO: Change back.
       if (!((tree.nodesProcessed || {}) [passage.level] || {}) [passage.passage_uid]) {
         console.log ("Received passage metadata.");
         tree.data [passage.passage_uid] = passage;

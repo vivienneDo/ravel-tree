@@ -57,6 +57,11 @@ export default (state = initialState, action) => {
                 ...state,
                 passage_level_fetch_is_success: action.payload
             }
+        case 'RESET_STATE_PASSAGE':
+            return {
+                ...state,
+                ...initialState,
+            }
         default:
             return state;
     }

@@ -90,6 +90,7 @@ class Home extends Component<{}> {
 
     var passage = newProps.passage_meta_data;
 
+    // TODO: Check whether the passage is marked public.
     if (passage && _.size (passage) > 0) {
       var passages = this.state.passages;
       passages.push (passage);
@@ -145,6 +146,7 @@ class Home extends Component<{}> {
               ravel={passage.ravel_title}
               passageIndex={passage.passage_index}
               title={passage.passage_title}
+              author={passage.user_created}
               passage={passage.passage_body}
               upvotes={passage.passage_upvote}
               downvotes={passage.passage_downvote}

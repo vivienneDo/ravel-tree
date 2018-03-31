@@ -17,6 +17,11 @@ export default (state = initialState, action) => {
                 ...state,
                 user_report_success: action.payload
             }
+        case 'RESET_STATE_REPORT':
+            return {
+                ...state,
+                ...initialState,
+            }
         default:
             return state;
     }

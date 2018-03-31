@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/07/18
-// Modified:  03/23/18
+// Modified:  03/31/18
 
 // Navigation bar component for RavelTree.
 //
@@ -141,7 +141,7 @@ class NavBar extends React.Component {
             </Text>
           </Touchable>
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Profile')}>
-            <UserImage {...this.props} profile={this.props.currentUserProfile} size={30} active={this.props.activeTab === 'Profile'} disabled />
+            <UserImage {...this.props} /*profile={this.props.currentUserProfile}*/ userID={this.props.currentUserProfile.user_uid} size={30} active={this.props.activeTab === 'Profile'} disabled />
             <Text style = {[styles.text, this.props.activeTab === 'Profile' ? styles.active : styles.inactive]}>
               Profile
             </Text>

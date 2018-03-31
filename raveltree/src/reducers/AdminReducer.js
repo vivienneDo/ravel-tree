@@ -64,6 +64,11 @@ export default (state = initialState, action) => {
                ...state,
                ban_ravel_success: action.payload
            }
+       case 'RESET_STATE_ADMIN':
+           return {
+               ...state,
+               ...initialState,
+           }
         default:
             return state;
     }
