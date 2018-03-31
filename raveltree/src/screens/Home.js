@@ -94,7 +94,6 @@ class Home extends Component<{}> {
       var passages = this.state.passages;
       passages.push (passage);
       this.setState ({ passages: passages });
-      console.log (passages);
     }
 
     if (newProps.userProfile) {
@@ -142,6 +141,7 @@ class Home extends Component<{}> {
           <View key={passage.ravel_uid + '_' + passage.passage_uid} style={styles.passageCard}>
             <PassageCard
               ravelID={passage.ravel_uid}
+              passageID={passage.passage_uid}
               ravel={passage.ravel_title}
               passageIndex={passage.passage_index}
               title={passage.passage_title}

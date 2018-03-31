@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/13/18
-// Modified:  03/28/18
+// Modified:  03/30/18
 
 // Standard passage popup component for RavelTree.
 //
@@ -137,7 +137,12 @@ class PassagePopup extends React.Component {
             <TextSans size={40} color={'#95989A'}>...</TextSans>
           </Touchable>
           <View style={styles.voteBar}>
-            <VoteBar />
+            <VoteBar
+              upvotes={passageMetaData.passage_upvote}
+              downvotes={passageMetaData.passage_downvote}
+              ravelID={passageMetaData.ravel_uid}
+              passageID={passageMetaData.passage_uid}
+            />
           </View>
         </View>
       </ModalContainer>

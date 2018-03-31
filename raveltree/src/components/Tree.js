@@ -294,7 +294,7 @@ class Tree extends Component {
           onPress={() => this.onPressPassage (content)}
           onPressAdd={() => this.props.onPressAdd (content)}
           showAddButton={
-            (this.state.screenData.ravel_participants [firebase.auth ().currentUser.uid]) ||
+            ((this.state.screenData.ravel_participants || {}) [firebase.auth ().currentUser.uid]) ||
             (this.props.screenData.user_created == firebase.auth ().currentUser.uid)
           }
           highlighted={this.state.selectedNodeIndex == content.passage_index}

@@ -37,6 +37,7 @@ class PassageCard extends React.Component {
   }
 
   componentWillReceiveProps (newProps) {
+
     if (newProps.ravel_report_success) {
       Alert.alert ('Reported', 'Thank you for reporting a violation of RavelTree\'s Terms of Use. We\'ll review your report and take action as necessary.');
     }
@@ -59,12 +60,12 @@ class PassageCard extends React.Component {
   }
 
   navigateToRavel (id) {
-    var screenData = Object.assign ({}, {ravelID: id});
+    var screenData = Object.assign ({}, {ravel_uid: id});
     this.props.navigateForward ('Ravel', this.props.parentScreen, screenData);
   }
 
   navigateToPassage (ravelID, passageID) {
-    var screenData = Object.assign ({}, {ravelID: ravelID, passageID: passageID, showModal: 'PassagePopup'});
+    var screenData = Object.assign ({}, {ravel_uid: ravelID, passage_uid: passageID, loadPassage: true});
     this.props.navigateForward ('Ravel', this.props.parentScreen, screenData);
   }
 
@@ -121,7 +122,11 @@ class PassageCard extends React.Component {
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
-    var truncatedPassage = this.shorten (passage, PASSAGE_TRUNCATION) + '...';
+    var truncatedPassage = (passage.length >= PASSAGE_TRUNCATION) ? (
+      this.shorten (passage, PASSAGE_TRUNCATION) + '...'
+    ) : (
+      passage
+    );
 
     return (
       <View style={styles.container}>
@@ -150,7 +155,13 @@ class PassageCard extends React.Component {
           <Touchable onPress={() => this.onPressEllipsis ()}>
             <TextSans size={40} color={'#95989A'}>...</TextSans>
           </Touchable>
-          <VoteBar upvotes={this.props.upvotes} downvotes={this.props.downvotes} />
+          <VoteBar
+            ravelID={ravelID}
+            passageID={passageID}
+            upvotes={upvotes}
+            downvotes={downvotes}
+            {...this.props}
+          />
         </View>
       </View>
     )

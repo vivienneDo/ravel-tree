@@ -1,6 +1,6 @@
 // Author:    Alex Aguirre
 // Created:   01/20/18
-// Modified:  02/16/18 by Frank Fusco (fr@nkfus.co)
+// Modified:  02/30/18 by Frank Fusco (fr@nkfus.co)
 
 // Standard "vote bar" component for RavelTree.
 
@@ -13,28 +13,49 @@ import {
   TouchableOpacity
 } from 'react-native';
 
+import { connect } from 'react-redux'
+import _ from 'lodash';
 
-export default class VoteBar extends Component<{}> {
+
+class VoteBar extends Component {
 
   constructor(props) {
     super(props);
-    var upvotes = this.props.upvotes ? this.props.upvotes : 0;
-    var downvotes = this.props.downvotes ? this.props.downvotes : 0;
-    this.state = {upvotes: upvotes , downvotes: downvotes};
+    this.state = {
+      upvotes: this.props.upvotes || 0,
+      downvotes: this.props.downvotes || 0,
+      pendingUpvote: false,
+      pendingDownvote: false,
+    };
   }
 
-  // create the count for the # of upvotes
+  componentWillReceiveProps (newProps) {
+    if (newProps.passage_vote_is_success) {
+      if (this.state.pendingUpvote) {
+        var upvotes = this.state.upvotes + 1;
+        this.setState ({
+          upvotes: upvotes,
+          pendingUpvote: false,
+        });
+      }
+      if (this.state.pendingDownvote) {
+        var downvotes = this.state.downvotes + 1;
+        this.setState ({
+          downvotes: downvotes,
+          pendingDownvote: false,
+        });
+      }
+    }
+  }
+
   onPressUp = () => {
-    this.setState( {
-      upvotes: this.state.upvotes + 1
-    })
+    this.setState ({ pendingUpvote: true });
+    this.props.upVotePassage (this.props.ravelID, this.props.passageID);
   }
 
-  // create the count for the # of downvotes
   onPressDown = () => {
-    this.setState( {
-      downvotes: this.state.downvotes + 1
-    })
+    this.setState ({ pendingDownvote: true });
+    this.props.downVotePassage (this.props.ravelID, this.props.passageID);
   }
 
   render() {
@@ -101,3 +122,16 @@ const styles = StyleSheet.create({
       borderTopColor: '#939393',
   },
 });
+
+const mapStateToProps = (state) => {
+
+  const {
+    passage_vote_is_success,
+  } = state.passage;
+
+  return {
+    passage_vote_is_success,
+  };
+}
+
+export default connect (mapStateToProps)(VoteBar);
