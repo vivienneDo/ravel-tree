@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\support-media-compat-27.0.2.aar\e28d5939f550976d2ab7b4f9adc0c86b\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="25c8cb628374f9a2d59ff9e1172753751e9a9f84">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\15.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\facebook-common-4.30.0.aar\01542c7c0e82a3fe4c00b6d80c5584da\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="e3b8ecc558c6deeb90eb3934c1c715128ab26dcd">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\support-fragment-27.0.2.aar\383d67bbd6c1272a9d0c4d7a7cb15a66\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="618f75fe11febf263e3234c7da7dc892232a5608">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\13.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\animated-vector-drawable-27.0.2.aar\899c76f9285e84346ddd0cb265a410bd\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="fe3916317a699975bcce0cba2d13fd2d8cf88922">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\16.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\facebook-messenger-4.30.0.aar\f52655fdc9beebe263bacd96e34c2f59\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="2482bfd874e8b3927f4141105674ad392ff83698">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\8.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\support-vector-drawable-27.0.2.aar\1d6a305e0fc5f191a168a21bc312c1d2\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="caa03787689212c10939f308a55a8dc8a3333ed2">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\18.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\modules-2\files-2.1\com.parse.bolts\bolts-tasks\1.4.0\d85884acf6810a3bbbecb587f239005cbc846dc4\bolts-tasks-1.4.0.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="d85884acf6810a3bbbecb587f239005cbc846dc4">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\25.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\modules-2\files-2.1\android.arch.lifecycle\common\1.0.3\7d7f60c4783872861222166f6164215f8951c7b1\common-1.0.3.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="7d7f60c4783872861222166f6164215f8951c7b1">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\26.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\support-core-ui-27.0.2.aar\5a5bae4654bd67bc2bf6307d735a6606\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="ed6560f31a6a40b5965f5879d8f2eab1f68def05">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\17.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\facebook-core-4.30.0.aar\276188598f245ce3bb2a3c728e4b4ac5\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="8fb648e3321f9556ac5b36485b0028f455350c4a">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\9.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\facebook-android-sdk-4.30.0.aar\894b867c01ee2cb18a38b31f7977ae08\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="b1c250352bb7bbd5ea1982ca5165f2a81f36b530">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\1.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\appcompat-v7-27.0.2.aar\118bb617c43e70f572b638f3a4daace1\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="04cd0cacbedcb338f64665b88bad64d145325fbd">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\facebook-places-4.30.0.aar\440c741637e076ece241e0dd57b0efa1\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="821200fa3e07f93d0ae66e4a5917db8bac69dfe1">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\6.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\runtime-1.0.3.aar\ebe576793678bec652b77a8400f12f9f\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="d7cc5473b9cf4ea159a263cd477fb3ecb2987b96">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\23.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\support-compat-27.0.2.aar\940e28b2c0727f98407d40255cdec31c\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="b432e82447a3af781e927b9ba0bbb9fe2a496d4a">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\19.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\customtabs-27.0.2.aar\a5867f671109d2e499a098d9dd21e760\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="cdebcd9e0580b35115f655f8dc8ed7a66a8ef0fc">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\11.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\modules-2\files-2.1\com.parse.bolts\bolts-applinks\1.4.0\8ad21bf21784dacce5f2043afb97218cc377e835\bolts-applinks-1.4.0.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="8ad21bf21784dacce5f2043afb97218cc377e835">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\24.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\modules-2\files-2.1\android.arch.core\common\1.0.0\a2d487452376193fc8c103dd2b9bd5f2b1b44563\common-1.0.0.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="a2d487452376193fc8c103dd2b9bd5f2b1b44563">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\27.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\support-core-utils-27.0.2.aar\0a0a3ffccc7e65d9695fb67ab300d773\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="ac2ce6027755bcf49442e70597bec0feb9064f68">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\14.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\modules-2\files-2.1\com.google.zxing\core\3.3.0\73c49077166faa4c3c0059c5f583d1d7bd1475fe\core-3.3.0.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="73c49077166faa4c3c0059c5f583d1d7bd1475fe">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\22.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\modules-2\files-2.1\com.android.support\support-annotations\27.0.2\b9ef4342c934a1a8b107506273dc8061662a322\support-annotations-27.0.2.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="0b9ef4342c934a1a8b107506273dc8061662a322">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\20.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\facebook-login-4.30.0.aar\dbb70fdbeb9295fe45ad60621b2ae7e8\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="b8b26b28aae0ba8e2db55ad9fe0ebc770530c5ef">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\cardview-v7-27.0.2.aar\b374b9d23bcbaae2c26b37152a29019d\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="14bfdbf5594d4d7c320de20831849050788ab1e3">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\10.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\facebook-share-4.30.0.aar\a1e3656156fb66b8192a7a2e381c996e\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="95d97996ec624fca99f6b06ad6004c749259970d">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\facebook-applinks-4.30.0.aar\86cb3b2db175eaf9da3ae928f721d00a\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="82ea5a937ab84229fbd2f3fc8cf2a72cbdf0ee0f">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\joe45\.gradle\caches\transforms-1\files-1.1\support-v4-27.0.2.aar\8544c2d4196d4dca96c10a803510f5b4\jars\classes.jar"
+        jumboMode="false"
+        min-sdk-version="19"
+        optimize="true"
+        revision="26.0.2"
+        sha1="bcd0bcdef85b31a656af76e39c0c95ce70800772">
+        <dex dex="C:\Users\joe45\Desktop\GitHub\ravel-tree\raveltree\android\MyApplication\app\build\intermediates\transforms\preDex\release\12.jar" />
+    </item>
+
+</items>

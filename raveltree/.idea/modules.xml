@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/node_modules/react-native/ReactAndroid/src/androidTest/androidTest.iml" filepath="$PROJECT_DIR$/node_modules/react-native/ReactAndroid/src/androidTest/androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/app/src/androidTest/androidTest1.iml" filepath="$PROJECT_DIR$/android/app/src/androidTest/androidTest1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/MyApplication/app/build/generated/source/buildConfig/androidTest/androidTest2.iml" filepath="$PROJECT_DIR$/android/MyApplication/app/build/generated/source/buildConfig/androidTest/androidTest2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MyApplication/app/src/androidTest/androidTest3.iml" filepath="$PROJECT_DIR$/MyApplication/app/src/androidTest/androidTest3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/MyApplication/app/build/generated/source/buildConfig/buildConfig.iml" filepath="$PROJECT_DIR$/android/MyApplication/app/build/generated/source/buildConfig/buildConfig.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/MyApplication/app/build/intermediates/manifests/full/debug/debug.iml" filepath="$PROJECT_DIR$/android/MyApplication/app/build/intermediates/manifests/full/debug/debug.iml" />
+      <module fileurl="file://$PROJECT_DIR$/node_modules/react-native/local-cli/core/__fixtures__/files/files.iml" filepath="$PROJECT_DIR$/node_modules/react-native/local-cli/core/__fixtures__/files/files.iml" />
+      <module fileurl="file://$PROJECT_DIR$/node_modules/react-native/ReactAndroid/src/main/main.iml" filepath="$PROJECT_DIR$/node_modules/react-native/ReactAndroid/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/MyApplication/app/build/generated/source/r/r.iml" filepath="$PROJECT_DIR$/android/MyApplication/app/build/generated/source/r/r.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/MyApplication/app/build/intermediates/manifests/full/release/release.iml" filepath="$PROJECT_DIR$/android/MyApplication/app/build/intermediates/manifests/full/release/release.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MyApplication/app/src/test/test.iml" filepath="$PROJECT_DIR$/MyApplication/app/src/test/test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/app/src/test/test1.iml" filepath="$PROJECT_DIR$/android/app/src/test/test1.iml" />
+    </modules>
+  </component>
+</project>
