@@ -25,11 +25,15 @@
                         Added searchUserByEmail() 
                         Refactored forkPassage() to add passage_uid to roots array if level === 1 
   - 3/31/2018 - VD Do - Refactored downVotePassage() to reset user_track_vote field on downVotePassage()
+                        Refactored addPassage(), addInitPassage() and forkPassage() to have datetime with format:
+                        dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
+                    
 
  */
 
 import firebase from 'firebase';
 import _ from 'lodash';
+const dateformat = require('dateformat');
 
 
 /* CREATE USER/LOGIN FUNCTIONS */
@@ -733,7 +737,8 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
     const { currentUser } = firebase.auth();
     var user_created = currentUser.uid;
     var ravel_status = true;
-    var ravel_create_date = new Date().toLocaleTimeString();
+    let ravel_create_date = dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
+    //dateformat(ravel_create_date, 'dddd, mmmm dS, yyyy, h:MM:ss TT');
     var user_created_photoURL = '';   
     var ravel_points = 0;
     var ravel_number_participants = 0;
@@ -1445,7 +1450,7 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
     const { currentUser } = firebase.auth();
     var user_created = currentUser.uid;
     var ravel_title = '';
-    var passage_create_date = new Date().toLocaleTimeString();
+    var passage_create_date = dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
     var user_created_photoURL = '';   
     var passage_upvote = 0;
     var passage_downvote = 0;
@@ -1638,7 +1643,7 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
     const { currentUser } = firebase.auth();
     var user_created = currentUser.uid;
     var ravel_title = '';
-    var passage_create_date = new Date().toLocaleTimeString();
+    var passage_create_date = dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
     var user_created_photoURL = '';   
     var passage_upvote = 0;
     var passage_downvote = 0;
@@ -2460,7 +2465,7 @@ export const forkPassage = ({ravel_uid, parent_passage_uid, passage_title, passa
     const { currentUser } = firebase.auth();
     var user_created = currentUser.uid;
     var ravel_title = '';
-    var passage_create_date = new Date().toLocaleTimeString();
+    var passage_create_date = dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
     var user_created_photoURL = '';   
     var passage_upvote = 0;
     var passage_downvote = 0;
