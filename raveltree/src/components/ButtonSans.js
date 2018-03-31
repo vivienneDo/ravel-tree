@@ -10,6 +10,7 @@
 const ColorPropType = require('ColorPropType');
 const Platform = require('Platform');
 const React = require('React');
+const AppRegistry = require('AppRegistry');
 const PropTypes = require('prop-types');
 const StyleSheet = require('StyleSheet');
 const Text = require('Text');
@@ -73,6 +74,7 @@ export default class ButtonSans extends React.Component <{
 
     const buttonStyles = [styles.button];
     const textStyles = [styles.text];
+    const layoutStyles = [styles.layout];
     const accessibilityTraits = ['button'];
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
@@ -87,8 +89,14 @@ export default class ButtonSans extends React.Component <{
     }
     if (width)
     {
+      // If a percentage is passed, make sure it doesn't cascade.
+      if (width.slice (-1) == '%') {
+        layoutStyles.push ({width: width});
+        buttonStyles.push ({width: '100%'});
+      } else {
       layoutStyles.push ({width: width});
       buttonStyles.push ({width: width});
+      }
     }
     if (height) {
       layoutStyles.push ({height: height});
@@ -105,7 +113,7 @@ export default class ButtonSans extends React.Component <{
         testID={testID}
         disabled={disabled}
         onPress={onPress}
-        style={styles.layout}>
+        style={layoutStyles}>
         <View style={buttonStyles}>
           <Text style={textStyles} disabled={disabled}>{title}</Text>
         </View>

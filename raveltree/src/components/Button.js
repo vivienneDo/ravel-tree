@@ -10,6 +10,7 @@
 const ColorPropType = require('ColorPropType');
 const Platform = require('Platform');
 const React = require('React');
+const AppRegistry = require('AppRegistry');
 const PropTypes = require('prop-types');
 const StyleSheet = require('StyleSheet');
 const Text = require('Text');
@@ -73,6 +74,7 @@ export default class Button extends React.Component <{
 
     const buttonStyles = [styles.button];
     const textStyles = [styles.text];
+    const layoutStyles = [styles.layout];
     const accessibilityTraits = ['button'];
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
@@ -105,7 +107,7 @@ export default class Button extends React.Component <{
         testID={testID}
         disabled={disabled}
         onPress={onPress}
-        style={styles.layout}>
+        style={layoutStyles}>
         <View style={buttonStyles}>
           <Text style={textStyles} disabled={disabled}>{title.toUpperCase ()}</Text>
         </View>

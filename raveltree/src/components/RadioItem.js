@@ -9,6 +9,7 @@
 const ColorPropType = require('ColorPropType');
 const Platform = require('Platform');
 const React = require('React');
+const AppRegistry = require('AppRegistry');
 const PropTypes = require('prop-types');
 const StyleSheet = require('StyleSheet');
 const Text = require('Text');
@@ -20,8 +21,7 @@ const View = require('View');
 export default class RadioItem extends React.Component {
   constructor (props) {
     super (props);
-    this.state = {isSelected: false};
-    this.handleSelect = this.handleSelect.bind (this);
+    this.state = {active: this.props.active};
   }
 
   static propTypes = {
@@ -42,14 +42,18 @@ export default class RadioItem extends React.Component {
     testID: PropTypes.string,
   };
 
-  handleSelect () {
-    this.setState ({isSelected: true});
+  componentWillReceiveProps (newProps)
+  {
+    this.setState ({active: newProps.active});
   }
+
 
   render () {
     const {
       title,
       name,
+      setFormState,
+      active,
       accessibilityLabel,
       disabled,
       testID,
@@ -60,7 +64,7 @@ export default class RadioItem extends React.Component {
     const accessibilityTraits = ['button'];
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
-    if (this.state.isSelected) {
+    if (this.state.active) {
       buttonStyles.push (styles.buttonSelected);
       textStyles.push (styles.textSelected);
       accessibilityTraits.push ('selected');
@@ -75,18 +79,19 @@ export default class RadioItem extends React.Component {
       accessibilityTraits.push ('disabled');
     }
 
+
     return (
       <Touchable
-        accessibilityComponentType={this.state.isSelected ? 'radiobutton_checked' : 'radiobutton_unchecked'}
+        accessibilityComponentType={this.state.active ? 'radiobutton_checked' : 'radiobutton_unchecked'}
         accessibilityLabel={accessibilityLabel}
         accessibilityTraits={accessibilityTraits}
         name={name}
         testID={testID}
         disabled={disabled}
-        onPress={this.handleSelect}
+        onPress={() => {this.props.setFormState({active: name})}}
         style={styles.layout}>
         <View style={buttonStyles}>
-          <View style={this.state.isSelected ? styles.dot : null} />
+          <View style={this.state.active ? styles.dot : null} />
         </View>
         <Text style={textStyles} disabled={disabled}>{title}</Text>
       </Touchable>

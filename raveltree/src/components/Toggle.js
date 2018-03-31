@@ -9,6 +9,7 @@
 const ColorPropType = require('ColorPropType');
 const Platform = require('Platform');
 const React = require('React');
+const AppRegistry = require('AppRegistry');
 const PropTypes = require('prop-types');
 const StyleSheet = require('StyleSheet');
 const Text = require('Text');
@@ -20,32 +21,21 @@ const View = require('View');
 export default class Toggle extends React.Component {
   constructor (props) {
     super (props);
-    this.state = {isOn: false};
+    this.state = {isOn: this.props.active};
     this.handleToggle = this.handleToggle.bind (this);
   }
 
-  static propTypes = {
-
-    // Name of the toggle (used by parents and/or event listeners)
-    name: PropTypes.string.isRequired,
-
-    // Text to display for blindness accessibility features
-    accessibilityLabel: PropTypes.string,
-
-    // If true, disable all interactions for this component.
-    disabled: PropTypes.bool,
-
-    // Used to locate this view in end-to-end tests.
-    testID: PropTypes.string,
-  };
-
   handleToggle () {
-    this.setState ({isOn: !this.state.isOn});
+    var newState = !this.state.isOn;
+    this.setState ({isOn: newState});
+    this.props.onChange (newState);
   }
 
   render () {
     const {
       name,
+      active,
+      onChange,
       accessibilityLabel,
       disabled,
       testID,

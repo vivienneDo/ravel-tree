@@ -9,6 +9,7 @@
 const ColorPropType = require('ColorPropType');
 const Platform = require('Platform');
 const React = require('React');
+const AppRegistry = require('AppRegistry');
 const PropTypes = require('prop-types');
 const StyleSheet = require('StyleSheet');
 const Text = require('Text');
@@ -28,7 +29,7 @@ export default class TextSerif extends React.Component {
       this.props.size ? {fontSize: size} : {fontSize: 18},
       this.props.color ? {color: color} : {color: '#303030'},
     ]);
-    
+
     return (
       <Text style={textStyles}>
         {this.props.children}

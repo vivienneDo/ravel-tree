@@ -10,6 +10,7 @@
 const ColorPropType = require('ColorPropType');
 const Platform = require('Platform');
 const React = require('React');
+const AppRegistry = require('AppRegistry');
 const PropTypes = require('prop-types');
 const StyleSheet = require('StyleSheet');
 const Text = require('Text');
@@ -60,6 +61,7 @@ export default class ButtonPlus extends React.Component <{
     } = this.props;
 
     const buttonStyles = [styles.button];
+    const layoutStyles = [styles.layout];
     const accessibilityTraits = ['button'];
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
@@ -86,7 +88,7 @@ export default class ButtonPlus extends React.Component <{
         testID={testID}
         disabled={disabled}
         onPress={onPress}
-        style={styles.layout}>
+        style={layoutStyles}>
         <View style={buttonStyles}>
           <Text style={styles.text}>+</Text>
         </View>
@@ -105,10 +107,13 @@ const styles = StyleSheet.create ({
     borderRadius: 100,
     width: 21,
     height: 21,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   text: {
     color: '#FFFFFF',
     textAlign: 'center',
+    alignSelf: 'center',
     fontSize: 23,
     fontFamily: 'EB Garamond',
     fontWeight: 'bold',
