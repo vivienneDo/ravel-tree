@@ -73,7 +73,7 @@ class YourRavels extends Component {
           userCreatedRavels: newProps.all_user_created_ravels,
           retrieved: retrieved,
         });
-        if (_.size (newProps.all_user_created_ravels) > 0) {
+        if (_.size (newProps.all_user_created_ravels) > 0) { // Compare this to the size we expect...
           this.getMetaData (newProps.all_user_created_ravels);
         } else {
           loading.userCreatedRavels = false;
