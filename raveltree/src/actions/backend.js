@@ -33,6 +33,7 @@
  *                      - this.props.passage_meta_data.optimalChild 
                         Added reCalculateOptimalityScore(), reCalculateCurrentPassagesOptimalityScore
                         Added getOptimalityChildID(), getOptimality()
+                        Refactored getPassageMetaData() to call reCalculateOptimalityScore() 
                     
 
  */
@@ -1834,14 +1835,21 @@ export const getPassageMetaData = (passage_uid, ravel_uid) => {
 
     return (dispatch) => {
 
+        reCalculateOptimalityScore(passage_uid, ravel_uid).then(valueOfKey => {
 
-        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
-            dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
         })
         .then(() => {
-            // dispatch a success state
-            dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
+
+            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
+                dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
+            })
+            .then(() => {
+                // dispatch a success state
+                dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
+            })
+
         })
+        
         .catch((error) => {
             // dispatch an error
             dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
@@ -2061,7 +2069,7 @@ export const checkRavelLevel = (ravel_uid) => {
     })
 }
 
-/**TODO: CALL THIS FUNCTION ON onPassageForkLevelOne() 
+/**
  * 
  * @param {*} ravel_uid
  * @returns {*} promise, true on success, false on fail 
@@ -2330,8 +2338,6 @@ export const addPassageToRavelLevelTree = (ravel_uid, level, passage_uid) => {
 
     })
 }
-
-/** CALCULATE NODECOUNT{} in ravel */
 
 /**
  * 
@@ -3093,9 +3099,7 @@ export const userDownVoteTrackerHelper = (ravel_uid, passage_uid) => {
     })
 }
 
-/** TO DO  
-* Function that gets a ravel's particular passage, will do after talking about structure 
-*/
+
 /**
  * 
  * @param {*} ravel_uid, passage_uid, comment_body
@@ -3241,19 +3245,54 @@ export const getPassageComment = (ravel_uid, passage_uid) => {
     }
 }
 
-// TODO AFTER STRUCTURE CHANGES 
+
+/** EXPLORE SCREEN FUNCTIONS */
+
+/**
+ * @param: nothing
+ * @returns: 
+ * mapStateToProps = state => all_user_created_ravels = 
+ * state.current_user_ravel:
+ *      'INITIAL_USER_RAVEL_FETCH' : a list of ravels that the current user created   
+ *          - this.props.all_user_created_ravels.enable_comment
+            - this.props.all_user_created_ravels.enable_voting
+            - this.props.all_user_created_ravels.m_ravel_participants
+            - this.props.all_user_created_ravels.passage_length
+            - this.props.all_user_created_ravels.ravel_category
+            - this.props.all_user_created_ravels.ravel_concept
+            - this.props.all_user_created_ravels.ravel_create_date
+            - this.props.all_user_created_ravels.ravel_number_participants
+            - this.props.all_user_created_ravels.ravel_participants{}
+            - this.props.all_user_created_ravels.ravel_points 
+            - this.props.all_user_created_ravels.ravel_title
+            - this.props.all_user_created_ravels.user_created
+            - this.props.all_user_created_ravels.user_created_photoURL
+ * actions: gets the current user's created ravels 
+ * 
+ */
+// Gets a list of random passages associated to a ravel that is in public_list 
+export const loadPassageExplore = () => {
+
+    var currentUserUid = firebase.auth().currentUser.uid;
+    var listOfPublicRavel = {}; 
+    var randomElm;
+
+    return (dispatch) => {
+        firebase.database().ref(`ravels`).orderByChild(`visibility`).equalTo(true).once('value', (snapshotPublicRavel) => {
+            listOfPublicRavel = snapshotPublicRavel.val(); 
+            console.log('snapshotPublicRavel elm = ' + snapshotPublicRavel.val())
+            console.log('listOfPublicRavel elm = ' + listOfPublicRavel.val())
+        })
+        .then(() => {
+            randomElm = listOfPublicRavel[Math.floor(Math.random() * listOfPublicRavel.length)]
+        })
+        
+        console.log('random elm = ' + randomElm)
 
 
-// export const forkPassage = () => {
-
-// }
-
-
-
-export const passageRavelPointCalculation = () => {
-
-}
-
+               
+    };
+};
 
 
 /** HELPER FUNCTION  */
@@ -3464,7 +3503,7 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
      reCalculateCurrentPassagesOptimalityScore(ravel_uid, passage_uid).then(valueOfKey => {
 
 
-        //console.log('value of key after recal = ' + valueOfKey)
+        console.log('value of key after recal = ' + valueOfKey)
         if (valueOfKey) {
 
             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/child`).once('value', (snapshot) => {
@@ -3474,7 +3513,7 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
                         this_passage_score = valueOfKey; 
                     })
                     .then(() => {
-                        //console.log('m_optimalityScore AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
+                        console.log('m_optimalityScore AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
                         m_optimalityScore = this_passage_score + 0;
                         firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({optimalityScore : m_optimalityScore})
                     })
