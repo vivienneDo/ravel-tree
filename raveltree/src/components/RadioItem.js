@@ -89,11 +89,14 @@ export default class RadioItem extends React.Component {
         testID={testID}
         disabled={disabled}
         onPress={() => {this.props.setFormState({active: name})}}
-        style={styles.layout}>
-        <View style={buttonStyles}>
-          <View style={this.state.active ? styles.dot : null} />
+        style={styles.layout}
+      >
+        <View style={styles.inner}>
+          <View style={buttonStyles}>
+            <View style={this.state.active ? styles.dot : null} />
+          </View>
+          <Text style={textStyles} disabled={disabled}>{title}</Text>
         </View>
-        <Text style={textStyles} disabled={disabled}>{title}</Text>
       </Touchable>
     )
   }
@@ -101,6 +104,11 @@ export default class RadioItem extends React.Component {
 
 const styles = StyleSheet.create ({
   layout: {
+    height: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  inner: {
     height: 14,
     flexDirection: 'row',
     alignItems: 'center',

@@ -134,7 +134,9 @@ class PassagePopup extends React.Component {
         </View>
         <View style={styles.bottom}>
           <Touchable onPress={() => this.onPressEllipsis ()}>
-            <TextSans size={40} color={'#95989A'}>...</TextSans>
+            <View>
+              <TextSans size={40} color={'#95989A'}>...</TextSans>
+            </View>
           </Touchable>
           <View style={styles.voteBar}>
             <VoteBar

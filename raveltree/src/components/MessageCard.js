@@ -71,7 +71,9 @@ class MessageCard extends React.Component {
               <UserImage {...this.props} size={26} />
             </View>
             <Touchable onPress={() => this.onPressUser ()}>
-              <TextSans bold size={14}>{this.props.user}</TextSans>
+              <View>
+                <TextSans bold size={14}>{this.props.user}</TextSans>
+              </View>
             </Touchable>
             <TextSans size={14}> says:</TextSans>
           </View>
@@ -99,6 +101,7 @@ const styles = StyleSheet.create ({
     borderRadius: 20,
     borderWidth: 2,
     padding: 20,
+    backgroundColor: '#eeeeee',
   },
   active: {
     borderColor: '#2E8AF7',
@@ -129,6 +132,9 @@ const styles = StyleSheet.create ({
   replyText: {
     alignSelf: 'flex-end',
   },
+  inner: {
+    flexDirection: 'row',
+  }
 });
 
 const mapStateToProps = (state) => {

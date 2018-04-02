@@ -46,10 +46,13 @@ export default class TextLink extends React.Component {
         accessibilityTraits={accessibilityTraits}
         testID={testID}
         disabled={disabled}
-        onPress={onPress}>
-        <Text style={textStyles}>
-          {this.props.children}
-        </Text>
+        onPress={onPress}
+      >
+        <View>
+          <Text style={textStyles}>
+            {this.props.children}
+          </Text>
+        </View>
       </Touchable>
     )
   }

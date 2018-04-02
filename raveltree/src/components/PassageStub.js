@@ -71,20 +71,22 @@ class PassageStub extends Component<{}> {
     return (
       <View style={styles.wrapper}>
         <Touchable disabled={disabled} onPress={() => this.onPressStub ()} style={containerStyles}>
-          <View style={styles.left}>
-            <View style={styles.userImage}>
-              <UserImage {...this.props} userID={author} size={26} />
+          <View style={styles.inner}>
+            <View style={styles.left}>
+              <View style={styles.userImage}>
+                <UserImage {...this.props} userID={author} size={26} />
+              </View>
+              <TextSans size={12} color={disabled ? '#95989A' : '#282828'}>{this.props.name}</TextSans>
             </View>
-            <TextSans size={12} color={disabled ? '#95989A' : '#282828'}>{this.props.name}</TextSans>
-          </View>
-          <View style={styles.right}>
-            <View style={styles.passageIndex}>
-              <TextSans size={13} color={'#95989A'}>{passageIndex}</TextSans>
-            </View>
-            <View style={styles.score}>
-              <IconLeaf />
-              <View style={styles.scoreText}>
-                <TextSerif size={16} color={disabled ? '#95989A' : '#282828'}>{this.props.score}</TextSerif>
+            <View style={styles.right}>
+              <View style={styles.passageIndex}>
+                <TextSans size={13} color={'#95989A'}>{passageIndex}</TextSans>
+              </View>
+              <View style={styles.score}>
+                <IconLeaf />
+                <View style={styles.scoreText}>
+                  <TextSerif size={16} color={disabled ? '#95989A' : '#282828'}>{this.props.score}</TextSerif>
+                </View>
               </View>
             </View>
           </View>
@@ -111,6 +113,13 @@ const styles = StyleSheet.create({
     borderColor: '#8D8D8D',
     backgroundColor: '#FFFFFF',
     paddingVertical: 2,
+    paddingRight: 6,
+    width: NODE_WIDTH,
+  },
+  inner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingRight: 6,
     width: NODE_WIDTH,
   },

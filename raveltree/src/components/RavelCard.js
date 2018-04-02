@@ -63,34 +63,36 @@ class RavelCard extends Component<{}> {
 
     return (
       <Touchable onPress={() => this.onPressCard ()} style = {styles.container}>
-        <View style={styles.head}>
-          <View style={styles.left}>
-            <View style={styles.userImage}>
-              <UserImage {...this.props} profile={this.state.profile} /*photoURL={authorImage}*/ size={26} />
+        <View style={styles.inner}>
+          <View style={styles.head}>
+            <View style={styles.left}>
+              <View style={styles.userImage}>
+                <UserImage {...this.props} profile={this.state.profile} /*photoURL={authorImage}*/ size={26} />
+              </View>
+              <TextSerif size={16}>{this.props.ravel}</TextSerif>
             </View>
-            <TextSerif size={16}>{this.props.ravel}</TextSerif>
+            <View style={styles.right}>
+              <View style={styles.users}>
+                <View style={styles.hpad}>
+                  <IconUser size={20} />
+                </View>
+                <View style={styles.hpad}>
+                  <TextSerif size={16}>{this.props.users}</TextSerif>
+                </View>
+              </View>
+              <View style={styles.score}>
+                <View style={styles.hpad}>
+                  <IconLeaf size={20} />
+                </View>
+                <View style={styles.hpad}>
+                  <TextSerif size={16}>{this.props.score}</TextSerif>
+                </View>
+              </View>
+            </View>
           </View>
-          <View style={styles.right}>
-            <View style={styles.users}>
-              <View style={styles.hpad}>
-                <IconUser size={20} />
-              </View>
-              <View style={styles.hpad}>
-                <TextSerif size={16}>{this.props.users}</TextSerif>
-              </View>
-            </View>
-            <View style={styles.score}>
-              <View style={styles.hpad}>
-                <IconLeaf size={20} />
-              </View>
-              <View style={styles.hpad}>
-                <TextSerif size={16}>{this.props.score}</TextSerif>
-              </View>
-            </View>
+          <View style={styles.concept}>
+            <TextSans size={16} color={'#7F7F7F'}>{this.props.concept}</TextSans>
           </View>
-        </View>
-        <View style={styles.concept}>
-          <TextSans size={16} color={'#7F7F7F'}>{this.props.concept}</TextSans>
         </View>
       </Touchable>
     );
@@ -106,6 +108,9 @@ const styles = StyleSheet.create({
       paddingTop: 5,
       paddingBottom: 10,
       paddingHorizontal: 17,
+    },
+    inner: {
+      
     },
     head: {
       flexDirection: 'row',
