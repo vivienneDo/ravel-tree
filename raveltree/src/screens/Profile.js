@@ -1,30 +1,14 @@
-// Author: Frank Fusco (fr@nkfus.co)
-// Created: 02/17/18
-// Modified: 03/06/18
+// Author:   Frank Fusco (fr@nkfus.co)
+// Created:  02/17/18
+// Modified: 03/24/18
 //
 // Profile screen for RavelTree.
-//
-// Pass in user data as props like so:
-//
-// <Profile
-//    isOwned
-//    user={'Rebecca Bates'}
-//    score={1064}
-//    bio={'Rebecca Bates was born on a dairy farm in upstate New York. Her parents made it a point to rear her with a thorough appreciation of manual labor. She seeks to bring all that appreciation into her writing—though it usually finds its way in there pretty much on its own.\n\nRebecca earned an MFA from Georgetown in 2015. She lives in Manhattan with six pugs.'}
-//    statistics={{
-//      ravelsLed: 5,
-//      ravelsContributedTo: 29,
-//      passagesWritten: 213,
-//      upvotesReceived: 731,
-//    }}
-// />
 //
 // Note: "isOwned" displays the active user's profile, including links to log
 // out and edit content. If false, these elements will be omitted, and
 // "message" and "follow" functions will be added.
 //
-// TODO: Set isOwned locally, checking whether the passed userID matches the
-//       userID of the current user in global Redux state.
+// TODO: Align statistics.
 
 import React, { Component } from 'react';
 import {
@@ -34,6 +18,7 @@ import {
 } from 'react-native';
 
 import { connect } from 'react-redux'
+import * as actions from '../actions';
 import _ from 'lodash';
 
 import RTLogoText from '../components/RTLogoText'
@@ -41,8 +26,25 @@ import TextSans from '../components/TextSans'
 import TextSerif from '../components/TextSerif'
 import TextLink from '../components/TextLink'
 import TextHeader from '../components/TextHeader'
+import InputText from '../components/InputText'
+import Button from '../components/Button'
 import UserImage from '../components/UserImage'
 import IconLeaf from '../components/IconLeaf'
+
+import ImagePicker from 'react-native-image-picker';
+import SelectImage from '../utils/CameraPicker.js';
+import RNFetchBlob from 'react-native-fetch-blob';
+
+const Blob = RNFetchBlob.polyfill.Blob;
+const fs = RNFetchBlob.fs;
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+window.Blob = Blob;
+
+const FBSDK = require('react-native-fbsdk');
+const {
+  LoginButton,
+  AccessToken
+} = FBSDK;
 
 const TEST_USER = 'Rebecca Bates';
 const TEST_SCORE = 1064;
@@ -57,11 +59,138 @@ const TEST_STATISTICS = {
 class Profile extends Component {
   constructor (props) {
     super (props);
+    // this.state = {
+    //   isOwned: false,
+    //   mode: 'view',
+    //   //showCameraPicker: false,
+    //   //
+    //   // firstName: this.props.currentUserProfile.first_name,
+    //   // lastName: this.props.currentUserProfile.last_name,
+    //   // score: this.props.currentUserProfile.ravel_points,
+    //   // photoURL: this.props.currentUserProfile.photoURL,
+    //   // bio: this.props.currentUserProfile.bio,
+    //   // bioEdit: this.props.currentUserProfile.bio,
+    //   // ravelsLed: this.props.currentUserProfile.stat_ravel_led,
+    //   // ravelsContributedTo: this.props.currentUserProfile.stat_ravel_contributed,
+    //   // passagesWritten: this.props.currentUserProfile.stat_passage_written,
+    //   // upvotesReceived: this.props.currentUserProfile.upvotes,
+    //   //
+    //   ...this.props.screenData,
+    // };
+
+    var profile = this.props.profile || this.props.currentUserProfile;
+
+    this.state = {
+      profile: profile,
+      isOwned: profile.user_uid == this.props.currentUserProfile.user_uid,
+      mode: 'view',
+      firstName: profile.first_name,
+      lastName: profile.last_name,
+      score: profile.ravel_points,
+      photoURL: profile.photoURL,
+      bio: profile.bio,
+      bioEdit: profile.bio,
+      ravelsLed: profile.stat_ravel_led,
+      ravelsContributedTo: profile.stat_ravel_contributed,
+      passagesWritten: profile.stat_passage_written,
+      upvotesReceived: profile.upvotes,
+      ...this.props.screenData,
+    };
+
+
+
+
+    // if (this.props.userID == this.props.currentUserProfile.user_uid) {
+    //   this.state = {
+    //     isOwned: true,
+    //     mode: 'view',
+    //     firstName: this.props.currentUserProfile.first_name,
+    //     lastName: this.props.currentUserProfile.last_name,
+    //     score: this.props.currentUserProfile.ravel_points,
+    //     photoURL: this.props.currentUserProfile.photoURL,
+    //     bio: this.props.currentUserProfile.bio,
+    //     bioEdit: this.props.currentUserProfile.bio,
+    //     ravelsLed: this.props.currentUserProfile.stat_ravel_led,
+    //     ravelsContributedTo: this.props.currentUserProfile.stat_ravel_contributed,
+    //     passagesWritten: this.props.currentUserProfile.stat_passage_written,
+    //     upvotesReceived: this.props.currentUserProfile.upvotes,
+    //     ...this.props.screenData,
+    //   };
+    // } else {
+    //   this.state = {
+    //     isOwned: false,
+    //     mode: 'view',
+    //     firstName: this.props.userProfile.first_name,
+    //     lastName: this.props.userProfile.last_name,
+    //     score: this.props.userProfile.ravel_points,
+    //     photoURL: this.props.userProfile.photoURL,
+    //     bio: this.props.userProfile.bio,
+    //     bioEdit: this.props.userProfile.bio,
+    //     ravelsLed: this.props.userProfile.stat_ravel_led,
+    //     ravelsContributedTo: this.props.userProfile.stat_ravel_contributed,
+    //     passagesWritten: this.props.userProfile.stat_passage_written,
+    //     upvotesReceived: this.props.userProfile.upvotes,
+    //     ...this.props.screenData,
+    //   };
+    // }
+  }
+
+  // componentWillReceiveProps (newProps) {
+  //   if (newProps.currentUserProfile) {
+  //     this.setState ({
+  //       bio: newProps.currentUserProfile.bio,
+  //       photoURL: newProps.currentUserProfile.photoURL,
+  //       mode: 'view',
+  //     });
+  //   }
+  //   else if (newProps.userProfile) {
+  //
+  //   }
+  // }
+
+  onPressChangeImage () {
+    SelectImage().then((url) => {
+      this.props.updateProfilePicture (url);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+    .then (() => {
+      this.props.getCurrentUserProfile ();
+    });
+  }
+
+  onPressLogOut () {
+    this.props.userLogOff ();
+    FBSDK.LoginManager.logOut ();
+    this.props.setActiveScreen ('Login');
+  }
+
+  onPressFollow () {
+    // TODO
+  }
+
+  onPressMessage () {
+    // TODO
+  }
+
+  onPressEdit () {
+    this.setState ({mode: 'edit'});
+  }
+
+  onChangeBioEdit (bioEdit) {
+    this.setState ({bioEdit: bioEdit});
+  }
+
+  onPressSaveChanges () {
+    var firstName = this.state.firstName;
+    var lastName = this.state.lastName;
+    var bioEdit = this.state.bioEdit;
+    this.props.updateCurrentUserProfile ({first_name: firstName, last_name: lastName, bio: bioEdit});
   }
 
   render (){
     const {
-      isOwned,
       user,
       score,
       bio,
@@ -76,42 +205,73 @@ class Profile extends Component {
         </View>
         <View style={styles.top}>
           <View style={styles.topLeft}>
-            <UserImage size={100} />
-            {isOwned ? (
-              <TextLink size={12}>Change Image</TextLink>
+            <UserImage {...this.props} profile={this.state.profile} size={100} />
+
+            {this.state.isOwned ? (
+              <TextLink onPress={() => this.onPressChangeImage ()} size={12}>Change Image</TextLink>
             ) : (
               <View style={{display: 'none'}} />
             )}
+
           </View>
           <View style={styles.topRight}>
-            <TextSerif size={22}>{TEST_USER}</TextSerif>
+            <TextSerif size={22}>
+              {this.state.firstName + ' ' + this.state.lastName}
+            </TextSerif>
             <View style={styles.score}>
               <IconLeaf size={30} />
-              <TextSerif size={24}>{TEST_SCORE}</TextSerif>
+              <TextSerif size={24}>{this.state.score}</TextSerif>
             </View>
-            {isOwned ? (
-              <TextLink size={12}>Log Out</TextLink>
+
+            {this.state.isOwned ? (
+              <TextLink onPress={() => this.onPressLogOut ()} size={12}>Log Out</TextLink>
             ) : (
               <View>
                 <View style={styles.spaceBelow}>
-                  <TextLink size={12}>Follow</TextLink>
+                  <TextLink onPress={() => this.onPressFollow ()} size={12}>Follow</TextLink>
                 </View>
-                <TextLink size={12}>Message</TextLink>
+                <TextLink onPress={() => this.onPressMessage ()}size={12}>Message</TextLink>
               </View>
             )}
+
           </View>
         </View>
+
+        {/*this.state.showCameraPicker ? (
+          <CameraPicker />
+        ) : (
+          <View style={{display: 'none'}} />
+        )*/}
+
         <ScrollView style={styles.scroll}>
           <View style={styles.bio}>
             <View style={styles.bioHeader}>
               <TextHeader>Bio&nbsp;&nbsp;</TextHeader>
-              {isOwned ? (
-                <TextLink size={12}>Edit</TextLink>
+
+              {this.state.isOwned ? (
+                <TextLink onPress={() => this.onPressEdit ()} size={12}>Edit</TextLink>
               ) : (
                 <View style={{display: 'none'}} />
               )}
+
             </View>
-            <TextSerif size={16}>{TEST_BIO}</TextSerif>
+
+            {this.state.mode == 'edit' ? (
+              <View style={styles.editBio}>
+                <InputText
+                  text={this.state.bioEdit}
+                  placeholder={'Add your autobiography (e.g., "I was born in a log cabin in Illinois...").'}
+                  onChangeText={(bioEdit) => this.onChangeBioEdit (bioEdit)}
+                  multiline
+                  height={200}
+                />
+                <View style={styles.spaceBelow} />
+                <Button title={'Save Changes'} onPress={() => this.onPressSaveChanges ()} />
+              </View>
+            ) : (
+              <TextSerif size={16}>{this.state.bio}</TextSerif>
+            )}
+
           </View>
           <View style={styles.statistics}>
             <View style={styles.statisticsHeader}>
@@ -134,16 +294,16 @@ class Profile extends Component {
               </View>
               <View style={styles.statisticsRight}>
                 <View style={styles.rightItem}>
-                  <TextSans size={20} bold color={'#3BB54A'}>{TEST_STATISTICS.ravelsLed}</TextSans>
+                  <TextSans size={20} bold color={'#3BB54A'}>{this.state.ravelsLed}</TextSans>
                 </View>
                 <View style={styles.rightItem}>
-                  <TextSans size={20} bold color={'#3BB54A'}>{TEST_STATISTICS.ravelsContributedTo}</TextSans>
+                  <TextSans size={20} bold color={'#3BB54A'}>{this.state.ravelsContributedTo}</TextSans>
                 </View>
                 <View style={styles.rightItem}>
-                  <TextSans size={20} bold color={'#3BB54A'}>{TEST_STATISTICS.passagesWritten}</TextSans>
+                  <TextSans size={20} bold color={'#3BB54A'}>{this.state.passagesWritten}</TextSans>
                 </View>
                 <View style={styles.rightItem}>
-                  <TextSans size={20} bold color={'#3BB54A'}>{TEST_STATISTICS.upvotesReceived}</TextSans>
+                  <TextSans size={20} bold color={'#3BB54A'}>{this.state.upvotesReceived}</TextSans>
                 </View>
               </View>
             </View>
@@ -193,6 +353,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     marginBottom: 10,
   },
+  editBio: {
+    alignItems: 'center',
+  },
   statistics: {
 
   },
@@ -230,10 +393,29 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapStateToProps (state) {
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreens,
+    showNavBar,
+    screenData,
+  } = state.navigation;
+
+  const {
+    currentUserProfile,
+  } = state.current_user;
+
+  const {
+    userProfile,
+  } = state.user;
+
   return {
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreen,
+    activeScreen,
+    previousScreens,
+    showNavBar,
+    screenData,
+    currentUserProfile,
+    userProfile
   };
 }
 

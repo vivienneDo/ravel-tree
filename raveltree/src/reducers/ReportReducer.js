@@ -1,7 +1,7 @@
 const initialState = {
     ravel_report_success: false,
     user_report_success: false
-    
+
 };
 
 export default (state = initialState, action) => {
@@ -16,6 +16,11 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 user_report_success: action.payload
+            }
+        case 'RESET_STATE_REPORT':
+            return {
+                ...state,
+                ...initialState,
             }
         default:
             return state;

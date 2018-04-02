@@ -13,21 +13,29 @@ import {
 
 // Backend imports
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, compose, applyMiddleware } from 'redux';
 import Thunk from 'redux-thunk';
 //import { connect } from 'react-redux';
 import rootReducer from './reducers/index';
 
 import AppContainer from './AppContainer';
 
-const store = createStore (
-  rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-  applyMiddleware(Thunk)
-);
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const store = createStore (rootReducer, composeEnhancers (applyMiddleware (Thunk)));
 
 export default class App extends Component {
+
   render () {
+
+    // TEMP: Remove for testing and production.
+    // Temporarlity hide specified warnings.
+    console.ignoredYellowBox = [
+      'Warning: Cannot update during',
+      'FIREBASE WARNING: Using',
+      'Remote debugger',
+    ];
+
     return (
       <Provider store={store}>
         <AppContainer />

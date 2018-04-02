@@ -22,12 +22,14 @@ import Test from './screens/Test';
 
 import Login from './screens/Login';
 import LoginEmail from './screens/LoginEmail'
+import PasswordReset from './screens/PasswordReset'
 import Messages from './screens/Messages';
 import MessageThread from './screens/MessageThread';
 import Notifications from './screens/Notifications';
 import TermsAndPrivacy from './screens/TermsAndPrivacy';
 import YourRavels from './screens/YourRavels';
 import Profile from './screens/Profile';
+import CreateProfile from './screens/CreateProfile';
 import StartARavel from './screens/StartARavel'
 import AddTags from './screens/AddTags'
 import InviteParticipants from './screens/InviteParticipants'
@@ -35,7 +37,9 @@ import Splash from './screens/Splash'
 import Home from './screens/Home'
 import Explore from './screens/Explore'
 import Ravel from './screens/Ravel'
+import Merge from './screens/Merge'
 
+import GraphicsTest from './screens/GraphicsTest';
 
 class Screen extends Component {
   constructor (props: any, context: any) {
@@ -46,7 +50,7 @@ class Screen extends Component {
 
   componentWillMount() {
     firebase.auth().onAuthStateChanged((user) => {
-      console.log('Authentication state has changed: ' + (user ? 'True' : 'False'));
+      console.log('Authentication state is: ' + (user ? 'True' : 'False'));
       if (user) {
         this.setState ({loggedIn: true})
       } else {
@@ -56,6 +60,8 @@ class Screen extends Component {
   }
 
   showScreen () {
+    //return <InviteParticipants {...this.props} />;
+    //return <Merge {...this.props} />;
     //return <Ravel {...this.props} />;
     switch (this.props.activeScreen) {
       case ('Splash'):
@@ -64,8 +70,12 @@ class Screen extends Component {
         return <Login {...this.props} />;
       case ('LoginEmail'):
         return <LoginEmail {...this.props} />;
+      case ('PasswordReset'):
+        return <PasswordReset {...this.props} />;
       case ('TermsAndPrivacy'):
         return <TermsAndPrivacy {...this.props} />;
+      case ('CreateProfile'):
+        return <CreateProfile {...this.props} />;
       case ('Home'):
         return <Home {...this.props} />;
       case ('YourRavels'):
@@ -88,6 +98,8 @@ class Screen extends Component {
         return <InviteParticipants {...this.props} />;
       case ('Ravel'):
         return <Ravel {...this.props} />;
+      case ('Merge'):
+        return <Merge {...this.props} />;
       default:
         return <Login {...this.props} />;
     }

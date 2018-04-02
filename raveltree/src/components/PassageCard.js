@@ -1,29 +1,24 @@
 // Author:    Alex Aguirre
 // Created:   02/5/18
-// Modified:  03/09/18 by Frank Fusco (fr@nkfus.co)
+// Modified:  03/26/18 by Frank Fusco (fr@nkfus.co)
 
 // Standard passage card component for RavelTree.
 //
-// TODO: Ellipsis modal menu.
-// TODO: Truncate text (8 lines?)
+// TODO: 'Report passage' functionality on backend.
 // TODO: Limit voting power to 1 per user per passage.
-// TODO: navigateToRavel () and navigateToPassage (): Replace
-//       this.constructor.name with the name of the parent screen. Will have to
-//       retrieve this through props.
 
-'use strict';
-
-const ColorPropType = require('ColorPropType');
-const Platform = require('Platform');
-const React = require('React');
-const Dimensions = require('Dimensions');
-const AppRegistry = require('AppRegistry');
-const PropTypes = require('prop-types');
-const StyleSheet = require('StyleSheet');
-const Text = require('Text');
-const TouchableNativeFeedback = require('TouchableNativeFeedback');
-const TouchableOpacity = require('TouchableOpacity');
-const View = require('View');
+import React, {Component} from 'react';
+import {
+  Platform,
+  StyleSheet,
+  Dimensions,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  TouchableNativeFeedback,
+  Alert,
+} from 'react-native';
 
 import { connect } from 'react-redux'
 import _ from 'lodash';
@@ -33,10 +28,19 @@ import TextSans from './TextSans'
 import UserImage from './UserImage'
 import VoteBar from './VoteBar'
 
+// Number of characters of passage text to display on the card.
+PASSAGE_TRUNCATION = 330;
 
 class PassageCard extends React.Component {
   constructor (props, context) {
     super (props, context);
+  }
+
+  componentWillReceiveProps (newProps) {
+
+    if (newProps.ravel_report_success) {
+      Alert.alert ('Reported', 'Thank you for reporting a violation of RavelTree\'s Terms of Use. We\'ll review your report and take action as necessary.');
+    }
   }
 
   onPressRavel () {
@@ -56,17 +60,50 @@ class PassageCard extends React.Component {
   }
 
   navigateToRavel (id) {
-    var screenData = Object.assign ({}, {ravelID: id});
-    this.props.navigateForward ('Ravel', this.constructor.name, screenData);
+    var screenData = Object.assign ({}, {ravel_uid: id});
+    this.props.navigateForward ('Ravel', this.props.parentScreen, screenData);
   }
 
   navigateToPassage (ravelID, passageID) {
-    var screenData = Object.assign ({}, {ravelID: ravelID, passageID: passageID, showModal: 'PassagePopup'});
-    this.props.navigateForward ('Ravel', this.constructor.name, screenData);
+    var screenData = Object.assign ({}, {ravel_uid: ravelID, passage_uid: passageID, loadPassage: true});
+    this.props.navigateForward ('Ravel', this.props.parentScreen, screenData);
   }
 
   onPressEllipsis () {
-    // TODO: Modal options menu ("Share," etc.)
+    var title = this.props.title;
+    var message = 'Choose an action:';
+    var buttons = [
+      {text: 'Report', onPress: () => this.onPressReport ()},
+      {text: 'Share...', onPress: () => this.onPressShare ()},
+      {text: 'Cancel', style: 'cancel'},
+    ];
+    var options = { cancelable: false };
+    Alert.alert (title, message, buttons, options);
+  }
+
+  onPressReport () {
+    var title = 'Confirm Report';
+    var message = 'Are you sure you want to report ' + this.props.title + ' for violating RavelTree\'s Terms of Use? You can\'t undo this.';
+    var buttons = [
+      {text: 'Cancel', style: 'cancel'},
+      {text: 'Report', onPress: () => this.onPressConfirmReport ()},
+    ]
+    var options = { cancelable: false };
+    Alert.alert (title, message, buttons, options);
+  }
+
+  onPressConfirmReport () {
+    console.log ('Reporting ' + this.props.title + '...');
+    this.props.reportRavel (this.props.ravelID); // TODO: 'Report passage' functionality on backend.
+  }
+
+  onPressShare () {
+    console.log ('Opening share menu for ' + this.props.title);
+  }
+
+  shorten (str, maxLen, separator = ' ') {
+    if (!str || str.length <= maxLen) { return str; }
+    return str.substr(0, str.lastIndexOf(separator, maxLen));
   }
 
   render () {
@@ -76,13 +113,21 @@ class PassageCard extends React.Component {
       passageIndex,
       passageID,
       title,
+      author,
       passage,
       upvotes,
       downvotes,
+      parentScreen,
       testID,
     } = this.props;
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
+
+    var truncatedPassage = (passage.length >= PASSAGE_TRUNCATION) ? (
+      this.shorten (passage, PASSAGE_TRUNCATION) + '...'
+    ) : (
+      passage
+    );
 
     return (
       <View style={styles.container}>
@@ -99,19 +144,25 @@ class PassageCard extends React.Component {
             <Touchable onPress={() => this.onPressTitle ()}>
               <TextSans size={13} color={'#95989A'}>{this.props.title}</TextSans>
             </Touchable>
-            <UserImage size={26}/>
+            <UserImage {...this.props} userID={author} size={26}/>
           </View>
         </View>
         <Touchable onPress={() => this.onPressPassage ()} style={styles.passage}>
           <TextSerif>
-            {this.props.passage}
+            {truncatedPassage}
           </TextSerif>
         </Touchable>
         <View style={styles.buttons}>
           <Touchable onPress={() => this.onPressEllipsis ()}>
             <TextSans size={40} color={'#95989A'}>...</TextSans>
           </Touchable>
-          <VoteBar upvotes={this.props.upvotes} downvotes={this.props.downvotes} />
+          <VoteBar
+            ravelID={ravelID}
+            passageID={passageID}
+            upvotes={upvotes}
+            downvotes={downvotes}
+            {...this.props}
+          />
         </View>
       </View>
     )
@@ -166,6 +217,10 @@ const mapStateToProps = (state) => {
     activeScreen,
     previousScreens,
   } = state.navigation;
+
+  const {
+    ravel_report_success,
+  } = state.report_status;
 
   return {
     activeScreen,

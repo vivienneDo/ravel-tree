@@ -6,8 +6,8 @@ const initialState = {
 
 export default (state = initialState, action) => {
     switch (action.type) {
-        
-        case 'GET_TERMS_OF_SERVICE': 
+
+        case 'GET_TERMS_OF_SERVICE':
             return {
                 ...state,
                 terms_of_service: action.payload,

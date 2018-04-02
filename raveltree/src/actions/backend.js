@@ -4,37 +4,37 @@
  */
 /**
  * LOGS
-   - 3/24/2018 - VD Do - Added: createRavel() these fields:   
-    var roots = {root:true}; 
-    var level_count = 0; 
-    var nodeCount = { 0:0 }; 
-    var has_children = false; 
+   - 3/24/2018 - VD Do - Added: createRavel() these fields:
+    var roots = {root:true};
+    var level_count = 0;
+    var nodeCount = { 0:0 };
+    var has_children = false;
 
    - 3/25/2018 - VD Do - Added passage functions and user voting tracker list
-   - 3/26/2018 - VD Do - Updated addPassage() and addInitialPassage() to check if currentUser is creator of ravel 
-                         Updated upVoteRavel() and downDownRavel() to return dispatch ON_SUCCESS : false when failed 
-                         Updated createStartRavel() push roots:false, nodeCount: false on initi 
-                         Updated addInitiPassage() to push  var parent = {root:true} and var children = false on start 
+   - 3/26/2018 - VD Do - Updated addPassage() and addInitialPassage() to check if currentUser is creator of ravel
+                         Updated upVoteRavel() and downDownRavel() to return dispatch ON_SUCCESS : false when failed
+                         Updated createStartRavel() push roots:false, nodeCount: false on initi
+                         Updated addInitiPassage() to push  var parent = {root:true} and var children = false on start
                          Added getPassageMetaData()
-                         Added calculatePassageIndexField() and updated addPassage() and addInitiPassage() to update passage_index 
-                                                              
-  - 3/28/2018 - VD Do - Added forkPassage() and mergeTwoPassage() and helper functions. 
-                        Updated getPassageMetaData() to accept ravel_uid as a param         
+                         Added calculatePassageIndexField() and updated addPassage() and addInitiPassage() to update passage_index
+
+  - 3/28/2018 - VD Do - Added forkPassage() and mergeTwoPassage() and helper functions.
+                        Updated getPassageMetaData() to accept ravel_uid as a param
                         <2>Refactored addAdminUser() to create a new user when called
                         Added email field to user's userProfile when new account is created.
-                        Added searchUserByEmail() 
-                        Refactored forkPassage() to add passage_uid to roots array if level === 1 
+                        Added searchUserByEmail()
+                        Refactored forkPassage() to add passage_uid to roots array if level === 1
   - 3/31/2018 - VD Do - Refactored downVotePassage() to reset user_track_vote field on downVotePassage()
                         Refactored addPassage(), addInitPassage() and forkPassage() to have datetime with format:
                         dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
                         Refactored addPassage(), addInitPassage() and forkPassage() to have the following fields:
-                        - this.props.passage_meta_data.optimalityScore 
- *                      - this.props.passage_meta_data.currentPassageOptimality 
- *                      - this.props.passage_meta_data.optimalChild 
+                        - this.props.passage_meta_data.optimalityScore
+ *                      - this.props.passage_meta_data.currentPassageOptimality
+ *                      - this.props.passage_meta_data.optimalChild
                         Added reCalculateOptimalityScore(), reCalculateCurrentPassagesOptimalityScore
                         Added getOptimalityChildID(), getOptimality()
-                        Refactored getPassageMetaData() to call reCalculateOptimalityScore() 
-                    
+                        Refactored getPassageMetaData() to call reCalculateOptimalityScore()
+
 
  */
 
@@ -42,17 +42,35 @@ import firebase from 'firebase';
 import _ from 'lodash';
 const dateformat = require('dateformat');
 
+/* TEST FUNCTIONS */
+/**
+* @param: nothing
+* @returns: The current privacy_policy
+* actions: Test function that attempts to get the current privacy policy in the
+*          database.
+*/
+export const returnTest = () => dispatch => {
+  return new Promise ((resolve, reject) => {
+    firebase.database().ref(`privacy_policy/privacy_policy`).once('value', (snapshot) => {
+      resolve (snapshot.val ());
+    })
+    .catch((error) => {
+      reject ('Error getting privacy policy.');
+    })
+  });
+}
+
 
 /* CREATE USER/LOGIN FUNCTIONS */
 
-/** 
-* @param: nothing 
+/**
+* @param: nothing
 * @returns: the current privacy_policy
 * mapStateToProps = state => term_of_service =
-* state.term_of_service: 
+* state.term_of_service:
 *      'GET_PRIVACY_POLICY' - the privacy policy in the db
 *          - this.props.term_of_service.privacy_policy
-* actions: Attempts the get the current privacy policy in the database. 
+* actions: Attempts the get the current privacy policy in the database.
 */
 export const readPrivacyPolicy = () => {
 
@@ -64,8 +82,8 @@ export const readPrivacyPolicy = () => {
             alert('Error getting privacy policy...')
         })
     }
-    
-    }
+}
+
 
 /**
 * @param: nothing
@@ -128,10 +146,10 @@ export const userLogOff = () => dispatch => {
 
 
 /**
- * @param: registered user's email address 
+ * @param: registered user's email address
  * @returns: nothing
  * actions: fires an email that will enable a user to reset their password
- * 
+ *
  */
 export const userResetPassword = (email) => dispatch => {
    var auth = firebase.auth();
@@ -319,14 +337,14 @@ export const createUser = (firstName, lastName, bio, photoURL = '') => dispatch 
 /** NON_CURRENT_USER USER FUNCTIONS */
 
 /**
- * @param: user uid 
- * @returns: 
- * mapStateToProps = state => userProfile = 
- * state.user: 
+ * @param: user uid
+ * @returns:
+ * mapStateToProps = state => userProfile =
+ * state.user:
  *      'GET_USER_PROFILE' - an entire userProfile object
  *          - this.props.userProfile.bio
- *          - this.props.userProfile.first_name 
- *          - this.props.userProfile.last_name 
+ *          - this.props.userProfile.first_name
+ *          - this.props.userProfile.last_name
  *          - this.props.userProfile.photoURL
  *          - this.props.userProfile.ravel_points
  *          - this.props.userProfile.stats_passage_written
@@ -334,8 +352,8 @@ export const createUser = (firstName, lastName, bio, photoURL = '') => dispatch 
  *          - this.props.userProfile.stat_ravel_led
  *          - this.props.userProfile.upvotes
  *          - this.props.userProfile.user_uid
- * actions: gets the user profile of the passed in uid 
- * 
+ * actions: gets the user profile of the passed in uid
+ *
  */
 export const getUserProfile = (uid) => {
 
@@ -353,10 +371,10 @@ export const getUserProfile = (uid) => {
 
 /**
  * @param: nothing
- * @returns: 
- * mapStateToProps = state => all_public_ravel_fetch = 
- * state.master_ravel 
- *      'ALL_PUBLIC_RAVEL_FETCH': a list of all public ravel objects 
+ * @returns:
+ * mapStateToProps = state => all_public_ravel_fetch =
+ * state.master_ravel
+ *      'ALL_PUBLIC_RAVEL_FETCH': a list of all public ravel objects
  *          - this.props.all_public_ravel_fetch.enable_comment
             - this.props.all_public_ravel_fetch.enable_voting
             - this.props.all_public_ravel_fetch.m_ravel_participants
@@ -366,11 +384,11 @@ export const getUserProfile = (uid) => {
             - this.props.all_public_ravel_fetch.ravel_create_date
             - this.props.all_public_ravel_fetch.ravel_number_participants
             - this.props.all_public_ravel_fetch.ravel_participants{}
-            - this.props.all_public_ravel_fetch.ravel_points 
+            - this.props.all_public_ravel_fetch.ravel_points
             - this.props.all_public_ravel_fetch.ravel_title
             - this.props.all_public_ravel_fetch.user_created
             - this.props.all_public_ravel_fetch.user_created_photoURL
- * actions: attempts to get a list of all public ravel objects 
+ * actions: attempts to get a list of all public ravel objects
  */
 export const loadAllUserKey = () => {
 
@@ -389,14 +407,14 @@ export const loadAllUserKey = () => {
 
 /**
  * @param: photo url
- * @returns: 
+ * @returns:
  * mapStateToProps = state => photoURL =
- * state.current_user: 
- *      'UPDATE_CURRENT_USER_PROFILE_PICTURE' - new photo url 
+ * state.current_user:
+ *      'UPDATE_CURRENT_USER_PROFILE_PICTURE' - new photo url
  *          - this.props.photoURL
- * 
+ *
  * actions: updates the currently logged in user's user profile picture
- * and updates in their user_created ravel card reference 
+ * and updates in their user_created ravel card reference
  */
 export const updateProfilePicture = (url) => {
 
@@ -412,11 +430,11 @@ export const updateProfilePicture = (url) => {
             payload: url});
           })
           .then(() => {
-    
+
             var ravel_query = firebase.database().ref(`ravels`).orderByChild(`user_created`).equalTo(currentUser.uid);
             ravel_query.once('value', (snapshot) => {
                 snapshot.forEach((ravelSnap) => {
-                    firebase.database().ref(`ravels/${ravelSnap.key}`).update({user_created_photoURL : url}) 
+                    firebase.database().ref(`ravels/${ravelSnap.key}`).update({user_created_photoURL : url})
                 })
             })
 
@@ -426,26 +444,26 @@ export const updateProfilePicture = (url) => {
             var ravel_query = firebase.database().ref(`users/${currentUser.uid}/ravel_created`);
             ravel_query.once('value', (snapshot) => {
                 snapshot.forEach((ravelSnap) => {
-                    firebase.database().ref(`users/${currentUser.uid}/ravel_created/${ravelSnap.key}`).update({user_created_photoURL : url}) 
+                    firebase.database().ref(`users/${currentUser.uid}/ravel_created/${ravelSnap.key}`).update({user_created_photoURL : url})
                 })
             })
           })
           .catch((error) => {
             alert('Error updating profile picture at this time...')
           })
-                  
+
     }
 }
 
 /**
- * @param: nothing 
- * @returns: 
+ * @param: nothing
+ * @returns:
  * mapStateToProps = state => currentUserProfile =
- * state.current_user: 
+ * state.current_user:
  *      'GET_CURRENT_USER_PROFILE' - an entire userProfile object
  *          - this.props.currentUserProfile.bio
- *          - this.props.currentUserProfile.first_name 
- *          - this.props.currentUserProfile.last_name 
+ *          - this.props.currentUserProfile.first_name
+ *          - this.props.currentUserProfile.last_name
  *          - this.props.currentUserProfile.photoURL
  *          - this.props.currentUserProfile.ravel_points
  *          - this.props.currentUserProfile.stats_passage_written
@@ -453,8 +471,8 @@ export const updateProfilePicture = (url) => {
  *          - this.props.currentUserProfile.stat_ravel_led
  *          - this.props.currentUserProfile.upvotes
  *          - this.props.currentUserProfile.user_uid
- * actions: gets the user profile of the current user 
- * 
+ * actions: gets the user profile of the current user
+ *
  */
 export const getCurrentUserProfile = () => {
 
@@ -474,13 +492,13 @@ export const getCurrentUserProfile = () => {
 
 /**
  * @param: user's { first_name, last_name, bio }
- * @returns: 
+ * @returns:
  * mapStateToProps = state => currentUserProfile =
  * state.current_user
  *      'UPDATE_CURRENT_USER_PROFILE' : first_name, last_name, bio
  *          - this.props.currentUserProfile.bio
- *          - this.props.currentUserProfile.first_name 
- *          - this.props.currentUserProfile.last_name 
+ *          - this.props.currentUserProfile.first_name
+ *          - this.props.currentUserProfile.last_name
  *          - this.props.currentUserProfile.photoURL
  *          - this.props.currentUserProfile.ravel_points
  *          - this.props.currentUserProfile.stats_passage_written
@@ -514,10 +532,10 @@ export const updateCurrentUserProfile = ({ first_name, last_name, bio }) => {
  * @param: ravel_uid
  * @returns: dispatch 'REPORT_RAVEL_SUCCESS' - attempts to report a ravel, returns true on success
  * mapStateToProps => state = ravel_report_success
- * state.report_status 
- *                       <1> 'REPORT_RAVEL_SUCCESS' 
+ * state.report_status
+ *                       <1> 'REPORT_RAVEL_SUCCESS'
  *                           - this.props.report_status.ravel_report_success
- * Actions: Attempts to get the status if a ravel report was successful 
+ * Actions: Attempts to get the status if a ravel report was successful
  */
 export const reportRavel = (ravel_uid) => {
 
@@ -538,10 +556,10 @@ export const reportRavel = (ravel_uid) => {
  * @param: user_uid
  * @returns: dispatch 'REPORT_USER_SUCCESS' - attempts to report a user, returns true on success
  * mapStateToProps => state = user_report_success
- * state.report_status 
- *                       <1> 'REPORT_USER_SUCCESS' 
+ * state.report_status
+ *                       <1> 'REPORT_USER_SUCCESS'
  *                           - this.props.report_status.user_report_success
- * Actions: Attempts to get the status if a user report was successful 
+ * Actions: Attempts to get the status if a user report was successful
  */
 export const reportUser = (user_uid) => {
 
@@ -562,10 +580,10 @@ export const reportUser = (user_uid) => {
 
 /**
  * @param: nothing
- * @returns: 
+ * @returns:
  * mapStateToProps = state => all_non_created_user_ravel =
  * state.current_user_ravel:
- *      'ALL_NON_CREATED_CURR_USER_RAVEL' : a list of ravels that the current user is particpating in (but did not create) 
+ *      'ALL_NON_CREATED_CURR_USER_RAVEL' : a list of ravels that the current user is particpating in (but did not create)
  *          - this.props.all_non_created_user_ravel.enable_comment
             - this.props.all_non_created_user_ravel.enable_voting
             - this.props.all_non_created_user_ravel.m_ravel_participants
@@ -575,12 +593,12 @@ export const reportUser = (user_uid) => {
             - this.props.all_non_created_user_ravel.ravel_create_date
             - this.props.all_non_created_user_ravel.ravel_number_participants
             - this.props.all_non_created_user_ravel.ravel_participants{}
-            - this.props.all_non_created_user_ravel.ravel_points 
+            - this.props.all_non_created_user_ravel.ravel_points
             - this.props.all_non_created_user_ravel.ravel_title
             - this.props.all_non_created_user_ravel.user_created
             - this.props.all_non_created_user_ravel.user_created_photoURL
- * actions: gets the current user's participating ravels 
- * 
+ * actions: gets the current user's participating ravels
+ *
  */
 export const loadNonCreatedCurrentUserRavel = () => {
     var currentUid = firebase.auth().currentUser.uid;
@@ -592,19 +610,19 @@ export const loadNonCreatedCurrentUserRavel = () => {
         })
         .catch((error) => {
             alert('Error loading user participated ravels...')
-        }) 
+        })
 
     }
 
-   
+
 }
 
 /**
  * @param: nothing
- * @returns: 
- * mapStateToProps = state => all_user_created_ravels = 
+ * @returns:
+ * mapStateToProps = state => all_user_created_ravels =
  * state.current_user_ravel:
- *      'INITIAL_USER_RAVEL_FETCH' : a list of ravels that the current user created   
+ *      'INITIAL_USER_RAVEL_FETCH' : a list of ravels that the current user created
  *          - this.props.all_user_created_ravels.enable_comment
             - this.props.all_user_created_ravels.enable_voting
             - this.props.all_user_created_ravels.m_ravel_participants
@@ -614,12 +632,12 @@ export const loadNonCreatedCurrentUserRavel = () => {
             - this.props.all_user_created_ravels.ravel_create_date
             - this.props.all_user_created_ravels.ravel_number_participants
             - this.props.all_user_created_ravels.ravel_participants{}
-            - this.props.all_user_created_ravels.ravel_points 
+            - this.props.all_user_created_ravels.ravel_points
             - this.props.all_user_created_ravels.ravel_title
             - this.props.all_user_created_ravels.user_created
             - this.props.all_user_created_ravels.user_created_photoURL
- * actions: gets the current user's created ravels 
- * 
+ * actions: gets the current user's created ravels
+ *
  */
 export const loadInitialCurrentUserCreatedRavel = () => {
 
@@ -630,28 +648,28 @@ export const loadInitialCurrentUserCreatedRavel = () => {
             firebase.database().ref(`/users`).orderByChild(`/${currentUserUid}/ravel_created`).once('value', (snapshot) => {
 
                 snapshot.forEach((childSnapShot) => {
-                    var uid_child = childSnapShot.key; 
+                    var uid_child = childSnapShot.key;
                 })
-            })       
-            .then(() => {              
-                firebase.database().ref(`/users/${currentUserUid}/ravel_created`)                 
+            })
+            .then(() => {
+                firebase.database().ref(`/users/${currentUserUid}/ravel_created`)
                 .once('value', function(snapshotRavels) {
                     dispatch({ type: 'INITIAL_CREATED_CURR_USER_RAVEL_FETCH', payload:  snapshotRavels.val()});
                 })
-            })   
+            })
             .catch((error) => {
                 alert('Error loading user created...')
-            })        
+            })
     };
 };
 
 /**
  * @param: nothing
- * @returns: 
- * mapStateToProps = state => get_pending_invite_ravel = 
+ * @returns:
+ * mapStateToProps = state => get_pending_invite_ravel =
  * state.current_user_ravel:
- *      'GET_PENDING_INVITE_RAVEL' : a list of ravels that a user is invited to (pending status)  
- *          Each ravel object will have the following fields: 
+ *      'GET_PENDING_INVITE_RAVEL' : a list of ravels that a user is invited to (pending status)
+ *          Each ravel object will have the following fields:
     *          - this.props.get_pending_invite_ravel.enable_comment
                 - this.props.get_pending_invite_ravel.enable_voting
                 - this.props.get_pending_invite_ravel.m_ravel_participants
@@ -661,16 +679,16 @@ export const loadInitialCurrentUserCreatedRavel = () => {
                 - this.props.get_pending_invite_ravel.ravel_create_date
                 - this.props.get_pending_invite_ravel.ravel_number_participants
                 - this.props.get_pending_invite_ravel.ravel_participants{}
-                - this.props.get_pending_invite_ravel.ravel_points 
+                - this.props.get_pending_invite_ravel.ravel_points
                 - this.props.get_pending_invite_ravel.ravel_title
                 - this.props.get_pending_invite_ravel.user_created
                 - this.props.get_pending_invite_ravel.user_created_photoURL
- * actions: gets the current user's created ravels 
- * 
+ * actions: gets the current user's created ravels
+ *
  */
 export const getPendingRavelInvite = () => {
 
-    var currentUid = firebase.auth().currentUser.uid; 
+    var currentUid = firebase.auth().currentUser.uid;
 
     return (dispatch) => {
         firebase.database().ref(`ravels`).orderByChild(`ravel_participants/${currentUid}`).equalTo(false).once('value', (snapshot) => {
@@ -684,8 +702,8 @@ export const getPendingRavelInvite = () => {
 
 /**
  * @param: nothing
- * @returns: 
- * mapStateToProps = state => all_ravel_key = 
+ * @returns:
+ * mapStateToProps = state => all_ravel_key =
  * state.master_ravel
  *      'ALL_RAVEL_KEY_FETCH': a list of all ravel uid and it's status (true/false)
  *          - this.props.all_ravel_key => ravel_uid
@@ -707,14 +725,14 @@ export const loadAllRavelKey = () => {
 /**  FUTURE TODO: HOOK UP NOTIFICATION FUNCTION => sendInviteAlertNotification() when participants are added
  * @param: { ravel_title, ravel_category, passage_length, visibility (true/false), enable_voting (true/false), enable_comment (true/false),
            ravel_concept, m_ravel_participants [ARRAY], ravel_tags [ARRAY] }
- * @returns: 
- * mapStateToProps = state => ravel_meta_data = 
+ * @returns:
+ * mapStateToProps = state => ravel_meta_data =
  * state.ravel
  *      <1>'CREATE_RAVEL' - a new ravel uid
  *          - this.props.ravel_uid
- * 
+ *
  *      <2>'GET_RAVEL_META_DATA' - entire ravel object
- *      
+ *
             - this.props.ravel_meta_data.enable_comment
             - this.props.ravel_meta_data.enable_voting
             - this.props.ravel_meta_data.m_ravel_participants
@@ -724,7 +742,7 @@ export const loadAllRavelKey = () => {
             - this.props.ravel_meta_data.ravel_create_date
             - this.props.ravel_meta_data.ravel_number_participants
             - this.props.ravel_meta_data.ravel_participants{}
-            - this.props.ravel_meta_data.ravel_points 
+            - this.props.ravel_meta_data.ravel_points
             - this.props.ravel_meta_data.ravel_title
             - this.props.ravel_meta_data.user_created
             - this.props.ravel_meta_data.user_created_photoURL
@@ -732,11 +750,11 @@ export const loadAllRavelKey = () => {
             - this.props.ravel_meta_data.roots{key:value} // false if none exist
             - this.props.ravel_meta_data.level_count // 0 is none exist
 
- * actions: attempts to create a new ravel and set all of the metadata. Will update the user stats on userProfile 
+ * actions: attempts to create a new ravel and set all of the metadata. Will update the user stats on userProfile
  *          object as well (+1 to stat_ravel_led field). Will then kick off a helper function that will re-calc the ravel_points
- *          field in userProfile object.  
- * 
- * 
+ *          field in userProfile object.
+ *
+ *
  */
 export const createStartRavel = ({ ravel_title, ravel_category, passage_length, visibility, enable_voting, enable_comment,
                                 ravel_concept, m_ravel_participants, ravel_tags }) => {
@@ -746,27 +764,27 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
     var ravel_status = true;
     let ravel_create_date = dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
     //dateformat(ravel_create_date, 'dddd, mmmm dS, yyyy, h:MM:ss TT');
-    var user_created_photoURL = '';   
+    var user_created_photoURL = '';
     var ravel_points = 0;
     var ravel_number_participants = 0;
     var ravel_participants = {};
     m_ravel_participants.forEach(function(elm) { ravel_participants[elm] = false })
-    
+
     // Update the user's ravel created count
-    var ravel_led_stat;                               
-    var ravel_counter = 1; 
-    
+    var ravel_led_stat;
+    var ravel_counter = 1;
+
     var public_tag_set = {};
     ravel_tags.forEach(function(elm) { public_tag_set["public_" + elm] = false })
     var public_ravel_title = '';
 
-    var public_cat_fiction = false; 
+    var public_cat_fiction = false;
     var public_cat_nonfiction = false;
     var public_cat_other = false;
-    var roots = false; 
-    var level_count = 0; 
-    var nodeCount = false; 
-    var has_child = false; 
+    var roots = false;
+    var level_count = 0;
+    var nodeCount = false;
+    var has_child = false;
 
 
     if (visibility === true) {
@@ -774,13 +792,13 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
         // tags
         ravel_tags.forEach(function(elm) { public_tag_set["public_" + elm] = true })
 
-        // title 
+        // title
         public_ravel_title = "public_" + ravel_title;
-        
+
         // category
         switch (ravel_category) {
             case 'fiction': {
-                public_cat_fiction = true 
+                public_cat_fiction = true
             }
             case 'non_fiction': {
                 public_cat_nonfiction = true
@@ -789,12 +807,12 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
                 pubic_cat_other = true
             }
             default: {
-                public_cat_other = true 
+                public_cat_other = true
             }
         }
 
     }
-    
+
     return (dispatch) => {
         var ravel_uid;
         firebase.database().ref(`/users/${user_created}/userProfile/photoURL`).once('value', snapshotPhoto => {
@@ -810,7 +828,7 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
             .then(returnKey => {
                 ravel_uid = returnKey.getKey();
                 firebase.database().ref(`/ravels/${ravel_uid}/ravel_uid`).set(ravel_uid);
-                firebase.database().ref(`/users/${currentUser.uid}/ravel_created/${ravel_uid}`).set({ravel_uid, user_created_photoURL, ravel_title, ravel_number_participants, ravel_points});                         
+                firebase.database().ref(`/users/${currentUser.uid}/ravel_created/${ravel_uid}`).set({ravel_uid, user_created_photoURL, ravel_title, ravel_number_participants, ravel_points});
             })
             .then(() => {
 
@@ -825,7 +843,7 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
             .then(() => {
                 firebase.database().ref(`/users/${currentUser.uid}/userProfile/stat_ravel_led`).once('value', (snapshot) => {
 
-                        ravel_led_stat = snapshot.val();   
+                        ravel_led_stat = snapshot.val();
                 })
                 .then(() => {
                     firebase.database().ref(`/users/${currentUser.uid}/userProfile`).update({
@@ -833,30 +851,30 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
                       })
                       .then(() => {
                         userRavelPointCalculationHelper(user_created);
-                    }) 
+                    })
                 })
-            })     
+            })
             .then(() => {
                 // Add to master_ravel_key
                 firebase.database().ref(`/master_ravel_key/${ravel_uid}`).set({
                     ravel_uid: true
                 })
-            }) 
-        })    
+            })
+        })
         .catch((error) => {
             alert('Error creating ravel at this time...')
-        }) 
-        
+        })
+
     };
 
 };
 
-/** 
+/**
  * @param: ravel uid (unique id)
- * @returns: 
- * mapToStateProps = state => ravel_meta_data = 
+ * @returns:
+ * mapToStateProps = state => ravel_meta_data =
  * state.ravel
- *      'GET_RAVEL_META_DATA': a particular ravel object that contains its metadata 
+ *      'GET_RAVEL_META_DATA': a particular ravel object that contains its metadata
  *          - this.props.ravel_meta_data.enable_comment
             - this.props.ravel_meta_data.enable_voting
             - this.props.ravel_meta_data.m_ravel_participants
@@ -866,7 +884,7 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
             - this.props.ravel_meta_data.ravel_create_date
             - this.props.ravel_meta_data.ravel_number_participants
             - this.props.ravel_meta_data.ravel_participants{key:value}
-            - this.props.ravel_meta_data.ravel_points 
+            - this.props.ravel_meta_data.ravel_points
             - this.props.ravel_meta_data.ravel_title
             - this.props.ravel_meta_data.user_created
             - this.props.ravel_meta_data.user_created_photoURL
@@ -889,19 +907,19 @@ export const getRavelMetaData = (ravel_uid) => {
         })
         .catch((error) => {
             alert('Error getting metadata for ravels...')
-        }) 
+        })
     }
 }
 
 /**
  * @param: ravel_uid
- * @returns: 
- * mapToStateProps = state => all_participant_of_a_ravel = 
+ * @returns:
+ * mapToStateProps = state => all_participant_of_a_ravel =
  * state.ravel
  *      'GET_ALL_RAVEL_PARTICIPANT_USER_PROFILE': a list of userProfile objects of all participants for a particular ravel
  *          - this.props.all_participant_of_a_ravel.bio
- *          - this.props.all_participant_of_a_ravel.first_name 
- *          - this.props.all_participant_of_a_ravel.last_name 
+ *          - this.props.all_participant_of_a_ravel.first_name
+ *          - this.props.all_participant_of_a_ravel.last_name
  *          - this.props.all_participant_of_a_ravel.photoURL
  *          - this.props.all_participant_of_a_ravel.ravel_points
  *          - this.props.all_participant_of_a_ravel.stats_passage_written
@@ -910,37 +928,37 @@ export const getRavelMetaData = (ravel_uid) => {
  *          - this.props.all_participant_of_a_ravel.upvotes
  *          - this.props.all_participant_of_a_ravel.user_uid
  * actions: attempts to get a list of userProfile objects of all participants for a particular ravel
- * 
+ *
  */
 export const getAllRavelParticipantUserProfile = (ravel_uid) => {
-    
+
     var all_participant_of_a_ravel = [];
-    return (dispatch) => {    
+    return (dispatch) => {
         firebase.database().ref(`ravels/${ravel_uid}/ravel_participants`).orderByKey().once('value', function(snapshot) {
             snapshot.forEach((childSnapShot) => {
                             if(childSnapShot.val() === true){
                                 firebase.database().ref(`/users/${childSnapShot.key}/userProfile`).once('value', function (snapshotChild){
                                     all_participant_of_a_ravel.push(snapshotChild.val());
-                                    dispatch( {type: 'GET_ALL_RAVEL_PARTICIPANT_USER_PROFILE', payload: all_participant_of_a_ravel})                   
+                                    dispatch( {type: 'GET_ALL_RAVEL_PARTICIPANT_USER_PROFILE', payload: all_participant_of_a_ravel})
                                 })
                             }})
-            
+
         })
         .catch((error) => {
             alert('Error getting user profiles..')
-        })   
+        })
     }
 
-     
-    
+
+
 }
 
 /**
  * @param: nothing
- * @returns: 
- * mapStateToProps = state => all_public_ravel_fetch = 
- * state.master_ravel 
- *      'ALL_PUBLIC_RAVEL_FETCH': a list of all public ravel objects 
+ * @returns:
+ * mapStateToProps = state => all_public_ravel_fetch =
+ * state.master_ravel
+ *      'ALL_PUBLIC_RAVEL_FETCH': a list of all public ravel objects
  *          - this.props.all_public_ravel_fetch.enable_comment
             - this.props.all_public_ravel_fetch.enable_voting
             - this.props.all_public_ravel_fetch.m_ravel_participants
@@ -950,11 +968,11 @@ export const getAllRavelParticipantUserProfile = (ravel_uid) => {
             - this.props.all_public_ravel_fetch.ravel_create_date
             - this.props.all_public_ravel_fetch.ravel_number_participants
             - this.props.all_public_ravel_fetch.ravel_participants{}
-            - this.props.all_public_ravel_fetch.ravel_points 
+            - this.props.all_public_ravel_fetch.ravel_points
             - this.props.all_public_ravel_fetch.ravel_title
             - this.props.all_public_ravel_fetch.user_created
             - this.props.all_public_ravel_fetch.user_created_photoURL
- * actions: attempts to get a list of all public ravel objects 
+ * actions: attempts to get a list of all public ravel objects
  */
 export const loadAllPublicRavel = () => {
 
@@ -965,16 +983,16 @@ export const loadAllPublicRavel = () => {
             })
             .catch((error) => {
                 alert('Error loading all ravels...')
-            })         
+            })
     };
 };
 
 /**
  * @param: nothing
- * @returns: 
- * mapStateToProps = state => all_ravel = 
- * state.master_ravel 
- *      'ALL_RAVEL_FETCH': a list of all ravel objects 
+ * @returns:
+ * mapStateToProps = state => all_ravel =
+ * state.master_ravel
+ *      'ALL_RAVEL_FETCH': a list of all ravel objects
  *          - this.props.all_ravel.enable_comment
             - this.props.all_ravel.enable_voting
             - this.props.all_ravel.m_ravel_participants
@@ -984,11 +1002,11 @@ export const loadAllPublicRavel = () => {
             - this.props.all_ravel.ravel_create_date
             - this.props.all_ravel.ravel_number_participants
             - this.props.all_ravel.ravel_participants{}
-            - this.props.all_ravel.ravel_points 
+            - this.props.all_ravel.ravel_points
             - this.props.all_ravel.ravel_title
             - this.props.all_ravel.user_created
             - this.props.all_ravel.user_created_photoURL
- * actions: attempts to get a list of all ravel objects 
+ * actions: attempts to get a list of all ravel objects
  */
 export const loadAllRavel = () => {
 
@@ -999,7 +1017,7 @@ export const loadAllRavel = () => {
             })
             .catch((error) => {
                 alert('Error loading all ravels...')
-            }) 
+            })
     };
 };
 
@@ -1009,94 +1027,94 @@ export const loadAllRavel = () => {
 /**
  * @param: ravel uid, a new set of ravel_tags[ARRAY]
  * @returns:
- * mapStateToProps = state => ravel_tag_update 
+ * mapStateToProps = state => ravel_tag_update
  * state.ravel
- *      'UPDATE_RAVEL_TAG': returns true if successful 
+ *      'UPDATE_RAVEL_TAG': returns true if successful
  *          - this.props.ravel_tag_update
  * actions: attempts to adds the new tags to the list of existing tags for a particular ravel
  */
 export const updateRavelTag = (ravel_uid, ravel_tags) => {
 
-    var get_curr_tags = {}; 
+    var get_curr_tags = {};
 
     return (dispatch) => {
-     
+
         firebase.database().ref(`ravels/${ravel_uid}/public_tag_set`).once('value', (snapshot) => {
         get_current_tags = snapshot.val();
 
         })
         .then(() => {
             var m_tag_set = {};
-            ravel_tags.forEach((elm) => { m_tag_set['public_' + elm] = true } );  
+            ravel_tags.forEach((elm) => { m_tag_set['public_' + elm] = true } );
             var master = {...get_current_tags, ...m_tag_set};
             firebase.database().ref(`ravels/${ravel_uid}`).update({ public_tag_set : master });
             dispatch({ type: 'UPDATE_RAVEL_TAG', payload: true})
         })
         .catch((error) => {
             alert('Error updating ravel tags...')
-        }) 
-        
+        })
+
     };
 
 }
 
 /**  FUTURE TODO: HOOK UP NOTIFICATION FUNCTION => sendInviteAlertNotification() when participant it added
  * @param: ravel uid, a new set of ravel participants[ARRAY]
- * @returns: 
- * mapStateToProps = state => ravel_participants_update = 
+ * @returns:
+ * mapStateToProps = state => ravel_participants_update =
  * state.ravel
  *      'UPDATE_RAVEL_PARTICIPANTS': returns true if successful, false if not.
  *          - this.props.ravel_participants_update
  * actions: attempts to adds the new participants to the list of existing participants for a particular ravel
- *          if the ravel_par_number <= 4. 
+ *          if the ravel_par_number <= 4.
  */
 export const updateRavelParticipant = (ravel_uid, ravel_tags) => {
 
-    var get_curr_tags = {}; 
+    var get_curr_tags = {};
     var get_curr_tags2 = [];
 
     return (dispatch) => {
-        
+
         // Currently only checks if the ravel_number_participant is greater than 4. If I have time, I will add
         // error check on adding the same uid.
         firebase.database().ref(`ravels/${ravel_uid}/ravel_number_participants`).once('value', (snapshot) => {
 
             if (snapshot.val() >= 4) {
-                
+
                     alert('Max number of ravel participant is 4.')
                     dispatch({ type: 'UPDATE_RAVEL_PARTICIPANTS', payload: false})
-                    
+
             } else {
                 firebase.database().ref(`ravels/${ravel_uid}/ravel_participants`).once('value', (snapshot) => {
 
                     get_current_tags = snapshot.val();
-            
+
                     })
                     .then(() => {
 
                         var m_tag_set = {};
-                        ravel_tags.forEach((elm) => { m_tag_set[elm] = false } );  
+                        ravel_tags.forEach((elm) => { m_tag_set[elm] = false } );
                         var master = {...get_current_tags, ...m_tag_set};
-                        firebase.database().ref(`ravels/${ravel_uid}`).update({ ravel_participants : master });  
+                        firebase.database().ref(`ravels/${ravel_uid}`).update({ ravel_participants : master });
 
                         dispatch({ type: 'UPDATE_RAVEL_PARTICIPANTS', payload: true})
 
                     })
                     .then(() => {
-            
+
                         firebase.database().ref(`ravels/${ravel_uid}/m_ravel_participants`).once('value', (snapshot) => {
                         get_curr_tags2 = snapshot.val();
                         var master_set = arrayUnique(get_curr_tags2.concat(ravel_tags));
                         firebase.database().ref(`ravels/${ravel_uid}`).update({m_ravel_participants : master_set})
 
                         })
-            
+
                     })
-    
+
             }
-            
-        }) 
-       
+
+        })
+
     };
 
     // remove duplicates
@@ -1108,7 +1126,7 @@ export const updateRavelParticipant = (ravel_uid, ravel_tags) => {
                     a.splice(j--, 1);
             }
         }
-    
+
         return a;
     }
 
@@ -1118,26 +1136,26 @@ export const updateRavelParticipant = (ravel_uid, ravel_tags) => {
 
 /**
  * FUTURE TODO: HOOK UP NOTIFICATION FUNCTION => sendInviteAlertNotificationAccept() when participant accepts
- * @param {*} ravel_uid 
- * @returns: 
- * mapStateToProps = state => ravel_participant =       
+ * @param {*} ravel_uid
+ * @returns:
+ * mapStateToProps = state => ravel_participant =
  * state.notification
  *      'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE' - sets 'true' if accepts, 'false' if something went wrong...
- *          - this.props.ravel_participant_response 
- * actions: sets the ravel participant to 'true' if a user accepts the ravel invite. Updates the ravel_number_participant 
- *          field in the particular ravel_uid. 
+ *          - this.props.ravel_participant_response
+ * actions: sets the ravel participant to 'true' if a user accepts the ravel invite. Updates the ravel_number_participant
+ *          field in the particular ravel_uid.
  * UI: Invite Accept Button
  */
 export const acceptRavelInvite = (ravel_uid) => {
 
-    var currentUid = firebase.auth().currentUser.uid;                           
+    var currentUid = firebase.auth().currentUser.uid;
     var ravel_counter = 1;
-    
+
     return (dispatch) => {
 
         firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).once('value', (snapshot) => {
             if (snapshot.val() != null && snapshot.val() === false) {
-                var stat_ravel_contributed; 
+                var stat_ravel_contributed;
                 var m_ravel_number_participants;
 
                 firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).set(true)
@@ -1160,11 +1178,11 @@ export const acceptRavelInvite = (ravel_uid) => {
                         .then(() => {
                             userRavelPointCalculationHelper(currentUid);
                         })
-                        
+
                     })
 
                 })
-                
+
                 dispatch({type: 'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE', payload: true})
 
             } else {
@@ -1175,25 +1193,25 @@ export const acceptRavelInvite = (ravel_uid) => {
 }
 
 /**
- * @param {*} ravel_uid 
- * @returns: 
- * mapStateToProps = state => ravel_participant =       
+ * @param {*} ravel_uid
+ * @returns:
+ * mapStateToProps = state => ravel_participant =
  * state.notification
  *      'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE' - sets 'true' if removal of participant from ravel : ravel_participants
  *                                                  + decline was set successfully in db
- *          - this.props.ravel_participant_response 
+ *          - this.props.ravel_participant_response
  * actions: sets 'true' if removal of participant from ravel + decline was set successfully in db
  * UI: Invite decline button
- * 
+ *
  */
 export const declineRavelInvite = (ravel_uid) => {
 
-    var currentUid = firebase.auth().currentUser.uid;                           
-    
+    var currentUid = firebase.auth().currentUser.uid;
+
     return (dispatch) => {
 
         firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).once('value', (snapshot) => {
-            
+
             if (snapshot.val() != null && snapshot.val() === false) {
 
                 firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).remove()
@@ -1203,7 +1221,7 @@ export const declineRavelInvite = (ravel_uid) => {
                 .catch((error) => {
                     alert('Error declining ravel...')
                 })
-            } 
+            }
         })
     }
 }
@@ -1211,14 +1229,14 @@ export const declineRavelInvite = (ravel_uid) => {
 /** SEARCH FUNCTIONS */
 
 /**
- * @param: a first name search 
- * @returns: 
+ * @param: a first name search
+ * @returns:
  * mapStateToProps = state => users_first_name_search =
  * state.search
  *      'SEARCH_USER_FIRST_NAME': a list of userProfile object with the same first name
  *          - this.props.users_first_name_search.bio
- *          - this.props.users_first_name_search.first_name 
- *          - this.props.users_first_name_search.last_name 
+ *          - this.props.users_first_name_search.first_name
+ *          - this.props.users_first_name_search.last_name
  *          - this.props.users_first_name_search.photoURL
  *          - this.props.users_first_name_search.ravel_points
  *          - this.props.users_first_name_search.stats_passage_written
@@ -1226,8 +1244,8 @@ export const declineRavelInvite = (ravel_uid) => {
  *          - this.props.users_first_name_search.stat_ravel_led
  *          - this.props.users_first_name_search.upvotes
  *          - this.props.users_first_name_search.user_uid
- * actions: filters all user profiles by first name attribute 
- * 
+ * actions: filters all user profiles by first name attribute
+ *
  */
 export const searchUserByName = (first_name) => {
     return (dispatch) => {
@@ -1236,19 +1254,19 @@ export const searchUserByName = (first_name) => {
         })
         .catch((error) => {
             alert('Error search for users at this...')
-        })    
-    } 
+        })
+    }
 }
 
 /**
  * @param: email
- * @returns: 
+ * @returns:
  * mapStateToProps = state => user_email_search =
  * state.search
  *      'SEARCH_USER_FIRST_NAME': a list of userProfile object with the same first name
  *          - this.props.user_email_search.bio
- *          - this.props.user_email_search.first_name 
- *          - this.props.user_email_search.last_name 
+ *          - this.props.user_email_search.first_name
+ *          - this.props.user_email_search.last_name
  *          - this.props.user_email_search.photoURL
  *          - this.props.user_email_search.ravel_points
  *          - this.props.user_email_search.stats_passage_written
@@ -1256,8 +1274,8 @@ export const searchUserByName = (first_name) => {
  *          - this.props.user_email_search.stat_ravel_led
  *          - this.props.user_email_search.upvotes
  *          - this.props.user_email_search.user_uid
- * actions: filters all user profiles by email 
- * 
+ * actions: filters all user profiles by email
+ *
  */
 export const searchUserByEmail = (email) => {
     return (dispatch) => {
@@ -1266,16 +1284,16 @@ export const searchUserByEmail = (email) => {
         })
         .catch((error) => {
             alert('Error search for users at this...')
-        })    
-    } 
+        })
+    }
 }
 
 /**
  * @param: tag [ARRAY]
- * @returns: 
- * mapStateToProps = state => ravel_tag_search = 
+ * @returns:
+ * mapStateToProps = state => ravel_tag_search =
  * state.search
- *      'SEARCH_RAVEL_BY_TAG': a list of ravel objects with associated tags 
+ *      'SEARCH_RAVEL_BY_TAG': a list of ravel objects with associated tags
             - this.props.ravel_tag_search.enable_comment
             - this.props.ravel_tag_search.enable_voting
             - this.props.ravel_tag_search.m_ravel_participants
@@ -1285,36 +1303,36 @@ export const searchUserByEmail = (email) => {
             - this.props.ravel_tag_search.ravel_create_date
             - this.props.ravel_tag_search.ravel_number_participants
             - this.props.ravel_tag_search.ravel_participants{}
-            - this.props.ravel_tag_search.ravel_points 
+            - this.props.ravel_tag_search.ravel_points
             - this.props.ravel_tag_search.ravel_title
             - this.props.ravel_tag_search.user_created
             - this.props.ravel_tag_search.user_created_photoURL
- * actions: attempts to filter all ravels by tag. function will loop through 
+ * actions: attempts to filter all ravels by tag. function will loop through
  * all tags in tag[] and return all ravels with a match.
- * 
+ *
  */
 export const searchRavelByTag = (tag) => {
 
     return (dispatch) => {
 
-        tag.forEach((tag) => { 
+        tag.forEach((tag) => {
             firebase.database().ref(`/ravels/`).orderByChild(`public_tag_set/${'public_' + tag}`).equalTo(true).once('value', function(snapshot) {
                 dispatch({type : 'SEARCH_RAVEL_BY_TAG', payload: snapshot.val()});
             })
             .catch((error) => {
                 alert('Error searching for ravels...')
-            }) 
+            })
         })
 
-            
-    } 
+
+    }
 }
 
 /**
  * @param: title
- * @returns: 
- * mapStateToProps = state => ravel_title_search = 
- * state.search 
+ * @returns:
+ * mapStateToProps = state => ravel_title_search =
+ * state.search
  *      'SEARCH_RAVEL_BY_TITLE': a list of ravels with the same title param
             - this.props.ravel_title_search.enable_comment
             - this.props.ravel_title_search.enable_voting
@@ -1325,17 +1343,17 @@ export const searchRavelByTag = (tag) => {
             - this.props.ravel_title_search.ravel_create_date
             - this.props.ravel_title_search.ravel_number_participants
             - this.props.ravel_title_search.ravel_participants{}
-            - this.props.ravel_title_search.ravel_points 
+            - this.props.ravel_title_search.ravel_points
             - this.props.ravel_title_search.ravel_title
             - this.props.ravel_title_search.user_created
             - this.props.ravel_title_search.user_created_photoURL
  * actions: attempts to filter ravels by title
- * 
- * 
+ *
+ *
  */
 export const searchRavelByTitle = (title) => {
 
-    var public_title = 'public_' + title; 
+    var public_title = 'public_' + title;
 
     return (dispatch) => {
         firebase.database().ref(`/ravels/`).orderByChild("public_ravel_title").equalTo(public_title).once('value', snapshot => {
@@ -1343,15 +1361,15 @@ export const searchRavelByTitle = (title) => {
         })
         .catch((error) => {
             alert('Error searching for ravels...')
-        }) 
+        })
     }
 }
 
 
 /**
  * @param: category
- * @returns: 
- * mapStateToProps = state => ravel_category_search = 
+ * @returns:
+ * mapStateToProps = state => ravel_category_search =
  * state.search
  *      'SEARCH_RAVEL_BY_CATEGORY': a list of ravels with the same category
             - this.props.ravel_category_search.enable_comment
@@ -1363,12 +1381,12 @@ export const searchRavelByTitle = (title) => {
             - this.props.ravel_category_search.ravel_create_date
             - this.props.ravel_category_search.ravel_number_participants
             - this.props.ravel_category_search.ravel_participants{}
-            - this.props.ravel_category_search.ravel_points 
+            - this.props.ravel_category_search.ravel_points
             - this.props.ravel_category_search.ravel_title
             - this.props.ravel_category_search.user_created
             - this.props.ravel_category_search.user_created_photoURL
  * actions: attempts to filter ravels by category
- * 
+ *
  */
 export const searchRavelByCategory = (category) => {
 
@@ -1380,7 +1398,7 @@ export const searchRavelByCategory = (category) => {
                 })
                 .catch((error) => {
                     alert('Error searching for ravels...')
-                }) 
+                })
             }
             case 'non_fiction': {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_nonfiction").equalTo(true).once('value', snapshot => {
@@ -1388,7 +1406,7 @@ export const searchRavelByCategory = (category) => {
                 })
                 .catch((error) => {
                     alert('Error searching for ravels...')
-                }) 
+                })
             }
             case 'other': {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_other").equalTo(true).once('value', snapshot => {
@@ -1396,7 +1414,7 @@ export const searchRavelByCategory = (category) => {
                 })
                 .catch((error) => {
                     alert('Error searching for ravels...')
-                }) 
+                })
             }
             default: {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_other").equalTo(true).once('value', snapshot => {
@@ -1404,27 +1422,27 @@ export const searchRavelByCategory = (category) => {
                 })
                 .catch((error) => {
                     alert('Error searching for ravels...')
-                }) 
+                })
             }
-        }     
+        }
     }
 }
 
 /** PASSAGE FUNCTIONS */
 
 /**
- * 
- *       level: level that the passage is on 
- *       parent{}: list of parent_passage_uid 
+ *
+ *       level: level that the passage is on
+ *       parent{}: list of parent_passage_uid
  *       child{}: list of child_passage_uid
  * @param {*} {ravel_uid, passage_title, passage_body}
- * @returns {*} 
- * 
+ * @returns {*}
+ *
  * mapStateToProps = state => passage_uid =
  * state.passage
  *              <1> 'CREATE_PASSAGE' - returns the passage_uid that was just created
  *                  - this.props.passage.passage_uid
- * 
+ *
  * mapStateToProps = state => passage_meta_data =
  * state.passage
  *              <2> 'GET_PASSAGE_META_DATA' - attempts to get the metadata from a passage just created
@@ -1440,17 +1458,17 @@ export const searchRavelByCategory = (category) => {
  *                  - this.props.passage_meta_data.user_created_photoURL
  *                  - this.props.passage_meta_data.level
  *                  - this.props.passage_meta_data.parent{root:true}
- *                  - this.props.passage_meta_data.child{} // false if none , otherwise a key:value list  
- * 
- * mapStateToProps => state = passage_meta_data_fetch_is_success = 
- * state.passage 
- *              <3>'ON_GET_PASSAGE_META_DATA_SUCCESS' - returns true on success, false on fail 
+ *                  - this.props.passage_meta_data.child{} // false if none , otherwise a key:value list
+ *
+ * mapStateToProps => state = passage_meta_data_fetch_is_success =
+ * state.passage
+ *              <3>'ON_GET_PASSAGE_META_DATA_SUCCESS' - returns true on success, false on fail
  *                  - this.props.passage.passage_meta_data_fetch_is_success
- *          
- * actions: Checks if current user is in ravel participant field. Checks if this is the first passage 
+ *
+ * actions: Checks if current user is in ravel participant field. Checks if this is the first passage
  *          to be added to this ravel. If so, adds a new initial passage to the db and sets all of the meta data field. Updates the current userProfile : stat_passage_written
- *          field to be +1 what is currently stored. Fires an update function that will re-calc the userProfile : ravel_points field 
- *          to reflect these changes. Returns the meta data for the newly added passage. 
+ *          field to be +1 what is currently stored. Fires an update function that will re-calc the userProfile : ravel_points field
+ *          to reflect these changes. Returns the meta data for the newly added passage.
  */
 export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
 
@@ -1458,19 +1476,19 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
     var user_created = currentUser.uid;
     var ravel_title = '';
     var passage_create_date = dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
-    var user_created_photoURL = '';   
+    var user_created_photoURL = '';
     var passage_upvote = 0;
     var passage_downvote = 0;
     var passage_combined_vote = 0;
     var stat_passage_written;
-    var passage_comment = '';    
-    var level = 1;   
-    var parent = {root:true};  
-    var child = false;  
-    var checkUserCreator = '';    
-    var optimalityScore = 0; 
-    var currentPassageOptimality = 0; 
-    var optimalChild = false;                 
+    var passage_comment = '';
+    var level = 1;
+    var parent = {root:true};
+    var child = false;
+    var checkUserCreator = '';
+    var optimalityScore = 0;
+    var currentPassageOptimality = 0;
+    var optimalChild = false;
 
     return (dispatch) => {
 
@@ -1478,22 +1496,22 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
 
         checkUserCreator = valueOfKey
         console.log('Check user creator: ' + checkUserCreator);
-        
+
         checkParticipantExistRavel(ravel_uid).then(valueOfKey => {
 
             if (checkUserCreator || valueOfKey) {
-    
+
                 checkRavelHasChild(ravel_uid).then(valueOfKey => {
-    
+
                     if (valueOfKey) {
-    
-                        console.log('ravel has child value' + valueOfKey); 
+
+                        console.log('ravel has child value' + valueOfKey);
                         alert('Ravel has an initial passage, please use add passage function...');
-    
+
                     } else {
-    
+
                         var passage_uid;
-    
+
                         firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
                             m_ravel_title = snapshotPhoto.val();
                         })
@@ -1507,28 +1525,28 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
                                 .push({optimalityScore, currentPassageOptimality, optimalChild, parent, child, level, passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
                                 .then(returnKey => {
                                     passage_uid = returnKey.getKey();
-            
-                                    // Do something with the passage_uid    
+
+                                    // Do something with the passage_uid
                                     firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_uid : passage_uid})
                                 })
-                                .then(() => {  
+                                .then(() => {
                                     dispatch({ type: 'CREATE_PASSAGE',
                                             payload: {passage_uid} });
                                 })
                                 .then(() => {
                                     firebase.database().ref(`/users/${user_created}/userProfile/photoURL`).once('value', snapshotPhoto => {
-                                            user_created_photoURL = snapshotPhoto.val();        
+                                            user_created_photoURL = snapshotPhoto.val();
                                     })
                                     .then(() => {
                                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({user_created_photoURL : user_created_photoURL})
-                                    })         
+                                    })
                                     firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
                                         ravel_title = snapshotPhoto.val();
                                     })
                                     .then(() => {
                                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ravel_title : ravel_title})
                                     })
-            
+
                                 })
                                 .then(() => {
                                     firebase.database().ref(`ravels/${ravel_uid}`).update({has_child : true});
@@ -1537,7 +1555,7 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
                                     updateRavelLevelCountByIncrementOne(ravel_uid);
                                 })
                                 .then(() => {
-                                    addPassageToRavelRootList(ravel_uid, passage_uid); 
+                                    addPassageToRavelRootList(ravel_uid, passage_uid);
                                 })
                                 .then(() => {
                                     console.log('before index calc')
@@ -1547,7 +1565,7 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
                                     })
                                     .then(() => {
                                         addPassageToRavelLevelTree(ravel_uid, level, passage_uid);
-         
+
                                     })
                                 })
 
@@ -1559,10 +1577,10 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
                                 .then(() => {
                                     firebase.database().ref(`users/${user_created}/userProfile/stat_passage_written`).once('value', (snapshot) => {
                                         stat_passage_written = snapshot.val() + 1
-                                        
+
                                     })
-                                    .then(() => { // Update the number of passages a user has written 
-                                        firebase.database().ref(`users/${user_created}/userProfile`).update({stat_passage_written : stat_passage_written});                    
+                                    .then(() => { // Update the number of passages a user has written
+                                        firebase.database().ref(`users/${user_created}/userProfile`).update({stat_passage_written : stat_passage_written});
                                     })
                                     .then(() => {
                                         userRavelPointCalculationHelper(user_created);
@@ -1571,38 +1589,38 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
                                 .then(() => {
                                     dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
                                 })
-            
+
                         })
                         .catch(() => {
                             dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
                             alert('Failure adding a new passage...')
                         })
-                        
+
                     }
                 })
-        
+
             } else {
                 dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
                 alert('Current user is not a part of this ravel...Cannot add passage.')
             }
         })
-    
+
     })
-    
+
     }
 }
 
-// Maybe this function is not needed, if forking, simply update the root{} in the ravel. 
+// Maybe this function is not needed, if forking, simply update the root{} in the ravel.
 // export const setRootPassageOnRavelCreate = (ravel_uid) => {
 
 //     const { currentUser } = firebase.auth();
 
 //     var user_created = currentUser.uid;
-//     var passage_create_date = new Date().toLocaleTimeString();  
-//     var level = 0;   
-//     var parent = false;  
-//     var child = false;  
-    
+//     var passage_create_date = new Date().toLocaleTimeString();
+//     var level = 0;
+//     var parent = false;
+//     var child = false;
+
 //     firebase.database().ref(`/passages/${ravel_uid}/root`)
 //         .set({ parent: parent, child: child , level : level , user_created : user_created, passage_create_date: passage_create_date})
 
@@ -1610,18 +1628,18 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
 // }
 
 /**
- * 
- *       level: level that the passage is on 
- *       parent{}: list of parent_passage_uid 
+ *
+ *       level: level that the passage is on
+ *       parent{}: list of parent_passage_uid
  *       child{}: list of child_passage_uid
  * @param {*} {ravel_uid, parent_passage_uid, passage_title, passage_body}
- * @returns {*} 
- * 
+ * @returns {*}
+ *
  * mapStateToProps = state => passage_uid =
  * state.passage
  *              <1> 'CREATE_PASSAGE' - returns the passage_uid that was just created
  *                  - this.props.passage.passage_uid
- * 
+ *
  * mapStateToProps = state => passage_meta_data =
  * state.passage
  *              <2> 'GET_PASSAGE_META_DATA' - attempts to get the metadata from a passage just created
@@ -1637,19 +1655,19 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => {
  *                  - this.props.passage_meta_data.user_created_photoURL
  *                  - this.props.passage_meta_data.level
  *                  - this.props.passage_meta_data.parent{} // {root:0} if root if parent, otherwise, key:value pair of parent_passage_uids
- *                  - this.props.passage_meta_data.child{} // false if none , otherwise a key:value list  
- *                  - this.props.passage_meta_data.optimalityScore 
- *                  - this.props.passage_meta_data.currentPassageOptimality 
- *                  - this.props.passage_meta_data.optimalChild 
- * 
- * mapStateToProps => state = passage_meta_data_fetch_is_success = 
- * state.passage 
- *              <3>'ON_GET_PASSAGE_META_DATA_SUCCESS' - returns true on success, false on fail 
+ *                  - this.props.passage_meta_data.child{} // false if none , otherwise a key:value list
+ *                  - this.props.passage_meta_data.optimalityScore
+ *                  - this.props.passage_meta_data.currentPassageOptimality
+ *                  - this.props.passage_meta_data.optimalChild
+ *
+ * mapStateToProps => state = passage_meta_data_fetch_is_success =
+ * state.passage
+ *              <3>'ON_GET_PASSAGE_META_DATA_SUCCESS' - returns true on success, false on fail
  *                  - this.props.passage.passage_meta_data_fetch_is_success
- *          
+ *
  * actions: adds a new passage to the db and sets all of the meta data field. Updates the current userProfile : stat_passage_written
- *          field to be +1 what is currently stored. Fires an update function that will re-calc the userProfile : ravel_points field 
- *          to reflect these changes. Returns the meta data for the newly added passage. 
+ *          field to be +1 what is currently stored. Fires an update function that will re-calc the userProfile : ravel_points field
+ *          to reflect these changes. Returns the meta data for the newly added passage.
  */
 export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passage_body}) => {
 
@@ -1657,19 +1675,19 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
     var user_created = currentUser.uid;
     var ravel_title = '';
     var passage_create_date = dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
-    var user_created_photoURL = '';   
+    var user_created_photoURL = '';
     var passage_upvote = 0;
     var passage_downvote = 0;
     var passage_combined_vote = 0;
     var stat_passage_written;
-    var passage_comment = '';    
-    var level = 0;  // calculate this by function  
-    var parent = '';  // add parent_passage_uid to this {} 
-    var children = '';      // update parent_passage_uid children{} to have this new passage_uid   
-    var checkUserCreator = '';         
-    var optimalityScore = 0; 
-    var currentPassageOptimality = 0; 
-    var optimalChild = false;      
+    var passage_comment = '';
+    var level = 0;  // calculate this by function
+    var parent = '';  // add parent_passage_uid to this {}
+    var children = '';      // update parent_passage_uid children{} to have this new passage_uid
+    var checkUserCreator = '';
+    var optimalityScore = 0;
+    var currentPassageOptimality = 0;
+    var optimalChild = false;
 
     return (dispatch) => {
 
@@ -1684,7 +1702,7 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
                 checkRavelHasChild(ravel_uid).then(valueOfKey => {
                     if (valueOfKey != true ) {
 
-                        console.log('ravel has child value' + valueOfKey); 
+                        console.log('ravel has child value' + valueOfKey);
                         alert('Ravel does not have initial child, please use initial add passage function...');
 
                     } else {
@@ -1704,35 +1722,35 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
                                 .push({optimalityScore, currentPassageOptimality,optimalChild,  level, passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
                                 .then(returnKey => {
                                     passage_uid = returnKey.getKey();
-            
-                                    // Do something with the passage_uid    
+
+                                    // Do something with the passage_uid
                                     firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_uid : passage_uid})
                                 })
-                                .then(() => {  
+                                .then(() => {
                                     dispatch({ type: 'CREATE_PASSAGE',
                                             payload: {passage_uid} });
                                 })
                                 .then(() => {
                                     firebase.database().ref(`/users/${user_created}/userProfile/photoURL`).once('value', snapshotPhoto => {
-                                            user_created_photoURL = snapshotPhoto.val();        
+                                            user_created_photoURL = snapshotPhoto.val();
                                     })
                                     .then(() => {
                                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({user_created_photoURL : user_created_photoURL})
-                                    })         
+                                    })
                                     firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
                                         ravel_title = snapshotPhoto.val();
                                     })
                                     .then(() => {
                                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ravel_title : ravel_title})
                                     })
-            
+
                                 })
                                     .then(() => {
                                         firebase.database().ref(`ravels/${ravel_uid}`).update({has_child : true});
                                     })
                                         .then(() => {
                                         addChildPassageToParentPassage(ravel_uid, parent_passage_uid, passage_uid)
-                                        
+
                                     })
                                     .then(() => {
                                         addParentPassageToChildPassage(ravel_uid, parent_passage_uid, passage_uid);
@@ -1752,7 +1770,7 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
                                                 addPassageToRavelLevelTree(ravel_uid, valueOfKey, passage_uid)
                                             })
 
-                                            
+
                                         });
                                     })
                                 .then(() => {
@@ -1763,10 +1781,10 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
                                 .then(() => {
                                     firebase.database().ref(`users/${user_created}/userProfile/stat_passage_written`).once('value', (snapshot) => {
                                         stat_passage_written = snapshot.val() + 1
-                                        
+
                                     })
-                                    .then(() => { // Update the number of passages a user has written 
-                                        firebase.database().ref(`users/${user_created}/userProfile`).update({stat_passage_written : stat_passage_written});                    
+                                    .then(() => { // Update the number of passages a user has written
+                                        firebase.database().ref(`users/${user_created}/userProfile`).update({stat_passage_written : stat_passage_written});
                                     })
                                     .then(() => {
                                         userRavelPointCalculationHelper(user_created);
@@ -1775,16 +1793,16 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
                                 .then(() => {
                                     dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
                                 })
-            
+
                         })
                         .catch(() => {
                             dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
                             alert('Failure adding a new passage...')
                         })
-                        
+
                     }
                 })
-        
+
             } else {
                 dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
                 alert('Current user is not a part of this ravel...Cannot add passage.')
@@ -1797,9 +1815,9 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
 }
 
 /**
- * 
+ *
  * @param {*} {passage_uid, ravel_uid}
- * @returns {*} DISPATCHES 
+ * @returns {*} DISPATCHES
 
  * mapStateToProps = state => passage_meta_data =
  * state.passage
@@ -1816,20 +1834,20 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
  *                  - this.props.passage_meta_data.user_created_photoURL
  *                  - this.props.passage_meta_data.level
  *                  - this.props.passage_meta_data.parent{} // {root:0} if root if parent, otherwise, key:value pair of parent_passage_uids
- *                  - this.props.passage_meta_data.child{} // false if none , otherwise a key:value list  
- *  *               - this.props.passage_meta_data.optimalityScore 
- *                  - this.props.passage_meta_data.currentPassageOptimality 
- *                  - this.props.passage_meta_data.optimalChild 
- *                  - this.props.passage_meta_data.optimalityScore 
- *                  - this.props.passage_meta_data.currentPassageOptimality 
- *                  - this.props.passage_meta_data.optimalChild 
- * 
- * mapStateToProps => state = passage_meta_data_fetch_is_success = 
- * state.passage 
- *              <2>'ON_GET_PASSAGE_META_DATA_SUCCESS' - returns true on success, false on fail 
+ *                  - this.props.passage_meta_data.child{} // false if none , otherwise a key:value list
+ *  *               - this.props.passage_meta_data.optimalityScore
+ *                  - this.props.passage_meta_data.currentPassageOptimality
+ *                  - this.props.passage_meta_data.optimalChild
+ *                  - this.props.passage_meta_data.optimalityScore
+ *                  - this.props.passage_meta_data.currentPassageOptimality
+ *                  - this.props.passage_meta_data.optimalChild
+ *
+ * mapStateToProps => state = passage_meta_data_fetch_is_success =
+ * state.passage
+ *              <2>'ON_GET_PASSAGE_META_DATA_SUCCESS' - returns true on success, false on fail
  *                  - this.props.passage.passage_meta_data_fetch_is_success
- *          
- * actions: Attempts to get the metadata for a particular ravel 
+ *
+ * actions: Attempts to get the metadata for a particular ravel
  */
 export const getPassageMetaData = (passage_uid, ravel_uid) => {
 
@@ -1849,7 +1867,7 @@ export const getPassageMetaData = (passage_uid, ravel_uid) => {
             })
 
         })
-        
+
         .catch((error) => {
             // dispatch an error
             dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
@@ -1859,7 +1877,7 @@ export const getPassageMetaData = (passage_uid, ravel_uid) => {
     }
 
 
-    
+
 }
 
 export const testerPromiseHelper = (ravel_uid,passage_uid,level) => {
@@ -1869,24 +1887,24 @@ export const testerPromiseHelper = (ravel_uid,passage_uid,level) => {
         dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
     }
 
-    
+
 }
 
 
 /**
- * 
+ *
  * @param {*} ravel_uid, level, passage_uid
  * @returns {*} promise, returns 'passage_index' field in the format 'level-alphaversion'
- * actions: Attempts to create a new passage index field for a ravel 
+ * actions: Attempts to create a new passage index field for a ravel
  */
 export const calculatePassageIndexField = (ravel_uid, level, passage_uid) => {
 
-    // Get the level the passage_uid is on 
-    // Get the number of children currently on the passage's level 
-    // +1 that number and convert it to alpha 
+    // Get the level the passage_uid is on
+    // Get the number of children currently on the passage's level
+    // +1 that number and convert it to alpha
 
     var numChild = 0;
-    var passageNum_Pre_Alpha = 0; 
+    var passageNum_Pre_Alpha = 0;
     var nodesAtNextLevel = 0;
     var nextLetterIndex = 0;
     var nextLetters = '';
@@ -1895,15 +1913,15 @@ export const calculatePassageIndexField = (ravel_uid, level, passage_uid) => {
     return new Promise((resolve,reject) => {
 
         firebase.database().ref(`ravel_level_passage/${ravel_uid}/${level}`).once('value', (snapshot) => {
-            
+
             // If no child exist for that level, default to level-A
             if (snapshot.exists() === false) {
 
                 passage_index = level + '-' + 'A'
 
             } else {
-                nodesAtNextLevel = snapshot.numChildren(); 
-                nextLetterIndex = nodesAtNextLevel + 1; 
+                nodesAtNextLevel = snapshot.numChildren();
+                nextLetterIndex = nodesAtNextLevel + 1;
 
                 // Converts the numeric index to base 26.
                 while (nextLetterIndex > 0) {
@@ -1915,10 +1933,10 @@ export const calculatePassageIndexField = (ravel_uid, level, passage_uid) => {
                  }
                 // Reverse the string (because we constructed it backwards).
                 nextLetters = nextLetters.split ("").reverse ().join ("");
-            
+
                 // Make sure the letters are uppercase.
                 nextLetters = nextLetters.toUpperCase ();
-                
+
                 passage_index = level + '-' + nextLetters;
             }
 
@@ -1940,9 +1958,9 @@ export const calculatePassageIndexField = (ravel_uid, level, passage_uid) => {
 export const checkUserCreatedPassage = (ravel_uid) => {
 
     return new Promise((resolve, reject) => {
-        var valueOfKey = false; 
+        var valueOfKey = false;
         var currentUid = firebase.auth().currentUser.uid;
-        var snapShotVal; 
+        var snapShotVal;
 
         firebase.database().ref(`ravels/${ravel_uid}/user_created`).once('value', (snapshot) => {
             if (currentUid === snapshot.val()) {
@@ -1966,13 +1984,13 @@ export const checkUserCreatedPassage = (ravel_uid) => {
 
 
 /**
- * 
+ *
  * @param {*} ravel_uid
- * @returns {*} promise, true on success, false on fail 
+ * @returns {*} promise, true on success, false on fail
  * actions: Checks if current user that is attempting to add new passage is a participant in a particular ravel
  */
 export const checkParticipantExistRavel = (ravel_uid) => {
-    
+
     return new Promise((resolve,reject) => {
 
         var valueOfKey = false;
@@ -1983,7 +2001,7 @@ export const checkParticipantExistRavel = (ravel_uid) => {
             console.log('Current uid = ' + currentUid);
             if (snapshot.val() === true) {
                 valueOfKey = true
-            }                   
+            }
         })
         .then(() => {
             return valueOfKey
@@ -1995,20 +2013,20 @@ export const checkParticipantExistRavel = (ravel_uid) => {
             reject(error)
         })
 
-            
+
 
     })
 }
 
 
 /**
- * 
+ *
  * @param {*} ravel_uid
- * @returns {*} promise, true on success, false on fail 
- * actions: Checks if ravel has initial passage yet. 
+ * @returns {*} promise, true on success, false on fail
+ * actions: Checks if ravel has initial passage yet.
  */
 export const checkRavelHasChild = (ravel_uid) => {
-    
+
     return new Promise((resolve,reject) => {
         var valueOfKey = false;
         var currentUid = firebase.auth().currentUser.uid;
@@ -2018,7 +2036,7 @@ export const checkRavelHasChild = (ravel_uid) => {
 
             if (snapshot.val() === true ) {
                 valueOfKey = true
-            }                   
+            }
         })
         .then(() => {
             return valueOfKey
@@ -2030,19 +2048,19 @@ export const checkRavelHasChild = (ravel_uid) => {
             reject(error)
         })
 
-            
+
 
     })
 }
 
 /**
- * 
+ *
  * @param {*} ravel_uid
- * @returns {*} promise, number of levels a ravel has 
- * actions: Checks the level_count of a ravel 
+ * @returns {*} promise, number of levels a ravel has
+ * actions: Checks the level_count of a ravel
  */
 export const checkRavelLevel = (ravel_uid) => {
-    
+
     return new Promise((resolve,reject) => {
         var valueOfKey = 0;
         var currentUid = firebase.auth().currentUser.uid;
@@ -2052,7 +2070,7 @@ export const checkRavelLevel = (ravel_uid) => {
 
             if (snapshot.val() != null ) {
                 valueOfKey = snapshot.val()
-            }                   
+            }
         })
         .then(() => {
             return valueOfKey;
@@ -2064,19 +2082,19 @@ export const checkRavelLevel = (ravel_uid) => {
             reject(error)
         })
 
-            
+
 
     })
 }
 
 /**
- * 
+ *
  * @param {*} ravel_uid
- * @returns {*} promise, true on success, false on fail 
- * actions: Attempts to add initial passage to root list 
+ * @returns {*} promise, true on success, false on fail
+ * actions: Attempts to add initial passage to root list
  */
 export const addPassageToRavelRootList = (ravel_uid, passage_uid) => {
-    
+
     return new Promise((resolve,reject) => {
 
         var valueOfKey = false;
@@ -2086,7 +2104,7 @@ export const addPassageToRavelRootList = (ravel_uid, passage_uid) => {
         firebase.database().ref(`ravels/${ravel_uid}/roots/${passage_uid}`).set(true)
         .then(() => {
             valueOfKey = true;
-        })                        
+        })
         .then(() => {
             return valueOfKey
         })
@@ -2097,19 +2115,19 @@ export const addPassageToRavelRootList = (ravel_uid, passage_uid) => {
             reject(error)
         })
 
-            
+
 
     })
 }
 
 /**
- * 
+ *
  * @param {*} ravel_uid, parent_passage_uid, passage_uid
- * @returns {*} promise, true on success, false on fail 
- * actions: Attempts to add the child passage uid to the parent passage uid 'child{}' field 
+ * @returns {*} promise, true on success, false on fail
+ * actions: Attempts to add the child passage uid to the parent passage uid 'child{}' field
  */
 export const addChildPassageToParentPassage = (ravel_uid, parent_passage_uid, passage_uid) => {
-    
+
     return new Promise((resolve,reject) => {
 
         var valueOfKey = false;
@@ -2119,7 +2137,7 @@ export const addChildPassageToParentPassage = (ravel_uid, parent_passage_uid, pa
         firebase.database().ref(`passages/${ravel_uid}/${parent_passage_uid}/child/${passage_uid}`).set(true)
         .then(() => {
             valueOfKey = true;
-        })                        
+        })
         .then(() => {
             return valueOfKey
         })
@@ -2130,20 +2148,20 @@ export const addChildPassageToParentPassage = (ravel_uid, parent_passage_uid, pa
             reject(error)
         })
 
-            
+
 
     })
 }
 
 
 /**
- * 
+ *
  * @param {*} ravel_uid, parent_passage_uid, passage_uid
- * @returns {*} promise, true on success, false on fail 
- * actions: Attempts to add the parent passage uid to the child passage uid 'parent{}' field 
+ * @returns {*} promise, true on success, false on fail
+ * actions: Attempts to add the parent passage uid to the child passage uid 'parent{}' field
  */
 export const addParentPassageToChildPassage = (ravel_uid, parent_passage_uid, passage_uid) => {
-    
+
     return new Promise((resolve,reject) => {
 
         var valueOfKey = false;
@@ -2153,7 +2171,7 @@ export const addParentPassageToChildPassage = (ravel_uid, parent_passage_uid, pa
         firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/parent/${parent_passage_uid}`).set(true)
         .then(() => {
             valueOfKey = true;
-        })                        
+        })
         .then(() => {
             return valueOfKey
         })
@@ -2164,7 +2182,7 @@ export const addParentPassageToChildPassage = (ravel_uid, parent_passage_uid, pa
             reject(error)
         })
 
-            
+
 
     })
 }
@@ -2173,26 +2191,26 @@ export const addParentPassageToChildPassage = (ravel_uid, parent_passage_uid, pa
 
 
 /**
- * 
+ *
  * @param {*} ravel_uid
- * @returns {*} promise, true on success, false on fail 
+ * @returns {*} promise, true on success, false on fail
  * actions: Attempts to updates ravel level_count by 1 on addPassage() or addInitialPassage()
- *          
+ *
  */
 
 export const updateRavelLevelCountByIncrementOne = (ravel_uid) => {
-    
+
     return new Promise((resolve,reject) => {
 
         var valueOfKey = false;
         var currentUid = firebase.auth().currentUser.uid;
         var snapShotVal;
-        var m_level_count = 0; 
+        var m_level_count = 0;
 
         firebase.database().ref(`ravels/${ravel_uid}/level_count`).once('value', (snapshot) => {
             if ( snapshot.val() != null ) {
 
-                m_level_count = snapshot.val() + 1; 
+                m_level_count = snapshot.val() + 1;
             } else {
                 alert('Error getting ravel level count, was not set in database...')
             }
@@ -2202,7 +2220,7 @@ export const updateRavelLevelCountByIncrementOne = (ravel_uid) => {
         })
         .then(() => {
             valueOfKey = true;
-        })                        
+        })
         .then(() => {
             return valueOfKey
         })
@@ -2213,31 +2231,31 @@ export const updateRavelLevelCountByIncrementOne = (ravel_uid) => {
             reject(error)
         })
 
-            
+
 
     })
 }
 
 /**
- * 
+ *
  * @param {*} ravel_uid, parent_passage_uid, passage_uid
- * @returns {*} promise, true on success, false on fail 
+ * @returns {*} promise, true on success, false on fail
  * actions: Attempts to Add passage takes the parent_passage_uid and +1 the child's
- *          
+ *
  */
 export const updateAddPassageLevel = (ravel_uid, parent_passage_uid, passage_uid) => {
-    
+
     return new Promise((resolve,reject) => {
 
         var valueOfKey = 0;
         var currentUid = firebase.auth().currentUser.uid;
         var snapShotVal;
-        var m_level_count = 0; 
+        var m_level_count = 0;
 
         firebase.database().ref(`passages/${ravel_uid}/${parent_passage_uid}/level`).once('value', (snapshot) => {
             if ( snapshot.val() != null ) {
 
-                m_level_count = snapshot.val() + 1; 
+                m_level_count = snapshot.val() + 1;
                 valueOfKey = snapshot.val() + 1;
 
             } else {
@@ -2246,7 +2264,7 @@ export const updateAddPassageLevel = (ravel_uid, parent_passage_uid, passage_uid
         })
         .then(() => {
             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({level : m_level_count})
-        })                      
+        })
         .then(() => {
             return valueOfKey
         })
@@ -2257,31 +2275,31 @@ export const updateAddPassageLevel = (ravel_uid, parent_passage_uid, passage_uid
             reject(error)
         })
 
-            
+
 
     })
 }
 
 /**
- * 
+ *
  * @param {*} ravel_uid, parent_passage_uid, passage_uid
- * @returns {*} promise, true on success, false on fail 
- * actions: Updates child passage_uid to have same level as parent 
- *          
+ * @returns {*} promise, true on success, false on fail
+ * actions: Updates child passage_uid to have same level as parent
+ *
  */
 export const updatePassageLevelOnFork = (ravel_uid, parent_passage_uid, passage_uid) => {
-    
+
     return new Promise((resolve,reject) => {
 
         var valueOfKey = 0;
         var currentUid = firebase.auth().currentUser.uid;
         var snapShotVal;
-        var m_level_count = 0; 
+        var m_level_count = 0;
 
         firebase.database().ref(`passages/${ravel_uid}/${parent_passage_uid}/level`).once('value', (snapshot) => {
             if ( snapshot.val() != null ) {
 
-                m_level_count = snapshot.val(); 
+                m_level_count = snapshot.val();
                 valueOfKey = snapshot.val();
 
             } else {
@@ -2290,7 +2308,7 @@ export const updatePassageLevelOnFork = (ravel_uid, parent_passage_uid, passage_
         })
         .then(() => {
             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({level : m_level_count})
-        })                      
+        })
         .then(() => {
             return valueOfKey
         })
@@ -2301,7 +2319,7 @@ export const updatePassageLevelOnFork = (ravel_uid, parent_passage_uid, passage_
             reject(error)
         })
 
-            
+
 
     })
 }
@@ -2309,11 +2327,11 @@ export const updatePassageLevelOnFork = (ravel_uid, parent_passage_uid, passage_
 
 /**
  * @param {*} ravel_uid, parent_passage_uid, passage_uid
- * @returns {*} promise, true on success, false on fail 
- * actions: Attempts to set a new passage_uid under ravel_level_passsage/${ravel_uid}/${level}/${passage_uid}         
+ * @returns {*} promise, true on success, false on fail
+ * actions: Attempts to set a new passage_uid under ravel_level_passsage/${ravel_uid}/${level}/${passage_uid}
  */
 export const addPassageToRavelLevelTree = (ravel_uid, level, passage_uid) => {
-    
+
     return new Promise((resolve,reject) => {
 
         var valueOfKey = false;
@@ -2323,7 +2341,7 @@ export const addPassageToRavelLevelTree = (ravel_uid, level, passage_uid) => {
         firebase.database().ref(`ravel_level_passage/${ravel_uid}/${level}/${passage_uid}`).set(true)
         .then(() => {
             valueOfKey = true;
-        })                        
+        })
         .then(() => {
             return valueOfKey
         })
@@ -2334,20 +2352,20 @@ export const addPassageToRavelLevelTree = (ravel_uid, level, passage_uid) => {
             reject(error)
         })
 
-            
+
 
     })
 }
 
 /**
- * 
+ *
  * @param {*} ravel_uid
- * @returns {*} promise, true on success, false on fail 
+ * @returns {*} promise, true on success, false on fail
  * actions: Attempts to calculate nodeCount field on getRavelMetaData()
- *          
+ *
  */
 export const calculateNodeCountOnRavelFetch= (ravel_uid) => {
-    
+
     return new Promise((resolve,reject) => {
 
         var valueOfKey = false;
@@ -2355,7 +2373,7 @@ export const calculateNodeCountOnRavelFetch= (ravel_uid) => {
         var snapShotVal;
 
         var m_level_count = 0;
-             
+
 
         firebase.database().ref(`ravels/${ravel_uid}/level_count`).once('value', (snapshot) => {
             m_level_count = snapshot.val()
@@ -2369,33 +2387,33 @@ export const calculateNodeCountOnRavelFetch= (ravel_uid) => {
             } else {
                 var m_nodeCount = [];
                 var m_numChildOnLevel = [];
-                
+
 
                 for( var i = 0; i < m_level_count; i++) {
 
-                    
+
                     firebase.database().ref(`ravel_level_passage/${ravel_uid}/${i + 1}`).once('value', (snapshot) => {
-    
+
                         m_numChildOnLevel.push(snapshot.numChildren());
-                        
+
                     })
                     .then(() => {
-                        var i = 0; 
+                        var i = 0;
 
                         m_numChildOnLevel.forEach(elm => {
                             firebase.database().ref(`ravels/${ravel_uid}/nodeCount/${i + 1} `).set(elm);
                             i++;
                         })
                     })
-                   
-    
+
+
                 }
 
                 valueOfKey = true;
 
             }
 
-        })                      
+        })
         .then(() => {
             return valueOfKey
         })
@@ -2406,25 +2424,25 @@ export const calculateNodeCountOnRavelFetch= (ravel_uid) => {
             reject(error)
         })
 
-            
+
 
     })
 }
 
 /**
  * @param {*} ravel_uid, level
- * @returns {*} DISPATCH 'FETCH_ALL_PASSAGE_UID_ON_LEVEL' 
+ * @returns {*} DISPATCH 'FETCH_ALL_PASSAGE_UID_ON_LEVEL'
  * mapStateToProps => state = passage_uid_level_list
- * state.passages 
+ * state.passages
  *                  <1> FETCH_ALL_PASSAGE_UID_ON_LEVEL - list of passage uids in the form of key,pair : <uid:true>
  *                  this.props.passages.passage_uid_level_list
- * 
+ *
  * mapStateToProps => state = passage_level_fetch_is_success
- * state.passages 
- *                  <2> 'FETCH_ALL_PASSAGE_UID_ON_LEVEL_ON_SUCCESS' - true on success, false on fail 
- * 
- * 
- * actions: Attempts to get a list of passage uids on the passed in level         
+ * state.passages
+ *                  <2> 'FETCH_ALL_PASSAGE_UID_ON_LEVEL_ON_SUCCESS' - true on success, false on fail
+ *
+ *
+ * actions: Attempts to get a list of passage uids on the passed in level
  */
 export const getPassageUidOnLevel = (ravel_uid, level) => {
 
@@ -2434,7 +2452,7 @@ export const getPassageUidOnLevel = (ravel_uid, level) => {
 
         firebase.database().ref(`ravel_level_passage/${ravel_uid}/${level}`).orderByKey().once('value', (snapshot) => {
             dispatch({ type: 'FETCH_ALL_PASSAGE_UID_ON_LEVEL', payload: snapshot.val()})
-            
+
         })
         .then(() => {
             dispatch({ type: 'FETCH_ALL_PASSAGE_UID_ON_LEVEL_ON_SUCCESS', payload: true})
@@ -2442,24 +2460,24 @@ export const getPassageUidOnLevel = (ravel_uid, level) => {
         .catch((error) => {
             dispatch({ type: 'FETCH_ALL_PASSAGE_UID_ON_LEVEL_ON_SUCCESS', payload: false})
             alert('Error loading user participated ravels...')
-        }) 
+        })
 
     }
 
-   
+
 }
 
 
 /**
- * Forking means you add all parent{} passage_uid inside of parent_passage_uid into the new passage_uid child{} 
+ * Forking means you add all parent{} passage_uid inside of parent_passage_uid into the new passage_uid child{}
  * @param {*} Object of vars - {ravel_uid, parent_passage_uid, passage_title, passage_body}
- * @returns {*} DISPATCHES 
- * 
+ * @returns {*} DISPATCHES
+ *
  * mapStateToProps = state => passage_uid =
  * state.passage
  *              <1> 'CREATE_PASSAGE' - returns the passage_uid that was just created
  *                  - this.props.passage.passage_uid
- * 
+ *
  * mapStateToProps = state => passage_meta_data =
  * state.passage
  *              <2> 'GET_PASSAGE_META_DATA' - attempts to get the metadata from a passage just created
@@ -2475,20 +2493,20 @@ export const getPassageUidOnLevel = (ravel_uid, level) => {
  *                  - this.props.passage_meta_data.user_created_photoURL
  *                  - this.props.passage_meta_data.level
  *                  - this.props.passage_meta_data.parent{} // {root:0} if root if parent, otherwise, key:value pair of parent_passage_uids
- *                  - this.props.passage_meta_data.child{} // false if none, otherwise a key:value list  
- *                  - this.props.passage_meta_data.optimalityScore 
- *                  - this.props.passage_meta_data.currentPassageOptimality 
- *                  - this.props.passage_meta_data.optimalChild 
- * 
- * mapStateToProps => state = passage_meta_data_fetch_is_success = 
- * state.passage 
- *              <3>'ON_GET_PASSAGE_META_DATA_SUCCESS' - returns true on success, false on fail 
+ *                  - this.props.passage_meta_data.child{} // false if none, otherwise a key:value list
+ *                  - this.props.passage_meta_data.optimalityScore
+ *                  - this.props.passage_meta_data.currentPassageOptimality
+ *                  - this.props.passage_meta_data.optimalChild
+ *
+ * mapStateToProps => state = passage_meta_data_fetch_is_success =
+ * state.passage
+ *              <3>'ON_GET_PASSAGE_META_DATA_SUCCESS' - returns true on success, false on fail
  *                  - this.props.passage.passage_meta_data_fetch_is_success
- *          
+ *
  * actions: Attempts to add a new passage to the db and sets all of the meta data field. Updates the current userProfile : stat_passage_written
- *          field to be +1 what is currently stored. Fires an update function that will re-calc the userProfile : ravel_points field 
- *          to reflect these changes. Returns the meta data for the newly added passage where the newly created passage_uid: parent{} has 
- *          all of parent_passage_uid:parent{}. 
+ *          field to be +1 what is currently stored. Fires an update function that will re-calc the userProfile : ravel_points field
+ *          to reflect these changes. Returns the meta data for the newly added passage where the newly created passage_uid: parent{} has
+ *          all of parent_passage_uid:parent{}.
  */
 export const forkPassage = ({ravel_uid, parent_passage_uid, passage_title, passage_body}) => {
 
@@ -2496,19 +2514,19 @@ export const forkPassage = ({ravel_uid, parent_passage_uid, passage_title, passa
     var user_created = currentUser.uid;
     var ravel_title = '';
     var passage_create_date = dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
-    var user_created_photoURL = '';   
+    var user_created_photoURL = '';
     var passage_upvote = 0;
     var passage_downvote = 0;
     var passage_combined_vote = 0;
     var stat_passage_written;
-    var passage_comment = '';    
-    var level = 0;  // calculate this by function  
-    var parent = '';  // add parent_passage_uid to this {} 
-    var children = '';      // update parent_passage_uid children{} to have this new passage_uid   
-    var checkUserCreator = '';     
-    var optimalityScore = 0; 
-    var currentPassageOptimality = 0; 
-    var optimalChild = false;          
+    var passage_comment = '';
+    var level = 0;  // calculate this by function
+    var parent = '';  // add parent_passage_uid to this {}
+    var children = '';      // update parent_passage_uid children{} to have this new passage_uid
+    var checkUserCreator = '';
+    var optimalityScore = 0;
+    var currentPassageOptimality = 0;
+    var optimalChild = false;
 
     return (dispatch) => {
 
@@ -2530,28 +2548,28 @@ export const forkPassage = ({ravel_uid, parent_passage_uid, passage_title, passa
                                     .push({optimalityScore, currentPassageOptimality, optimalChild, level, passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
                                     .then(returnKey => {
                                         passage_uid = returnKey.getKey();
-                
-                                        // Do something with the passage_uid    
+
+                                        // Do something with the passage_uid
                                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_uid : passage_uid})
                                     })
-                                    .then(() => {  
+                                    .then(() => {
                                         dispatch({ type: 'CREATE_PASSAGE',
                                                 payload: {passage_uid} });
                                     })
                                     .then(() => {
                                     firebase.database().ref(`/users/${user_created}/userProfile/photoURL`).once('value', snapshotPhoto => {
-                                            user_created_photoURL = snapshotPhoto.val();        
+                                            user_created_photoURL = snapshotPhoto.val();
                                     })
                                     .then(() => {
                                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({user_created_photoURL : user_created_photoURL})
-                                    })         
+                                    })
                                     firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
                                         ravel_title = snapshotPhoto.val();
                                     })
                                     .then(() => {
                                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ravel_title : ravel_title})
                                     })
-            
+
                                     })
                                     .then(() => {
                                         addAllParentPassageToChildPassageOnFork(ravel_uid, parent_passage_uid, passage_uid);
@@ -2570,14 +2588,14 @@ export const forkPassage = ({ravel_uid, parent_passage_uid, passage_title, passa
                                             })
                                             .then(() => {
                                                 if (level === 1 ) {
-                                                   
-                                                    // add to roots object 
+
+                                                    // add to roots object
                                                     firebase.database().ref(`/ravels/${ravel_uid}/roots/${passage_uid}`).set(true);
-                                                    
+
                                                 }
                                             })
 
-                                            
+
                                         });
                                     })
                                 .then(() => {
@@ -2588,10 +2606,10 @@ export const forkPassage = ({ravel_uid, parent_passage_uid, passage_title, passa
                                 .then(() => {
                                     firebase.database().ref(`users/${user_created}/userProfile/stat_passage_written`).once('value', (snapshot) => {
                                         stat_passage_written = snapshot.val() + 1
-                                        
+
                                     })
-                                    .then(() => { // Update the number of passages a user has written 
-                                        firebase.database().ref(`users/${user_created}/userProfile`).update({stat_passage_written : stat_passage_written});                    
+                                    .then(() => { // Update the number of passages a user has written
+                                        firebase.database().ref(`users/${user_created}/userProfile`).update({stat_passage_written : stat_passage_written});
                                     })
                                     .then(() => {
                                         userRavelPointCalculationHelper(user_created);
@@ -2600,19 +2618,19 @@ export const forkPassage = ({ravel_uid, parent_passage_uid, passage_title, passa
                                 .then(() => {
                                     dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
                                 })
-            
+
                         })
                         .catch(() => {
                             dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
                             alert('Failure adding a new passage...')
                         })
-                        
+
                     } else {
                         dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: false})
                         alert('User is not apart of ravel..')
                     }
                 })
-        
+
 
     })
 
@@ -2620,13 +2638,13 @@ export const forkPassage = ({ravel_uid, parent_passage_uid, passage_title, passa
 }
 
 /**
- * 
+ *
  * @param {*} ravel_uid, parent_passage_uid, passage_uid
- * @returns {*} promise, true on success, false on fail 
- * actions: Attempts to add all parent{} from parent_passage_uid to the child passage uid 'parent{}' field 
+ * @returns {*} promise, true on success, false on fail
+ * actions: Attempts to add all parent{} from parent_passage_uid to the child passage uid 'parent{}' field
  */
 export const addAllParentPassageToChildPassageOnFork = (ravel_uid, parent_passage_uid, passage_uid) => {
-    
+
     return new Promise((resolve,reject) => {
 
         var valueOfKey = false;
@@ -2635,13 +2653,13 @@ export const addAllParentPassageToChildPassageOnFork = (ravel_uid, parent_passag
         var p;
 
         firebase.database().ref(`passages/${ravel_uid}/${parent_passage_uid}/parent`).once('value', (snapshot) => {
-            p = snapshot.val(); 
+            p = snapshot.val();
             valueOfKey = true;
         })
         .then(() => {
-            // Update child_passage_uid : parent{} to have the same parent as parent_passage_uid 
+            // Update child_passage_uid : parent{} to have the same parent as parent_passage_uid
             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/parent`).set(p)
-        })                        
+        })
         .then((valueOfKey) => {
             resolve(valueOfKey)
         })
@@ -2649,42 +2667,42 @@ export const addAllParentPassageToChildPassageOnFork = (ravel_uid, parent_passag
             reject(error)
         })
 
-            
+
 
     })
 }
 
 
 /**
- * 
+ *
  * @param {*} ravel_uid, Object of vars {ravel_uid, parent_passage_uid, child_passage_uid}
  *            parent_passage_uid = passage you are merging from
- *            child_passage_uid = passage you are merging to 
+ *            child_passage_uid = passage you are merging to
  * @returns {*} dispatch ON_MERGE_SUCCESS
- * mapStateToProps => state = passage_merge_is_success = 
- * state.passage 
- *              <1>'ON_MERGE_SUCCESS' - returns true on success, false on fail 
+ * mapStateToProps => state = passage_merge_is_success =
+ * state.passage
+ *              <1>'ON_MERGE_SUCCESS' - returns true on success, false on fail
  *                  - this.props.passage.passage_merge_is_success
- * 
- * actions: Merging means to merge two passages together. The parent_passage_uid is the initial clicked passage. 
-   The child_passage is the passage that will suceed the parent. 
-   Go to parent_passage_uid: child{} and add child_passage_uid to it. 
-   Go to child_passage_uid:parent and add parent_passage_uid to it. 
+ *
+ * actions: Merging means to merge two passages together. The parent_passage_uid is the initial clicked passage.
+   The child_passage is the passage that will suceed the parent.
+   Go to parent_passage_uid: child{} and add child_passage_uid to it.
+   Go to child_passage_uid:parent and add parent_passage_uid to it.
  */
 export const mergeTwoPassage = ({ravel_uid, parent_passage_uid, child_passage_uid}) => {
-  
-        var checkUserCreator = '';              
-    
+
+        var checkUserCreator = '';
+
         return (dispatch) => {
-    
+
         checkUserCreatedPassage(ravel_uid).then(valueOfKey => {
-    
+
         checkUserCreator = valueOfKey
-    
+
             checkParticipantExistRavel(ravel_uid).then(valueOfKey => {
-    
+
                 if (checkUserCreator || valueOfKey) {
-            
+
                     addChildPassageToParentPassage(ravel_uid, parent_passage_uid, child_passage_uid)
                     .then(() => {
                         addParentPassageToChildPassage(ravel_uid, parent_passage_uid, child_passage_uid);
@@ -2696,31 +2714,31 @@ export const mergeTwoPassage = ({ravel_uid, parent_passage_uid, child_passage_ui
                         dispatch({type:'ON_MERGE_SUCCESS', payload: false})
                         alert('Failure merging passages...')
                     })
-                            
+
                     } else {
                         dispatch({type:'ON_MERGE_SUCCESS', payload: false})
                         alert('Current user is not a part of this ravel...Cannot merge passage.')
                     }
-                              
-                
+
+
             })
-    
+
         })
-    
+
         }
     }
 
 /**
- * 
- * @param {*} ravel_uid, passage_uid 
+ *
+ * @param {*} ravel_uid, passage_uid
  * @returns {*} dispatch ON_VOTE_SUCCESS
- * mapStateToProps => state = passage_vote_is_success = 
- * state.passage 
- *              <1>'ON_VOTE_SUCCESS' - returns true on success, false on fail 
+ * mapStateToProps => state = passage_vote_is_success =
+ * state.passage
+ *              <1>'ON_VOTE_SUCCESS' - returns true on success, false on fail
  *                  - this.props.passage.passage_vote_is_success
- * 
- * actions: Checks to see if ravel has voting enabled. If so, updates passage_uid: passage_upvote to be +1.  
- * Then, updates the user that created the passage_uid userProfile: upvotes field. 
+ *
+ * actions: Checks to see if ravel has voting enabled. If so, updates passage_uid: passage_upvote to be +1.
+ * Then, updates the user that created the passage_uid userProfile: upvotes field.
  */
 export const upVotePassage = (ravel_uid, passage_uid) => {
 
@@ -2730,10 +2748,10 @@ export const upVotePassage = (ravel_uid, passage_uid) => {
 
     return(dispatch) => {
 
-        
+
         checkRavelEnabledVoting(ravel_uid, passage_uid).then(valueOfKey => {
 
-            
+
 
             if (valueOfKey) {
 
@@ -2742,10 +2760,10 @@ export const upVotePassage = (ravel_uid, passage_uid) => {
                     //console.log('Before checking vote tracker value: ' + valueOfKey)
 
                     if (valueOfKey) {
-                        // Ask Frank what he wants set back 
+                        // Ask Frank what he wants set back
                         dispatch({type: 'ON_VOTE_SUCCESS', payload: false})
 
-    
+
                     } else if(valueOfKey === false) {
 
                         //console.log('Inside false')
@@ -2759,9 +2777,9 @@ export const upVotePassage = (ravel_uid, passage_uid) => {
                             downvote = snapshot.val()
                         })
                         .then(() => {
-                            var tot = upvotes + downvote; 
+                            var tot = upvotes + downvote;
                             //console.log('total vote: ' + tot)
-                            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes, passage_combined_vote: tot});                  
+                            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes, passage_combined_vote: tot});
                         })
                         .then(() => {
                             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
@@ -2769,7 +2787,7 @@ export const upVotePassage = (ravel_uid, passage_uid) => {
                             })
                             .then(() => {
                                 firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : (upvotes + downvote)})
-        
+
                             })
                             .then(() => {
                                 userRavelPointCalculationHelper(passage_creator_uid);
@@ -2788,7 +2806,7 @@ export const upVotePassage = (ravel_uid, passage_uid) => {
                         })
                     } else {
 
-                        // Add them to upvote tracker list 
+                        // Add them to upvote tracker list
 
                             firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
 
@@ -2799,10 +2817,10 @@ export const upVotePassage = (ravel_uid, passage_uid) => {
                                 downvote = snapshot.val()
                             })
                             .then(() => {
-                                var tot = upvotes + downvote; 
+                                var tot = upvotes + downvote;
                                 //console.log('total vote: ' + tot)
 
-                                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes, passage_combined_vote: tot});                  
+                                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes, passage_combined_vote: tot});
                             })
                             .then(() => {
                                 firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
@@ -2810,7 +2828,7 @@ export const upVotePassage = (ravel_uid, passage_uid) => {
                                 })
                                 .then(() => {
                                     firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : (upvotes + downvote)})
-            
+
                                 })
                                 .then(() => {
                                     userRavelPointCalculationHelper(passage_creator_uid);
@@ -2843,18 +2861,18 @@ export const upVotePassage = (ravel_uid, passage_uid) => {
 }
 
 /**
- * 
- * @param {*} ravel_uid, passage_uid 
+ *
+ * @param {*} ravel_uid, passage_uid
  * @returns {*} dispatch ON_VOTE_SUCCESS
- * mapStateToProps => state = passage_vote_is_success = 
- * state.passage 
- *              <1>'ON_VOTE_SUCCESS' - returns true on success, false on fail 
+ * mapStateToProps => state = passage_vote_is_success =
+ * state.passage
+ *              <1>'ON_VOTE_SUCCESS' - returns true on success, false on fail
  *                  - this.props.passage.passage_vote_is_success
- * 
- * actions: Updates the passage_uid/passage_combined_vote field by decrementing the value by one. 
- *          Updates the user created userProfile/upvotes field by decrementing it by one. 
- *          Updates the userProfile/ravel_points field by re-calculating it due to decrement 
- *          Updates passage_uid/passage_downvote field by decrementing it by one 
+ *
+ * actions: Updates the passage_uid/passage_combined_vote field by decrementing the value by one.
+ *          Updates the user created userProfile/upvotes field by decrementing it by one.
+ *          Updates the userProfile/ravel_points field by re-calculating it due to decrement
+ *          Updates passage_uid/passage_downvote field by decrementing it by one
  */
 export const downVotePassage = (ravel_uid, passage_uid) => {
 
@@ -2866,7 +2884,7 @@ export const downVotePassage = (ravel_uid, passage_uid) => {
     var downvote;
 
     return (dispatch) => {
-        
+
         checkRavelEnabledVoting(ravel_uid, passage_uid).then(valueOfKey => {
 
             if (valueOfKey) {
@@ -2876,7 +2894,7 @@ export const downVotePassage = (ravel_uid, passage_uid) => {
                     //console.log('Before checking vote tracker value: ' + valueOfKey)
                     if (valueOfKey === false) {
                         //console.log('After checking vote tracker value: ' + valueOfKey)
-                        // Add return value for Frank to know user has already downvoted and is attempting to re-downvote 
+                        // Add return value for Frank to know user has already downvoted and is attempting to re-downvote
                         dispatch({type: 'ON_VOTE_SUCCESS', payload: false})
                     } else if (valueOfKey) {
 
@@ -2893,7 +2911,7 @@ export const downVotePassage = (ravel_uid, passage_uid) => {
                                 downvote = snapshot.val() - 1;
                             })
                             .then(() => {
-                                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_downvote : downvote, passage_combined_vote: (upvotes + downvote)});                  
+                                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_downvote : downvote, passage_combined_vote: (upvotes + downvote)});
                             })
 
                         })
@@ -2905,7 +2923,7 @@ export const downVotePassage = (ravel_uid, passage_uid) => {
                             })
                             .then(() => {
                                 firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : (upvotes + downvote)})
-        
+
                             })
                             .then(() => {
                                 userRavelPointCalculationHelper(passage_creator_uid);
@@ -2924,22 +2942,22 @@ export const downVotePassage = (ravel_uid, passage_uid) => {
                             })
                         })
                     } else {
-                        
-                        // First time downvoting, add them to tracker downvote list  
+
+                        // First time downvoting, add them to tracker downvote list
                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
 
                             upvotes = snapshot.val();
-                            
+
                         })
                         .then(() => {
-                            
+
                             firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
                                 //console.log('down vote in.....' + snapshot.val())
                                 downvote = (snapshot.val() - 1);
                             })
                             .then(() => {
                                 //console.log('up vote + down vote in downvot' + (upvotes + downvote))
-                                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_downvote : downvote, passage_combined_vote: (upvotes + downvote)});                  
+                                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_downvote : downvote, passage_combined_vote: (upvotes + downvote)});
                             })
 
                         })
@@ -2951,7 +2969,7 @@ export const downVotePassage = (ravel_uid, passage_uid) => {
                             })
                             .then(() => {
                                 firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : (upvotes + downvote)})
-        
+
                             })
                             .then(() => {
                                 userRavelPointCalculationHelper(passage_creator_uid);
@@ -2969,7 +2987,7 @@ export const downVotePassage = (ravel_uid, passage_uid) => {
                     }
                 })
 
-                
+
             } else {
                 dispatch({type: 'ON_VOTE_SUCCESS', payload: false})
                 alert('This ravel does not have comment enabled...')
@@ -2980,13 +2998,13 @@ export const downVotePassage = (ravel_uid, passage_uid) => {
 }
 
 /**
- * 
- * @param {*} passage_uid 
+ *
+ * @param {*} passage_uid
  * @returns {*} nothing
  * actions: function that updates the passage_downvote field for stats purposes
  */
 export const downVotePassageHelper = (ravel_uid, passage_uid) => {
- 
+
     var m_down_votes;
 
      firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
@@ -2996,13 +3014,13 @@ export const downVotePassageHelper = (ravel_uid, passage_uid) => {
          firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ passage_downvote : m_down_votes})
      })
 
- 
+
 
 }
 
 
 export const userUpVoteTrackerHelper = (ravel_uid, passage_uid) => {
-    
+
     return new Promise((resolve,reject) => {
 
         var valueOfKey = false;
@@ -3012,7 +3030,7 @@ export const userUpVoteTrackerHelper = (ravel_uid, passage_uid) => {
         firebase.database().ref(`track_user_vote/${ravel_uid}/${passage_uid}/${currentUid}`).set(true)
         .then(() => {
             valueOfKey = true;
-        })                        
+        })
         .then(() => {
             return valueOfKey
         })
@@ -3023,13 +3041,13 @@ export const userUpVoteTrackerHelper = (ravel_uid, passage_uid) => {
             reject(error)
         })
 
-            
+
 
     })
 }
 
 export const checkUserVoteTrackerHelper = (ravel_uid, passage_uid) => {
-    
+
     return new Promise((resolve,reject) => {
 
         var valueOfKey = false;
@@ -3040,22 +3058,22 @@ export const checkUserVoteTrackerHelper = (ravel_uid, passage_uid) => {
 
             if (snapshot.val() === true) {
                 //console.log('I am in if statement' + snapshot.val())
-                // User has upvoted already 
+                // User has upvoted already
                 valueOfKey = true;
 
             } else if (snapshot.val() === false) {
 
-                // User has downvoted already 
+                // User has downvoted already
                 valueOfKey = false;
-                
+
             } else {
-                valueOfKey = 0; 
-                // User has never voted before 
-                
+                valueOfKey = 0;
+                // User has never voted before
+
             }
 
             //console.log('Snapshot value:' + snapshot.val())
-        })                       
+        })
         .then(() => {
             return valueOfKey
         })
@@ -3066,14 +3084,14 @@ export const checkUserVoteTrackerHelper = (ravel_uid, passage_uid) => {
             reject(error)
         })
 
-            
+
 
     })
 }
 
 
 export const userDownVoteTrackerHelper = (ravel_uid, passage_uid) => {
-    
+
     return new Promise((resolve,reject) => {
 
         var valueOfKey = false;
@@ -3083,7 +3101,7 @@ export const userDownVoteTrackerHelper = (ravel_uid, passage_uid) => {
         firebase.database().ref(`track_user_vote/${ravel_uid}/${passage_uid}/${currentUid}`).set(false)
         .then(() => {
             valueOfKey = true;
-        })                        
+        })
         .then(() => {
             return valueOfKey
         })
@@ -3094,35 +3112,35 @@ export const userDownVoteTrackerHelper = (ravel_uid, passage_uid) => {
             reject(error)
         })
 
-            
+
 
     })
 }
 
 
 /**
- * 
+ *
  * @param {*} ravel_uid, passage_uid, comment_body
  * @returns {*} dispatches GET_PASSAGE_COMMENT
  * mapStateToProps = state => passage_comment =
  * state.passage
  *              <1> 'GET_PASSAGE_COMMENT' - returns a list of passage comments
  *                  - this.props.passage.passage_comment
- * 
+ *
  * mapStateToProps = state => passage_comment_fetch_is_success =
  * state.passage
- *              <2> 'ON_GET_PASSAGE_COMMENT_SUCCESS' - returns true on success, false on fail 
- *                  - this.props.passage.passage_comment_fetch_is_success 
- * 
- * actions: Check if a ravel has comments_enabled, if so continute, else alert user and return. 
+ *              <2> 'ON_GET_PASSAGE_COMMENT_SUCCESS' - returns true on success, false on fail
+ *                  - this.props.passage.passage_comment_fetch_is_success
+ *
+ * actions: Check if a ravel has comments_enabled, if so continute, else alert user and return.
  *          If comments are enabled, push a new comment to path ${passage_uid}/passage_comment with the user's metadata
- *          Returns back a state change with the passage_uid/passage_comment list 
+ *          Returns back a state change with the passage_uid/passage_comment list
  */
 export const writePassageComment = (ravel_uid, passage_uid, comment_body) => {
 
     return (dispatch) => {
         var m_first_name = '';
-        var m_photo_URL = ''; 
+        var m_photo_URL = '';
 
         checkRavelEnabledComment(ravel_uid, passage_uid).then(valueOfKey => {
             if (valueOfKey) {
@@ -3146,12 +3164,12 @@ export const writePassageComment = (ravel_uid, passage_uid, comment_body) => {
                     }
 
                     const newCommentRef = firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_comment`).push();
-                    comment.key = newCommentRef.key; 
+                    comment.key = newCommentRef.key;
                     newCommentRef.set(comment);
                     firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_comment`).orderByChild('timestamp').once('value', (snapshot )=> {
                         dispatch({type: 'GET_PASSAGE_COMMENT', payload: snapshot.val()})
                     })
-                    
+
                 })
                 .then(() => {
                     dispatch({type: 'ON_GET_PASSAGE_COMMENT_SUCCESS', payload: true})
@@ -3170,17 +3188,17 @@ export const writePassageComment = (ravel_uid, passage_uid, comment_body) => {
 
 
 /**
- * 
+ *
  * @param {*} ravel_uid, passage_uid, comment_key
  * @returns {*} dispatches REMOVE_PASSAGE_COMMENT_IS_SUCCESS
  * mapStateToProps = state => passage_remove_comment_is_succcess =
  * state.passage
  *              <1> 'REMOVE_PASSAGE_COMMENT_IS_SUCCESS' - returns a list of passage comments
  *                  - this.props.passage.passage_remove_comment_is_succcess
- * 
- * actions: Attempts to remove a passage comment. Checks if ravel has comments_enabaled. If so, remove the comment 
- *          associated with param@comment_key. 
- *          
+ *
+ * actions: Attempts to remove a passage comment. Checks if ravel has comments_enabaled. If so, remove the comment
+ *          associated with param@comment_key.
+ *
  */
 export const deletePassageComment = (ravel_uid, passage_uid, comment_key) => {
 
@@ -3193,7 +3211,7 @@ export const deletePassageComment = (ravel_uid, passage_uid, comment_key) => {
                 m_current_uid = snapshot.val()})
                 .then(() => {
                     if (valueOfKey && (m_current_uid === currentUid)) {
-                
+
                         firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_comment/${comment_key}`).remove()
                         dispatch({type: 'REMOVE_PASSAGE_COMMENT_IS_SUCCESS', payload: true})
 
@@ -3211,7 +3229,7 @@ export const deletePassageComment = (ravel_uid, passage_uid, comment_key) => {
 }
 
 /**
- * 
+ *
  * @param {*} ravel_uid, passage_uid
  * @returns {*} dispatches GET_PASSAGE_COMMENT
  * mapStateToProps = state => passage_comment =
@@ -3220,11 +3238,11 @@ export const deletePassageComment = (ravel_uid, passage_uid, comment_key) => {
  *                  - this.props.passage.passage_comment
  * mapStateToProps = state => passage_comment_fetch_is_success =
  * state.passage
- *              <2> 'ON_GET_PASSAGE_COMMENT_SUCCESS' - returns true on success, false on fail 
- *                  - this.props.passage.passage_comment_fetch_is_success 
- * 
- * actions: Check if a ravel has comments_enabled, if so continute, else alert user and return. 
- *          If comments are enabled, returns back a state change with the passage_uid/passage_comment list 
+ *              <2> 'ON_GET_PASSAGE_COMMENT_SUCCESS' - returns true on success, false on fail
+ *                  - this.props.passage.passage_comment_fetch_is_success
+ *
+ * actions: Check if a ravel has comments_enabled, if so continute, else alert user and return.
+ *          If comments are enabled, returns back a state change with the passage_uid/passage_comment list
  */
 export const getPassageComment = (ravel_uid, passage_uid) => {
     return (dispatch) => {
@@ -3250,10 +3268,10 @@ export const getPassageComment = (ravel_uid, passage_uid) => {
 
 /**
  * @param: nothing
- * @returns: 
- * mapStateToProps = state => all_user_created_ravels = 
+ * @returns:
+ * mapStateToProps = state => all_user_created_ravels =
  * state.current_user_ravel:
- *      'INITIAL_USER_RAVEL_FETCH' : a list of ravels that the current user created   
+ *      'INITIAL_USER_RAVEL_FETCH' : a list of ravels that the current user created
  *          - this.props.all_user_created_ravels.enable_comment
             - this.props.all_user_created_ravels.enable_voting
             - this.props.all_user_created_ravels.m_ravel_participants
@@ -3263,34 +3281,34 @@ export const getPassageComment = (ravel_uid, passage_uid) => {
             - this.props.all_user_created_ravels.ravel_create_date
             - this.props.all_user_created_ravels.ravel_number_participants
             - this.props.all_user_created_ravels.ravel_participants{}
-            - this.props.all_user_created_ravels.ravel_points 
+            - this.props.all_user_created_ravels.ravel_points
             - this.props.all_user_created_ravels.ravel_title
             - this.props.all_user_created_ravels.user_created
             - this.props.all_user_created_ravels.user_created_photoURL
- * actions: gets the current user's created ravels 
- * 
+ * actions: gets the current user's created ravels
+ *
  */
-// Gets a list of random passages associated to a ravel that is in public_list 
+// Gets a list of random passages associated to a ravel that is in public_list
 export const loadPassageExplore = () => {
 
     var currentUserUid = firebase.auth().currentUser.uid;
-    var listOfPublicRavel = {}; 
+    var listOfPublicRavel = {};
     var randomElm;
 
     return (dispatch) => {
         firebase.database().ref(`ravels`).orderByChild(`visibility`).equalTo(true).once('value', (snapshotPublicRavel) => {
-            listOfPublicRavel = snapshotPublicRavel.val(); 
+            listOfPublicRavel = snapshotPublicRavel.val();
             console.log('snapshotPublicRavel elm = ' + snapshotPublicRavel.val())
             console.log('listOfPublicRavel elm = ' + listOfPublicRavel.val())
         })
         .then(() => {
             randomElm = listOfPublicRavel[Math.floor(Math.random() * listOfPublicRavel.length)]
         })
-        
+
         console.log('random elm = ' + randomElm)
 
 
-               
+
     };
 };
 
@@ -3298,17 +3316,17 @@ export const loadPassageExplore = () => {
 /** HELPER FUNCTION  */
 
 /**
- * @param {*} user_uid 
- * @returns {*} nothing 
+ * @param {*} user_uid
+ * @returns {*} nothing
  * actions: Updates the ravel_points. This is a helper function that is called when a user:
- * creates a ravel, creates a passage, a passage they wrote become upvoted/downvoted, a user accepts 
- * a ravel invite 
+ * creates a ravel, creates a passage, a passage they wrote become upvoted/downvoted, a user accepts
+ * a ravel invite
  */
 export const userRavelPointCalculationHelper = (user_uid) => {
     /**
      * ravel_points: close
-       stat_passage_written: 
-       stat_ravel_contributed: 
+       stat_passage_written:
+       stat_ravel_contributed:
        stat_ravel_led:
        up_votes:
      */
@@ -3320,7 +3338,7 @@ export const userRavelPointCalculationHelper = (user_uid) => {
      var m_upvotes;
      var m_ravel_points;
 
-         firebase.database().ref(`users/${user_uid}/userProfile/stat_ravel_led`).once('value', (snapshot) => {           
+         firebase.database().ref(`users/${user_uid}/userProfile/stat_ravel_led`).once('value', (snapshot) => {
              m_stat_ravel_led = snapshot.val()
          })
          .then(() => {
@@ -3342,13 +3360,13 @@ export const userRavelPointCalculationHelper = (user_uid) => {
                     })
 
                 })
-            })          
+            })
          })
-     
+
 }
 
 export const reCalculateCurrentPassagesOptimalityScore = (ravel_uid, passage_uid) => {
-    
+
     return new Promise((resolve,reject) => {
      var valueOfKey = false;
      var m_passage_upvote;
@@ -3356,7 +3374,7 @@ export const reCalculateCurrentPassagesOptimalityScore = (ravel_uid, passage_uid
      var m_currentPassageOptimality;
 
 
-         firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {           
+         firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
             m_passage_upvote = snapshot.val()
          })
          .then(() => {
@@ -3366,11 +3384,11 @@ export const reCalculateCurrentPassagesOptimalityScore = (ravel_uid, passage_uid
             .then(() => {
                 m_currentPassageOptimality = (m_passage_upvote + 1.5*m_passage_downvote)
                 firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update( {currentPassageOptimality : m_currentPassageOptimality})
-                     
-            })          
+
+            })
          })
          .then(() => {
-            valueOfKey = true 
+            valueOfKey = true
         })
             .then(() => {
                 console.log('value of value of key inside recalcu' + valueOfKey)
@@ -3388,13 +3406,13 @@ export const reCalculateCurrentPassagesOptimalityScore = (ravel_uid, passage_uid
 
 export const getOptimality = (ravel_uid, elm_key) => {
 
-    
+
     return new Promise((resolve,reject) => {
      var valueOfKey = 0;
      //console.log('ravel uid' + ravel_uid)
      //console.log('passage uid' + elm_key)
 
-         firebase.database().ref(`passages/${ravel_uid}/${elm_key}/currentPassageOptimality`).once('value', (snapshot) => {           
+         firebase.database().ref(`passages/${ravel_uid}/${elm_key}/currentPassageOptimality`).once('value', (snapshot) => {
             valueOfKey = snapshot.val()
          })
             .then(() => {
@@ -3425,18 +3443,18 @@ export const getOptimalityChildID = (ravel_uid, passage_uid) => {
      var elm_key;
      var valueOfKey;
 
-         firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/child`).once('value', (snapshot) => {   
+         firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/child`).once('value', (snapshot) => {
             //  if (snapshot.val() === false) {
-            //      // exit because there is no child 
+            //      // exit because there is no child
             //  } else {
 
                 snapshot.forEach((elm) => {
 
-                    firebase.database().ref(`passages/${ravel_uid}/${elm.key}/currentPassageOptimality`).once('value', (snapshot) => {           
+                    firebase.database().ref(`passages/${ravel_uid}/${elm.key}/currentPassageOptimality`).once('value', (snapshot) => {
                         valueOfKey = snapshot.val()
                         //console.log('value of key ' + valueOfKey)
                         if (valueOfKey === false) {
-                            // do nothing and return 
+                            // do nothing and return
                         }
                         else  {
                             if (valueOfKey > optimalChildScore) {
@@ -3446,11 +3464,11 @@ export const getOptimalityChildID = (ravel_uid, passage_uid) => {
                             }
 
                             //m_valueOfKey = elm.key;
-                        } 
+                        }
                      })
                     //  .then(() => {
                     //     if (valueOfKey === false) {
-                    //         // do nothing and return 
+                    //         // do nothing and return
                     //     }
                     //     else if (valueOfKey > optimalChildScore) {
                     //         optimalChild = elm.key;
@@ -3462,13 +3480,13 @@ export const getOptimalityChildID = (ravel_uid, passage_uid) => {
                     //  })
 
                     //console.log('AFTER in else if function...optimal child id: ' + optimalChild)
-                    
+
                 })
-                
 
-                
 
-             //}       
+
+
+             //}
 
          })
             .then(() => {
@@ -3486,19 +3504,19 @@ export const getOptimalityChildID = (ravel_uid, passage_uid) => {
 }
 
 export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
-    
+
     return new Promise((resolve,reject) => {
 
      var valueOfKey = '';
      var optimalChildID = '';
      var optimalChildIDScore = 0;
      var this_passage_score = 0;
-     var m_optimalityScore = 0; 
+     var m_optimalityScore = 0;
      var optimalChild = '';
-     
 
 
- 
+
+
 
      reCalculateCurrentPassagesOptimalityScore(ravel_uid, passage_uid).then(valueOfKey => {
 
@@ -3510,29 +3528,29 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
 
                 if (snapshot.val() === false) {
                     getOptimality(ravel_uid, passage_uid).then((valueOfKey) => {
-                        this_passage_score = valueOfKey; 
+                        this_passage_score = valueOfKey;
                     })
                     .then(() => {
                         console.log('m_optimalityScore AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
                         m_optimalityScore = this_passage_score + 0;
                         firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({optimalityScore : m_optimalityScore})
                     })
-                    valueOfKey = false; 
-                    
+                    valueOfKey = false;
+
                 }  else {
                      //var optimalChild = '';
-                var optimalChildScore = 0;  
-                
-    
+                var optimalChildScore = 0;
+
+
                 snapshot.forEach((elm) => {
                     optimalChild = elm.key;
 
-                    firebase.database().ref(`passages/${ravel_uid}/${elm.key}/currentPassageOptimality`).once('value', (snapshot) => {  
+                    firebase.database().ref(`passages/${ravel_uid}/${elm.key}/currentPassageOptimality`).once('value', (snapshot) => {
 
                         valueOfKey = snapshot.val()
                         //console.log('value of key ' + valueOfKey)
                         if (valueOfKey === false) {
-                            // do nothing and return 
+                            // do nothing and return
                         }
                         else  {
                             if (valueOfKey > optimalChildScore) {
@@ -3544,11 +3562,11 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
                             }
 
                             //m_valueOfKey = elm.key;
-                        } 
+                        }
                      })
                     //  .then(() => {
                     //     if (valueOfKey === false) {
-                    //         // do nothing and return 
+                    //         // do nothing and return
                     //     }
                     //     else if (valueOfKey > optimalChildScore) {
                     //         optimalChild = elm.key;
@@ -3560,7 +3578,7 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
                     //  })
 
                     //console.log('AFTER in else if function...optimal child id: ' + optimalChild)
-                    
+
                 })
                 //console.log('AFTERrrr in else if function...optimal child id: ' + optimalChild)
 
@@ -3570,14 +3588,14 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
                 .then(() => {
                     //console.log('AFTERrrr inside then in else if function...optimal child id: ' + optimalChild)
                     getOptimality(ravel_uid, optimalChild).then((valueOfKey) => {
-        
-                    optimalChildIDScore = valueOfKey; 
+
+                    optimalChildIDScore = valueOfKey;
                     //console.log('AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
-        
+
                     })
                     .then(() => {
                         getOptimality(ravel_uid, passage_uid).then((valueOfKey) => {
-                            this_passage_score = valueOfKey; 
+                            this_passage_score = valueOfKey;
                         })
                         .then(() => {
                             //console.log('m_optimalityScore AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
@@ -3588,19 +3606,19 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
                             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({optimalChild:optimalChild })
                         })
                     })
-                    
+
                 })
 
         //})
 
-        
-                    
+
+
                 }
-               
+
         })
 
         } else {
-            valueOfKey = false; 
+            valueOfKey = false;
         }
      })
 
@@ -3620,11 +3638,11 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
 
 /**
  * @param: nothing
- * @returns: a promise, resolve will have valueOfKey = true if currentUser is in admin list. 
- * actions: Attempts to check if the current user is an admin 
+ * @returns: a promise, resolve will have valueOfKey = true if currentUser is in admin list.
+ * actions: Attempts to check if the current user is an admin
  */
 export const checkCurrentUserIsAdmin = () => {
-    
+
     return new Promise((resolve,reject) => {
         var valueOfKey = false;
         var currentUid = firebase.auth().currentUser.uid;
@@ -3632,9 +3650,9 @@ export const checkCurrentUserIsAdmin = () => {
             firebase.database().ref(`/admin`).orderByKey().once('value', (snapshotKey) => {
                 snapshotKey.forEach((elm) => {
                     if (elm.key === currentUid) {
-                        valueOfKey = true;                                
-                    }              
-                })               
+                        valueOfKey = true;
+                    }
+                })
             })
             .then(() => {
                 return valueOfKey
@@ -3651,11 +3669,11 @@ export const checkCurrentUserIsAdmin = () => {
 
 /**
  * @param: nothing
- * @returns: a promise, resolve will have valueOfKey = true if currentUser is in admin list. 
+ * @returns: a promise, resolve will have valueOfKey = true if currentUser is in admin list.
  * actions: Attempts to check if a particular ravel has voting enabled
  */
 export const checkRavelEnabledVoting = (ravel_uid, passage_uid) => {
-    
+
     return new Promise((resolve,reject) => {
         var valueOfKey = false;
         var currentUid = firebase.auth().currentUser.uid;
@@ -3667,8 +3685,8 @@ export const checkRavelEnabledVoting = (ravel_uid, passage_uid) => {
         .then(() => {
             firebase.database().ref(`ravels/${snapShotVal}/enable_voting`).orderByKey().once('value', (snapshotKey) => {
                 if (snapshotKey.val() === true) {
-                    valueOfKey = true;                                
-                }                         
+                    valueOfKey = true;
+                }
         })
         .then(() => {
             return valueOfKey
@@ -3681,18 +3699,18 @@ export const checkRavelEnabledVoting = (ravel_uid, passage_uid) => {
         })
 
         })
-            
+
 
     })
 }
 
 /**
  * @param: nothing
- * @returns: a promise, resolve will have valueOfKey = true if currentUser is in admin list. 
+ * @returns: a promise, resolve will have valueOfKey = true if currentUser is in admin list.
  * actions: Attempts to check if a particular ravel has commenting enabled
  */
 export const checkRavelEnabledComment = (ravel_uid, passage_uid) => {
-    
+
     return new Promise((resolve,reject) => {
         var valueOfKey = false;
         var currentUid = firebase.auth().currentUser.uid;
@@ -3704,8 +3722,8 @@ export const checkRavelEnabledComment = (ravel_uid, passage_uid) => {
         .then(() => {
             firebase.database().ref(`ravels/${snapShotVal}/enable_comment`).orderByKey().once('value', (snapshotKey) => {
                 if (snapshotKey.val() === true) {
-                    valueOfKey = true;                                
-                }                         
+                    valueOfKey = true;
+                }
         })
         .then(() => {
             return valueOfKey
@@ -3718,7 +3736,7 @@ export const checkRavelEnabledComment = (ravel_uid, passage_uid) => {
         })
 
         })
-            
+
 
     })
 }
@@ -3731,8 +3749,8 @@ export const checkRavelEnabledComment = (ravel_uid, passage_uid) => {
  * @param: terms_of_service
  * @returns: dispatch 'GET_TERMS_OF_SERVICE' - the current terms of service in a long string....
  * mapStateToProps => state = terms_of_service
- * state.terms_of_service 
- *                       <1> 'GET_TERMS_OF_SERVICE' 
+ * state.terms_of_service
+ *                       <1> 'GET_TERMS_OF_SERVICE'
  *                           - this.props.terms_of_service.terms_of_service
  * Actions: Adds a new terms of service, will fail if user is not admin
  */
@@ -3752,21 +3770,21 @@ export const insertTermsOfService = (terms_of_service) => {
                             dispatch({type: 'IS_ADMIN', payload: false})
                         })
                     })
-    
+
                 } else {
                     alert('Sorry, you do have no admin rights...')
                     dispatch({type: 'IS_ADMIN', payload: false})
                 }
-            })         
-        }   
+            })
+        }
 }
 
 /**
  * @param: terms_of_service
  * @returns: dispatch 'GET_TERMS_OF_SERVICE' - the current terms of service in a long string....
  * mapStateToProps => state = terms_of_service
- * state.terms_of_service 
- *                       <1> 'GET_TERMS_OF_SERVICE' 
+ * state.terms_of_service
+ *                       <1> 'GET_TERMS_OF_SERVICE'
  *                           - this.props.terms_of_service.terms_of_service
  * Actions: Updates the terms of service, will fail if user is not admin
  */
@@ -3787,21 +3805,21 @@ export const updateTermsOfService = (terms_of_service) => {
                         dispatch({type: 'IS_ADMIN', payload: false})
                     })
                 })
-    
+
             } else {
                 alert('Sorry, you do have no admin rights...')
                 dispatch({type: 'IS_ADMIN', payload: false})
             }
-        })      
-    }   
+        })
+    }
 }
 
 /**
  * @param: terms_of_service
  * @returns: dispatch 'GET_TERMS_OF_SERVICE' - the current terms of service in a long string....
  * mapStateToProps => state = terms_of_service
- * state.terms_of_service 
- *                       <1> 'GET_TERMS_OF_SERVICE' 
+ * state.terms_of_service
+ *                       <1> 'GET_TERMS_OF_SERVICE'
  *                           - this.props.terms_of_service.terms_of_service
  * Actions: Gets the terms of service
  */
@@ -3815,7 +3833,7 @@ export const readTermsOfService = () => {
             alert('Error getting terms of service...')
         })
     }
-   
+
 }
 
 
@@ -3824,10 +3842,10 @@ export const readTermsOfService = () => {
  * @param: user_uid
  * @returns: dispatch 'ADD_ADMIN' - attempts to add a new admin to admin list
  * mapStateToProps => state = add_admin
- * state.admin_functions 
- *                       <1> 'ADD_ADMIN' 
+ * state.admin_functions
+ *                       <1> 'ADD_ADMIN'
  *                           - this.props.admin_functions.add_admin
- * Actions: Attempts to create a new user account and add their uid to admin node 
+ * Actions: Attempts to create a new user account and add their uid to admin node
  */
 
 export const addAdminUser = (email, password) => dispatch => {
@@ -3838,7 +3856,7 @@ export const addAdminUser = (email, password) => dispatch => {
         dispatch({type: 'ADD_ADMIN', payload: true})
     })
     .catch(function(error) {
- 
+
     var errorCode = error.code;
     var errorMessage = error.message;
     if (errorCode == 'auth/weak-password') {
@@ -3859,8 +3877,8 @@ export const addAdminUser = (email, password) => dispatch => {
  * @returns: dispatch 'GET_RAVEL_REPORT_LIST' - attempts to get the report ravel list
  *           Attempts to get an ARRAY of ravels in the form of => [ {key,value}, [key,value] ]
  * mapStateToProps => state = ravel_report_list
- * state.admin_functions 
- *                       <1> 'GET_RAVEL_REPORT_LIST' 
+ * state.admin_functions
+ *                       <1> 'GET_RAVEL_REPORT_LIST'
  *                           - this.props.admin_functions.ravel_report_list
  * Actions: Attempts to get an ARRAY of ravels in the form of => [ {key,value}, [key,value] ]
  */
@@ -3877,14 +3895,14 @@ export const getCompleteRavelReportList = () => {
                         if (childSnapShot.val() === false) {
                             firebase.database().ref(`/ravels/${childSnapShot.key}`).once('value', function (snapshotChild){
                             ravel_report_list_array.push({key: childSnapShot.key, value: snapshotChild.val()});
-                            dispatch( {type: 'GET_RAVEL_REPORT_LIST', payload: ravel_report_list_array})                   
+                            dispatch( {type: 'GET_RAVEL_REPORT_LIST', payload: ravel_report_list_array})
                         })
                         }})
-                    
+
                 })
                 .catch((error) => {
                     alert('Error getting all reported ravels...')
-                }) 
+                })
             }
         })
     }
@@ -3896,8 +3914,8 @@ export const getCompleteRavelReportList = () => {
  * @returns: dispatch 'GET_USER_REPORT_LIST' - attempts to get the report user list
  *           Attempts to get an ARRAY of users in the form of => [ {key,value}, [key,value] ]
  * mapStateToProps => state = user_report_list
- * state.admin_functions 
- *                       <1> 'GET_USER_REPORT_LIST' 
+ * state.admin_functions
+ *                       <1> 'GET_USER_REPORT_LIST'
  *                           - this.props.admin_functions.user_report_list
  * Actions: Attempts to get an ARRAY of users in the form of => [ {key,value}, [key,value] ]
  */
@@ -3915,14 +3933,14 @@ export const getCompleteUserReportList = () => {
                         if (childSnapShot.val() === false) {
                             firebase.database().ref(`/users/${childSnapShot.key}/userProfile`).once('value', function (snapshotChild){
                             user_report_list_array.push({key: childSnapShot.key, value: snapshotChild.val()});
-                            dispatch( {type: 'GET_USER_REPORT_LIST', payload: user_report_list_array})                   
+                            dispatch( {type: 'GET_USER_REPORT_LIST', payload: user_report_list_array})
                             })
                         }})
-                    
+
                 })
                 .catch((error) => {
                     alert('Error getting all reported users...')
-                }) 
+                })
             }
         })
     }
@@ -3931,12 +3949,12 @@ export const getCompleteUserReportList = () => {
 /**
  * @param: nothing
  * @returns: dispatch 'DISMISS_REPORT_RAVEL_SUCCESS' - attempts to dismiss a ravel from report list
- *           
+ *
  * mapStateToProps => state = dismiss_ravel_state
- * state.admin_functions 
- *                       <1> 'DISMISS_REPORT_RAVEL_SUCCESS' 
+ * state.admin_functions
+ *                       <1> 'DISMISS_REPORT_RAVEL_SUCCESS'
  *                           - this.props.admin_functions.dismiss_ravel_state
- * Actions: Attempts to dismiss a ravel_uid from the ravel_report_list 
+ * Actions: Attempts to dismiss a ravel_uid from the ravel_report_list
  */
 export const dismissReportedRavel = (ravel_uid) => {
 
@@ -3946,7 +3964,7 @@ export const dismissReportedRavel = (ravel_uid) => {
                 firebase.database().ref(`ravel_report_list/${ravel_uid}`).remove()
                 .then(() => {
                     dispatch({type:'DISMISS_REPORT_RAVEL_SUCCESS', payload: true})
-                })              
+                })
             }
         })
         .catch((error) => {
@@ -3960,44 +3978,44 @@ export const dismissReportedRavel = (ravel_uid) => {
 /**
  * @param: nothing
  * @returns: dispatch 'DISMISS_REPORT_USER_SUCCESS' - attempts to dismiss a user from report list
- *           
+ *
  * mapStateToProps => state = dismiss_user_state
- * state.admin_functions 
- *                       <1> 'DISMISS_REPORT_USER_SUCCESS' 
+ * state.admin_functions
+ *                       <1> 'DISMISS_REPORT_USER_SUCCESS'
  *                           - this.props.admin_functions.dismiss_user_state
  * Actions: Attempts to dismiss a user_uid from the user_report_list
  */
 export const dismissReportedUser = (user_uid) => {
 
     return (dispatch) => {
-        
+
         checkCurrentUserIsAdmin().then(valueOfKey => {
             if (valueOfKey) {
                 firebase.database().ref(`user_report_list/${user_uid}`).remove()
                 .then(() => {
                     dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: true})
-                })               
+                })
             }
         })
         .catch((error) => {
             alert('Cannot dismiss this user at this time...')
             dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: false})
         })
-        
+
     }
 }
 
 /**
- * @param: ravel_uid 
- * @returns: dispatch BAN_RAVEL_SUCCESS, 'DISMISS_REPORT_RAVEL_SUCCESS' 
- *           
+ * @param: ravel_uid
+ * @returns: dispatch BAN_RAVEL_SUCCESS, 'DISMISS_REPORT_RAVEL_SUCCESS'
+ *
  * mapStateToProps => state = ban_ravel_success
- * state.admin_functions 
+ * state.admin_functions
  *                       <1> 'BAN_RAVEL_SUCCESS' - returns true on success
  *                           - this.props.admin_functions.ban_ravel_success
  * mapStateToProps => state = dismiss_ravel_state
- * state.admin_functions 
- *                       <2> 'DISMISS_REPORT_RAVEL_SUCCESS' - returns true on success 
+ * state.admin_functions
+ *                       <2> 'DISMISS_REPORT_RAVEL_SUCCESS' - returns true on success
  *                           - this.props.admin_functions.dismiss_ravel_state
  * Actions: Attempts to ban a reported ravel by removing it from the follow paths:
  *                                                                  - ravels/${ravel_uid}
@@ -4012,7 +4030,7 @@ export const banReportedRavel = (ravel_uid) => {
             if (valueOfKey) {
 
                 firebase.database().ref(`ravels/${ravel_uid}/user_created`).once('value', (snapshot) => {
-                
+
                     firebase.database().ref(`users/${snapshot.val()}/ravel_created/${ravel_uid}`).remove()
                     .then(() => {
 
@@ -4027,59 +4045,59 @@ export const banReportedRavel = (ravel_uid) => {
                                 firebase.database().ref(`ravel_report_list/${ravel_uid}`).remove()
                                 .then(() => {
                                     dispatch({type:'DISMISS_REPORT_RAVEL_SUCCESS', payload: true})
-                                })  
+                                })
                             })
                         })
                     })
-                })          
+                })
             }
-        })       
+        })
     }
 }
 
-// TODO 
+// TODO
 export const banReportedUser = () => {
 
     return (dispatch) => {
         checkCurrentUserIsAdmin().then(valueOfKey => {
             if (valueOfKey) {
-                // Do stuff 
+                // Do stuff
             }
         })
-        
+
     }
 }
 
 /**
- * Gets the admin stat page 
+ * Gets the admin stat page
  * // Number of Ravels
  * // Number of Users
- * // Number of Reported Ravels 
- * // Number of Reported Users 
+ * // Number of Reported Ravels
+ * // Number of Reported Users
  */
 /**
  * @param: nothing
- * @returns: dispatch 'GET_ADMIN_STAT' 
- *           
+ * @returns: dispatch 'GET_ADMIN_STAT'
+ *
  * mapStateToProps => state = various
- * state.admin_functions 
- *                       <1> 'GET_ADMIN_STAT' 
+ * state.admin_functions
+ *                       <1> 'GET_ADMIN_STAT'
  *                           - this.props.admin_functions.number_ravels
  *                           - this.props.admin_functions.number_users
  *                           - this.props.admin_functions.number_reported_ravels
  *                           - this.props.admin_functions.number_reported_users
- * 
+ *
  * Actions: Attempts to get the stats for admin stats page
  */
 export const getStats = () => {
 
     var m_number_ravels = 0;
-    var m_number_users = 0; 
+    var m_number_users = 0;
     var m_number_reported_ravels = 0;
-    var m_number_reported_users = 0; 
+    var m_number_reported_users = 0;
 
     return (dispatch) => {
-        
+
         checkCurrentUserIsAdmin().then(valueOfKey => {
 
             if (valueOfKey) {
@@ -4115,7 +4133,7 @@ export const getStats = () => {
 // MAYBE DELETE
 export const acceptTermsAndAgreement = () => {
 
-    var currentUid = firebase.auth().currentUser.uid; 
+    var currentUid = firebase.auth().currentUser.uid;
 
     return (dispatch) => {
         firebase.database().ref(`terms_of_service/accepted_list/${currentUid}`).set(true)
@@ -4129,7 +4147,7 @@ export const acceptTermsAndAgreement = () => {
 }
 
 
-/** 
+/**
  * @param: privacy_policy
  * mapStateToProps => state = privacy_policy
  * state.term_of_service
@@ -4163,11 +4181,11 @@ export const insertPrivacyPolicy = (privacy_policy) => {
                 dispatch({type: 'IS_ADMIN', payload: false})
                 alert('Sorry, you do have no admin rights...')
             }
-        })         
-    }   
+        })
+    }
 }
 
-/** 
+/**
  * @param: privacy_policy
  * mapStateToProps => state = privacy_policy
  * state.term_of_service
@@ -4202,6 +4220,6 @@ return (dispatch) => {
             alert('Sorry, you do have no admin rights...')
             dispatch({type: 'IS_ADMIN', payload: false})
         }
-    })      
-}   
+    })
+}
 }

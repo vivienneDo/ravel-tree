@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/07/18
-// Modified:  03/06/18
+// Modified:  03/31/18
 
 // Navigation bar component for RavelTree.
 //
@@ -57,7 +57,14 @@ class NavBar extends React.Component {
   handleSelect (selected) {
     if (this.props.activeTab != selected) {
       this.props.setNavBarTab (selected);
-      this.props.setActiveScreen (selected);
+
+      if (selected == 'Profile') {
+        var screenData = Object.assign ({}, {isOwned: true, profile: this.props.currentUserProfile});
+        this.props.setActiveScreen (selected, screenData);
+      }
+      else {
+        this.props.setActiveScreen (selected);
+      }
     }
   }
 
@@ -134,7 +141,7 @@ class NavBar extends React.Component {
             </Text>
           </Touchable>
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Profile')}>
-            <UserImage size={30} active={this.props.activeTab === 'Profile'} disabled />
+            <UserImage {...this.props} /*profile={this.props.currentUserProfile}*/ userID={this.props.currentUserProfile.user_uid} size={30} active={this.props.activeTab === 'Profile'} disabled />
             <Text style = {[styles.text, this.props.activeTab === 'Profile' ? styles.active : styles.inactive]}>
               Profile
             </Text>
@@ -207,11 +214,16 @@ const mapStateToProps = (state) => {
     showNavBar,
   } = state.navigation;
 
+  const {
+    currentUserProfile,
+  } = state.current_user;
+
   return {
     activeTab,
     activeScreen,
     previousScreen,
     showNavBar,
+    currentUserProfile,
   };
 }
 

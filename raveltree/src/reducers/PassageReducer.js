@@ -18,12 +18,12 @@ export default (state = initialState, action) => {
                 ...state,
                 passage_uid: action.payload.passage_uid,
             };
-        case 'GET_PASSAGE_META_DATA': 
+        case 'GET_PASSAGE_META_DATA':
             return {
                 ...state,
                 passage_meta_data: action.payload
             };
-        case 'GET_PASSAGE_COMMENT': 
+        case 'GET_PASSAGE_COMMENT':
             return {
                 ...state,
                 passage_comment: action.payload
@@ -62,6 +62,11 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 passage_merge_is_success: action.payload
+            }
+        case 'RESET_STATE_PASSAGE':
+            return {
+                ...state,
+                ...initialState,
             }
         default:
             return state;

@@ -10,18 +10,25 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 photoURL: action.payload
-            };   
+            };
 
         case 'UPDATE_CURRENT_USER_PROFILE':
             return {
                 ...state,
                 currentUserProfile: action.payload
-            };       
+            };
         case 'GET_CURRENT_USER_PROFILE':
             return {
                 ...state,
                 currentUserProfile: action.payload
             };
+
+        case 'RESET_STATE_CURRENT_USER':
+            return {
+                ...state,
+                ...initialState,
+            };
+
         default:
             return state;
     }

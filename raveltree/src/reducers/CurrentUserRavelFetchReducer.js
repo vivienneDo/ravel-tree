@@ -21,6 +21,11 @@ export default (state = initialState, action) => {
                 ...state,
                 get_pending_invite_ravel: action.payload
             }
+        case 'RESET_STATE_CURRENT_USER_RAVEL_FETCH':
+            return {
+                ...state,
+                ...initialState,
+            }
         default:
             return state;
     }

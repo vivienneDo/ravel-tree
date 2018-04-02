@@ -34,6 +34,11 @@ export default (state = initialState, action) => {
                 ...state,
                 ravel_category_search: action.payload
             }
+        case 'RESET_STATE_SEARCH':
+            return {
+                ...state,
+                ...initialState,
+            }
         default:
             return state;
     }

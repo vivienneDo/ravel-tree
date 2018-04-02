@@ -31,6 +31,16 @@ import IconLeaf from './IconLeaf'
 class RavelCard extends Component<{}> {
   constructor (props, context) {
     super (props, context);
+    this.state = {
+      profile: {},
+    }
+    this.props.getUserProfile (this.props.author);
+  }
+
+  componentWillReceiveProps (newProps) {
+    if (newProps.userProfile) {
+      this.setState ({ profile: newProps.userProfile });
+    }
   }
 
   onPressCard () {
@@ -43,6 +53,7 @@ class RavelCard extends Component<{}> {
       ravel,
       ravelID,
       author,
+      authorImage,
       users,
       score,
       concept,
@@ -55,7 +66,7 @@ class RavelCard extends Component<{}> {
         <View style={styles.head}>
           <View style={styles.left}>
             <View style={styles.userImage}>
-              <UserImage size={26} />
+              <UserImage {...this.props} profile={this.state.profile} /*photoURL={authorImage}*/ size={26} />
             </View>
             <TextSerif size={16}>{this.props.ravel}</TextSerif>
           </View>
@@ -129,9 +140,22 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps (state) {
+  const {
+    activeScreen,
+  } = state.navigation;
+
+  const {
+    currentUserProfile,
+  } = state.current_user;
+
+  const {
+    userProfile,
+  } = state.user;
+
   return {
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreen,
+    activeScreen,
+    currentUserProfile,
+    userProfile,
   };
 }
 

@@ -31,6 +31,7 @@ export default class InputSearch extends Component<{}> {
 
     const {
       placeholder,
+      autoCapitalize,
       onChangeText,
       text,
     } = this.props;
@@ -41,6 +42,7 @@ export default class InputSearch extends Component<{}> {
             style = {styles.input}
             placeholder = {placeholder}
             placeholderTextColor = '#95989A'
+            autoCapitalize={autoCapitalize}
             value = {text}
             onChangeText={(text) => {this.props.onChangeText (text)}}
          />

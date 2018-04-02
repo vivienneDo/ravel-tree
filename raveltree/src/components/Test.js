@@ -169,7 +169,7 @@ export default class Test extends Component {
           <Tag>Postmodernism</Tag>
         </View>
         <View style={{flexDirection: 'column', justifyContent: 'center', paddingBottom: 20}}>
-          <UserImage size={30} />
+          <UserImage {...this.props} size={30} />
         </View>
         <View style={{flexDirection: 'column', justifyContent: 'center', paddingBottom: 20}}>
           <VoteBar />

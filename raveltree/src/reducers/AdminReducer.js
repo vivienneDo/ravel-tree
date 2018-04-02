@@ -25,7 +25,7 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 terms_of_service: action.payload
-            };   
+            };
         case 'ADD_ADMIN':
             return {
                 ...state,
@@ -54,7 +54,7 @@ export default (state = initialState, action) => {
         case 'GET_ADMIN_STAT':
             return {
                 ...state,
-                number_ravels: action.payload.number_ravels, 
+                number_ravels: action.payload.number_ravels,
                 number_users: action.payload.number_users,
                 number_reported_ravels: action.payload.number_reported_ravels,
                 number_reported_users: action.payload.number_reported_users
@@ -63,6 +63,11 @@ export default (state = initialState, action) => {
            return {
                ...state,
                ban_ravel_success: action.payload
+           }
+       case 'RESET_STATE_ADMIN':
+           return {
+               ...state,
+               ...initialState,
            }
         default:
             return state;

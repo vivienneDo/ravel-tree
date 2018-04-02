@@ -1,25 +1,23 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/13/18
-// Modified:  02/13/18
+// Modified:  03/28/18
 
 // Standard concept popup component for RavelTree.
-//
-// TODO: Make ravel name touchable and link to respective content.
 
-'use strict';
+import React, { Component } from 'react';
+import {
+  Platform,
+  StyleSheet,
+  Dimensions,
+  Text,
+  View, ScrollView,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+} from 'react-native';
 
-const ColorPropType = require('ColorPropType');
-const Platform = require('Platform');
-const React = require('React');
-const Dimensions = require('Dimensions');
-const AppRegistry = require('AppRegistry');
-const PropTypes = require('prop-types');
-const StyleSheet = require('StyleSheet');
-const Text = require('Text');
-const TouchableNativeFeedback = require('TouchableNativeFeedback');
-const TouchableOpacity = require('TouchableOpacity');
-const View = require('View');
-const ScrollView = require('ScrollView');
+import firebase from 'firebase';
+import { connect } from 'react-redux'
+import _ from 'lodash';
 
 import ModalContainer from './ModalContainer'
 import TextSerif from './TextSerif'
@@ -33,44 +31,53 @@ export default class ConceptPopup extends React.Component {
     super (props);
   }
 
-  static propTypes = {
-    // Used to locate this view in end-to-end tests.
-    testID: PropTypes.string,
-  };
-
   render () {
     const {
+      title,
+      author,
+      ravelID,
+      score,
+      concept,
+      participants,
+      onPressClose,
       testID,
     } = this.props;
+
+    const participantCount = Object.keys (participants).filter (id =>
+        participants [id] == true
+    ).length + 1;
+
+
+    participants.length;
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     var {height, width} = Dimensions.get ('window');
 
     return (
-      <ModalContainer name='PassagePopup' isActive>
+      <ModalContainer name='PassagePopup' isActive onPressClose={() => this.props.onPressClose ()}>
         <View style={styles.head}>
           <View style={styles.left}>
             <View style={styles.userImage}>
-              <UserImage size={26}  />
+              <UserImage {...this.props} userID={author} size={26}  />
             </View>
-            <TextSerif size={16}>{this.props.ravel}</TextSerif>
+            <TextSerif size={16}>{title}</TextSerif>
           </View>
           <View style={styles.right}>
             <View style={styles.users}>
               <IconUser size={20} />
-              <TextSerif style={styles.headText} size={20}>{this.props.participantCount}</TextSerif>
+              <TextSerif style={styles.headText} size={20}>{participantCount}</TextSerif>
             </View>
             <View style={styles.score}>
               <IconLeaf size={20} />
-              <TextSerif style={styles.headText} size={20}>{this.props.ravelScore}</TextSerif>
+              <TextSerif style={styles.headText} size={20}>{score}</TextSerif>
             </View>
           </View>
         </View>
         <ScrollView style={styles.scroll}>
           <View style={styles.scrollContent}>
             <TextSans style={styles.concept} size={16}>
-              {this.props.concept}
+              {concept}
             </TextSans>
           </View>
         </ScrollView>

@@ -1,6 +1,6 @@
 // Author:   Alex Aguirre
 // Created:  02/03/18
-// Modified: 03/09/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 03/27/18 by Frank Fusco (fr@nkfus.co)
 //
 // "Ravel Stub" component for RavelTree.
 //
@@ -30,19 +30,45 @@ import IconLeaf from './IconLeaf'
 class RavelStub extends Component<{}> {
   constructor (props) {
     super (props);
+    this.state = {
+      profile: [],
+      ravelID: this.props.ravel.ravel_uid,
+      ravelMetaData: this.props.ravel,
+    };
+    // Get user profile of author of ravel...
+    //this.props.getRavelMetaData (this.props.ravelID);
   }
 
+  // componentWillReceiveProps (newProps) {
+  //   if (this.state.ravelMetaData.length == 0 && newProps.ravel_meta_data) {
+  //     this.setState ({ ravelMetaData: newProps.ravel_meta_data });
+  //     this.props.getUserProfile (newProps.ravel_meta_data.user_created);
+  //   }
+  //   if (this.state.profile.length == 0 && newProps.userProfile) {
+  //     this.setState ({ profile: newProps.userProfile });
+  //   }
+  // }
+
   onPressStub () {
-    var screenData = Object.assign ({}, {ravelID: this.props.ravelID});
-    this.props.navigateForward ('Ravel', this.constructor.name, screenData);
+    var ravel = this.state.ravelMetaData;
+    // var screenData = Object.assign ({}, {
+    //   ravel_uid: this.state.ravelID,
+    //   ravel_title: ravel.ravel_title,
+    //   user_created: ravel.user_created,
+    //   ravel_participants: ravel.ravel_participants,
+    //   ravel_points: ravel.ravel_points,
+    //   ravel_concept: ravel.ravel_concept,
+    //   passageIndex: '',
+    // });
+    var screenData = Object.assign ({}, ravel);
+    this.props.navigateForward ('Ravel', this.props.parentScreen, screenData);
   }
 
   render() {
     const {
       ravel,
-      ravelID,
-      users,
-      score,
+      parentScreen,
+      testID,
     } = this.props;
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
@@ -51,9 +77,9 @@ class RavelStub extends Component<{}> {
       <Touchable onPress={() => this.onPressStub ()} style={styles.container}>
         <View style={styles.left}>
           <View style={styles.userImage}>
-            <UserImage size={26} />
+            <UserImage {...this.props} userID={ravel.user_created} size={26} />
           </View>
-          <TextSerif size={16}>{this.props.ravel}</TextSerif>
+          <TextSerif size={16}>{ravel.ravel_title}</TextSerif>
         </View>
         <View style={styles.right}>
           <View style={styles.users}>
@@ -61,7 +87,7 @@ class RavelStub extends Component<{}> {
               <IconUser />
             </View>
             <View style={styles.hpad}>
-              <TextSerif size={16}>{this.props.users}</TextSerif>
+              <TextSerif size={16}>{ravel.ravel_number_participants}</TextSerif>
             </View>
           </View>
           <View style={styles.score}>
@@ -69,7 +95,7 @@ class RavelStub extends Component<{}> {
               <IconLeaf />
             </View>
             <View style={styles.hpad}>
-              <TextSerif size={16}>{this.props.score}</TextSerif>
+              <TextSerif size={16}>{ravel.ravel_points}</TextSerif>
             </View>
           </View>
         </View>
@@ -118,9 +144,27 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps (state) {
+  const {
+    activeScreen,
+  } = state.navigation;
+
+  const {
+    currentUserProfile,
+  } = state.current_user;
+
+  const {
+    userProfile,
+  } = state.user;
+
+  const {
+    ravel_meta_data,
+  } = state.ravel;
+
   return {
-    activeScreen: state.activeScreen,
-    previousScreen: state.previousScreen,
+    activeScreen,
+    currentUserProfile,
+    userProfile,
+    ravel_meta_data,
   };
 }
 

@@ -1,26 +1,25 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/13/18
-// Modified:  02/13/18
+// Modified:  03/30/18
 
 // Standard passage popup component for RavelTree.
 //
 // TODO: Make ravel, title, and ID touchable and link to respective content.
-// TODO: Add VoteBar
 
-'use strict';
+import React, { Component } from 'react';
+import {
+  Platform,
+  StyleSheet,
+  Dimensions,
+  Text,
+  View, ScrollView,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+  Alert
+} from 'react-native';
 
-const ColorPropType = require('ColorPropType');
-const Platform = require('Platform');
-const React = require('React');
-const Dimensions = require('Dimensions');
-const AppRegistry = require('AppRegistry');
-const PropTypes = require('prop-types');
-const StyleSheet = require('StyleSheet');
-const Text = require('Text');
-const TouchableNativeFeedback = require('TouchableNativeFeedback');
-const TouchableOpacity = require('TouchableOpacity');
-const View = require('View');
-const ScrollView = require('ScrollView');
+import { connect } from 'react-redux'
+import _ from 'lodash';
 
 import ModalContainer from './ModalContainer'
 import TextSerif from './TextSerif'
@@ -29,55 +28,122 @@ import UserImage from './UserImage'
 import ButtonReverse from './ButtonReverse'
 import Button from './Button'
 import ButtonPlus from './ButtonPlus'
+import VoteBar from './VoteBar'
 
-
-export default class PassagePopup extends React.Component {
-  constructor (props) {
-    super (props);
+class PassagePopup extends React.Component {
+  constructor (props, context) {
+    super (props, context);
   }
 
-  static propTypes = {
+  componentWillReceiveProps (newProps) {
 
-    // Whether the container is active (will color the border)
-    isActive: PropTypes.bool,
+  }
 
-    // Used to locate this view in end-to-end tests.
-    testID: PropTypes.string,
-  };
+  onPressMerge () {
+    // We have to navigate from the parent 'Ravel' screen.
+    var screenData = Object.assign({}, this.props.passageMetaData);
+    this.props.onNavigate ('Merge', screenData);
+  }
+
+  onPressFork () {
+    // TODO
+  }
+
+  onPressAdd () {
+    this.props.onSwitchToAdd (this.props.passageMetaData);
+  }
+
+  onPressEllipsis () {
+    var title = this.props.passageMetaData.passage_title;
+    var message = 'Choose an action:';
+    var buttons = [
+      {text: 'Report', onPress: () => this.onPressReport ()},
+      {text: 'Share...', onPress: () => this.onPressShare ()},
+      {text: 'Cancel', style: 'cancel'},
+    ];
+    var options = { cancelable: false };
+    Alert.alert (title, message, buttons, options);
+  }
+
+  onPressReport () {
+    var passageTitle = this.props.passageMetaData.passage_title;
+    var title = 'Confirm Report';
+    var message = 'Are you sure you want to report ' + passageTitle + ' for violating RavelTree\'s Terms of Use? You can\'t undo this.';
+    var buttons = [
+      {text: 'Cancel', style: 'cancel'},
+      {text: 'Report', onPress: () => this.onPressConfirmReport ()},
+    ]
+    var options = { cancelable: false };
+    Alert.alert (title, message, buttons, options);
+  }
+
+  onPressConfirmReport () {
+    var passageTitle = this.props.passageMetaData.passage_title;
+    var ravelID = this.props.passageMetaData.ravel_uid;
+    console.log ('Reporting ' + passageTitle + '...');
+    this.props.reportRavel (ravelID); // TODO: 'Report passage' functionality on backend.
+  }
+
+  onPressShare () {
+    var passageTitle = this.props.passageMetaData.passage_title;
+    console.log ('Opening share menu for ' + passageTitle);
+  }
 
   render () {
-    const {
-      isActive,
+    var {
+      passageMetaData,
       testID,
     } = this.props;
+    isActive = passageMetaData.isOptimal || this.props.isActive;
+
+    console.log (passageMetaData);
+
+    var ravel = passageMetaData.ravel_title;
+    var passageIndex = passageMetaData.passage_index;
+    var title = passageMetaData.passage_title;
+    var passage = passageMetaData.passage_body;
+    var author = passageMetaData.user_created;
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     var {height, width} = Dimensions.get ('window');
 
     return (
-      <ModalContainer name='PassagePopup' isActive={this.props.isActive}>
+      <ModalContainer name='PassagePopup' isActive={isActive} onPressClose={() => this.props.onPressClose ()}>
         <View style={styles.head}>
           <View style={styles.row1}>
-            <TextSerif size={16}>{this.props.ravel}</TextSerif>
-            <TextSans size={13} color={'#95989A'}>{this.props.passageID}</TextSans>
+            <TextSerif size={16}>{ravel}</TextSerif>
+            <TextSans size={13} color={'#95989A'}>{passageIndex}</TextSans>
           </View>
           <View style={styles.row2}>
-            <TextSans size={13} color={'#95989A'}>{this.props.title}</TextSans>
-            <UserImage size={26}/>
+            <TextSans size={13} color={'#95989A'}>{title}</TextSans>
+            <UserImage {...this.props} userID={author} size={26}/>
           </View>
         </View>
         <ScrollView style={styles.scroll}>
           <View style={styles.scrollContent}>
             <TextSerif>
-              {this.props.passage}
+              {passage}
             </TextSerif>
           </View>
         </ScrollView>
         <View style={styles.buttons}>
-          <ButtonReverse title={'Merge...'} width={0.30 * width} />
-          <ButtonPlus size={36} />
-          <Button title={'Fork'} width={0.30 * width} />
+          <ButtonReverse title={'Merge...'} width={0.30 * width} onPress={() => this.onPressMerge ()} />
+          <ButtonPlus size={36} onPress={() => this.onPressAdd ()} />
+          <Button title={'Fork'} width={0.30 * width} onPress={() => this.onPressFork ()} />
+        </View>
+        <View style={styles.bottom}>
+          <Touchable onPress={() => this.onPressEllipsis ()}>
+            <TextSans size={40} color={'#95989A'}>...</TextSans>
+          </Touchable>
+          <View style={styles.voteBar}>
+            <VoteBar
+              upvotes={passageMetaData.passage_upvote}
+              downvotes={passageMetaData.passage_downvote}
+              ravelID={passageMetaData.ravel_uid}
+              passageID={passageMetaData.passage_uid}
+            />
+          </View>
         </View>
       </ModalContainer>
     )
@@ -116,5 +182,39 @@ const styles = StyleSheet.create ({
     justifyContent: 'space-between',
     paddingLeft: 21,
     paddingRight: 21,
+    paddingBottom: 10,
+  },
+  bottom: {
+    position: 'absolute',
+    bottom: 7,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 17,
+  },
+  voteBar: {
+    top: 10,
   },
 });
+
+const mapStateToProps = (state) => {
+  const {
+    activeScreen,
+    previousScreens,
+    screenData,
+  } = state.navigation;
+
+  const {
+    currentUserProfile,
+  } = state.current_user;
+
+  return {
+    activeScreen,
+    previousScreens,
+    screenData,
+    currentUserProfile
+  };
+}
+
+export default connect (mapStateToProps)(PassagePopup);

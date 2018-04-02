@@ -1,17 +1,8 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/17/18
-// Modified: 03/06/18
+// Modified: 03/23/18
 //
 // "Terms and Privacy" screen for RavelTree.
-//
-// Pass in Terms of Service and Privacy Policy as props like so:
-//
-// <TermsAndPrivacy
-//    terms={'Terms of service here.'}
-//    privacy={'Privacy policy here.'}
-// />
-//
-// TODO: Firebase retrieval (won't use props anymore).
 
 import React, { Component } from 'react';
 import {
@@ -26,14 +17,42 @@ import _ from 'lodash';
 import LinkBack from '../components/LinkBack'
 import RTLogoText from '../components/RTLogoText'
 import TextSans from '../components/TextSans'
+import * as actions from '../actions'
 
 class TermsAndPrivacy extends Component {
   constructor (props) {
     super (props);
+    this.state = {
+      terms: '',
+      privacy: '',
+    }
+    this.props.readTermsOfService ();
+    this.props.readPrivacyPolicy ();
+  }
+
+  componentWillReceiveProps (newProps) {
+    if (newProps.terms_of_service) {
+      this.setState ({ terms: newProps.terms_of_service });
+    }
+    if (newProps.privacy_policy) {
+      this.setState ({ privacy: newProps.privacy_policy });
+    }
   }
 
   onPressBack () {
     this.props.navigateBack ();
+  }
+
+  showTerms () {
+    return (
+      <TextSans size={12}>{this.state.terms}</TextSans>
+    );
+  }
+
+  showPrivacy () {
+    return (
+      <TextSans size={12}>{this.state.privacy}</TextSans>
+    );
   }
 
   render (){
@@ -53,14 +72,14 @@ class TermsAndPrivacy extends Component {
           <View style={styles.header}>
             <TextSans size={20}>Terms of Service</TextSans>
           </View>
-          <View contentContainerStyle={styles.text}>
-            <TextSans size={12}>{this.props.terms}</TextSans>
+          <View style={styles.text}>
+            {this.showTerms ()}
           </View>
           <View style={styles.header}>
             <TextSans size={20}>Privacy Policy</TextSans>
           </View>
-          <View contentContainerStyle={styles.text}>
-            <TextSans size={12}>{this.props.privacy}</TextSans>
+          <View style={styles.text}>
+            {this.showPrivacy ()}
           </View>
         </ScrollView>
       </View>
@@ -92,6 +111,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    paddingBottom: 20,
   },
 });
 
@@ -102,10 +122,17 @@ const mapStateToProps = (state) => {
     showNavBar,
   } = state.navigation;
 
+  const {
+    terms_of_service,
+    privacy_policy,
+  } = state.term_of_service;
+
   return {
     activeScreen,
     previousScreen,
     showNavBar,
+    terms_of_service,
+    privacy_policy,
   };
 }
 
