@@ -3,13 +3,14 @@ const initialState = {
     ravel_tag_search: [],
     ravel_title_search: [],
     ravel_category_search: [],
-    user_email_name: []
+    user_email_name: [],
+    passage_explore_search: [],
+    on_search_success: false
 };
 
 export default (state = initialState, action) => {
     switch (action.type) {
         case 'SEARCH_USER_FIRST_NAME':
-        console.log('Inside search reducer')
             return {
                 ...state,
                 users_first_name_search: action.payload
@@ -33,6 +34,16 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 ravel_category_search: action.payload
+            }
+        case 'EXPLORE_PASSAGE_SCREEN':
+            return {
+                ...state,
+                passage_explore_search : action.payload
+            }
+        case 'ON_SEARCH_SUCCESS':
+            return {
+                ...state,
+                on_search_success : action.payload
             }
         default:
             return state;

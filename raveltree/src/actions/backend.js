@@ -3273,26 +3273,144 @@ export const getPassageComment = (ravel_uid, passage_uid) => {
 // Gets a list of random passages associated to a ravel that is in public_list 
 export const loadPassageExplore = () => {
 
-    var currentUserUid = firebase.auth().currentUser.uid;
-    var listOfPublicRavel = {}; 
-    var randomElm;
 
     return (dispatch) => {
+
+
+    var currentUserUid = firebase.auth().currentUser.uid;
+    var listOfPublicRavel = []; 
+    var listOfPublicPassageFromRavel = [];
+    var randomElm;
+    var listOfRandomElm = [];
+
+
         firebase.database().ref(`ravels`).orderByChild(`visibility`).equalTo(true).once('value', (snapshotPublicRavel) => {
-            listOfPublicRavel = snapshotPublicRavel.val(); 
-            console.log('snapshotPublicRavel elm = ' + snapshotPublicRavel.val())
-            console.log('listOfPublicRavel elm = ' + listOfPublicRavel.val())
+            
+            snapshotPublicRavel.forEach((elm) => {
+                listOfPublicRavel.push(elm.key);
+                console.log('snapshotPublicRavel elm = ' + elm.key)
+                
+            })
+
+            // listOfPublicRavel is an array of public ravel uids now            
         })
         .then(() => {
-            randomElm = listOfPublicRavel[Math.floor(Math.random() * listOfPublicRavel.length)]
+            
+
+            // Do a for loop that iterates through the array and pushes passage uids to an array
+            var j = 0; 
+            for (var i = 0; i < listOfPublicRavel.length && i < 5; i++) {
+
+                firebase.database().ref(`passages/${listOfPublicRavel[i]}`).limitToLast(3).once('value', (snapshot) => {
+
+                    // Push each passage for each ravel inside listOfPublicPassageFromRavel array              
+                    snapshot.forEach((elm) => {
+                        listOfPublicPassageFromRavel.push(elm.key);
+                        //console.log('listOfPublicPassageFromRavel = ' + listOfPublicPassageFromRavel[j])
+                        j++;
+                    })
+                    
+                    console.log('listOfPublicPassageFromRavel = ' + listOfPublicPassageFromRavel)
+                })   
+                
+                //console.log('listOfPublicPassageFromRavel = ' + listOfPublicPassageFromRavel)
+
+            }
+
+            // Get a random ravel uid from the public ravel list 
+            //randomElm = listOfPublicRavel[Math.floor(Math.random() * listOfPublicRavel.length)]
+            //var number = Math.floor(Math.random() * listOfPublicRavel.length); 
+            // console.log('listOfPublicPassageFromRavel = ' + number)
+            // console.log('listOfPublicRavel elm = ' + listOfPublicRavel[1])
+            // console.log('random elm = ' + randomElm)
+
+            //console.log('listOfPublicPassageFromRavel = ' + listOfPublicPassageFromRavel)
+        })
+        .then(() => {
+
+            // Then, you pick randomly the order of the passages... 
+            // console.log('listOfPublicPassageFromRavel = ' + listOfPublicPassageFromRavel)
+            dispatch({type: 'EXPLORE_PASSAGE_SCREEN', payload: listOfPublicPassageFromRavel})
+            // console.log('after random elm = ' + randomElm)
+            // // Get some passage objects from the queried ravel object 
+            // firebase.database().ref(`passages/${randomElm}`).once('value', (snapshot) => {
+
+            // })
+        })
+        .then(() => {
+            dispatch({type: 'ON_SEARCH_SUCCESS', payload: true})
+        })
+        .catch(() => {
+            dispatch({type: 'ON_SEARCH_SUCCESS', payload: false})
         })
         
-        console.log('random elm = ' + randomElm)
+       
 
 
                
     };
 };
+
+
+export const explorePassagePromise = (listOfPublicRavel) => {
+    
+    return new Promise((resolve,reject) => {
+     var valueOfKey = false;
+     var m_passage_upvote;
+     var m_passage_downvote;
+     var m_currentPassageOptimality;
+     var listOfPublicPassageFromRavel = [];
+
+
+     for (var i = 0; i < listOfPublicRavel.length && i < 5; i++) {
+
+        firebase.database().ref(`passages/${listOfPublicRavel[i]}`).limitToLast(3).once('value', (snapshot) => {
+
+            // Push each passage for each ravel inside listOfPublicPassageFromRavel array              
+            snapshot.forEach((elm) => {
+                listOfPublicPassageFromRavel.push(elm.key);
+                //console.log('listOfPublicPassageFromRavel = ' + listOfPublicPassageFromRavel[j])
+                j++;
+            })
+            
+            console.log('listOfPublicPassageFromRavel = ' + listOfPublicPassageFromRavel)
+        })   
+        
+        //console.log('listOfPublicPassageFromRavel = ' + listOfPublicPassageFromRavel)
+
+    }
+
+    
+
+         firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {           
+            m_passage_upvote = snapshot.val()
+         })
+         .then(() => {
+            firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+                m_passage_downvote = snapshot.val()
+            })
+            .then(() => {
+                m_currentPassageOptimality = (m_passage_upvote + 1.5*m_passage_downvote)
+                firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update( {currentPassageOptimality : m_currentPassageOptimality})
+                     
+            })          
+         })
+         .then(() => {
+            valueOfKey = true 
+        })
+            .then(() => {
+                console.log('value of value of key inside recalcu' + valueOfKey)
+                return valueOfKey
+            })
+            .then((valueOfKey) => {
+                resolve(valueOfKey)
+            })
+            .catch((error) => {
+                reject(error)
+            })
+
+    })
+}
 
 
 /** HELPER FUNCTION  */
