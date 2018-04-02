@@ -9,11 +9,7 @@ import NotificationReducer from './NotificationReducer'
 import UserReducer from './UserReducer'
 import MasterRavelReducer from './MasterRavelReducer'
 import PassageReducer from './PassageReducer'
-import AdminReducer from './AdminReducer'
-import ReportReducer from './ReportReducer'
-
 import NavigationReducer from './NavigationReducer';
-
 import AdminReducer from './AdminReducer'
 import ReportReducer from './ReportReducer'
 
