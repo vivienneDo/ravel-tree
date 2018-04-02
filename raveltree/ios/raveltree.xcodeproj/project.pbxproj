@@ -15,7 +15,6 @@
 		00E356F31AD99517003FC87E /* raveltreeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* raveltreeTests.m */; };
 		0196B98B205C26B500F89864 /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0196B988205C26A800F89864 /* libART.a */; };
 		05F7592E4F1342E58B74BF60 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 72E6C28C71554207B661C034 /* Octicons.ttf */; };
-		060BD71AC82D4539BE5873F7 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 35203A2BFFFA4C4AAD53B05D /* libRNSVG.a */; };
 		0F0C464C1C9A4BC18DCFC599 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8AB0813095C84693B36234D2 /* SimpleLineIcons.ttf */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
@@ -477,7 +476,6 @@
 		87550BA43A9A4B5BB6C71CE2 /* Rubik-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Regular.ttf"; path = "../node_modules/@shoutem/ui/fonts/Rubik-Regular.ttf"; sourceTree = "<group>"; };
 		8A262BDCA6EF497A935BE11F /* RNPhotoView.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNPhotoView.xcodeproj; path = "../node_modules/react-native-photo-view/ios/RNPhotoView.xcodeproj"; sourceTree = "<group>"; };
 		8AB0813095C84693B36234D2 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
-		9AD7C677456C4EAABF468B17 /* RNSVG.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSVG.xcodeproj; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		ADFA571EF5C544FE81260FBD /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		B35D307A3F1841ECAE709AE7 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
@@ -553,7 +551,6 @@
 				2A6086B052F74173A0C419DB /* libRNImagePicker.a in Frameworks */,
 				62033473693E4D6CBE4A39F7 /* libBVLinearGradient.a in Frameworks */,
 				858B95E79115472D962E8890 /* libRNPhotoView.a in Frameworks */,
-				060BD71AC82D4539BE5873F7 /* libRNSVG.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -816,7 +813,6 @@
 				D1B8F2B16A564286AAF77FA2 /* RNImagePicker.xcodeproj */,
 				B35D307A3F1841ECAE709AE7 /* BVLinearGradient.xcodeproj */,
 				8A262BDCA6EF497A935BE11F /* RNPhotoView.xcodeproj */,
-				9AD7C677456C4EAABF468B17 /* RNSVG.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";

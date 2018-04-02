@@ -63,6 +63,11 @@ class Home extends Component<{}> {
     }
     this.props.setShowNavBar (true);
     this.getPassages ();
+
+    // TEMP
+    this.props.returnTest ()
+      .then (val => { console.log (val); })
+
   }
 
   componentWillReceiveProps (newProps) {

@@ -42,6 +42,24 @@ import firebase from 'firebase';
 import _ from 'lodash';
 const dateformat = require('dateformat');
 
+/* TEST FUNCTIONS */
+/**
+* @param: nothing
+* @returns: The current privacy_policy
+* actions: Test function that attempts to get the current privacy policy in the
+*          database.
+*/
+export const returnTest = () => dispatch => {
+  return new Promise ((resolve, reject) => {
+    firebase.database().ref(`privacy_policy/privacy_policy`).once('value', (snapshot) => {
+      resolve (snapshot.val ());
+    })
+    .catch((error) => {
+      reject ('Error getting privacy policy.');
+    })
+  });
+}
+
 
 /* CREATE USER/LOGIN FUNCTIONS */
 
@@ -64,8 +82,8 @@ export const readPrivacyPolicy = () => {
             alert('Error getting privacy policy...')
         })
     }
+}
 
-    }
 
 /**
 * @param: nothing

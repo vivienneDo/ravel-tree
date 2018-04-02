@@ -65,15 +65,20 @@ class YourRavels extends Component {
     var loading = this.state.loading;
     var metaData = newProps.ravel_meta_data;
 
+    console.log (newProps);
+
     // User-Created Ravels
     if (!retrieved.userCreatedRavels) {
+      console.log ('User created ravels not yet retrieved.')
       if (newProps.all_user_created_ravels) {
+        console.log ("User created ravels retrieved.")
         retrieved.userCreatedRavels = true;
         this.setState ({
           userCreatedRavels: newProps.all_user_created_ravels,
           retrieved: retrieved,
         });
         if (_.size (newProps.all_user_created_ravels) > 0) { // Compare this to the size we expect...
+          console.log ('Getting user-created ravel metadata...');
           this.getMetaData (newProps.all_user_created_ravels);
         } else {
           loading.userCreatedRavels = false;
@@ -87,6 +92,7 @@ class YourRavels extends Component {
     // User-Created Ravel Metadata
     if (loading.userCreatedRavels) {
       if ((newProps.ravel_meta_data || []).length != 0) {
+        console.log ('Metadata retrieved.');
         stubs.userCreatedRavels [metaData.ravel_uid] = this.renderRavelStub (metaData);
         this.setState ({ stubs: stubs });
         if (_.size (stubs.userCreatedRavels) == _.size (this.state.userCreatedRavels)) {
