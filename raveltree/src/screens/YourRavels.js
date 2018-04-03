@@ -1,6 +1,6 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/17/18
-// Modified: 03/27/18
+// Modified: 04/03/18
 //
 // "Your Ravels" screen for RavelTree.
 
@@ -49,129 +49,157 @@ class YourRavels extends Component {
         ravelsIn:          true,
         ravelsInvited:     true,
       },
-      retrieved: {
-        userCreatedRavels: false,
-        ravelsIn:          false,
-        ravelsInvited:     false,
-      },
     };
 
-    this.props.loadInitialCurrentUserCreatedRavel ();
+    this.props.loadInitialCurrentUserCreatedRavel ()
+    .then (ravels => {
+      var loading = this.state.loading;
+      loading.userCreatedRavels = false;
+      this.setState ({
+        userCreatedRavels: ravels,
+        loading: loading,
+      });
+    })
+    .catch (error => { console.error (error) });
+
+    this.props.loadNonCreatedCurrentUserRavel ()
+    .then (ravels => {
+      var loading = this.state.loading;
+      loading.ravelsIn = false;
+      this.setState ({
+        ravelsIn: ravels,
+        loading: loading,
+      });
+    })
+    .catch (error => { console.error (error) });
+
+
+    this.props.getPendingRavelInvite ()
+    .then (ravels => {
+      var loading = this.state.loading;
+      loading.ravelsInvited = false;
+      this.setState ({
+        ravelsInvited: ravels,
+        loading: loading,
+      });
+    })
+    .catch (error => { console.error (error) });
   }
 
-  componentWillReceiveProps (newProps) {
-    var retrieved = this.state.retrieved;
-    var stubs = this.state.stubs;
-    var loading = this.state.loading;
-    var metaData = newProps.ravel_meta_data;
+  // componentWillReceiveProps (newProps) {
+  //   var retrieved = this.state.retrieved;
+  //   var stubs = this.state.stubs;
+  //   var loading = this.state.loading;
+  //   var metaData = newProps.ravel_meta_data;
+  //
+  //   console.log (newProps);
+  //
+  //   // User-Created Ravels
+  //   if (!retrieved.userCreatedRavels) {
+  //     console.log ('User created ravels not yet retrieved.')
+  //     if (newProps.all_user_created_ravels) {
+  //       console.log ("User created ravels retrieved.")
+  //       retrieved.userCreatedRavels = true;
+  //       this.setState ({
+  //         userCreatedRavels: newProps.all_user_created_ravels,
+  //         retrieved: retrieved,
+  //       });
+  //       if (_.size (newProps.all_user_created_ravels) > 0) { // Compare this to the size we expect...
+  //         console.log ('Getting user-created ravel metadata...');
+  //         this.getMetaData (newProps.all_user_created_ravels);
+  //       } else {
+  //         loading.userCreatedRavels = false;
+  //         this.setState ({ loading: loading });
+  //         this.props.loadNonCreatedCurrentUserRavel ();
+  //       }
+  //       return;
+  //     }
+  //   }
+  //
+  //   // User-Created Ravel Metadata
+  //   if (loading.userCreatedRavels) {
+  //     if ((newProps.ravel_meta_data || []).length != 0) {
+  //       console.log ('Metadata retrieved.');
+  //       stubs.userCreatedRavels [metaData.ravel_uid] = this.renderRavelStub (metaData);
+  //       this.setState ({ stubs: stubs });
+  //       if (_.size (stubs.userCreatedRavels) == _.size (this.state.userCreatedRavels)) {
+  //         loading.userCreatedRavels = false;
+  //         this.setState ({ loading: loading });
+  //         this.props.loadNonCreatedCurrentUserRavel ();
+  //       }
+  //       return;
+  //     }
+  //   }
+  //
+  //   // Ravels In
+  //   if (!retrieved.ravelsIn) {
+  //     if (newProps.all_non_created_user_ravel) {
+  //       retrieved.ravelsIn = true;
+  //       this.setState ({
+  //         ravelsIn: newProps.all_non_created_user_ravel,
+  //         retrieved: retrieved,
+  //       });
+  //       if (_.size (newProps.all_non_created_user_ravel) > 0) {
+  //         this.getMetaData (newProps.all_non_created_user_ravel);
+  //       } else {
+  //         loading.ravelsIn = false;
+  //         this.setState ({ loading: loading });
+  //         this.props.getPendingRavelInvite ();
+  //       }
+  //     }
+  //   }
+  //
+  //   // Ravels In Metadata
+  //   if (loading.ravelsIn) {
+  //     if ((newProps.ravel_meta_data || []).length != 0) {
+  //       stubs.ravelsIn [metaData.ravel_uid] = this.renderRavelStub (metaData);
+  //       this.setState ({ stubs: stubs });
+  //       if (_.size (stubs.ravelsIn) == _.size (this.state.ravelsIn)) {
+  //         loading.ravelsIn = false;
+  //         this.setState ({ loading: loading });
+  //         this.props.getPendingRavelInvite ();
+  //       }
+  //       return;
+  //     }
+  //   }
+  //
+  //   // Ravels Invited
+  //   if (!retrieved.ravelsInvited) {
+  //     if (newProps.get_pending_invite_ravel) {
+  //       retrieved.ravelsInvited = true;
+  //       this.setState ({
+  //         ravelsInvited: newProps.get_pending_invite_ravel,
+  //         retrieved: retrieved,
+  //       });
+  //       if (_.size (newProps.get_pending_invite_ravel) > 0) {
+  //         this.getMetaData (newProps.get_pending_invite_ravel);
+  //       } else {
+  //         loading.ravelsInvited = false;
+  //         this.setState ({ loading: loading });
+  //       }
+  //     }
+  //   }
+  //
+  //   // Ravels Invited Metadata
+  //   if (loading.ravelsInvited) {
+  //     stubs.ravelsInvited [metaData.ravel_uid] = this.renderRavelStub (metaData);
+  //     this.setState ({ stubs: stubs });
+  //     if (_.size (stubs.ravelsInvited) == _.size (this.state.ravelsInvited)) {
+  //       loading.ravelsInvited = false;
+  //       this.setState ({ loading: loading });
+  //     }
+  //     return;
+  //   }
+  // }
 
-    console.log (newProps);
+  // getMetaData (ravels) {
+  //   Object.keys (ravels).map (ravel =>
+  //     this.props.getRavelMetaData (ravel)
+  //   );
+  // }
 
-    // User-Created Ravels
-    if (!retrieved.userCreatedRavels) {
-      console.log ('User created ravels not yet retrieved.')
-      if (newProps.all_user_created_ravels) {
-        console.log ("User created ravels retrieved.")
-        retrieved.userCreatedRavels = true;
-        this.setState ({
-          userCreatedRavels: newProps.all_user_created_ravels,
-          retrieved: retrieved,
-        });
-        if (_.size (newProps.all_user_created_ravels) > 0) { // Compare this to the size we expect...
-          console.log ('Getting user-created ravel metadata...');
-          this.getMetaData (newProps.all_user_created_ravels);
-        } else {
-          loading.userCreatedRavels = false;
-          this.setState ({ loading: loading });
-          this.props.loadNonCreatedCurrentUserRavel ();
-        }
-        return;
-      }
-    }
-
-    // User-Created Ravel Metadata
-    if (loading.userCreatedRavels) {
-      if ((newProps.ravel_meta_data || []).length != 0) {
-        console.log ('Metadata retrieved.');
-        stubs.userCreatedRavels [metaData.ravel_uid] = this.renderRavelStub (metaData);
-        this.setState ({ stubs: stubs });
-        if (_.size (stubs.userCreatedRavels) == _.size (this.state.userCreatedRavels)) {
-          loading.userCreatedRavels = false;
-          this.setState ({ loading: loading });
-          this.props.loadNonCreatedCurrentUserRavel ();
-        }
-        return;
-      }
-    }
-
-    // Ravels In
-    if (!retrieved.ravelsIn) {
-      if (newProps.all_non_created_user_ravel) {
-        retrieved.ravelsIn = true;
-        this.setState ({
-          ravelsIn: newProps.all_non_created_user_ravel,
-          retrieved: retrieved,
-        });
-        if (_.size (newProps.all_non_created_user_ravel) > 0) {
-          this.getMetaData (newProps.all_non_created_user_ravel);
-        } else {
-          loading.ravelsIn = false;
-          this.setState ({ loading: loading });
-          this.props.getPendingRavelInvite ();
-        }
-      }
-    }
-
-    // Ravels In Metadata
-    if (loading.ravelsIn) {
-      if ((newProps.ravel_meta_data || []).length != 0) {
-        stubs.ravelsIn [metaData.ravel_uid] = this.renderRavelStub (metaData);
-        this.setState ({ stubs: stubs });
-        if (_.size (stubs.ravelsIn) == _.size (this.state.ravelsIn)) {
-          loading.ravelsIn = false;
-          this.setState ({ loading: loading });
-          this.props.getPendingRavelInvite ();
-        }
-        return;
-      }
-    }
-
-    // Ravels Invited
-    if (!retrieved.ravelsInvited) {
-      if (newProps.get_pending_invite_ravel) {
-        retrieved.ravelsInvited = true;
-        this.setState ({
-          ravelsInvited: newProps.get_pending_invite_ravel,
-          retrieved: retrieved,
-        });
-        if (_.size (newProps.get_pending_invite_ravel) > 0) {
-          this.getMetaData (newProps.get_pending_invite_ravel);
-        } else {
-          loading.ravelsInvited = false;
-          this.setState ({ loading: loading });
-        }
-      }
-    }
-
-    // Ravels Invited Metadata
-    if (loading.ravelsInvited) {
-      stubs.ravelsInvited [metaData.ravel_uid] = this.renderRavelStub (metaData);
-      this.setState ({ stubs: stubs });
-      if (_.size (stubs.ravelsInvited) == _.size (this.state.ravelsInvited)) {
-        loading.ravelsInvited = false;
-        this.setState ({ loading: loading });
-      }
-      return;
-    }
-  }
-
-  getMetaData (ravels) {
-    Object.keys (ravels).map (ravel =>
-      this.props.getRavelMetaData (ravel)
-    );
-  }
-
-  renderRavelStub (ravel) {
+  renderRavelStub (ravel, userID = undefined) {
+    ravel.user_created = userID;
     return (
       <View key={ravel.ravel_uid} style={styles.ravel}>
         <RavelStub
@@ -196,16 +224,19 @@ class YourRavels extends Component {
       return (this.showLoader ());
     }
 
-    var userCreatedRavels = Object.values (this.state.userCreatedRavels);
-
-    if (_.size (userCreatedRavels) == 0) {
+    if (_.size (this.state.userCreatedRavels) == 0) {
       return (
         <View style={styles.text}>
           <TextSans size={14}>You haven&#39;t started any ravels yet.</TextSans>
         </View>
       );
     }
-    return (Object.values (this.state.stubs.userCreatedRavels));
+
+    return (
+      Object.values (this.state.userCreatedRavels).map (ravel => {
+        return this.renderRavelStub (ravel, this.props.getCurrentLoggedInUserUid ());
+      })
+    );
   }
 
   getRavelsIn () {
@@ -213,16 +244,19 @@ class YourRavels extends Component {
       return (this.showLoader ());
     }
 
-    var ravelsIn = Object.values (this.state.ravelsIn);
-
-    if (_.size (ravelsIn) == 0) {
+    if (_.size (this.state.ravelsIn) == 0) {
       return (
         <View style={styles.text}>
           <TextSans size={14}>You&#39;re not participating in anyone else&#39;s ravels yet.</TextSans>
         </View>
       );
     }
-    return (Object.values (this.state.stubs.ravelsIn));
+
+    return (
+      Object.values (this.state.ravelsIn).map (ravel => {
+        return this.renderRavelStub (ravel);
+      })
+    );
   }
 
   getRavelsInvited () {
@@ -230,16 +264,19 @@ class YourRavels extends Component {
       return (this.showLoader ());
     }
 
-    var ravelsInvited = Object.values (this.state.ravelsInvited);
-
-    if (_.size (ravelsInvited) == 0) {
+    if (_.size (this.state.ravelsInvited) == 0) {
       return (
         <View style={styles.text}>
           <TextSans size={14}>You haven&#39;t been invited to participate in anyone else&#39;s ravels yet.</TextSans>
         </View>
       );
     }
-    return (Object.values (this.state.stubs.ravelsInvited));
+
+    return (
+      Object.values (this.state.ravelsInvited).map (ravel => {
+        return this.renderRavelStub (ravel);
+      })
+    );
   }
 
   onPressStartARavel () {

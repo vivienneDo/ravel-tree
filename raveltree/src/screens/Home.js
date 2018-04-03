@@ -65,8 +65,13 @@ class Home extends Component<{}> {
     this.getPassages ();
 
     // TEMP
-    this.props.returnTest ()
+    // this.props.returnTest ()
+    //   .then (val => { console.log (val); })
+
+    // TEMP
+    this.props.loadAllUserKey ()
       .then (val => { console.log (val); })
+      .catch (error => { console.error (error); })
 
   }
 

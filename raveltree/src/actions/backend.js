@@ -355,18 +355,18 @@ export const createUser = (firstName, lastName, bio, photoURL = '') => dispatch 
  * actions: gets the user profile of the passed in uid
  *
  */
-export const getUserProfile = (uid) => {
-
-    return (dispatch) => {
+export const getUserProfile = (uid) => dispatch => {
+    return new Promise ((resolve, reject) => {
         firebase.database().ref(`/users/${uid}/userProfile`)
         .once('value', snapshot => {
+            resolve (snapshot.val ());
             dispatch({ type: 'GET_USER_PROFILE',
                        payload: snapshot.val() });
         })
         .catch((error) => {
-            alert('Error loading user profile at this time...')
+            reject ('Error loading user profile.')
         })
-    };
+    });
 };
 
 /**
@@ -390,17 +390,17 @@ export const getUserProfile = (uid) => {
             - this.props.all_public_ravel_fetch.user_created_photoURL
  * actions: attempts to get a list of all public ravel objects
  */
-export const loadAllUserKey = () => {
-
-    return (dispatch) => {
-            firebase.database().ref(`master_user_key`)
-            .once('value', function(snapshotRavels) {
-                dispatch({ type: 'ALL_USER_KEY_FETCH', payload: snapshotRavels.val()});
-            })
-            .catch((error) => {
-                alert('Error loading all user keys...');
-            })
-    };
+export const loadAllUserKey = () => dispatch => {
+  return new Promise ((resolve, reject) => {
+    firebase.database().ref(`master_user_key`)
+    .once('value', function(snapshotRavels) {
+      resolve (snapshotRavels.val());
+      dispatch({ type: 'ALL_USER_KEY_FETCH', payload: snapshotRavels.val()});
+    })
+    .catch((error) => {
+      reject ('Error loading all user keys.');
+    })
+  });
 };
 
 /** CURRENT USER FUNCTIONS */
@@ -537,19 +537,20 @@ export const updateCurrentUserProfile = ({ first_name, last_name, bio }) => {
  *                           - this.props.report_status.ravel_report_success
  * Actions: Attempts to get the status if a ravel report was successful
  */
-export const reportRavel = (ravel_uid) => {
+export const reportRavel = (ravel_uid) => dispatch => {
+  return new Promise ((resolve, reject) => {
 
-    return (dispatch) => {
+    firebase.database().ref(`ravel_report_list/${ravel_uid}`).set(false)
+    .then(() => {
+        resolve (true);
+        dispatch({type:'REPORT_RAVEL_SUCCESS', payload: true})
+    })
+    .catch((error) => {
+        reject ('Error reporting ravel.');
+        dispatch({type:'REPORT_RAVEL_SUCCESS', payload: false})
+    })
 
-        firebase.database().ref(`ravel_report_list/${ravel_uid}`).set(false)
-        .then(() => {
-            dispatch({type:'REPORT_RAVEL_SUCCESS', payload: true})
-        })
-        .catch((error) => {
-            alert('Error reporting ravel')
-            dispatch({type:'REPORT_RAVEL_SUCCESS', payload: false})
-        })
-    }
+  });
 }
 
 /**
@@ -561,19 +562,20 @@ export const reportRavel = (ravel_uid) => {
  *                           - this.props.report_status.user_report_success
  * Actions: Attempts to get the status if a user report was successful
  */
-export const reportUser = (user_uid) => {
+export const reportUser = (user_uid) => dispatch => {
+  return new Promise ((resolve, reject) => {
 
-    return (dispatch) => {
+    firebase.database().ref(`user_report_list/${user_uid}`).set(false)
+    .then(() => {
+        resolve (true);
+        dispatch({type:'REPORT_USER_SUCCESS', payload: true})
+    })
+    .catch((error) => {
+        reject ('Error reporting ravel.');
+        dispatch({type:'REPORT_USER_SUCCESS', payload: false})
+    })
 
-        firebase.database().ref(`user_report_list/${user_uid}`).set(false)
-        .then(() => {
-            dispatch({type:'REPORT_USER_SUCCESS', payload: true})
-        })
-        .catch((error) => {
-            alert('Error reporting ravel')
-            dispatch({type:'REPORT_USER_SUCCESS', payload: false})
-        })
-    }
+  });
 }
 
 /** CURRENT USER 'YOUR RAVELS' TAB FUNCTIONS */
@@ -600,21 +602,20 @@ export const reportUser = (user_uid) => {
  * actions: gets the current user's participating ravels
  *
  */
-export const loadNonCreatedCurrentUserRavel = () => {
-    var currentUid = firebase.auth().currentUser.uid;
+export const loadNonCreatedCurrentUserRavel = () => dispatch => {
+  var currentUid = firebase.auth().currentUser.uid;
 
-    return (dispatch) => {
+  return new Promise ((resolve, reject) => {
 
-        firebase.database().ref(`ravels`).orderByChild(`ravel_participants/${currentUid}`).equalTo(true).once('value', (snapshot) => {
-            dispatch({ type: 'ALL_NON_CREATED_CURR_USER_RAVEL', payload: snapshot.val()})
-        })
-        .catch((error) => {
-            alert('Error loading user participated ravels...')
-        })
+    firebase.database().ref(`ravels`).orderByChild(`ravel_participants/${currentUid}`).equalTo(true).once('value', (snapshot) => {
+        resolve (snapshot.val());
+        dispatch({ type: 'ALL_NON_CREATED_CURR_USER_RAVEL', payload: snapshot.val()})
+    })
+    .catch((error) => {
+        reject ('Error loading user-participating ravels.');
+    })
 
-    }
-
-
+  });
 }
 
 /**
@@ -639,28 +640,30 @@ export const loadNonCreatedCurrentUserRavel = () => {
  * actions: gets the current user's created ravels
  *
  */
-export const loadInitialCurrentUserCreatedRavel = () => {
+export const loadInitialCurrentUserCreatedRavel = () => dispatch => {
 
-    var currentUserUid = firebase.auth().currentUser.uid;
+  var currentUserUid = firebase.auth().currentUser.uid;
 
-    return (dispatch) => {
-            firebase.database().ref(`/users/${currentUserUid}/ravel_created`)
-            firebase.database().ref(`/users`).orderByChild(`/${currentUserUid}/ravel_created`).once('value', (snapshot) => {
+  return new Promise ((resolve, reject) => {
 
-                snapshot.forEach((childSnapShot) => {
-                    var uid_child = childSnapShot.key;
-                })
-            })
-            .then(() => {
-                firebase.database().ref(`/users/${currentUserUid}/ravel_created`)
-                .once('value', function(snapshotRavels) {
-                    dispatch({ type: 'INITIAL_CREATED_CURR_USER_RAVEL_FETCH', payload:  snapshotRavels.val()});
-                })
-            })
-            .catch((error) => {
-                alert('Error loading user created...')
-            })
-    };
+    firebase.database().ref(`/users/${currentUserUid}/ravel_created`)
+    firebase.database().ref(`/users`).orderByChild(`/${currentUserUid}/ravel_created`).once('value', (snapshot) => {
+      snapshot.forEach((childSnapShot) => {
+        var uid_child = childSnapShot.key;
+      })
+    })
+    .then(() => {
+      firebase.database().ref(`/users/${currentUserUid}/ravel_created`)
+      .once('value', function(snapshotRavels) {
+        resolve (snapshotRavels.val());
+        dispatch({ type: 'INITIAL_CREATED_CURR_USER_RAVEL_FETCH', payload: snapshotRavels.val()});
+      })
+    })
+    .catch((error) => {
+      reject ('Error loading user-created ravels.');
+    })
+
+  });
 };
 
 /**
@@ -683,18 +686,24 @@ export const loadInitialCurrentUserCreatedRavel = () => {
                 - this.props.get_pending_invite_ravel.ravel_title
                 - this.props.get_pending_invite_ravel.user_created
                 - this.props.get_pending_invite_ravel.user_created_photoURL
- * actions: gets the current user's created ravels
+ * actions: gets the current user's pending invtted ravels
  *
  */
-export const getPendingRavelInvite = () => {
+export const getPendingRavelInvite = () => dispatch => {
 
     var currentUid = firebase.auth().currentUser.uid;
 
-    return (dispatch) => {
+    return new Promise ((resolve, reject) => {
+
         firebase.database().ref(`ravels`).orderByChild(`ravel_participants/${currentUid}`).equalTo(false).once('value', (snapshot) => {
-            dispatch({type: 'GET_PENDING_INVITE_RAVEL', payload: snapshot.val()})
+          resolve (snapshot.val());
+          dispatch({type: 'GET_PENDING_INVITE_RAVEL', payload: snapshot.val()})
         })
-    }
+        .catch((error) => {
+          reject ('Error loading invited ravels.');
+        })
+
+    });
 }
 
 
