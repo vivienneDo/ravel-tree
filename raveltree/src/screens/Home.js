@@ -1,23 +1,10 @@
 // Author:   Alex Aguirre
 // Created:  02/07/18
-// Modified: 03/13/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 04/03/18 by Frank Fusco (fr@nkfus.co)
 //
 // Home screen for RavelTree.
 //
-// Pass in an array of passages as a prop like so:
-//
-// <Home
-//    user={'Rebecca Bates'}
-//    passages={[
-//      {ravel: 'Endless Smirk', passageIndex: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I'm going to need if I'm going to fill up more space to ensure that this gets truncated after a certain number of lines', upvotes: 11, downvotes: 0},
-//      {ravel: 'Endless Smirk', passageIndex: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I'm going to need if I'm going to fill up more space to ensure that this gets truncated after a certain number of lines', upvotes: 11, downvotes: 0},
-//      {ravel: 'Endless Smirk', passageIndex: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I'm going to need if I'm going to fill up more space to ensure that this gets truncated after a certain number of lines', upvotes: 11, downvotes: 0},
-//      {ravel: 'Endless Smirk', passageIndex: '67-B', title: 'The Visitor', passage: 'A fearful man, all in coarse gray, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and here is some more text that I think I'm going to need if I'm going to fill up more space to ensure that this gets truncated after a certain number of lines', upvotes: 11, downvotes: 0},
-//    ]}
-// />
-//
-// TODO: "Newsfeed" algorithm, Firebase retrieval
-// TODO: Search functionality
+// TODO: "Newsfeed" algorithm
 
 import React, {Component} from 'react';
 import {
@@ -57,59 +44,15 @@ class Home extends Component<{}> {
   constructor (props: any, context: any) {
     super (props, context);
     this.state = {
-      gotPassageIDs: false,
-      //gotPassages: false,
+      loading: true,
+      ravels: {},
       passages: [],
     }
     this.props.setShowNavBar (true);
-    this.getPassages ();
-
-    // TEMP
-    // this.props.returnTest ()
-    //   .then (val => { console.log (val); })
-
-    // TEMP
-    this.props.updateRavelParticipant ('-L929k_Vy2Tj_kJigkmM', ['w3VsAyXE4WXZeivSCxhdNCOC7Nh1'])
-      .then (val => { console.log (val); })
-      .catch (error => { console.error (error); })
-
   }
 
-  componentWillReceiveProps (newProps) {
-    var ravels = newProps.all_ravel;
-
-    if (!this.state.gotPassageIDs && _.size (ravels) > 0) {
-      var passageIds = [];
-      Object.values (ravels).map (ravel => {
-        if (_.size (ravel.roots || {}) > 0) {
-          Object.keys (ravel.roots).map (passageID =>
-            passageIds.push ({
-              ravelID: ravel.ravel_uid,
-              passageID: passageID,
-            })
-          );
-        }
-      });
-      this.setState ({ gotPassageIDs: true });
-      passageIds.map (passage =>
-        // For now, just get all of them. Will have to restrict size or pick at
-        // random soon. Eventually, this will be an actual algorithm.
-        this.props.getPassageMetaData (passage.passageID, passage.ravelID)
-      );
-    }
-
-    var passage = newProps.passage_meta_data;
-
-    // TODO: Check whether the passage is marked public.
-    if (passage && _.size (passage) > 0) {
-      var passages = this.state.passages;
-      passages.push (passage);
-      this.setState ({ passages: passages });
-    }
-
-    if (newProps.userProfile) {
-      console.log (nextProps.userProfile);
-    }
+  componentWillMount () {
+    this.getPassages ();
   }
 
   onPressExplore () {
@@ -126,16 +69,50 @@ class Home extends Component<{}> {
 
   getPassages () {
     // TODO: "Newsfeed" algorithm, Firebase retrieval.
-    // For now, our newsfeed algorithm just gets all the passages.
+    // For now, our newsfeed algorithm just gets all public passages.
     // TODO: Select a subset at random and get more on scroll end.
-    this.props.loadAllRavel ();
+    this.props.loadAllPublicRavel ()
+    .then (ravels => {
+
+      this.setState ({ ravels: ravels });
+
+      if (_.size (ravels) > 0) {
+        var passageIds = [];
+        Object.values (ravels).map (ravel => {
+          if (_.size (ravel.roots || {}) > 0) {
+            Object.keys (ravel.roots).map (passageID =>
+              passageIds.push ({
+                ravelID: ravel.ravel_uid,
+                passageID: passageID,
+              })
+            );
+          }
+        });
+
+        // For now, just get n passages.
+        passageIds.length = Math.min (passageIds.length, PASSAGE_LOAD_COUNT);
+
+        passageIds.map (passage =>
+          this.props.getPassageMetaData (passage.passageID, passage.ravelID)
+          .then (passage => {
+            if (_.size (passage) > 0) {
+              var passages = this.state.passages;
+              passages.push (passage);
+              this.setState ({ passages: passages });
+            }
+          })
+          .then (this.setState ({ loading: false }))
+          .catch (error => { console.error (error); })
+        );
+      }
+    })
+    .catch (error => { console.error (error); })
   }
 
   renderPassages () {
-    if (_.size (this.state.passages) == 0) {
-      // Alternative message:
-      // No passages to display right now. You can search for ravels using
-      // Explore—or start your own ravel!
+    var passages = this.state.passages;
+
+    if (this.state.loading || _.size (passages) == 0) {
       return (
         <View style={styles.passages}>
           <Text>Loading newsfeed...</Text>
@@ -144,7 +121,14 @@ class Home extends Component<{}> {
       );
     }
 
-    var passages = this.state.passages;
+    // NOTE: Just assume there will never be zero passages?
+    // if (_.size (passages) == 0) {
+    //   return (
+    //     <View style={styles.passages}>
+    //       <Text>No passages to display right now. You can search for ravels using Explore—or start your own ravel!</Text>
+    //     </View>
+    //   );
+    // }
 
     return (
       <View style={styles.passages}>
