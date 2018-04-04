@@ -73,7 +73,6 @@ class YourRavels extends Component {
     })
     .catch (error => { console.error (error) });
 
-
     this.props.getPendingRavelInvite ()
     .then (ravels => {
       var loading = this.state.loading;
@@ -85,112 +84,6 @@ class YourRavels extends Component {
     })
     .catch (error => { console.error (error) });
   }
-
-  // componentWillReceiveProps (newProps) {
-  //   var retrieved = this.state.retrieved;
-  //   var stubs = this.state.stubs;
-  //   var loading = this.state.loading;
-  //   var metaData = newProps.ravel_meta_data;
-  //
-  //   console.log (newProps);
-  //
-  //   // User-Created Ravels
-  //   if (!retrieved.userCreatedRavels) {
-  //     console.log ('User created ravels not yet retrieved.')
-  //     if (newProps.all_user_created_ravels) {
-  //       console.log ("User created ravels retrieved.")
-  //       retrieved.userCreatedRavels = true;
-  //       this.setState ({
-  //         userCreatedRavels: newProps.all_user_created_ravels,
-  //         retrieved: retrieved,
-  //       });
-  //       if (_.size (newProps.all_user_created_ravels) > 0) { // Compare this to the size we expect...
-  //         console.log ('Getting user-created ravel metadata...');
-  //         this.getMetaData (newProps.all_user_created_ravels);
-  //       } else {
-  //         loading.userCreatedRavels = false;
-  //         this.setState ({ loading: loading });
-  //         this.props.loadNonCreatedCurrentUserRavel ();
-  //       }
-  //       return;
-  //     }
-  //   }
-  //
-  //   // User-Created Ravel Metadata
-  //   if (loading.userCreatedRavels) {
-  //     if ((newProps.ravel_meta_data || []).length != 0) {
-  //       console.log ('Metadata retrieved.');
-  //       stubs.userCreatedRavels [metaData.ravel_uid] = this.renderRavelStub (metaData);
-  //       this.setState ({ stubs: stubs });
-  //       if (_.size (stubs.userCreatedRavels) == _.size (this.state.userCreatedRavels)) {
-  //         loading.userCreatedRavels = false;
-  //         this.setState ({ loading: loading });
-  //         this.props.loadNonCreatedCurrentUserRavel ();
-  //       }
-  //       return;
-  //     }
-  //   }
-  //
-  //   // Ravels In
-  //   if (!retrieved.ravelsIn) {
-  //     if (newProps.all_non_created_user_ravel) {
-  //       retrieved.ravelsIn = true;
-  //       this.setState ({
-  //         ravelsIn: newProps.all_non_created_user_ravel,
-  //         retrieved: retrieved,
-  //       });
-  //       if (_.size (newProps.all_non_created_user_ravel) > 0) {
-  //         this.getMetaData (newProps.all_non_created_user_ravel);
-  //       } else {
-  //         loading.ravelsIn = false;
-  //         this.setState ({ loading: loading });
-  //         this.props.getPendingRavelInvite ();
-  //       }
-  //     }
-  //   }
-  //
-  //   // Ravels In Metadata
-  //   if (loading.ravelsIn) {
-  //     if ((newProps.ravel_meta_data || []).length != 0) {
-  //       stubs.ravelsIn [metaData.ravel_uid] = this.renderRavelStub (metaData);
-  //       this.setState ({ stubs: stubs });
-  //       if (_.size (stubs.ravelsIn) == _.size (this.state.ravelsIn)) {
-  //         loading.ravelsIn = false;
-  //         this.setState ({ loading: loading });
-  //         this.props.getPendingRavelInvite ();
-  //       }
-  //       return;
-  //     }
-  //   }
-  //
-  //   // Ravels Invited
-  //   if (!retrieved.ravelsInvited) {
-  //     if (newProps.get_pending_invite_ravel) {
-  //       retrieved.ravelsInvited = true;
-  //       this.setState ({
-  //         ravelsInvited: newProps.get_pending_invite_ravel,
-  //         retrieved: retrieved,
-  //       });
-  //       if (_.size (newProps.get_pending_invite_ravel) > 0) {
-  //         this.getMetaData (newProps.get_pending_invite_ravel);
-  //       } else {
-  //         loading.ravelsInvited = false;
-  //         this.setState ({ loading: loading });
-  //       }
-  //     }
-  //   }
-  //
-  //   // Ravels Invited Metadata
-  //   if (loading.ravelsInvited) {
-  //     stubs.ravelsInvited [metaData.ravel_uid] = this.renderRavelStub (metaData);
-  //     this.setState ({ stubs: stubs });
-  //     if (_.size (stubs.ravelsInvited) == _.size (this.state.ravelsInvited)) {
-  //       loading.ravelsInvited = false;
-  //       this.setState ({ loading: loading });
-  //     }
-  //     return;
-  //   }
-  // }
 
   // getMetaData (ravels) {
   //   Object.keys (ravels).map (ravel =>

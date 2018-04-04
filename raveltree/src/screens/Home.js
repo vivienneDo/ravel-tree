@@ -69,7 +69,7 @@ class Home extends Component<{}> {
     //   .then (val => { console.log (val); })
 
     // TEMP
-    this.props.loadAllUserKey ()
+    this.props.updateRavelParticipant ('-L929k_Vy2Tj_kJigkmM', ['w3VsAyXE4WXZeivSCxhdNCOC7Nh1'])
       .then (val => { console.log (val); })
       .catch (error => { console.error (error); })
 
