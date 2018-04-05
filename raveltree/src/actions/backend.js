@@ -2728,7 +2728,7 @@ export const upVotePassage = (ravel_uid, passage_uid) => {
     var passage_creator_uid;
     var downvote;
 
-    return(dispatch) => {
+    return (dispatch) => {
 
         
         checkRavelEnabledVoting(ravel_uid, passage_uid).then(valueOfKey => {
@@ -3227,6 +3227,7 @@ export const deletePassageComment = (ravel_uid, passage_uid, comment_key) => {
  *          If comments are enabled, returns back a state change with the passage_uid/passage_comment list 
  */
 export const getPassageComment = (ravel_uid, passage_uid) => {
+    
     return (dispatch) => {
         checkRavelEnabledComment(ravel_uid, passage_uid).then(valueOfKey => {
             if (valueOfKey) {
@@ -3399,7 +3400,7 @@ export const explorePassagePromise = (listOfPublicRavel) => {
             valueOfKey = true 
         })
             .then(() => {
-                console.log('value of value of key inside recalcu' + valueOfKey)
+                //console.log('value of value of key inside recalcu' + valueOfKey)
                 return valueOfKey
             })
             .then((valueOfKey) => {
