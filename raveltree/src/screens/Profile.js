@@ -97,7 +97,8 @@ class Profile extends Component {
       ...this.props.screenData,
     };
 
-
+    console.log ('Current user profile: ' + this.props.currentUserProfile.user_uid);
+    console.log ('Passed user profile: ' + this.props.profile);
 
 
     // if (this.props.userID == this.props.currentUserProfile.user_uid) {

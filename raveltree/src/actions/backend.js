@@ -2429,7 +2429,9 @@ export const calculateNodeCountOnRavelFetch= (ravel_uid) => {
                         var i = 0;
 
                         m_numChildOnLevel.forEach(elm => {
-                            firebase.database().ref(`ravels/${ravel_uid}/nodeCount/${i + 1} `).set(elm);
+                            // frank (04/04/18): Fixed bug that inserted an extra space in the key.
+                            // firebase.database().ref(`ravels/${ravel_uid}/nodeCount/${i + 1} `).set(elm);
+                            firebase.database().ref(`ravels/${ravel_uid}/nodeCount/${i + 1}`).set(elm);
                             i++;
                         })
                     })

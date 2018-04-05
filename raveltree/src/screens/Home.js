@@ -63,13 +63,9 @@ class Home extends Component<{}> {
     this.props.navigateForward ('StartARavel', this.constructor.name);
   }
 
-  onChangeText (text) {
-    // TODO: Search
-  }
-
   getPassages () {
-    // TODO: "Newsfeed" algorithm, Firebase retrieval.
-    // For now, our newsfeed algorithm just gets all public passages.
+    // TODO: "Newsfeed" algorithm.
+    // For now, our newsfeed algorithm just gets n public passages.
     // TODO: Select a subset at random and get more on scroll end.
     this.props.loadAllPublicRavel ()
     .then (ravels => {

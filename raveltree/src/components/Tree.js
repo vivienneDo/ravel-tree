@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   03/14/18
-// Modified:  03/28/18
+// Modified:  04/05/18
 
 // Tree component for RavelTree.
 //
@@ -72,6 +72,7 @@ class Tree extends Component {
     this.state = {
       ...this.props,
       //tree: {},
+      nodesToRender: [],
       selectedNodeIndex: undefined,
       connectingArrow: {},
       loading: true,
@@ -81,45 +82,40 @@ class Tree extends Component {
     TREE_HORIZONTAL_PADDING = this.props.horizontalPadding || 20;
   }
 
-  componentWillReceiveProps (newProps) {
-    var tree = this.state.tree;
-    var passage = newProps.passage_meta_data;
-    console.log (passage);
-
-    // Passage Metadata
-    if (passage && _.size (passage) > 0) {
-      if (!((tree.nodesProcessed || {}) [passage.level] || {}) [passage.passage_uid]) {
-        console.log ("Received passage metadata.");
-        console.log (passage);
-        tree.data [passage.passage_uid] = passage;
-        if (!tree.nodesProcessed [passage.level]) { tree.nodesProcessed [passage.level] = {}; }
-        tree.nodesProcessed [passage.level] [passage.passage_uid] = true;
-        console.log (tree);
-        this.setState ({ tree: tree });
-
-        nodesToRender.push (this.renderNode (tree.data [passage.passage_uid]));
-
-        // TODO: Check whether we're done rendering all the nodes at this level.
-        //  - If so, get the current nodes' children.
-        //  - If not, keep waiting.
-        if (tree.nodesProcessed [passage.level].length == tree.nodeCounts [passage.level]) {
-          // Move the loading indicator another level to the right.
-          var loadingLevel = this.state.loadingLevel + 1;
-          this.setState ({ loadingLevel : loadingLevel });
-
-          // TODO: Check whether we need to render any arrows.
-
-          // TODO: For now, start getting the current node's children. Eventually, insert a check
-          // here to see where the ScrollView is. Or alterntively, get the screen's width
-          // right off the bat and render only that many. In that case, make sure the width
-          // of the displayed tree is only however many nodes are showing, not the total.
-          // That way, we can make use of the function that detects when the end of the
-          // ScrollView is reached. TODO: Look into that function and see if it's viable /
-          // cross-compatible.
-
-        }
-      }
-    }
+  renderTestNode () {
+    return (
+      <View
+        key={'12345'}
+        style={{
+          position: 'absolute',
+          zIndex: 2,
+          left: this.getXPosition ({ level: 1 }),
+          top: 0,
+          width: NODE_WIDTH,
+          height: NODE_HEIGHT,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <PassageStub
+          key={'1234567890'}
+          {...this.props}
+          name={'Test Title'}
+          passageIndex={'1-A'}
+          score={0}
+          active={true}
+          disabled={false}
+          author={firebase.auth().currentUser.uid}
+          onPress={() => this.onPressPassage ({})}
+          onPressAdd={() => this.props.onPressAdd ({})}
+          showAddButton={
+            ((this.state.screenData.ravel_participants || {}) [firebase.auth ().currentUser.uid]) ||
+            (this.props.screenData.user_created == firebase.auth ().currentUser.uid)
+          }
+          highlighted={false}
+        />
+      </View>
+    );
   }
 
   findPosition (index) {
@@ -157,6 +153,10 @@ class Tree extends Component {
       }
     }
     return null;
+  }
+
+  logLive (obj) {
+    return (JSON.stringify(obj));
   }
 
   renderLoader () {
@@ -286,8 +286,9 @@ class Tree extends Component {
     var nodesAtThisLevel = this.state.tree.nodeCounts [node.level];
     var odd = nodesAtThisLevel % 2 != 0;
     var center = (nodesAtThisLevel - 1)/2;
-    var i = _.size (this.state.tree.nodesProcessed [node.level]);
+    var i = _.size (this.state.tree.nodesProcessed [node.level]) - 1;
     var y;
+
     if (i == center) {
       y = 0;
     }
@@ -517,9 +518,47 @@ class Tree extends Component {
       if (DEBUG) console.log (tree);
 
       // Download the passages at the root level.
-      Object.keys (tree.data).map (id =>
-        this.props.getPassageMetaData (id, this.props.ravelID)
-      );
+      this.props.getPassageUidOnLevel (this.props.ravelID, 1)
+      .then (passageIDs => {
+
+        if (DEBUG) console.log ('Got ' + _.size (passageIDs) + ' passages at level ' + 1 + ':')
+        if (DEBUG) console.log (passageIDs);
+
+        // Get the metadata for each passage.
+        return Promise.all (Object.keys (passageIDs).map (async passageID => {
+          return this.props.getPassageMetaData (passageID, this.props.ravelID);
+
+        }))
+      })
+      .then (passages => {
+
+        // Create a node for each passage.
+        return Promise.all (Object.values (passages).map (async passage => {
+          // Update the tree with the passage metadata.
+          var tree = this.state.tree;
+          var passageID = passage.passage_uid;
+          if (!tree.nodesProcessed [passage.level]) { tree.nodesProcessed [passage.level] = {}; }
+          tree.nodesProcessed [passage.level] [passageID] = true;
+          tree.data [passageID] = passage;
+
+          if (DEBUG) console.log (tree.data [passageID]);
+
+          return (this.renderNode (tree.data [passageID]));
+        }))
+
+      })
+      .then ((nodes) => {
+        // Add the nodes to the array of nodes to render.
+        var nodesToRender = this.state.nodesToRender.slice (this.state.nodesToRender.length);
+        nodesToRender.push (...nodes);
+        this.setState ({ nodesToRender: nodesToRender });
+
+        // Increment the loading level.
+        var loadingLevel = this.state.loadingLevel + 1;
+        this.setState ({ loading: false, loadingLevel: loadingLevel });
+
+      })
+      .catch (error => { console.error (error); });
     } else {
       if (DEBUG) console.log ('Tree already processed. Skipping analysis.');
     }
@@ -538,7 +577,7 @@ class Tree extends Component {
 
     return (
       <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, top: MAGIC_NUMBER,}}>
-        {nodesToRender}
+        {this.state.nodesToRender}
         <Surface
           width={TREE_WIDTH}
           height={TREE_HEIGHT}
@@ -561,7 +600,7 @@ class Tree extends Component {
   render () {
     const tree = this.props.tree;
     return (
-      <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, /*backgroundColor: '#aaaaaa',*/ zIndex: 1,}}>
+      <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, zIndex: 1,}}>
         {this.renderTree (tree)}
         {this.renderLoader ()}
       </View>

@@ -33,10 +33,20 @@ import VoteBar from './VoteBar'
 class PassagePopup extends React.Component {
   constructor (props, context) {
     super (props, context);
+    this.state = {
+      loading: !this.props.passageMetaData,
+      passageMetaData: this.props.passageMetaData || {},
+    };
   }
 
   componentWillReceiveProps (newProps) {
-
+    if (newProps.passageMetaData) {
+      console.log (newProps.passageMetaData);
+      this.setState ({
+        loading: false,
+        passageMetaData: newProps.passageMetaData,
+      });
+    }
   }
 
   onPressMerge () {
@@ -90,10 +100,8 @@ class PassagePopup extends React.Component {
   }
 
   render () {
-    var {
-      passageMetaData,
-      testID,
-    } = this.props;
+    var passageMetaData = this.state.passageMetaData || {};
+
     isActive = passageMetaData.isOptimal || this.props.isActive;
 
     console.log (passageMetaData);

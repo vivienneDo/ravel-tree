@@ -39,35 +39,6 @@ import * as Test from '../test/Test'
 
 TREE_HORIZONTAL_PADDING = 20;
 
-// this.state.loading is set to true by default. We're loading until the ravel's
-// metadata comes back.
-
-// State: {
-//   loading: true,
-//   tree: {
-//     data: {},
-//     nodeCounts: {},
-//     nodesProcessed: {},
-//     depth: 0,
-//     breadth: 0,
-//     height: 0,
-//     width: 0,
-//     analyzed: false,
-//   },
-//   ravelID: screenData.ravel_uid || '',
-//   title: '',
-//   author: '',
-//   participants: [],
-//   score: 0,
-//   concept: '',
-//   mode: /*firebase.auth ().currentUser.uid == (screenData.user_created || '') ? 'owned' :*/ '',
-//   showModal: '',
-//   loadPassage: screenData.loadPassage || false,
-//   passageID: screenData.passage_uid || '',
-//   //passageIndex: screenData.passageIndex || '',
-//   passageMetaData: screenData.passageMetaData || {},
-// };
-
 class Ravel extends Component {
   constructor (props) {
     super (props);
@@ -78,19 +49,21 @@ class Ravel extends Component {
       mode: this.props.mode || '',
       showModal: '',
       loadPassage: screenData.loadPassage || false,
-      // passageID: screenData.passage_uid || '',
-      // passageMetaData: screenData.passageMetaData || {},
+      passageID: screenData.passage_uid || '',
+      //passageMetaData: screenData.passageMetaData || {},
     };
 
-    console.log (screenData);
-
-    // Retrieve the ravel's metadata.
-    this.props.getRavelMetaData (screenData.ravel_uid);
+    //console.log (screenData);
   }
 
-  componentWillReceiveProps (newProps) {
-    var ravel = newProps.ravel_meta_data;
-    if (this.state.loading && (ravel || {}).ravel_uid == this.props.screenData.ravel_uid) {
+  componentWillMount () {
+    this.props.getRavelMetaData (this.props.screenData.ravel_uid)
+    .then (ravel => { this.handleRavelMetaData (ravel); })
+    .catch (error => { console.error (error); });
+  }
+
+  handleRavelMetaData (ravel) {
+    if ((ravel || {}).ravel_uid == this.props.screenData.ravel_uid) {
       var tree = {
         data: ravel.roots,
         nodeCounts: ravel.nodeCount,
@@ -117,22 +90,22 @@ class Ravel extends Component {
       // If we're supposed to be loading a passage.
       if (this.state.loadPassage) {
         // ...then we need to get the passage metadata as well.
-        this.props.getPassageMetaData (this.state.passageID, this.state.ravelID);
+        this.props.getPassageMetaData (this.state.passageID, this.state.ravelID)
+        .then (passage => { this.handlePassageMetaData (passage); })
+        .catch (error => { console.error (error); });
       }
-    }
-
-    var passage = newProps.passage_meta_data;
-    if (!this.state.loading && this.state.loadPassage && passage) {
-      this.setState ({
-        passageMetaData: passage,
-        loadPassage: false,
-        showModal: 'passage',
-      });
     }
   }
 
+  handlePassageMetaData (passage) {
+    this.setState ({
+      passageMetaData: passage,
+      loadPassage: false,
+      showModal: 'passage',
+    });
+  }
+
   showModal (modalToShow) {
-    return;                               // TODO: REMOVE
     var Popup;
     switch (modalToShow) {
       case 'concept':
