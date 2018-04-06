@@ -76,6 +76,7 @@ class Tree extends Component {
       arrowsToRender: [],
       stagedArrowData: [],
       optimal: [],
+      disabled: [],
       loading: true,
       loadingLevel: 1,
       shouldLoadLevel: false,
@@ -407,44 +408,6 @@ class Tree extends Component {
     );
   }
 
-  renderLevel (tree, data, nodes, level) {
-
-    // ----------------------------
-    // TO INTEGRATE:
-    // ----------------------------
-
-      // // Designate the optimal child.
-      // if (data [j].optimal && data [j].children) {
-      //   var optimalChild = data [j].optimalChild;
-      //   (data [j].children [optimalChild] || {}).optimal = true;
-      // }
-
-      // If we're on the Merge screen...
-      if (this.props.mergeFrom) {
-        // We want to exclude all levels <= the specified passage index.
-        var mergeFromLevel = parseInt (this.props.mergeFrom.split ('-') [0]);
-        var thisLevel = level + 1;
-        if (thisLevel <= mergeFromLevel) {
-          data [j].disabled = true;
-        }
-
-        // We also want to exclude any of the node's existing children. We have
-        // to do this from the child node to be excluded, not the parent.
-        for (var k = 0; k < (data [j].parents || {}).length; k++) {
-          // If the parent node is the mergeFrom node, disable the current node.
-          if (data [j].parents [k].passageIndex == this.props.mergeFrom) {
-            data [j].disabled = true;
-          }
-        }
-
-        if (data [j].passageIndex == this.props.mergeFrom && data [j].children) {
-          for (var k = 0; k < data [j].children.length; k++) {
-            data [j].children [k].disabled = true;
-          }
-        }
-      }
-  }
-
   getLevel (level) {
     this.props.getPassageUidOnLevel (this.props.ravelID, level)
     .then (passageIDs => {
@@ -514,6 +477,31 @@ class Tree extends Component {
 
       // Create a node for each passage.
       return Promise.all (Object.values (passages).map (async passage => {
+
+        // If we're on the Merge screen:
+        // TODO: Test this block.
+        if (this.props.mergeFrom) {
+          // We want to exclude all levels <= the specified passage index.
+          var mergeFromLevel = parseInt (this.props.mergeFrom.split ('-') [0]);
+          //var thisLevel = level + 1;
+          if (level <= mergeFromLevel) {
+            passage.disabled = true;
+          }
+
+          // We also want to exclude any of the node's existing children.
+          var disabled = this.state.disabled.slice ();
+          if (passage.passageIndex == this.props.mergeFrom) {
+            // This is the passage we're merging from. Remember the passageIDs
+            // of the passages to disable when we get to them.
+            Object.keys (passage.child).map (id => { disabled.push (id); });
+          }
+          if (disabled.includes (passage.passage_uid)) {
+            // This is a child of the passage we're merging from. Disable it.
+            passage.disabled = true;
+            disabled.splice (disabled.indexOf (passage.passage_uid), 1);
+          }
+          this.setState ({ disabled: disabled });
+        }
 
         // Update the nodesProcessed array with the passage metadata.
         var tree = this.state.tree;
