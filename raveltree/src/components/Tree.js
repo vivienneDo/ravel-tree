@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   03/14/18
-// Modified:  03/28/18
+// Modified:  04/05/18
 
 // Tree component for RavelTree.
 //
@@ -54,8 +54,8 @@ const ARROW_HEIGHT = NODE_HEIGHT;
 TREE_HEIGHT = undefined;
 TREE_WIDTH  = undefined;
 
-var nodesToRender = [];
-var arrowsToRender = [];
+// var nodesToRender = [];
+// var arrowsToRender = [];
 
 // MAGIC_NUMBER:
 // MaxNodes   Height    Magic Number
@@ -72,54 +72,97 @@ class Tree extends Component {
     this.state = {
       ...this.props,
       //tree: {},
-      selectedNodeIndex: undefined,
-      connectingArrow: {},
+      nodesToRender: [],
+      arrowsToRender: [],
+      stagedArrowData: [],
+      optimal: [],
+      disabled: [],
       loading: true,
       loadingLevel: 1,
+      shouldLoadLevel: false,
+      selectedNodeIndex: undefined,
+      connectingArrow: {},
     };
 
     TREE_HORIZONTAL_PADDING = this.props.horizontalPadding || 20;
   }
 
-  componentWillReceiveProps (newProps) {
-    var tree = this.state.tree;
-    var passage = newProps.passage_meta_data;
-    console.log (passage);
+  renderTestNode () {
+    return (
+      <View
+        key={'12345'}
+        style={{
+          position: 'absolute',
+          zIndex: 2,
+          left: this.getXPosition ({ level: 1 }),
+          top: 0,
+          width: NODE_WIDTH,
+          height: NODE_HEIGHT,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <PassageStub
+          key={'1234567890'}
+          {...this.props}
+          name={'Test Title'}
+          passageIndex={'1-A'}
+          score={0}
+          active={true}
+          disabled={false}
+          author={firebase.auth().currentUser.uid}
+          onPress={() => this.onPressPassage ({})}
+          onPressAdd={() => this.props.onPressAdd ({})}
+          showAddButton={
+            ((this.state.screenData.ravel_participants || {}) [firebase.auth ().currentUser.uid]) ||
+            (this.props.screenData.user_created == firebase.auth ().currentUser.uid)
+          }
+          highlighted={false}
+        />
+      </View>
+    );
+  }
 
-    // Passage Metadata
-    if (passage && _.size (passage) > 0) {
-      if (!((tree.nodesProcessed || {}) [passage.level] || {}) [passage.passage_uid]) {
-        console.log ("Received passage metadata.");
-        console.log (passage);
-        tree.data [passage.passage_uid] = passage;
-        if (!tree.nodesProcessed [passage.level]) { tree.nodesProcessed [passage.level] = {}; }
-        tree.nodesProcessed [passage.level] [passage.passage_uid] = true;
-        console.log (tree);
-        this.setState ({ tree: tree });
+  addToTree (passage) {
+    // Finds a passageID in the tree.data structure, adds its metadata, and
+    // returns a 'path' to it in the form of an array.
+    var path = [];
+    var found = this._addToTree (passage, this.state.tree.data, 1, _.size (this.state.tree.data), path);
+    return found ? path : undefined;
+  }
 
-        nodesToRender.push (this.renderNode (tree.data [passage.passage_uid]));
+  _addToTree (passage, tree, level, groupCount, path) {
+    if (!passage || !tree) { return false; }
 
-        // TODO: Check whether we're done rendering all the nodes at this level.
-        //  - If so, get the current nodes' children.
-        //  - If not, keep waiting.
-        if (tree.nodesProcessed [passage.level].length == tree.nodeCounts [passage.level]) {
-          // Move the loading indicator another level to the right.
-          var loadingLevel = this.state.loadingLevel + 1;
-          this.setState ({ loadingLevel : loadingLevel });
+    var found = false;
+    var targetLevel = passage.level;
 
-          // TODO: Check whether we need to render any arrows.
+    if (level < targetLevel) {
+      // For each node in this group, try to get to the target level.
+      for (let id of Object.keys (tree)) {
+        path.push (id);
+        found = this._addToTree (passage, tree [id].child, level + 1, _.size (tree [id].child), path);
+        if (found) { return true; } else { path.pop (); }
+      }
+      return false;
+    }
 
-          // TODO: For now, start getting the current node's children. Eventually, insert a check
-          // here to see where the ScrollView is. Or alterntively, get the screen's width
-          // right off the bat and render only that many. In that case, make sure the width
-          // of the displayed tree is only however many nodes are showing, not the total.
-          // That way, we can make use of the function that detects when the end of the
-          // ScrollView is reached. TODO: Look into that function and see if it's viable /
-          // cross-compatible.
+    // If we're deeper than the target level, don't go any further.
+    if (level > targetLevel) { return false; }
 
-        }
+    // We're at the target level. Check this group for the passageID.
+    for (let id of Object.keys (tree)) {
+      if (id == passage.passage_uid) {
+        // if (DEBUG) { console.log ('FOUND:'); }
+        // if (DEBUG) { console.log (id); }
+
+        // If found, replace the entry with the passage's metadata.
+        tree [id] = passage;
+        /*if (_.size (path) == 0) {*/ path.push (id); /*}*/
+        return true;
       }
     }
+    return false;
   }
 
   findPosition (index) {
@@ -138,7 +181,6 @@ class Tree extends Component {
     if (level < targetLevel) {
       // For each node in this group, try to get to the target level.
       for (var i = 0; i < tree.length; i++) {
-
         position = this._findPosition (index, tree [i].children, level + 1, tree [i].children.length);
         if (position) { return position; }
       }
@@ -157,6 +199,10 @@ class Tree extends Component {
       }
     }
     return null;
+  }
+
+  logLive (obj) {
+    return (JSON.stringify(obj));
   }
 
   renderLoader () {
@@ -286,8 +332,9 @@ class Tree extends Component {
     var nodesAtThisLevel = this.state.tree.nodeCounts [node.level];
     var odd = nodesAtThisLevel % 2 != 0;
     var center = (nodesAtThisLevel - 1)/2;
-    var i = _.size (this.state.tree.nodesProcessed [node.level]);
+    var i = _.size (this.state.tree.nodesProcessed [node.level]) - 1;
     var y;
+
     if (i == center) {
       y = 0;
     }
@@ -303,12 +350,24 @@ class Tree extends Component {
   renderNode (content) {
     var Node = PassageStub;
 
-    console.log (content);
+    //console.log (content);
 
     // Position
     if (!content.position) { content.position = {}; }
     content.position.x = this.getXPosition (content);
     content.position.y = this.getYPosition (content);
+
+    // Get any staged arrows and update them with relevant position data.
+    var stagedArrowData = this.state.stagedArrowData.slice ();
+    stagedArrowData.map (a => {
+      if (a.id == content.passage_uid) {
+        a.endPosition = {
+          x: content.position.x,
+          y: content.position.y,
+        };
+      }
+      this.setState ({ stagedArrowData: stagedArrowData });
+    });
 
     return (
       <View
@@ -349,140 +408,185 @@ class Tree extends Component {
     );
   }
 
-  renderLevel (tree, data, nodes, level) {
-    if (
-      !tree                    ||
-      !tree.nodeCounts         ||
-      !tree.nodeCounts [level] ||
-      !data                    ||
-      data == undefined        ||
-      data.length < 1
-    ) { return nodes; }
+  getLevel (level) {
+    this.props.getPassageUidOnLevel (this.props.ravelID, level)
+    .then (passageIDs => {
 
-    // DEBUG
-    var tabs = '';
-    for (var n = 0; n < level; n++) { tabs += '\t'; }
-    if (DEBUG) console.log (tabs + 'Rendering at level ' + level + '...');
+      if (DEBUG) console.log ('Got ' + _.size (passageIDs) + ' passages at level ' + 1 + ':')
+      if (DEBUG) console.log (passageIDs);
 
-    // Get the number of nodes at this level.
-    var nodesAtThisLevel = tree.nodeCounts [level];
+      // Get the metadata for each passage.
+      return Promise.all (Object.keys (passageIDs).map (async passageID => {
+        return this.props.getPassageMetaData (passageID, this.props.ravelID);
 
-    // Get the number of siblings in this group.
-    var nodesInThisGroup = data [0].groupCount;
-    if (DEBUG) console.log (tabs + 'Nodes in this group: ' + nodesInThisGroup);
+      }))
+    })
+    .then (passages => {
 
-    // Keep track of how many nodes at this level we've processed.
-    if (!tree.nodesProcessed [level]) { tree.nodesProcessed [level] = 0; }
+      // Designate the optimal node on this level (if any).
+      var optimal = this.state.optimal;
+      // Level 1:
+      if (level == 1) {
+        // If there's only one passage on level 1, it's optimal by default.
+        if (_.size (passages) == 1) {
+          passages [0].optimal = true;
 
-    // DEBUG
-    if (DEBUG) console.log (tabs + 'Already processed ' + tree.nodesProcessed [level] + "/" + nodesAtThisLevel + ' nodes at this level.');
+          // Remember its optimal child.
+          if (passages [0].optimalChild) {
+            optimal.push (passages [0].optimalChild);
+          }
 
-    // Calculate the positions for each node at this level.
-    // --------------------------------------------
-    // Horizontal Positioning:
-    // --------------------------------------------
-    var n = level + 1;
-    var s = SPACING_HORIZONTAL;
-    var W = NODE_WIDTH;
-    var k = (2 * n - 1);
-    var x = (k * W)/2 + (n-1) * s - (W/2);
+          this.setState ({ optimal: optimal });
+        }
+        // Otherwise, mark the passage with the highest optimality score.
+        else {
+          var iMax = 0;
+          var count = 0;
+          Object.values (passages).map (passage => {
+            if (passage.optimalityScore > passages [iMax].optimalityScore) {
+              iMax = count;
+            }
+            count++;
+          });
+          passages [iMax].optimal = true;
 
-    // --------------------------------------------
-    // Vertical Positioning:
-    // --------------------------------------------
-    var s = SPACING_VERTICAL;
-    var N = NODE_HEIGHT;
-    var odd = nodesAtThisLevel % 2 != 0;
-    var center = (nodesAtThisLevel - 1)/2;
+          // Remember its optimal child.
+          if (passages [iMax].optimalChild) {
+            optimal.push (passages [iMax].optimalChild);
+          }
 
-    var j = 0;
-    var groupNodesProcessed = 0;
-    while (groupNodesProcessed < nodesInThisGroup) {
-      var i = tree.nodesProcessed [level];
-
-      var y;
-      if (i == center) {
-        y = 0;
+          this.setState ({ optimal: optimal });
+        }
       }
-      else if (i < center) {
-        y = - ((center-i) * N + (center-i) * s);
-      }
-      else if (i > center) {
-        y = (i-center) * N + (i-center) * s;
-      }
-
-      // Add position data to the tree.
-      data [j].position = {x: x, y: y};
-
-      // Designate the optimal child.
-      if (data [j].optimal && data [j].children) {
-        var optimalChild = data [j].optimalChild;
-        (data [j].children [optimalChild] || {}).optimal = true;
+      // Any other level: If any passage is designated optimal in the array,
+      // mark it as optimal and add its optimal child to the optimality array.
+      else {
+        Object.values (passages).map (passage => {
+          var optimal = this.state.optimal.slice ();
+          if (optimal.includes (passage.passage_uid)) {
+            var i = optimal.indexOf (passage);
+            if (i > -1) { optimal.splice (i, 1); }
+            passage.optimal = true;
+            if (passage.optimalChild) {
+              optimal.push (passage.optimalChild);
+            }
+          }
+          this.setState ({ optimal: optimal });
+        });
       }
 
-      // Repeat for each child.
-      this.renderLevel (tree, data [j].children, nodes, ++level);
+      // Create a node for each passage.
+      return Promise.all (Object.values (passages).map (async passage => {
 
-      // Now that we're back, decrement level.
-      level--;
+        // If we're on the Merge screen:
+        // TODO: Test this block.
+        if (this.props.mergeFrom) {
+          // We want to exclude all levels <= the specified passage index.
+          var mergeFromLevel = parseInt (this.props.mergeFrom.split ('-') [0]);
+          //var thisLevel = level + 1;
+          if (level <= mergeFromLevel) {
+            passage.disabled = true;
+          }
 
-      // If we're on the Merge screen...
-      if (this.props.mergeFrom) {
-        // We want to exclude all levels <= the specified passage index.
-        var mergeFromLevel = parseInt (this.props.mergeFrom.split ('-') [0]);
-        var thisLevel = level + 1;
-        if (thisLevel <= mergeFromLevel) {
-          data [j].disabled = true;
+          // We also want to exclude any of the node's existing children.
+          var disabled = this.state.disabled.slice ();
+          if (passage.passageIndex == this.props.mergeFrom) {
+            // This is the passage we're merging from. Remember the passageIDs
+            // of the passages to disable when we get to them.
+            Object.keys (passage.child).map (id => { disabled.push (id); });
+          }
+          if (disabled.includes (passage.passage_uid)) {
+            // This is a child of the passage we're merging from. Disable it.
+            passage.disabled = true;
+            disabled.splice (disabled.indexOf (passage.passage_uid), 1);
+          }
+          this.setState ({ disabled: disabled });
         }
 
-        // We also want to exclude any of the node's existing children. We have
-        // to do this from the child node to be excluded, not the parent.
-        for (var k = 0; k < (data [j].parents || {}).length; k++) {
-          // If the parent node is the mergeFrom node, disable the current node.
-          if (data [j].parents [k].passageIndex == this.props.mergeFrom) {
-            data [j].disabled = true;
+        // Update the nodesProcessed array with the passage metadata.
+        var tree = this.state.tree;
+        var passageID = passage.passage_uid;
+        if (!tree.nodesProcessed [passage.level]) { tree.nodesProcessed [passage.level] = {}; }
+        tree.nodesProcessed [passage.level] [passageID] = passage;
+
+        // Find the passageID in the data tree and replace the entry.
+        // (Yeah, this constructs a "path" to the passage using strings. If you
+        // know of a better way, please change this. It is super gross.)
+        var pathToPassage = this.addToTree (passage);
+        var indexedPath = pathToPassage.map (id => [id]);
+        var indexedPathString = JSON.stringify (indexedPath);
+        indexedPathString = indexedPathString.replace (/,/g , "['child']");
+        indexedPathString = indexedPathString.substr (1).slice (0, -1);
+        indexedPathString = 'tree.data ' + indexedPathString;
+
+        // Prepare data for arrows linking to the parent(s).
+        var arrows = [];
+        if (level > 1 && passage.parent) {
+          for (let parent of Object.keys (passage.parent)) {
+            // Find the level and position of this parent passage, and whether
+            // it's optimal.
+            var parentLevel;
+            var parentPosition;
+            var parentOptimal;
+            for (let _level of Object.values (tree.nodesProcessed)) {
+              if (_level [parent]) {
+                parentLevel = _level [parent].level;
+                parentPosition = _level [parent].position;
+                parentOptimal = _level [parent].optimal;
+              }
+            }
+
+            var startPosition = {
+              x: parentPosition.x + (NODE_WIDTH),
+              y: parentPosition.y + (NODE_HEIGHT / 2),
+            }
+            var endPosition = startPosition;
+            var optimal = parentOptimal && passage.optimal;
+            arrows.push ({
+              id:            passage.passage_uid,
+              startPosition: startPosition,
+              endPosition:   endPosition,
+              optimal:       optimal,
+            });
           }
         }
 
-        if (data [j].passageIndex == this.props.mergeFrom && data [j].children) {
-          for (var k = 0; k < data [j].children.length; k++) {
-            data [j].children [k].disabled = true;
-          }
-        }
-      }
+        // Add the arrows to the array of staged arrow data.
+        var stagedArrowData = this.state.stagedArrowData.slice ();
+        stagedArrowData.push (...arrows);
+        this.setState ({ stagedArrowData: stagedArrowData });
 
-      // Generate the node.
-      nodes.push (this.renderNode (_.omit (data [j], ['children', 'groupCount',])));
+        return (this.renderNode  (eval (indexedPathString)));
 
-      // Generate the arrows.
-      if (data [j].children) {
-        for (var k = 0; k < data [j].children.length; k++) {
-          var startPosition = {
-            x: data [j].position.x + (W),
-            y: data [j].position.y + (N/2),
-          }
-          var endPosition = {
-            x: data [j].children [k].position.x,
-            y: data [j].children [k].position.y + N/2,
-          }
-          var optimal = data [j].optimal && data [j].children [k].optimal;
-          arrowsToRender.push (this.renderArrow (startPosition, endPosition, optimal));
-        }
-      }
+      }))
+    })
+    .then ((nodes) => {
 
-      // DEBUG
-      if (DEBUG) console.log (tabs + 'Processed node ' + data [j].name);
+      // Add the staged arrows to the array of arrows to render.
+      var stagedArrowData = this.state.stagedArrowData.slice ();
+      var arrowsToRender = this.state.arrowsToRender.slice ();
+      var arrows = stagedArrowData.map (a => {
+        return (this.renderArrow (a.startPosition, a.endPosition, a.optimal));
+      });
+      arrowsToRender.push (...arrows);
+      this.setState ({
+        arrowsToRender:  arrowsToRender,
+        stagedArrowData: [],
+      });
 
-      tree.nodesProcessed [level] ++;
-      j++;
-      groupNodesProcessed++;
-    }
+      // Add the nodes to the array of nodes to render.
+      var nodesToRender = this.state.nodesToRender.slice ();
+      nodesToRender.push (...nodes);
+      this.setState ({ nodesToRender: nodesToRender });
 
-    // DEBUG
-    var sym = tree.nodesProcessed [level] == nodesAtThisLevel ? '✅' : '❌';
-    if (DEBUG) console.log (tabs + sym + 'Processed ' + tree.nodesProcessed [level] + "/" + nodesAtThisLevel + ' nodes at level ' + level + '.');
-
-    return nodes;
+      // Increment the loading level.
+      var loadingLevel = this.state.loadingLevel + 1;
+      this.setState ({
+        loadingLevel: loadingLevel,
+        shouldLoadLevel: true,
+      });
+    })
+    .catch (error => { console.error (error); });
   }
 
   analyzeTree (tree) {
@@ -517,15 +621,33 @@ class Tree extends Component {
       if (DEBUG) console.log (tree);
 
       // Download the passages at the root level.
-      Object.keys (tree.data).map (id =>
-        this.props.getPassageMetaData (id, this.props.ravelID)
-      );
-    } else {
+      this.getLevel (1);
+    }
+    else {
       if (DEBUG) console.log ('Tree already processed. Skipping analysis.');
     }
 
-    // Render the tree.
-    //nodesToRender = this.renderLevel (tree, tree.data, nodesToRender, 0);
+    // Check whether we should load a level – if so, which?
+    if (
+      this.state.shouldLoadLevel &&
+      this.state.loading         &&
+      this.state.loadingLevel > 1
+    ) {
+      this.setState ({ shouldLoadLevel: false });
+
+      var tree = this.state.tree;
+      var nodeCounts = tree.nodeCounts;
+      var nodesProcessed = tree.nodesProcessed;
+      var _nodeCounts = _.size (nodeCounts) - 1;
+      var _nodesProcessed = _.size (nodesProcessed);
+
+      if (_nodesProcessed < _nodeCounts) {
+        this.getLevel (_nodesProcessed + 1);
+      }
+      else {
+        this.setState ({ loading: false });
+      }
+    }
 
     // If we're on the Merge screen, scroll to the appropriate level.
     if (this.props.mergeFrom) {
@@ -538,7 +660,7 @@ class Tree extends Component {
 
     return (
       <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, top: MAGIC_NUMBER,}}>
-        {nodesToRender}
+        {this.state.nodesToRender}
         <Surface
           width={TREE_WIDTH}
           height={TREE_HEIGHT}
@@ -551,7 +673,7 @@ class Tree extends Component {
             backgroundColor:'transparent',
           }}
         >
-          {arrowsToRender}
+          {this.state.arrowsToRender}
           {this.showConnectingArrow ()}
         </Surface>
       </View>
@@ -561,7 +683,7 @@ class Tree extends Component {
   render () {
     const tree = this.props.tree;
     return (
-      <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, /*backgroundColor: '#aaaaaa',*/ zIndex: 1,}}>
+      <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, zIndex: 1,}}>
         {this.renderTree (tree)}
         {this.renderLoader ()}
       </View>

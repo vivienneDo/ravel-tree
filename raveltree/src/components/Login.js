@@ -43,12 +43,18 @@ const GLoginButton = MKButton.coloredButton()
     .build();
 
 export default class Login extends Component {
-  state = {
+  constructor (props, context) {
+    super (props, context);
+    this.state = {
       email :  '',
       password: '',
       error: '',
       loading: false,
-  };
+    };
+
+    console.log ('Test');
+
+  }
 
   onButtonPress() {
       const {email, password} = this.state;

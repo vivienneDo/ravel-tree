@@ -87,7 +87,7 @@ class RavelStub extends Component<{}> {
               <IconUser />
             </View>
             <View style={styles.hpad}>
-              <TextSerif size={16}>{ravel.ravel_number_participants}</TextSerif>
+              <TextSerif size={16}>{ravel.ravel_number_participants + 1}</TextSerif>
             </View>
           </View>
           <View style={styles.score}>

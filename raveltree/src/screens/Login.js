@@ -64,6 +64,36 @@ class Login extends Component {
     };
   }
 
+  // testLog (num) {
+  //   console.log ('Test ' + num);
+  // }
+  //
+  // delayedLog (num) {
+  //   return new Promise ((resolve, reject) => {
+  //     setTimeout (() => resolve (this.testLog (num)), 1000);
+  //   });
+  // }
+  //
+  // componentWillMount () {
+  //   console.log ('\n\n\n');
+  //   ///////////////////////
+  //   var testArray = [1, 2, 3, 4, 5];
+  //
+  //   this.delayedLog (1)
+  //   .then (() => {
+  //     return this.delayedLog (2)
+  //   })
+  //   .then (() => {
+  //     const results = testArray.map (async (n) => {
+  //       return ( n * 2 )
+  //     });
+  //     return Promise.all (results)
+  //   })
+  //   .then ((results) => { console.log (results); });
+  //   //////////////////////
+  //   console.log ('\n\n\n');
+  // }
+
   componentDidMount () {
     if (!firebase.auth ().currentUser) {
       this.props.userLogOff ();
