@@ -75,6 +75,7 @@ class Tree extends Component {
       nodesToRender: [],
       arrowsToRender: [],
       stagedArrowData: [],
+      optimal: [],
       loading: true,
       loadingLevel: 1,
       shouldLoadLevel: false,
@@ -135,19 +136,10 @@ class Tree extends Component {
     var found = false;
     var targetLevel = passage.level;
 
-    console.log ('Current level: ' + level);
-    console.log ('Target level: ' + targetLevel);
-
-    console.log ('Looking for: ' + passage.passage_uid);
-
-    console.log ('Tree from here: ');
-    console.log (tree);
-
     if (level < targetLevel) {
       // For each node in this group, try to get to the target level.
       for (let id of Object.keys (tree)) {
         path.push (id);
-        console.log (path);
         found = this._addToTree (passage, tree [id].child, level + 1, _.size (tree [id].child), path);
         if (found) { return true; } else { path.pop (); }
       }
@@ -158,13 +150,10 @@ class Tree extends Component {
     if (level > targetLevel) { return false; }
 
     // We're at the target level. Check this group for the passageID.
-    console.log (groupCount);
-    console.log (Object.keys (tree));
     for (let id of Object.keys (tree)) {
-      console.log (id);
       if (id == passage.passage_uid) {
-        if (DEBUG) { console.log ('FOUND:'); }
-        if (DEBUG) { console.log (id); }
+        // if (DEBUG) { console.log ('FOUND:'); }
+        // if (DEBUG) { console.log (id); }
 
         // If found, replace the entry with the passage's metadata.
         tree [id] = passage;
@@ -360,7 +349,7 @@ class Tree extends Component {
   renderNode (content) {
     var Node = PassageStub;
 
-    console.log (content);
+    //console.log (content);
 
     // Position
     if (!content.position) { content.position = {}; }
@@ -424,11 +413,11 @@ class Tree extends Component {
     // TO INTEGRATE:
     // ----------------------------
 
-      // Designate the optimal child.
-      if (data [j].optimal && data [j].children) {
-        var optimalChild = data [j].optimalChild;
-        (data [j].children [optimalChild] || {}).optimal = true;
-      }
+      // // Designate the optimal child.
+      // if (data [j].optimal && data [j].children) {
+      //   var optimalChild = data [j].optimalChild;
+      //   (data [j].children [optimalChild] || {}).optimal = true;
+      // }
 
       // If we're on the Merge screen...
       if (this.props.mergeFrom) {
@@ -471,26 +460,76 @@ class Tree extends Component {
     })
     .then (passages => {
 
+      // Designate the optimal node on this level (if any).
+      var optimal = this.state.optimal;
+      // Level 1:
+      if (level == 1) {
+        // If there's only one passage on level 1, it's optimal by default.
+        if (_.size (passages) == 1) {
+          passages [0].optimal = true;
+
+          // Remember its optimal child.
+          if (passages [0].optimalChild) {
+            optimal.push (passages [0].optimalChild);
+          }
+
+          this.setState ({ optimal: optimal });
+        }
+        // Otherwise, mark the passage with the highest optimality score.
+        else {
+          var iMax = 0;
+          var count = 0;
+          Object.values (passages).map (passage => {
+            if (passage.optimalityScore > passages [iMax].optimalityScore) {
+              iMax = count;
+            }
+            count++;
+          });
+          passages [iMax].optimal = true;
+
+          // Remember its optimal child.
+          if (passages [iMax].optimalChild) {
+            optimal.push (passages [iMax].optimalChild);
+          }
+
+          this.setState ({ optimal: optimal });
+        }
+      }
+      // Any other level: If any passage is designated optimal in the array,
+      // mark it as optimal and add its optimal child to the optimality array.
+      else {
+        Object.values (passages).map (passage => {
+          var optimal = this.state.optimal.slice ();
+          if (optimal.includes (passage.passage_uid)) {
+            var i = optimal.indexOf (passage);
+            if (i > -1) { optimal.splice (i, 1); }
+            passage.optimal = true;
+            if (passage.optimalChild) {
+              optimal.push (passage.optimalChild);
+            }
+          }
+          this.setState ({ optimal: optimal });
+        });
+      }
+
       // Create a node for each passage.
       return Promise.all (Object.values (passages).map (async passage => {
 
-        // Update the tree with the passage metadata.
+        // Update the nodesProcessed array with the passage metadata.
         var tree = this.state.tree;
         var passageID = passage.passage_uid;
         if (!tree.nodesProcessed [passage.level]) { tree.nodesProcessed [passage.level] = {}; }
         tree.nodesProcessed [passage.level] [passageID] = passage;
 
         // Find the passageID in the data tree and replace the entry.
+        // (Yeah, this constructs a "path" to the passage using strings. If you
+        // know of a better way, please change this. It is super gross.)
         var pathToPassage = this.addToTree (passage);
         var indexedPath = pathToPassage.map (id => [id]);
         var indexedPathString = JSON.stringify (indexedPath);
-        console.log (indexedPathString);
         indexedPathString = indexedPathString.replace (/,/g , "['child']");
-        console.log (indexedPathString);
         indexedPathString = indexedPathString.substr (1).slice (0, -1);
         indexedPathString = 'tree.data ' + indexedPathString;
-        console.log (indexedPathString);
-        console.log (eval (indexedPathString));
 
         // Prepare data for arrows linking to the parent(s).
         var arrows = [];
@@ -501,7 +540,6 @@ class Tree extends Component {
             var parentLevel;
             var parentPosition;
             var parentOptimal;
-            console.log (tree.nodesProcessed);
             for (let _level of Object.values (tree.nodesProcessed)) {
               if (_level [parent]) {
                 parentLevel = _level [parent].level;
@@ -509,19 +547,12 @@ class Tree extends Component {
                 parentOptimal = _level [parent].optimal;
               }
             }
-            console.log (parentLevel);
-            console.log (parentPosition);
-
-            console.log (passage);
 
             var startPosition = {
               x: parentPosition.x + (NODE_WIDTH),
               y: parentPosition.y + (NODE_HEIGHT / 2),
             }
-            var endPosition = {
-              x: 100,  // x: data [j].children [k].position.x,
-              y: 100,  // y: data [j].children [k].position.y + N/2,
-            }
+            var endPosition = startPosition;
             var optimal = parentOptimal && passage.optimal;
             arrows.push ({
               id:            passage.passage_uid,
@@ -536,12 +567,6 @@ class Tree extends Component {
         var stagedArrowData = this.state.stagedArrowData.slice ();
         stagedArrowData.push (...arrows);
         this.setState ({ stagedArrowData: stagedArrowData });
-
-
-        // Add the arrows to the array of arrows to render.
-        // var arrowsToRender = this.state.arrowsToRender.slice ();
-        // arrowsToRender.push (...arrows);
-        // this.setState ({ arrowsToRender: arrowsToRender });
 
         return (this.renderNode  (eval (indexedPathString)));
 
@@ -560,9 +585,6 @@ class Tree extends Component {
         arrowsToRender:  arrowsToRender,
         stagedArrowData: [],
       });
-      console.log (this.state.stagedArrowData);
-
-
 
       // Add the nodes to the array of nodes to render.
       var nodesToRender = this.state.nodesToRender.slice ();
