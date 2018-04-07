@@ -1,0 +1,583 @@
+26a27,37
+>   - 3/31/2018 - VD Do - Refactored downVotePassage() to reset user_track_vote field on downVotePassage()
+>                         Refactored addPassage(), addInitPassage() and forkPassage() to have datetime with format:
+>                         dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
+>                         Refactored addPassage(), addInitPassage() and forkPassage() to have the following fields:
+>                         - this.props.passage_meta_data.optimalityScore
+>  *                      - this.props.passage_meta_data.currentPassageOptimality
+>  *                      - this.props.passage_meta_data.optimalChild
+>                         Added reCalculateOptimalityScore(), reCalculateCurrentPassagesOptimalityScore
+>                         Added getOptimalityChildID(), getOptimality()
+>                         Refactored getPassageMetaData() to call reCalculateOptimalityScore()
+> 
+31a43
+> const dateformat = require('dateformat');
+735c747,748
+<     var ravel_create_date = new Date().toLocaleTimeString();
+---
+>     let ravel_create_date = dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
+>     //dateformat(ravel_create_date, 'dddd, mmmm dS, yyyy, h:MM:ss TT');
+1447c1460
+<     var passage_create_date = new Date().toLocaleTimeString();
+---
+>     var passage_create_date = dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
+1457a1471,1473
+>     var optimalityScore = 0;
+>     var currentPassageOptimality = 0;
+>     var optimalChild = false;
+1491c1507
+<                                 .push({parent, child, level, passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
+---
+>                                 .push({optimalityScore, currentPassageOptimality, optimalChild, parent, child, level, passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
+1624a1641,1643
+>  *                  - this.props.passage_meta_data.optimalityScore
+>  *                  - this.props.passage_meta_data.currentPassageOptimality
+>  *                  - this.props.passage_meta_data.optimalChild
+1640c1659
+<     var passage_create_date = new Date().toLocaleTimeString();
+---
+>     var passage_create_date = dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
+1650a1670,1672
+>     var optimalityScore = 0;
+>     var currentPassageOptimality = 0;
+>     var optimalChild = false;
+1682c1704
+<                                 .push({level, passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
+---
+>                                 .push({optimalityScore, currentPassageOptimality,optimalChild,  level, passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
+1797a1820,1825
+>  *  *               - this.props.passage_meta_data.optimalityScore
+>  *                  - this.props.passage_meta_data.currentPassageOptimality
+>  *                  - this.props.passage_meta_data.optimalChild
+>  *                  - this.props.passage_meta_data.optimalityScore
+>  *                  - this.props.passage_meta_data.currentPassageOptimality
+>  *                  - this.props.passage_meta_data.optimalChild
+1809a1838
+>         reCalculateOptimalityScore(passage_uid, ravel_uid).then(valueOfKey => {
+1811,1812d1839
+<         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
+<             dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
+1815,1816c1842,1850
+<             // dispatch a success state
+<             dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
+---
+> 
+>             firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
+>                 dispatch({type: 'GET_PASSAGE_META_DATA', payload: snapshot.val()})
+>             })
+>             .then(() => {
+>                 // dispatch a success state
+>                 dispatch({type:'ON_GET_PASSAGE_META_DATA_SUCCESS', payload: true})
+>             })
+> 
+1817a1852
+> 
+2037c2072
+< /**TODO: CALL THIS FUNCTION ON onPassageForkLevelOne()
+---
+> /**
+2307,2308d2341
+< /** CALCULATE NODECOUNT{} in ravel */
+< 
+2445a2479,2481
+>  *                  - this.props.passage_meta_data.optimalityScore
+>  *                  - this.props.passage_meta_data.currentPassageOptimality
+>  *                  - this.props.passage_meta_data.optimalChild
+2462c2498
+<     var passage_create_date = new Date().toLocaleTimeString();
+---
+>     var passage_create_date = dateformat(new Date(), 'dddd, mmmm dS, yyyy, h:MM:ss TT');
+2472a2509,2511
+>     var optimalityScore = 0;
+>     var currentPassageOptimality = 0;
+>     var optimalChild = false;
+2491c2530
+<                                     .push({level, passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
+---
+>                                     .push({optimalityScore, currentPassageOptimality, optimalChild, level, passage_comment, passage_downvote, passage_upvote, passage_combined_vote, user_created, ravel_uid, passage_title, passage_body, passage_create_date, user_created_photoURL, ravel_title })
+2621a2661,2662
+>  *            parent_passage_uid = passage you are merging from
+>  *            child_passage_uid = passage you are merging to
+2687a2729
+>     var downvote;
+2699a2742,2743
+>                     //console.log('Before checking vote tracker value: ' + valueOfKey)
+> 
+2706a2751,2752
+>                         //console.log('Inside false')
+> 
+2710a2757,2760
+>                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+> 
+>                             downvote = snapshot.val()
+>                         })
+2712c2762,2764
+<                             firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes, passage_combined_vote: upvotes});
+---
+>                             var tot = upvotes + downvote;
+>                             //console.log('total vote: ' + tot)
+>                             firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes, passage_combined_vote: tot});
+2719c2771
+<                                 firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : upvotes})
+---
+>                                 firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : (upvotes + downvote)})
+2725a2778,2785
+> 
+>                                 userUpVoteTrackerHelper(ravel_uid, passage_uid);
+>                             })
+>                             .then(() => {
+>                                 reCalculateOptimalityScore(ravel_uid, passage_uid);
+>                             })
+>                             .then(() => {
+>                                 //console.log('Done in VOTINGGG')
+2736a2797,2800
+>                             firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+> 
+>                                 downvote = snapshot.val()
+>                             })
+2738c2802,2805
+<                                 firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes, passage_combined_vote: upvotes});
+---
+>                                 var tot = upvotes + downvote;
+>                                 //console.log('total vote: ' + tot)
+> 
+>                                 firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes, passage_combined_vote: tot});
+2745c2812
+<                                     firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : upvotes})
+---
+>                                     firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : (upvotes + downvote)})
+2755a2823,2827
+>                                     reCalculateOptimalityScore(ravel_uid, passage_uid);
+>                                 })
+>                                 .then(() => {
+> 
+>                                     //console.log('Done in VOTINGGG')
+2792a2865,2866
+>     var upvotes;
+>     var downvote;
+2800a2875,2876
+> 
+>                     //console.log('Before checking vote tracker value: ' + valueOfKey)
+2801a2878
+>                         //console.log('After checking vote tracker value: ' + valueOfKey)
+2806c2883
+<                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_combined_vote`).once('value', (snapshot) => {
+---
+>                         //console.log('After checking vote tracker value: ' + valueOfKey)
+2808c2885,2887
+<                             total_votes = snapshot.val() - 1
+---
+>                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+> 
+>                             upvotes = snapshot.val();
+2811c2890,2898
+<                             firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ passage_combined_vote : total_votes });
+---
+> 
+>                             firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+> 
+>                                 downvote = snapshot.val() - 1;
+>                             })
+>                             .then(() => {
+>                                 firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_downvote : downvote, passage_combined_vote: (upvotes + downvote)});
+>                             })
+> 
+2812a2900
+> 
+2819c2907
+<                                 firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : total_votes})
+---
+>                                 firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : (upvotes + downvote)})
+2824a2913,2915
+>                             // .then(() => {
+>                             //     downVotePassageHelper(ravel_uid, passage_uid);
+>                             // })
+2826c2917
+<                                 downVotePassageHelper(ravel_uid, passage_uid);
+---
+>                                 userDownVoteTrackerHelper(ravel_uid, passage_uid);
+2829c2920
+<                                 userDownVoteTrackerHelper(ravel_uid, passage_uid);
+---
+>                                 reCalculateOptimalityScore(ravel_uid, passage_uid);
+2837a2929
+>                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+2839c2931
+<                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_combined_vote`).once('value', (snapshot) => {
+---
+>                             upvotes = snapshot.val();
+2841d2932
+<                             total_votes = snapshot.val() - 1
+2844c2935,2944
+<                             firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ passage_combined_vote : total_votes });
+---
+> 
+>                             firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+>                                 //console.log('down vote in.....' + snapshot.val())
+>                                 downvote = (snapshot.val() - 1);
+>                             })
+>                             .then(() => {
+>                                 //console.log('up vote + down vote in downvot' + (upvotes + downvote))
+>                                 firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_downvote : downvote, passage_combined_vote: (upvotes + downvote)});
+>                             })
+> 
+2845a2946
+> 
+2852c2953
+<                                 firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : total_votes})
+---
+>                                 firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : (upvotes + downvote)})
+2859c2960
+<                                 downVotePassageHelper(ravel_uid, passage_uid);
+---
+>                                 userDownVoteTrackerHelper(ravel_uid, passage_uid);
+2862c2963
+<                                 userDownVoteTrackerHelper(ravel_uid, passage_uid);
+---
+>                                 reCalculateOptimalityScore(ravel_uid, passage_uid);
+2940,2941c3041,3042
+<             if (snapshot.val()) {
+< 
+---
+>             if (snapshot.val() === true) {
+>                 //console.log('I am in if statement' + snapshot.val())
+2954a3056,3057
+> 
+>             //console.log('Snapshot value:' + snapshot.val())
+2979c3082
+<         console.log('i am here')
+---
+>         //console.log('i am here')
+2999,3001c3102
+< /** TO DO
+< * Function that gets a ravel's particular passage, will do after talking about structure
+< */
+---
+> 
+3147d3247
+< // TODO AFTER STRUCTURE CHANGES
+3148a3249
+> /** EXPLORE SCREEN FUNCTIONS */
+3150c3251,3274
+< // export const forkPassage = () => {
+---
+> /**
+>  * @param: nothing
+>  * @returns:
+>  * mapStateToProps = state => all_user_created_ravels =
+>  * state.current_user_ravel:
+>  *      'INITIAL_USER_RAVEL_FETCH' : a list of ravels that the current user created
+>  *          - this.props.all_user_created_ravels.enable_comment
+>             - this.props.all_user_created_ravels.enable_voting
+>             - this.props.all_user_created_ravels.m_ravel_participants
+>             - this.props.all_user_created_ravels.passage_length
+>             - this.props.all_user_created_ravels.ravel_category
+>             - this.props.all_user_created_ravels.ravel_concept
+>             - this.props.all_user_created_ravels.ravel_create_date
+>             - this.props.all_user_created_ravels.ravel_number_participants
+>             - this.props.all_user_created_ravels.ravel_participants{}
+>             - this.props.all_user_created_ravels.ravel_points
+>             - this.props.all_user_created_ravels.ravel_title
+>             - this.props.all_user_created_ravels.user_created
+>             - this.props.all_user_created_ravels.user_created_photoURL
+>  * actions: gets the current user's created ravels
+>  *
+>  */
+> // Gets a list of random passages associated to a ravel that is in public_list
+> export const loadPassageExplore = () => {
+3152c3276,3278
+< // }
+---
+>     var currentUserUid = firebase.auth().currentUser.uid;
+>     var listOfPublicRavel = {};
+>     var randomElm;
+3153a3280,3288
+>     return (dispatch) => {
+>         firebase.database().ref(`ravels`).orderByChild(`visibility`).equalTo(true).once('value', (snapshotPublicRavel) => {
+>             listOfPublicRavel = snapshotPublicRavel.val();
+>             console.log('snapshotPublicRavel elm = ' + snapshotPublicRavel.val())
+>             console.log('listOfPublicRavel elm = ' + listOfPublicRavel.val())
+>         })
+>         .then(() => {
+>             randomElm = listOfPublicRavel[Math.floor(Math.random() * listOfPublicRavel.length)]
+>         })
+3154a3290
+>         console.log('random elm = ' + randomElm)
+3156d3291
+< export const passageRavelPointCalculation = () => {
+3158d3292
+< }
+3159a3294,3295
+>     };
+> };
+3213a3350,3619
+> export const reCalculateCurrentPassagesOptimalityScore = (ravel_uid, passage_uid) => {
+> 
+>     return new Promise((resolve,reject) => {
+>      var valueOfKey = false;
+>      var m_passage_upvote;
+>      var m_passage_downvote;
+>      var m_currentPassageOptimality;
+> 
+> 
+>          firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+>             m_passage_upvote = snapshot.val()
+>          })
+>          .then(() => {
+>             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+>                 m_passage_downvote = snapshot.val()
+>             })
+>             .then(() => {
+>                 m_currentPassageOptimality = (m_passage_upvote + 1.5*m_passage_downvote)
+>                 firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update( {currentPassageOptimality : m_currentPassageOptimality})
+> 
+>             })
+>          })
+>          .then(() => {
+>             valueOfKey = true
+>         })
+>             .then(() => {
+>                 console.log('value of value of key inside recalcu' + valueOfKey)
+>                 return valueOfKey
+>             })
+>             .then((valueOfKey) => {
+>                 resolve(valueOfKey)
+>             })
+>             .catch((error) => {
+>                 reject(error)
+>             })
+> 
+>     })
+> }
+> 
+> export const getOptimality = (ravel_uid, elm_key) => {
+> 
+> 
+>     return new Promise((resolve,reject) => {
+>      var valueOfKey = 0;
+>      //console.log('ravel uid' + ravel_uid)
+>      //console.log('passage uid' + elm_key)
+> 
+>          firebase.database().ref(`passages/${ravel_uid}/${elm_key}/currentPassageOptimality`).once('value', (snapshot) => {
+>             valueOfKey = snapshot.val()
+>          })
+>             .then(() => {
+>                 //console.log('optimal score = ' + valueOfKey)
+>                 return valueOfKey
+>             })
+>             .then((valueOfKey) => {
+>                 resolve(valueOfKey)
+>             })
+>             .catch((error) => {
+>                 reject(error)
+>             })
+> 
+>     })
+> }
+> 
+> 
+> export const getOptimalityChildID = (ravel_uid, passage_uid) => {
+>     var m_valueOfKey = '';
+>     var m_optimalChildScore = 0;
+> 
+>     return new Promise((resolve,reject) => {
+>      //var m_valueOfKey = '';
+>      var optimalChildScore = 0;
+>      //var m_optimalChildScore = 0;
+>      var optimalChild = '';
+>      var elm_opt;
+>      var elm_key;
+>      var valueOfKey;
+> 
+>          firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/child`).once('value', (snapshot) => {
+>             //  if (snapshot.val() === false) {
+>             //      // exit because there is no child
+>             //  } else {
+> 
+>                 snapshot.forEach((elm) => {
+> 
+>                     firebase.database().ref(`passages/${ravel_uid}/${elm.key}/currentPassageOptimality`).once('value', (snapshot) => {
+>                         valueOfKey = snapshot.val()
+>                         //console.log('value of key ' + valueOfKey)
+>                         if (valueOfKey === false) {
+>                             // do nothing and return
+>                         }
+>                         else  {
+>                             if (valueOfKey > optimalChildScore) {
+>                                 optimalChild = elm.key.toString();
+>                                 //console.log('in else if function...optimal child id: ' + optimalChild)
+> 
+>                             }
+> 
+>                             //m_valueOfKey = elm.key;
+>                         }
+>                      })
+>                     //  .then(() => {
+>                     //     if (valueOfKey === false) {
+>                     //         // do nothing and return
+>                     //     }
+>                     //     else if (valueOfKey > optimalChildScore) {
+>                     //         optimalChild = elm.key;
+>                     //         //m_valueOfKey = elm.key;
+>                     //     } else {
+> 
+>                     //     }
+> 
+>                     //  })
+> 
+>                     //console.log('AFTER in else if function...optimal child id: ' + optimalChild)
+> 
+>                 })
+> 
+> 
+> 
+> 
+>              //}
+> 
+>          })
+>             .then(() => {
+>                 //console.log('after function...optimal child id: ' + optimalChild)
+>                 return optimalChild
+>             })
+>             .then((optimalChild) => {
+>                 resolve(optimalChild)
+>             })
+>             .catch((error) => {
+>                 reject(error)
+>             })
+> 
+>     })
+> }
+> 
+> export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
+> 
+>     return new Promise((resolve,reject) => {
+> 
+>      var valueOfKey = '';
+>      var optimalChildID = '';
+>      var optimalChildIDScore = 0;
+>      var this_passage_score = 0;
+>      var m_optimalityScore = 0;
+>      var optimalChild = '';
+> 
+> 
+> 
+> 
+> 
+>      reCalculateCurrentPassagesOptimalityScore(ravel_uid, passage_uid).then(valueOfKey => {
+> 
+> 
+>         console.log('value of key after recal = ' + valueOfKey)
+>         if (valueOfKey) {
+> 
+>             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/child`).once('value', (snapshot) => {
+> 
+>                 if (snapshot.val() === false) {
+>                     getOptimality(ravel_uid, passage_uid).then((valueOfKey) => {
+>                         this_passage_score = valueOfKey;
+>                     })
+>                     .then(() => {
+>                         console.log('m_optimalityScore AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
+>                         m_optimalityScore = this_passage_score + 0;
+>                         firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({optimalityScore : m_optimalityScore})
+>                     })
+>                     valueOfKey = false;
+> 
+>                 }  else {
+>                      //var optimalChild = '';
+>                 var optimalChildScore = 0;
+> 
+> 
+>                 snapshot.forEach((elm) => {
+>                     optimalChild = elm.key;
+> 
+>                     firebase.database().ref(`passages/${ravel_uid}/${elm.key}/currentPassageOptimality`).once('value', (snapshot) => {
+> 
+>                         valueOfKey = snapshot.val()
+>                         //console.log('value of key ' + valueOfKey)
+>                         if (valueOfKey === false) {
+>                             // do nothing and return
+>                         }
+>                         else  {
+>                             if (valueOfKey > optimalChildScore) {
+> 
+>                                 optimalChild = elm.key;
+>                                 optimalChildScore = valueOfKey;
+>                                 //console.log('in else if function...optimal child id: ' + optimalChild)
+> 
+>                             }
+> 
+>                             //m_valueOfKey = elm.key;
+>                         }
+>                      })
+>                     //  .then(() => {
+>                     //     if (valueOfKey === false) {
+>                     //         // do nothing and return
+>                     //     }
+>                     //     else if (valueOfKey > optimalChildScore) {
+>                     //         optimalChild = elm.key;
+>                     //         //m_valueOfKey = elm.key;
+>                     //     } else {
+> 
+>                     //     }
+> 
+>                     //  })
+> 
+>                     //console.log('AFTER in else if function...optimal child id: ' + optimalChild)
+> 
+>                 })
+>                 //console.log('AFTERrrr in else if function...optimal child id: ' + optimalChild)
+> 
+> 
+> 
+>                 firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({optimalChild:optimalChild })
+>                 .then(() => {
+>                     //console.log('AFTERrrr inside then in else if function...optimal child id: ' + optimalChild)
+>                     getOptimality(ravel_uid, optimalChild).then((valueOfKey) => {
+> 
+>                     optimalChildIDScore = valueOfKey;
+>                     //console.log('AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
+> 
+>                     })
+>                     .then(() => {
+>                         getOptimality(ravel_uid, passage_uid).then((valueOfKey) => {
+>                             this_passage_score = valueOfKey;
+>                         })
+>                         .then(() => {
+>                             //console.log('m_optimalityScore AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
+>                             m_optimalityScore = this_passage_score + optimalChildIDScore;
+>                             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({optimalityScore : m_optimalityScore})
+>                         })
+>                         .then(() => {
+>                             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({optimalChild:optimalChild })
+>                         })
+>                     })
+> 
+>                 })
+> 
+>         //})
+> 
+> 
+> 
+>                 }
+> 
+>         })
+> 
+>         } else {
+>             valueOfKey = false;
+>         }
+>      })
+> 
+> 
+>             .then(() => {
+>                 return valueOfKey
+>             })
+>             .then((valueOfKey) => {
+>                 resolve(valueOfKey)
+>             })
+>             .catch((error) => {
+>                 reject(error)
+>             })
+> 
+>     })
+> }
