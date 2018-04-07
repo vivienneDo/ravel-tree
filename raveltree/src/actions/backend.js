@@ -36,7 +36,7 @@
                         Refactored getPassageMetaData() to call reCalculateOptimalityScore()
  - 04/07/2018 - VD Do - Added userNoVoteTrackerHelper() which sets the field to 'novote' when a user is in no-vote state
                       - Added searchAllRavelByTitle() that searches for allravels by title (public and private )
-
+                      - Modified createUser() to set initial ravel_created field to false 
 
  */
 
@@ -315,10 +315,15 @@ export const createUser = (firstName, lastName, bio, photoURL = '') => dispatch 
  var user = firebase.auth().currentUser;
  var m_email = firebase.auth().currentUser.email;
 
+// Do any initial user setup here 
  firebase.database ().ref (`/master_user_key/${user.uid}`).set ({ user_uid: true })
  .then(() => {
 
     firebase.database().ref(`notification_list/${user.uid}`).set(true)
+    .then(() => {
+        firebase.database().ref(`users/${user.uid}/ravel_created`).set(false)
+
+    })
  })
  .catch ((error) => {alert('Error creating profile.')});
 
