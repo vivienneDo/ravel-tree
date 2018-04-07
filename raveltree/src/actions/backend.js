@@ -34,6 +34,8 @@
                         Added reCalculateOptimalityScore(), reCalculateCurrentPassagesOptimalityScore
                         Added getOptimalityChildID(), getOptimality()
                         Refactored getPassageMetaData() to call reCalculateOptimalityScore()
+ - 04/07/2018 - VD Do - Added userNoVoteTrackerHelper() which sets the field to 'novote' when a user is in no-vote state
+ 
 
 
  */
@@ -2782,13 +2784,58 @@ export const upVotePassage = (ravel_uid, passage_uid) => dispatch => {
 
                     //console.log('Before checking vote tracker value: ' + valueOfKey)
 
+                    // If the value in track_user_vote is true, that means the user has upvoted. Do nothing because
+                    // user is trying to upvote again 
                     if (valueOfKey) {
                         // Ask Frank what he wants set back
                         reject ('Invalid upvote');
                         dispatch({type: 'ON_VOTE_SUCCESS', payload: false})
 
-
+                    // Else, if the user value if false, that means they have downvoted before and now that are 
+                    // trying to upvote. Set their flag to 'novote' 
                     } else if(valueOfKey === false) {
+
+                        //console.log('Inside false')
+
+                        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+
+                            upvotes = snapshot.val() + 1
+                        })
+                        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+
+                            downvote = snapshot.val()
+                        })
+                        .then(() => {
+                            var tot = upvotes + downvote;
+                            //console.log('total vote: ' + tot)
+                            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_upvote : upvotes, passage_combined_vote: tot});
+                        })
+                        .then(() => {
+                            firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
+                                passage_creator_uid = snapshot.val();
+                            })
+                            .then(() => {
+                                firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : (upvotes + downvote)})
+
+                            })
+                            .then(() => {
+                                userRavelPointCalculationHelper(passage_creator_uid);
+                            })
+                            .then(() => {
+
+                                userNoVoteTrackerHelper(ravel_uid, passage_uid);
+                            })
+                            .then(() => {
+                                reCalculateOptimalityScore(ravel_uid, passage_uid);
+                            })
+                            .then(() => {
+                                //console.log('Done in VOTINGGG')
+                                resolve (true);
+                                dispatch({type: 'ON_VOTE_SUCCESS', payload: true})
+                            })
+                        })
+                      // User is in a novote state, set their flag to 'true'
+                    } else if (valueOfKey === 'novote') {
 
                         //console.log('Inside false')
 
@@ -2829,7 +2876,9 @@ export const upVotePassage = (ravel_uid, passage_uid) => dispatch => {
                                 dispatch({type: 'ON_VOTE_SUCCESS', payload: true})
                             })
                         })
-                    } else {
+                    }
+                    // User is not in the list, flag to 'true' 
+                    else {
 
                         // Add them to upvote tracker list
 
@@ -2916,13 +2965,62 @@ export const downVotePassage = (ravel_uid, passage_uid) => dispatch => {
 
                 checkUserVoteTrackerHelper(ravel_uid, passage_uid).then(valueOfKey => {
 
-                    //console.log('Before checking vote tracker value: ' + valueOfKey)
+                    // User has already downvoted and attempting to downvote again 
+                    // do nothing 
                     if (valueOfKey === false) {
                         //console.log('After checking vote tracker value: ' + valueOfKey)
                         // Add return value for Frank to know user has already downvoted and is attempting to re-downvote
                         reject ('Invalid downvote.');
                         dispatch({type: 'ON_VOTE_SUCCESS', payload: false})
+                    // Else, user upvoted before and is now trying to downvote. Flag as 'novote' 
                     } else if (valueOfKey) {
+
+                        //console.log('After checking vote tracker value: ' + valueOfKey)
+
+                        firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
+
+                            upvotes = snapshot.val();
+                        })
+                        .then(() => {
+
+                            firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_downvote`).once('value', (snapshot) => {
+
+                                downvote = snapshot.val() - 1;
+                            })
+                            .then(() => {
+                                firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({passage_downvote : downvote, passage_combined_vote: (upvotes + downvote)});
+                            })
+
+                        })
+
+                        .then(() => {
+                            firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/user_created`).once('value', (snapshot) => {
+                                passage_creator_uid = snapshot.val();
+                                user_uid = snapshot.val()
+                            })
+                            .then(() => {
+                                firebase.database().ref(`users/${passage_creator_uid}/userProfile`).update({upvotes : (upvotes + downvote)})
+
+                            })
+                            .then(() => {
+                                userRavelPointCalculationHelper(passage_creator_uid);
+                            })
+                            // .then(() => {
+                            //     downVotePassageHelper(ravel_uid, passage_uid);
+                            // })
+                            .then(() => {
+                                userNoVoteTrackerHelper(ravel_uid, passage_uid);
+                            })
+                            .then(() => {
+                                reCalculateOptimalityScore(ravel_uid, passage_uid);
+                            })
+                            .then(() => {
+                                resolve (true);
+                                dispatch({type: 'ON_VOTE_SUCCESS', payload: true})
+                            })
+                        })
+                    // Else, user is in 'novote' state and is trying to downvote. Flag to 'false' 
+                    } else if (valueOfKey === 'novote') {
 
                         //console.log('After checking vote tracker value: ' + valueOfKey)
 
@@ -2968,7 +3066,9 @@ export const downVotePassage = (ravel_uid, passage_uid) => dispatch => {
                                 dispatch({type: 'ON_VOTE_SUCCESS', payload: true})
                             })
                         })
-                    } else {
+                    }  
+                    // User never voting, flag to 'false' 
+                    else {
 
                         // First time downvoting, add them to tracker downvote list
                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_upvote`).once('value', (snapshot) => {
@@ -3045,6 +3145,7 @@ export const downVotePassageHelper = (ravel_uid, passage_uid) => {
 
 
 }
+
 
 
 export const userUpVoteTrackerHelper = (ravel_uid, passage_uid) => {
@@ -3127,6 +3228,33 @@ export const userDownVoteTrackerHelper = (ravel_uid, passage_uid) => {
         var snapShotVal;
         //console.log('i am here')
         firebase.database().ref(`track_user_vote/${ravel_uid}/${passage_uid}/${currentUid}`).set(false)
+        .then(() => {
+            valueOfKey = true;
+        })
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+
+
+    })
+}
+
+export const userNoVoteTrackerHelper = (ravel_uid, passage_uid) => {
+
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+        //console.log('i am here')
+        firebase.database().ref(`track_user_vote/${ravel_uid}/${passage_uid}/${currentUid}`).set('novote')
         .then(() => {
             valueOfKey = true;
         })
