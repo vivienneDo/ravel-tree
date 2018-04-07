@@ -35,7 +35,7 @@
                         Added getOptimalityChildID(), getOptimality()
                         Refactored getPassageMetaData() to call reCalculateOptimalityScore()
  - 04/07/2018 - VD Do - Added userNoVoteTrackerHelper() which sets the field to 'novote' when a user is in no-vote state
- 
+                      - Added searchAllRavelByTitle() that searches for allravels by title (public and private )
 
 
  */
@@ -4378,4 +4378,54 @@ return (dispatch) => {
         }
     })
 }
+}
+
+/**
+ * @param: title
+ * @returns:
+ * mapStateToProps = state => ravel_title_search =
+ * state.search
+ *      'SEARCH_RAVEL_BY_TITLE': a list of ravels with the same title param
+            - this.props.ravel_title_search.enable_comment
+            - this.props.ravel_title_search.enable_voting
+            - this.props.ravel_title_search.m_ravel_participants
+            - this.props.ravel_title_search.passage_length
+            - this.props.ravel_title_search.ravel_category
+            - this.props.ravel_title_search.ravel_concept
+            - this.props.ravel_title_search.ravel_create_date
+            - this.props.ravel_title_search.ravel_number_participants
+            - this.props.ravel_title_search.ravel_participants{}
+            - this.props.ravel_title_search.ravel_points
+            - this.props.ravel_title_search.ravel_title
+            - this.props.ravel_title_search.user_created
+            - this.props.ravel_title_search.user_created_photoURL
+ * actions: attempts to filter ravels by title
+ *
+ *
+ */
+export const searchAllRavelByTitle = (title) => dispatch => {
+
+    return new Promise ((resolve, reject) => {
+
+        checkCurrentUserIsAdmin().then(valueOfKey => {
+
+            if (valueOfKey) {
+
+                firebase.database().ref(`/ravels/`).orderByChild("ravel_title").equalTo(title).once('value', snapshot => {
+                    resolve (snapshot.val());
+                    dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: snapshot.val()})
+                })
+                .catch((error) => {
+                    reject('Error searching for ravel.');
+                })
+    
+            } else {
+                reject ('Sorry, you do have no admin rights...');
+                dispatch({type: 'IS_ADMIN', payload: false})
+            }
+        })
+
+
+        
+    });
 }
