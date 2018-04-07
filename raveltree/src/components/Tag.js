@@ -84,10 +84,13 @@ export default class Tag extends Component<{}> {
         onLayout={this.onTagLayout}
       >
         <Touchable
-          onPress={() => {this.props.toggleFormState(this.props.name)}}>
+          onPress={() => {this.props.toggleFormState(this.props.name)}}
+        >
+          <View>
             <Text style = {textStyles}>
                 {this.props.children}
             </Text>
+          </View>
         </Touchable>
       </View>
     );

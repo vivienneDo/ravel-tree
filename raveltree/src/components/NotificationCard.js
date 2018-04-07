@@ -170,10 +170,12 @@ class NotificationCard extends React.Component {
 
     return (
       <Touchable onPress={() => this.onPressCard ()} style={layoutStyles}>
-        <View style={dotStyles} />
-        <View style={styles.content}>
-          <View style={styles.notification}>
-              {this.displayNotification (this.props.notification)}
+        <View style={styles.inner}>
+          <View style={dotStyles} />
+          <View style={styles.content}>
+            <View style={styles.notification}>
+                {this.displayNotification (this.props.notification)}
+            </View>
           </View>
         </View>
       </Touchable>
@@ -189,6 +191,11 @@ const styles = StyleSheet.create ({
     minHeight: 80,
     borderRadius: 20,
     borderWidth: 2,
+  },
+  inner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
   },
   active: {
     borderColor: '#2E8AF7',

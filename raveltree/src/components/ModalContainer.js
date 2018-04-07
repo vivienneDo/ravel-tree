@@ -55,7 +55,9 @@ export default class ModalContainer extends React.Component {
             style={styles.xButton}
             onPress={() => this.props.onPressClose ()}
           >
-            <Text style={styles.x}>&#215;</Text>
+            <View>
+              <Text style={styles.x}>&#215;</Text>
+            </View>
           </Touchable>
         </View>
       </View>

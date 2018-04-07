@@ -75,27 +75,29 @@ class RavelStub extends Component<{}> {
 
     return (
       <Touchable onPress={() => this.onPressStub ()} style={styles.container}>
-        <View style={styles.left}>
-          <View style={styles.userImage}>
-            <UserImage {...this.props} userID={ravel.user_created} size={26} />
+        <View style={styles.inner}>
+          <View style={styles.left}>
+            <View style={styles.userImage}>
+              <UserImage {...this.props} userID={ravel.user_created} size={26} />
+            </View>
+            <TextSerif size={16}>{ravel.ravel_title}</TextSerif>
           </View>
-          <TextSerif size={16}>{ravel.ravel_title}</TextSerif>
-        </View>
-        <View style={styles.right}>
-          <View style={styles.users}>
-            <View style={styles.hpad}>
-              <IconUser />
+          <View style={styles.right}>
+            <View style={styles.users}>
+              <View style={styles.hpad}>
+                <IconUser />
+              </View>
+              <View style={styles.hpad}>
+                <TextSerif size={16}>{ravel.ravel_number_participants}</TextSerif>
+              </View>
             </View>
-            <View style={styles.hpad}>
-              <TextSerif size={16}>{ravel.ravel_number_participants + 1}</TextSerif>
-            </View>
-          </View>
-          <View style={styles.score}>
-            <View style={styles.hpad}>
-              <IconLeaf />
-            </View>
-            <View style={styles.hpad}>
-              <TextSerif size={16}>{ravel.ravel_points}</TextSerif>
+            <View style={styles.score}>
+              <View style={styles.hpad}>
+                <IconLeaf />
+              </View>
+              <View style={styles.hpad}>
+                <TextSerif size={16}>{ravel.ravel_points}</TextSerif>
+              </View>
             </View>
           </View>
         </View>
@@ -115,7 +117,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: '#8D8D8D',
     paddingVertical: 5,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
+  },
+  inner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    // paddingVertical: 5, <-- TODO: Check if necessary.
+    //paddingHorizontal: 15, <-- TODO: Check if necessary.
   },
   left: {
     flexDirection: 'row',

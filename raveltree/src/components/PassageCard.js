@@ -1,6 +1,6 @@
 // Author:    Alex Aguirre
 // Created:   02/5/18
-// Modified:  03/26/18 by Frank Fusco (fr@nkfus.co)
+// Modified:  04/02/18 by Frank Fusco (fr@nkfus.co)
 
 // Standard passage card component for RavelTree.
 //
@@ -134,27 +134,37 @@ class PassageCard extends React.Component {
         <View style={styles.head}>
           <View style={styles.row1}>
             <Touchable onPress={() => this.onPressRavel ()}>
-              <TextSerif size={16}>{this.props.ravel}</TextSerif>
+              <View>
+                <TextSerif size={16}>{this.props.ravel}</TextSerif>
+              </View>
             </Touchable>
             <Touchable onPress={() => this.onPressPassageID ()}>
-              <TextSans size={13} color={'#95989A'}>{this.props.passageIndex}</TextSans>
+              <View>
+                <TextSans size={13} color={'#95989A'}>{this.props.passageIndex}</TextSans>
+              </View>
             </Touchable>
           </View>
           <View style={styles.row2}>
             <Touchable onPress={() => this.onPressTitle ()}>
-              <TextSans size={13} color={'#95989A'}>{this.props.title}</TextSans>
+              <View>
+                <TextSans size={13} color={'#95989A'}>{this.props.title}</TextSans>
+              </View>
             </Touchable>
             <UserImage {...this.props} userID={author} size={26}/>
           </View>
         </View>
         <Touchable onPress={() => this.onPressPassage ()} style={styles.passage}>
-          <TextSerif>
-            {truncatedPassage}
-          </TextSerif>
+          <View>
+            <TextSerif>
+              {truncatedPassage}
+            </TextSerif>
+          </View>
         </Touchable>
         <View style={styles.buttons}>
           <Touchable onPress={() => this.onPressEllipsis ()}>
-            <TextSans size={40} color={'#95989A'}>...</TextSans>
+            <View>
+              <TextSans size={40} color={'#95989A'}>...</TextSans>
+            </View>
           </Touchable>
           <VoteBar
             ravelID={ravelID}

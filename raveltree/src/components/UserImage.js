@@ -109,12 +109,12 @@ class UserImage extends Component {
 
     return (
       <Touchable style={layoutStyles} disabled={disabled} onPress={() => this.onPressImage ()}>
-
-        <Image
-          style = {[imageStyles, this.state.isActive ? styles.active : styles.inactive]}
-          source = {image}
-        />
-
+        <View>
+          <Image
+            style = {[imageStyles, this.state.isActive ? styles.active : styles.inactive]}
+            source = {image}
+          />
+        </View>
       </Touchable>
     );
   }

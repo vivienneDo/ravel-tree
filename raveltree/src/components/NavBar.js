@@ -95,24 +95,29 @@ class NavBar extends React.Component {
         <Divider />
         <View style={layoutStyles}>
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Home')}>
-            <Image
-              source = {this.props.activeTab == 'Home' ? require('./img/home-active.png') : require('./img/home.png')}
-              style = {styles.image}
-            />
-            <Text style = {[styles.text, this.props.activeTab == 'Home' ? styles.active : styles.inactive]}>
-              Home
-            </Text>
+            <View style={styles.menuItemInner}>
+              <Image
+                source = {this.props.activeTab == 'Home' ? require('./img/home-active.png') : require('./img/home.png')}
+                style = {styles.image}
+              />
+              <Text style = {[styles.text, this.props.activeTab == 'Home' ? styles.active : styles.inactive]}>
+                Home
+              </Text>
+            </View>
           </Touchable>
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('YourRavels')}>
-            <Image
-              source = {this.props.activeTab == 'YourRavels' ? require('./img/book-active.png') : require('./img/book.png')}
-              style = {styles.image}
-            />
-            <Text style = {[styles.text, this.props.activeTab == 'YourRavels' ? styles.active : styles.inactive]}>
-              Your Ravels
-            </Text>
+            <View style={styles.menuItemInner}>
+              <Image
+                source = {this.props.activeTab == 'YourRavels' ? require('./img/book-active.png') : require('./img/book.png')}
+                style = {styles.image}
+              />
+              <Text style = {[styles.text, this.props.activeTab == 'YourRavels' ? styles.active : styles.inactive]}>
+                Your Ravels
+              </Text>
+            </View>
           </Touchable>
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Messages')}>
+            <View style={styles.menuItemInner}>
               <View>
                 <View style={styles.notification}>
                   <Text style={styles.notificationText}>{messageCount}</Text>
@@ -125,26 +130,31 @@ class NavBar extends React.Component {
               <Text style = {[styles.text, this.props.activeTab == 'Messages' ? styles.active : styles.inactive]}>
                 Messages
               </Text>
+            </View>
           </Touchable>
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Notifications')}>
-            <View>
-              <View style={styles.notification}>
-                <Text style={styles.notificationText}>{notificationCount}</Text>
+            <View style={styles.menuItemInner}>
+              <View>
+                <View style={styles.notification}>
+                  <Text style={styles.notificationText}>{notificationCount}</Text>
+                </View>
+                <Image
+                  source = {this.props.activeTab == 'Notifications' ? require('./img/bell-active.png') : require('./img/bell.png')}
+                  style = {styles.image}
+                />
               </View>
-              <Image
-                source = {this.props.activeTab == 'Notifications' ? require('./img/bell-active.png') : require('./img/bell.png')}
-                style = {styles.image}
-              />
+              <Text style = {[styles.text, this.props.activeTab == 'Notifications' ? styles.active : styles.inactive]}>
+                Notifications
+              </Text>
             </View>
-            <Text style = {[styles.text, this.props.activeTab == 'Notifications' ? styles.active : styles.inactive]}>
-              Notifications
-            </Text>
           </Touchable>
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Profile')}>
-            <UserImage {...this.props} /*profile={this.props.currentUserProfile}*/ userID={this.props.currentUserProfile.user_uid} size={30} active={this.props.activeTab === 'Profile'} disabled />
-            <Text style = {[styles.text, this.props.activeTab === 'Profile' ? styles.active : styles.inactive]}>
-              Profile
-            </Text>
+            <View style={styles.menuItemInner}>
+              <UserImage {...this.props} /*profile={this.props.currentUserProfile}*/ userID={this.props.currentUserProfile.user_uid} size={30} active={this.props.activeTab === 'Profile'} disabled />
+              <Text style = {[styles.text, this.props.activeTab === 'Profile' ? styles.active : styles.inactive]}>
+                Profile
+              </Text>
+            </View>
           </Touchable>
         </View>
       </View>
@@ -165,6 +175,10 @@ const styles = StyleSheet.create ({
     width: '20%',
     //height: '100%',
     flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuItemInner: {
     justifyContent: 'center',
     alignItems: 'center',
   },
