@@ -258,7 +258,7 @@ class InviteParticipants extends Component {
       ravel_title: this.state.ravelName,
       ravel_category: this.state.category,
       passage_length: this.state.passageLength,
-      visibility: this.state.visibility,
+      visibility: this.state.visibility == 'public' ? true : false,
       enable_voting: !this.state.restrictVotingToParticipants,
       enable_comment: this.state.enablePassageComments,
       ravel_concept: this.state.concept,

@@ -48,8 +48,8 @@ class AddPopup extends React.Component {
     }
 
     this.state = {
-      title: this.props.passageMetaData.passage_title || '',
-      passage: this.props.passageMetaData.passage_body || '',
+      title: (this.props.passageMetaData || {}).passage_title || '',
+      passage: (this.props.passageMetaData || {}).passage_body || '',
       passageIndex: passageIndex,
     };
   }

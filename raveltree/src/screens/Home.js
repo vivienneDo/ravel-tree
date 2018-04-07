@@ -62,6 +62,8 @@ class Home extends Component<{}> {
     this.props.loadAllPublicRavel ()
     .then (ravels => {
 
+      console.log (ravels);
+
       this.setState ({ ravels: ravels });
 
       if (_.size (ravels) > 0) {
