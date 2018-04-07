@@ -150,6 +150,7 @@ class PassagePopup extends React.Component {
               downvotes={passageMetaData.passage_downvote}
               ravelID={passageMetaData.ravel_uid}
               passageID={passageMetaData.passage_uid}
+              {...this.props}
             />
           </View>
         </View>

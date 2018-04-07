@@ -38,17 +38,21 @@ export default class ConceptPopup extends React.Component {
       ravelID,
       score,
       concept,
-      participants,
+      //participants,
       onPressClose,
       testID,
     } = this.props;
 
-    const participantCount = Object.keys (participants).filter (id =>
-        participants [id] == true
-    ).length + 1;
+    console.log (this.props);
 
+    const participantCount = this.props.ravel_meta_data.ravel_number_participants + 1;
 
-    participants.length;
+    // const participantCount = Object.keys (participants).filter (id =>
+    //     participants [id] == true
+    // ).length + 1;
+    //
+    //
+    // participants.length;
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 

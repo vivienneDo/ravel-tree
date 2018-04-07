@@ -49,14 +49,16 @@ class AddPopup extends React.Component {
     const title = this.state.title;
     const passage = this.state.passage;
 
-    // Will trigger new props containing 'passage_meta_data'.
     if (this.props.passageIndex == '1-A' || !this.props.passageIndex) {
-      this.props.addInitialPassage ({
-        ravel_uid: ravelID,
-        passage_title: title,
-        passage_body: passage,
+        this.props.addInitialPassage ({
+          ravel_uid: ravelID,
+          passage_title: title,
+          passage_body: passage,
+        })
+      .then (passageMetaData => {
+        this.props.onAdd ();
+        this.switchToPassage (passageMetaData);
       })
-      .then (passageMetaData => { this.switchToPassage (passageMetaData) })
       .catch (error => { console.log (error); });
     } else {
       this.props.addPassage ({

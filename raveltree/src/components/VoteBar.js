@@ -41,7 +41,9 @@ class VoteBar extends Component {
   }
 
   onPressUp () {
-    this.setState ({ pendingUpvote: true });
+    // If the user has already downvoted...
+
+
     this.props.upVotePassage (this.props.ravelID, this.props.passageID)
     .then (success => {
       var upvotes = this.state.upvotes + 1;
@@ -54,7 +56,9 @@ class VoteBar extends Component {
   }
 
   onPressDown () {
-    this.setState ({ pendingDownvote: true });
+    // If the user has already upvoted...
+
+
     this.props.downVotePassage (this.props.ravelID, this.props.passageID)
     .then (success => {
       var downvotes = this.state.downvotes + 1;

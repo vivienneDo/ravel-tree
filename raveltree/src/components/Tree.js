@@ -426,6 +426,11 @@ class Tree extends Component {
         });
         return;
       }
+      else {
+        this.setState ({
+          showInitialAddButton: false,
+        });
+      }
 
       if (DEBUG) console.log ('Got ' + _.size (passageIDs) + ' passages at level ' + 1 + ':')
       if (DEBUG) console.log (passageIDs);

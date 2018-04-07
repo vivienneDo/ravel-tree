@@ -130,6 +130,7 @@ class Ravel extends Component {
           onPressClose={() => this.setState ({ showModal: '' })}
           onSwitchToPassage={(passageMetaData) => this.onSwitchToPassage (passageMetaData)}
           onSwitchToAdd={(passageMetaData) => this.onSwitchToAdd (passageMetaData)}
+          onAdd={() => this.onAdd ()}
           onNavigate={(screen, screenData) => this.onNavigate (screen, screenData)}
           {...this.props}
           {...this.state}
@@ -151,6 +152,15 @@ class Ravel extends Component {
       nodeCounts: this.state.tree.nodeCounts,
       showModal: 'add',
     });
+  }
+
+  onAdd (passageMetaData) {
+    this.props.getRavelMetaData (this.props.screenData.ravel_uid)
+    .then (ravel => {
+      this.handleRavelMetaData (ravel);
+      //this.onSwitchToPassage (passageMetaData);
+    })
+    .catch (error => { console.error (error); });
   }
 
   onNavigate (screen, screenData) {
