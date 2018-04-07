@@ -11,6 +11,7 @@
  * LOGS
  * 03/05/18 - Modified by Frank Fusco (fr@nkfus.co)
  * 03/25/18 - VD Do - Changed Facebook button to use FBLoginComponent
+ * 004/07/18 - VD Do - Please take this change when resolving conflicts!! Changed Facebook button to use FBLoginComponent
  */
 
 import React, { Component } from 'react';
@@ -207,7 +208,9 @@ class Login extends Component {
           <View style = {styles.buttons}>
 
             {/* Facebook button */}
-            <LoginButton
+            <FBLoginComponent             
+            />
+            {/* <LoginButton
               style = {styles.facebook}
               readPermissions = {['public_profile','email']}
               onLoginFinished = {
@@ -217,7 +220,7 @@ class Login extends Component {
                 this.props.userLogOff ();
                 alert("Logged out.");
               }}
-            />
+            /> */}
 
             {this.renderLoader()}
 

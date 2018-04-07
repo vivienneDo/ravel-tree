@@ -3,6 +3,8 @@ Name: FB Login component
 Instructions to use: import FBLoginComponent from '../utils/FBLoginComponent'; into parent
 Then, use the component as any other component 
 ex: <FBLoginComponent/> 
+
+- 04/07/18 - VD Do - Modified to set initial ravel_created field to false 
 */ 
 
 import React, { Component } from 'react';
@@ -81,10 +83,15 @@ class FBLoginComponent extends Component {
                                     updateUserProfile(user, {first_name:results['first_name'],last_name:results['last_name'],bio:'',photoURL:'', stat_ravel_led:0, stat_passage_written:0, stat_ravel_contributed:0, 
                                         upvotes:0, ravel_points:0, email:m_email });
                                         console.log('NEW UPDATE')
+                                        // Do any initial user setup here 
                                         firebase.database().ref(`/master_user_key/${user.uid}`).set({
                                             user_uid: true})
                                             .then(() => {
                                                 firebase.database().ref(`notification_list/${user.uid}`).set(true)
+                                            })
+                                            .then(() => {
+                                                firebase.database().ref(`users/${user.uid}/ravel_created`).set(false)
+                                        
                                             })
                                 }
                             });
