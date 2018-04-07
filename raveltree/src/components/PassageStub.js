@@ -39,6 +39,9 @@ class PassageStub extends Component<{}> {
   }
 
   showPlus (show) {
+    // NOTE: Disable this feature for now – might not be necessary.
+    return;
+
     if (!show) {return}
     return (
       <ButtonPlus size={26} onPress={() => this.props.onPressAdd ()}/>

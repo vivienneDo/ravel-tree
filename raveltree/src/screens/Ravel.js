@@ -149,7 +149,7 @@ class Ravel extends Component {
   onSwitchToAdd (passageMetaData) {
     this.setState ({
       passageMetaData: passageMetaData,
-      nodeCounts: this.state.tree.nodeCounts,
+      //nodeCounts: this.state.tree.nodeCounts,
       showModal: 'add',
     });
   }

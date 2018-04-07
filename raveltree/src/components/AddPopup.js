@@ -31,9 +31,26 @@ import InputText from './InputText'
 class AddPopup extends React.Component {
   constructor (props) {
     super (props);
+
+    var passageIndex = this.props.passageIndex;
+    var passageMetaData = this.props.passageMetaData;
+
+    // If we haven't been passed the passage index for the new passage...
+    if (!passageIndex) {
+      // Check whether we've recieved the metadata from the parent passage.
+      if (passageMetaData) {
+        // If so, generate the next available passage index (for display purposes only).
+        passageIndex = this.getNextPassageIndex (passageMetaData.passage_index);
+      } else {
+        // If not, assume this is 1-A.
+        passageIndex = '1-A';
+      }
+    }
+
     this.state = {
-      title: '',
-      passage: '',
+      title: this.props.passageMetaData.passage_title || '',
+      passage: this.props.passageMetaData.passage_body || '',
+      passageIndex: passageIndex,
     };
   }
 
@@ -49,7 +66,7 @@ class AddPopup extends React.Component {
     const title = this.state.title;
     const passage = this.state.passage;
 
-    if (this.props.passageIndex == '1-A' || !this.props.passageIndex) {
+    if (this.state.passageIndex == '1-A' || !this.state.passageIndex) {
         this.props.addInitialPassage ({
           ravel_uid: ravelID,
           passage_title: title,
@@ -67,7 +84,10 @@ class AddPopup extends React.Component {
         passage_title: title,
         passage_body: passage,
       })
-      .then (passageMetaData => { this.switchToPassage (passageMetaData) })
+      .then (passageMetaData => {
+        this.props.onAdd ();
+        this.switchToPassage (passageMetaData)
+      })
       .catch (error => { console.log (error); });
     }
   }
@@ -115,23 +135,14 @@ class AddPopup extends React.Component {
   render () {
     var {
       isActive,
-      passageIndex,
+      //passageIndex,
       nodeCounts,
-      passageMetaData,
+      //passageMetaData,
       testID,
     } = this.props;
 
-    // If we haven't been passed the passage index for the new passage...
-    if (!passageIndex) {
-      // Check whether we've recieved the metadata from the parent passage.
-      if (passageMetaData) {
-        // If so, generate the next available passage index (for display purposes only).
-        passageIndex = this.getNextPassageIndex (passageMetaData.passage_index);
-      } else {
-        // If not, assume this is 1-A.
-        passageIndex = '1-A';
-      }
-    }
+    var passageIndex = this.state.passageIndex;
+    var passageMetaData = this.state.passageMetaData;
 
     const ravel = this.props.title;
 
