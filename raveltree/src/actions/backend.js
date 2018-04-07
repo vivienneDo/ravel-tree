@@ -37,6 +37,7 @@
  - 04/07/2018 - VD Do - Added userNoVoteTrackerHelper() which sets the field to 'novote' when a user is in no-vote state
                       - Added searchAllRavelByTitle() that searches for allravels by title (public and private )
                       - Modified createUser() to set initial ravel_created field to false 
+                      - Converted all admin functions to return a promise back 
 
  */
 
@@ -3915,29 +3916,30 @@ export const checkRavelEnabledComment = (ravel_uid, passage_uid) => {
  *                           - this.props.terms_of_service.terms_of_service
  * Actions: Adds a new terms of service, will fail if user is not admin
  */
-export const insertTermsOfService = (terms_of_service) => {
+export const insertTermsOfService = (terms_of_service) => dispatch => {
 
-        return (dispatch) => {
+        return new Promise((resolve,reject) => {
 
             checkCurrentUserIsAdmin().then(valueOfKey => {
                 if (valueOfKey) {
                     firebase.database().ref(`terms_of_service`).set({terms_of_service : terms_of_service})
                     .then(() => {
                         firebase.database().ref(`terms_of_service/terms_of_service`).once('value', (snapshot) => {
+                            resolve(snapshot.val())
                         dispatch({type: 'GET_TERMS_OF_SERVICE', payload: snapshot.val() })
                     })
                         .catch(() => {
-                            alert('Sorry, you do have no admin rights...')
+                            reject('Sorry, you do have no admin rights...')
                             dispatch({type: 'IS_ADMIN', payload: false})
                         })
                     })
 
                 } else {
-                    alert('Sorry, you do have no admin rights...')
+                    reject('Sorry, you do have no admin rights...')
                     dispatch({type: 'IS_ADMIN', payload: false})
                 }
             })
-        }
+        })
 }
 
 /**
@@ -3949,9 +3951,9 @@ export const insertTermsOfService = (terms_of_service) => {
  *                           - this.props.terms_of_service.terms_of_service
  * Actions: Updates the terms of service, will fail if user is not admin
  */
-export const updateTermsOfService = (terms_of_service) => {
+export const updateTermsOfService = (terms_of_service) => dispatch => {
 
-    return (dispatch) => {
+    return new Promise((resolve,reject) => {
 
         checkCurrentUserIsAdmin().then(valueOfKey => {
 
@@ -3959,20 +3961,21 @@ export const updateTermsOfService = (terms_of_service) => {
                 firebase.database().ref(`terms_of_service`).update({terms_of_service : terms_of_service})
                 .then(() => {
                     firebase.database().ref(`terms_of_service/terms_of_service`).once('value', (snapshot) => {
+                    resolve(snapshot.val())
                     dispatch({type: 'GET_TERMS_OF_SERVICE', payload: snapshot.val()})
                 })
                     .catch(() => {
-                        alert('Sorry, you do have no admin rights...')
+                        reject('Sorry, you do have no admin rights...')
                         dispatch({type: 'IS_ADMIN', payload: false})
                     })
                 })
 
             } else {
-                alert('Sorry, you do have no admin rights...')
+                reject('Sorry, you do have no admin rights...')
                 dispatch({type: 'IS_ADMIN', payload: false})
             }
         })
-    }
+    })
 }
 
 /**
@@ -3984,16 +3987,17 @@ export const updateTermsOfService = (terms_of_service) => {
  *                           - this.props.terms_of_service.terms_of_service
  * Actions: Gets the terms of service
  */
-export const readTermsOfService = () => {
+export const readTermsOfService = () => dispatch => {
 
-    return (dispatch) => {
+    return new Promise((resolve, reject) => {
         firebase.database().ref(`terms_of_service/terms_of_service`).once('value', (snapshot) => {
+            resolve(snapshot.val())
             dispatch({type: 'GET_TERMS_OF_SERVICE', payload: snapshot.val() })
         })
         .catch((error) => {
-            alert('Error getting terms of service...')
+            reject('Error getting terms of service...')
         })
-    }
+    })
 
 }
 
@@ -4011,26 +4015,34 @@ export const readTermsOfService = () => {
 
 export const addAdminUser = (email, password) => dispatch => {
 
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then((user) => {
-        firebase.database().ref(`/admin/${user.uid}`).set(true)
-        dispatch({type: 'ADD_ADMIN', payload: true})
-    })
-    .catch(function(error) {
+    return new Promise((resolve, reject) => {
 
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    if (errorCode == 'auth/weak-password') {
-        alert('The password is too weak.');
-    } else if (errorCode === 'auth/email-already-in-use') {
-        alert('There already exists an account with the given email address');
-    } else {
-        alert(errorMessage);
-    }
-         console.log(error);
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((user) => {
+            firebase.database().ref(`/admin/${user.uid}`).set(true)
+            resolve(true)
+            dispatch({type: 'ADD_ADMIN', payload: true})
+        })
+        .catch(function(error) {
+    
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        if (errorCode == 'auth/weak-password') {
+            reject('The password is too weak.');
+        } else if (errorCode === 'auth/email-already-in-use') {
+            reject('There already exists an account with the given email address');
+        } else {
+            reject(errorMessage);
+        }
+             console.log(error);
+        })
+    
+        
+
     })
 
- };
+   
+ }
 
 
 /**
@@ -4043,11 +4055,11 @@ export const addAdminUser = (email, password) => dispatch => {
  *                           - this.props.admin_functions.ravel_report_list
  * Actions: Attempts to get an ARRAY of ravels in the form of => [ {key,value}, [key,value] ]
  */
-export const getCompleteRavelReportList = () => {
+export const getCompleteRavelReportList = () => dispatch => {
 
     var ravel_report_list_array = []
 
-    return (dispatch) => {
+    return new Promise((resolve, reject) => {
 
         checkCurrentUserIsAdmin().then(valueOfKey => {
             if (valueOfKey) {
@@ -4056,17 +4068,18 @@ export const getCompleteRavelReportList = () => {
                         if (childSnapShot.val() === false) {
                             firebase.database().ref(`/ravels/${childSnapShot.key}`).once('value', function (snapshotChild){
                             ravel_report_list_array.push({key: childSnapShot.key, value: snapshotChild.val()});
+                            resolve(ravel_report_list_array)
                             dispatch( {type: 'GET_RAVEL_REPORT_LIST', payload: ravel_report_list_array})
                         })
                         }})
 
                 })
                 .catch((error) => {
-                    alert('Error getting all reported ravels...')
+                    reject('Error getting all reported ravels...')
                 })
             }
         })
-    }
+    })
 
 }
 
@@ -4080,11 +4093,11 @@ export const getCompleteRavelReportList = () => {
  *                           - this.props.admin_functions.user_report_list
  * Actions: Attempts to get an ARRAY of users in the form of => [ {key,value}, [key,value] ]
  */
-export const getCompleteUserReportList = () => {
+export const getCompleteUserReportList = () => dispatch => {
 
     var user_report_list_array = []
 
-    return (dispatch) => {
+    return new Promise((resolve, reject) => {
 
         checkCurrentUserIsAdmin().then(valueOfKey => {
 
@@ -4094,17 +4107,18 @@ export const getCompleteUserReportList = () => {
                         if (childSnapShot.val() === false) {
                             firebase.database().ref(`/users/${childSnapShot.key}/userProfile`).once('value', function (snapshotChild){
                             user_report_list_array.push({key: childSnapShot.key, value: snapshotChild.val()});
+                            resolve(user_report_list_array)
                             dispatch( {type: 'GET_USER_REPORT_LIST', payload: user_report_list_array})
                             })
                         }})
 
                 })
                 .catch((error) => {
-                    alert('Error getting all reported users...')
+                    reject('Error getting all reported users...')
                 })
             }
         })
-    }
+    })
 }
 
 /**
@@ -4117,23 +4131,24 @@ export const getCompleteUserReportList = () => {
  *                           - this.props.admin_functions.dismiss_ravel_state
  * Actions: Attempts to dismiss a ravel_uid from the ravel_report_list
  */
-export const dismissReportedRavel = (ravel_uid) => {
+export const dismissReportedRavel = (ravel_uid) => dispatch =>  {
 
-    return (dispatch) => {
+    return new Promise((resolve, reject) => {
         checkCurrentUserIsAdmin().then(valueOfKey => {
             if (valueOfKey) {
                 firebase.database().ref(`ravel_report_list/${ravel_uid}`).remove()
                 .then(() => {
+                    resolve(true)
                     dispatch({type:'DISMISS_REPORT_RAVEL_SUCCESS', payload: true})
                 })
             }
         })
         .catch((error) => {
-            alert('Cannot dismiss this ravel at this time...')
+            reject('Cannot dismiss this ravel at this time...')
             dispatch({type:'DISMISS_REPORT_RAVEL_SUCCESS', payload: false})
         })
 
-    }
+    })
 }
 
 /**
@@ -4146,9 +4161,9 @@ export const dismissReportedRavel = (ravel_uid) => {
  *                           - this.props.admin_functions.dismiss_user_state
  * Actions: Attempts to dismiss a user_uid from the user_report_list
  */
-export const dismissReportedUser = (user_uid) => {
+export const dismissReportedUser = (user_uid) => dispatch => {
 
-    return (dispatch) => {
+    return new Promise ((resolve, reject) => {
 
         checkCurrentUserIsAdmin().then(valueOfKey => {
             if (valueOfKey) {
@@ -4163,7 +4178,7 @@ export const dismissReportedUser = (user_uid) => {
             dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: false})
         })
 
-    }
+    })
 }
 
 /**
@@ -4183,8 +4198,8 @@ export const dismissReportedUser = (user_uid) => {
  *                                                                  - users/${uid}/ravel_created/${ravel_uid}
  *                                                                  - master_ravel_key/${ravel_uid}
  */
-export const banReportedRavel = (ravel_uid) => {
-    return (dispatch) => {
+export const banReportedRavel = (ravel_uid) => dispatch => {
+    return new Promise ((resolve, reject) => {
 
         checkCurrentUserIsAdmin().then(valueOfKey => {
 
@@ -4199,21 +4214,46 @@ export const banReportedRavel = (ravel_uid) => {
                         .then(() => {
                             firebase.database().ref(`master_ravel_key/${ravel_uid}`).remove()
                             .then(() => {
-                                dispatch({type: 'BAN_RAVEL_SUCCESS', payload: true})
-                            })
-                            .then(() => {
 
                                 firebase.database().ref(`ravel_report_list/${ravel_uid}`).remove()
                                 .then(() => {
+                                    resolve(true)
                                     dispatch({type:'DISMISS_REPORT_RAVEL_SUCCESS', payload: true})
                                 })
+                                
+
+                                
                             })
                         })
+                    })
+                    .catch(() => {
+                        reject('Error banning report')
                     })
                 })
             }
         })
-    }
+    })
+}
+
+export const deleteRavel = (ravel_uid) => dispatch => {
+
+    return new Promise ((resolve, reject) => {
+        firebase.database().ref(`/ravels`).orderByChild("ravel_uid").equalTo(ravel_uid).once('value', function(snapshot) {
+    
+          firebase.database().ref(`ravels/${ravel_uid}`).remove()
+          .then(() => {
+            console.log("ravel_uid removed");
+          })
+          .catch((error) => {
+            console.log("Error removing: " + error);
+          })
+  
+        })
+        .catch((error) => {
+          console.log(error);
+          reject ('Error searching for ravel by title.');
+        })
+      });
 }
 
 // TODO
@@ -4250,14 +4290,14 @@ export const banReportedUser = () => {
  *
  * Actions: Attempts to get the stats for admin stats page
  */
-export const getStats = () => {
+export const getStats = () => dispatch => {
 
     var m_number_ravels = 0;
     var m_number_users = 0;
     var m_number_reported_ravels = 0;
     var m_number_reported_users = 0;
 
-    return (dispatch) => {
+    return new Promise((resolve, reject) => {
 
         checkCurrentUserIsAdmin().then(valueOfKey => {
 
@@ -4279,8 +4319,14 @@ export const getStats = () => {
                                 m_number_reported_users = snapshot.numChildren();
                             })
                             .then(() => {
+                                resolve({ number_ravels: m_number_ravels, number_users : m_number_users,
+                                    number_reported_ravels: m_number_reported_ravels, number_reported_users: m_number_reported_users})
+                                
                                 dispatch({type: 'GET_ADMIN_STAT', payload: ({ number_ravels: m_number_ravels, number_users : m_number_users,
                                                                             number_reported_ravels: m_number_reported_ravels, number_reported_users: m_number_reported_users})})
+                            })
+                            .catch(() => {
+                                reject('Error getting stats');
                             })
                         })
                     })
@@ -4288,7 +4334,7 @@ export const getStats = () => {
                 })
             }
         })
-    }
+    })
 }
 
 // MAYBE DELETE
@@ -4321,29 +4367,30 @@ export const acceptTermsAndAgreement = () => {
  * @returns: the current privacy_policy in a long string....
  * Actions: Adds a new privacy_policy, will fail if user is not admin
  */
-export const insertPrivacyPolicy = (privacy_policy) => {
+export const insertPrivacyPolicy = (privacy_policy) => dispatch => {
 
-    return (dispatch) => {
+    return new Promise ((resolve,reject) => {
 
         checkCurrentUserIsAdmin().then(valueOfKey => {
             if (valueOfKey) {
                 firebase.database().ref(`privacy_policy`).set({privacy_policy : privacy_policy})
                 .then(() => {
                     firebase.database().ref(`privacy_policy/privacy_policy`).once('value', (snapshot) => {
+                        resolve((snapshot.val()))
                     dispatch({type: 'GET_PRIVACY_POLICY', payload: snapshot.val() })
                 })
                     .catch(() => {
+                        reject('Sorry, you do have no admin rights...');
                         dispatch({type: 'IS_ADMIN', payload: false})
-                        alert('Sorry, you do have no admin rights...')
                     })
                 })
 
             } else {
+                reject('Sorry, you do have no admin rights...');
                 dispatch({type: 'IS_ADMIN', payload: false})
-                alert('Sorry, you do have no admin rights...')
             }
         })
-    }
+    })
 }
 
 /**
@@ -4359,9 +4406,9 @@ export const insertPrivacyPolicy = (privacy_policy) => {
  * @returns: the current privacy_policy in a long string....
  * Actions: Updates the privacy_policy, will fail if user is not admin
  */
-export const updatePrivacyPolicy = (privacy_policy) => {
+export const updatePrivacyPolicy = (privacy_policy) => dispatch =>{
 
-return (dispatch) => {
+return new Promise ((resolve, reject) => {
 
     checkCurrentUserIsAdmin().then(valueOfKey => {
 
@@ -4369,20 +4416,22 @@ return (dispatch) => {
             firebase.database().ref(`privacy_policy`).update({privacy_policy : privacy_policy})
             .then(() => {
                 firebase.database().ref(`privacy_policy/privacy_policy`).once('value', (snapshot) => {
+                    resolve((snapshot.val()))
                 dispatch({type: 'GET_PRIVACY_POLICY', payload: snapshot.val()})
             })
                 .catch(() => {
-                    alert('Sorry, you do have no admin rights...')
+                    reject('Sorry, you do have no admin rights...');
                     dispatch({type: 'IS_ADMIN', payload: false})
                 })
             })
 
         } else {
-            alert('Sorry, you do have no admin rights...')
+            reject('Sorry, you do have no admin rights...');
             dispatch({type: 'IS_ADMIN', payload: false})
         }
     })
-}
+})
+
 }
 
 /**
