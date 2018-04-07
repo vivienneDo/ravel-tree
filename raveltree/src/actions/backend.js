@@ -509,21 +509,19 @@ export const getCurrentUserProfile = () => {
  * actions: attempts to update the current logged in user's first name, last and bio and gives back the updated userProfile
  *          object
  */
-export const updateCurrentUserProfile = ({ first_name, last_name, bio }) => {
-
-    const { currentUser } = firebase.auth();
-
-    return (dispatch) => {
+export const updateCurrentUserProfile = ({ first_name, last_name, bio }) => dispatch => {
+    return new Promise ((resolve, reject) => {
+        const { currentUser } = firebase.auth();
         firebase.database().ref(`/users/${currentUser.uid}/userProfile`).update({ first_name, last_name, bio})
         firebase.database().ref(`/users/${currentUser.uid}/userProfile`).once('value', snapshot => {
+            resolve (snapshot.val ());
             dispatch({ type: 'UPDATE_CURRENT_USER_PROFILE',
                 payload: snapshot.val() });
             })
             .catch((error) => {
-                alert('Error updating user profile at this time...')
+                reject ('Error updating user profile.');
             });
-
-    }
+    });
 };
 
 /** CURRENT USER REPORT FUNCTIONS */

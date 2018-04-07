@@ -73,7 +73,7 @@ class Profile extends Component {
 
   getUserProfile (userID) {
     this.props.getUserProfile (userID)
-    .then  (profile => {
+    .then (profile => {
       var isOwned = profile.user_uid == this.props.currentUserProfile.user_uid;
       console.log (profile.user_uid);
       this.setState ({
@@ -134,7 +134,28 @@ class Profile extends Component {
     var firstName = this.state.firstName;
     var lastName = this.state.lastName;
     var bioEdit = this.state.bioEdit;
-    this.props.updateCurrentUserProfile ({first_name: firstName, last_name: lastName, bio: bioEdit});
+
+    this.props.updateCurrentUserProfile ({first_name: firstName, last_name: lastName, bio: bioEdit})
+    .then (profile => {
+      var isOwned = profile.user_uid == this.props.currentUserProfile.user_uid;
+      console.log (profile.user_uid);
+      this.setState ({
+        profile: profile,
+        userID: profile.user_uid,
+        firstName: profile.first_name,
+        lastName: profile.last_name,
+        score: profile.ravel_points,
+        photoURL: profile.photoURL,
+        bio: profile.bio,
+        bioEdit: profile.bio,
+        ravelsLed: profile.stat_ravel_led,
+        ravelsContributedTo: profile.stat_ravel_contributed,
+        passagesWritten: profile.stat_passage_written,
+        upvotesReceived: profile.upvotes,
+        mode: 'view',
+      })
+    })
+    .catch (error => { console.log (error); });
   }
 
   render (){
