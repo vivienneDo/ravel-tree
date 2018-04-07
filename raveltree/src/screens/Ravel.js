@@ -47,13 +47,13 @@ class Ravel extends Component {
       loading: true,
       ravelID: screenData.ravel_uid || '',
       mode: this.props.mode || '',
-      showModal: '',
+      showModal: screenData.showModal || '',
       loadPassage: screenData.loadPassage || false,
       passageID: screenData.passage_uid || '',
       //passageMetaData: screenData.passageMetaData || {},
     };
 
-    //console.log (screenData);
+    console.log (screenData);
   }
 
   componentWillMount () {
@@ -236,6 +236,7 @@ class Ravel extends Component {
         onAnalyzeTree={(tree) => this.setState ({ tree: tree })}
         onPressPassage={(passageMetaData) => this.onSwitchToPassage (passageMetaData)}
         onPressAdd={(passageMetaData) => this.onSwitchToAdd (passageMetaData)}
+        onPressInitialAddButton={() => this.onSwitchToAdd ()}
         horizontalPadding={TREE_HORIZONTAL_PADDING}
         ravelID={this.state.ravelID}
         {...this.props}

@@ -1,6 +1,6 @@
 // Author:   Alex Aguirre
 // Created:  01/20/18
-// Modified: 03/31/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 04/06/18 by Frank Fusco (fr@nkfus.co)
 //
 // "User Image" component for RavelTree.
 
@@ -36,7 +36,19 @@ class UserImage extends Component {
     };
   }
 
-  componentWillMount () {
+  componentWillReceiveProps (newProps) {
+    var newID = newProps.userID;
+    var oldID = this.props.userID;
+    if (newID && newID != oldID) {
+      // Get the profile associated with the user id.
+      console.log ("Getting user profile for " + newID);
+      this.props.getUserProfile (newID)
+      .then  (userProfile => { this.setUserProfile (userProfile); })
+      .catch (error => { console.log (error); });
+    }
+  }
+
+  componentDidMount () {
     if (this.props.profile) {
       this.setState ({
         userID: this.props.profile.user_uid,
@@ -50,30 +62,26 @@ class UserImage extends Component {
       if (this.props.userID) {
         // Get the profile associated with the user id.
         console.log ("Getting user profile for " + this.props.userID);
-        this.props.getUserProfile (this.props.userID);
+        this.props.getUserProfile (this.props.userID)
+        .then  (userProfile => { this.setUserProfile (userProfile); })
+        .catch (error => { console.log (error); });
       }
     }
   }
 
-  componentWillReceiveProps (newProps) {
-    if (newProps.userID && !this.props.userID) {
-      // Get the profile associated with the user id.
-      console.log ("Getting user profile for " + newProps.userID);
-      this.props.getUserProfile (newProps.userID);
-    }
-
-    if (newProps.userProfile && newProps.userProfile.user_uid == this.props.userID) {
-      this.setState ({
-        profile: newProps.userProfile,
-        userID: this.props.userID,
-        photoURL: newProps.userProfile.photoURL,
-      });
-    }
+  setUserProfile (userProfile) {
+    console.log (userProfile);
+    this.setState ({
+      profile: userProfile,
+      userID: userProfile.user_uid,
+      photoURL: userProfile.photoURL,
+    });
   }
 
   onPressImage () {
     // Navigate to user profile.
-    var screenData = Object.assign ({}, ...this.state);
+    var userID = this.state.userID;
+    var screenData = Object.assign ({}, { userID });
     this.props.navigateForward ('Profile', this.props.activeScreen, screenData);
   }
 

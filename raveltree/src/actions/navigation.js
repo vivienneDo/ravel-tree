@@ -205,3 +205,21 @@ export const setNavBarTab = (tab) => {
     });
   };
 }
+
+/**
+ * @param: Whether the Profile screen being viewed is owned by the user.
+ * @returns:
+ *  mapStateToProps:
+ *    state.profileIsOwned
+ * actions: Sets whether the Profile screen being viewed is owned by the user.
+ *
+ */
+export const setProfileIsOwned = (isOwned) => {
+  return (dispatch) => {
+    console.log ("Profile Is Owned: " + isOwned);
+    dispatch ({
+      type: types.SET_PROFILE_IS_OWNED,
+      isOwned
+    });
+  };
+}

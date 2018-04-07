@@ -6,6 +6,7 @@ const initialState = {
   previousScreens: ['Home'],
   showNavBar: false,
   activeTab: 'home',
+  profileIsOwned: false,
 }
 
 export default (state = initialState, action) => {
@@ -55,6 +56,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         activeTab: action.tab,
+      };
+
+    case types.SET_PROFILE_IS_OWNED:
+      return {
+        ...state,
+        profileIsOwned: action.isOwned,
       };
 
     default:

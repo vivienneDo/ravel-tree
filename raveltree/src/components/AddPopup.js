@@ -37,10 +37,10 @@ class AddPopup extends React.Component {
     };
   }
 
-  componentWillReceiveProps (newProps) {
+  switchToPassage (passageMetaData) {
     // Triggered after Add button is pressed and the passage is ready.
-    if (newProps.passage_meta_data) {
-      this.props.onSwitchToPassage (newProps.passage_meta_data);
+    if (passageMetaData) {
+      this.props.onSwitchToPassage (passageMetaData);
     }
   }
 
@@ -50,19 +50,23 @@ class AddPopup extends React.Component {
     const passage = this.state.passage;
 
     // Will trigger new props containing 'passage_meta_data'.
-    if (this.props.passageIndex == '1-A') {
+    if (this.props.passageIndex == '1-A' || !this.props.passageIndex) {
       this.props.addInitialPassage ({
         ravel_uid: ravelID,
         passage_title: title,
         passage_body: passage,
-      });
+      })
+      .then (passageMetaData => { this.switchToPassage (passageMetaData) })
+      .catch (error => { console.log (error); });
     } else {
       this.props.addPassage ({
         ravel_uid: ravelID,
         parent_passage_uid: this.props.passageMetaData.passage_uid,
         passage_title: title,
         passage_body: passage,
-      });
+      })
+      .then (passageMetaData => { this.switchToPassage (passageMetaData) })
+      .catch (error => { console.log (error); });
     }
   }
 
@@ -122,8 +126,8 @@ class AddPopup extends React.Component {
         // If so, generate the next available passage index (for display purposes only).
         passageIndex = this.getNextPassageIndex (passageMetaData.passage_index);
       } else {
-        // If not, just set it to a blank value.
-        passageIndex = '';
+        // If not, assume this is 1-A.
+        passageIndex = '1-A';
       }
     }
 
@@ -143,7 +147,7 @@ class AddPopup extends React.Component {
               </View>
               <View style={styles.row2}>
                 <InputText width={'auto'} placeholder={'Type a passage name (e.g., "The Reckoning").'} onChangeText={(text) => this.onChangeTitle (text)} />
-                <UserImage {...this.props} size={26}/>
+                <UserImage {...this.props} userID={this.props.currentUserProfile.user_uid} size={26}/>
               </View>
             </View>
             <View style={styles.passage}>

@@ -26,6 +26,7 @@ import _ from 'lodash';
 import PassageStub from './PassageStub';
 // -----------------------------------------------------------------------------
 
+import ButtonPlus from './ButtonPlus';
 import Loader from './Loader';
 
 const {
@@ -54,9 +55,6 @@ const ARROW_HEIGHT = NODE_HEIGHT;
 TREE_HEIGHT = undefined;
 TREE_WIDTH  = undefined;
 
-// var nodesToRender = [];
-// var arrowsToRender = [];
-
 // MAGIC_NUMBER:
 // MaxNodes   Height    Magic Number
 // 1          20        0
@@ -80,6 +78,7 @@ class Tree extends Component {
       loading: true,
       loadingLevel: 1,
       shouldLoadLevel: false,
+      showInitialAddButton: false,
       selectedNodeIndex: undefined,
       connectingArrow: {},
     };
@@ -121,6 +120,14 @@ class Tree extends Component {
         />
       </View>
     );
+  }
+
+  showInitialAddButton () {
+    if (this.state.showInitialAddButton) {
+      return (
+        <ButtonPlus size={40} onPress={() => this.props.onPressInitialAddButton ()} />
+      );
+    }
   }
 
   addToTree (passage) {
@@ -412,6 +419,14 @@ class Tree extends Component {
     this.props.getPassageUidOnLevel (this.props.ravelID, level)
     .then (passageIDs => {
 
+      if (!passageIDs) {
+        this.setState ({
+          showInitialAddButton: true,
+          loading: false,
+        });
+        return;
+      }
+
       if (DEBUG) console.log ('Got ' + _.size (passageIDs) + ' passages at level ' + 1 + ':')
       if (DEBUG) console.log (passageIDs);
 
@@ -422,6 +437,8 @@ class Tree extends Component {
       }))
     })
     .then (passages => {
+
+      if (!passages) { return; }
 
       // Designate the optimal node on this level (if any).
       var optimal = this.state.optimal;
@@ -562,6 +579,8 @@ class Tree extends Component {
     })
     .then ((nodes) => {
 
+      if (!nodes) { return; }
+
       // Add the staged arrows to the array of arrows to render.
       var stagedArrowData = this.state.stagedArrowData.slice ();
       var arrowsToRender = this.state.arrowsToRender.slice ();
@@ -641,6 +660,7 @@ class Tree extends Component {
       var _nodeCounts = _.size (nodeCounts) - 1;
       var _nodesProcessed = _.size (nodesProcessed);
 
+      // TODO: Split up into increments? Detect scroll end?
       if (_nodesProcessed < _nodeCounts) {
         this.getLevel (_nodesProcessed + 1);
       }
@@ -660,6 +680,7 @@ class Tree extends Component {
 
     return (
       <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, top: MAGIC_NUMBER,}}>
+        {this.showInitialAddButton ()}
         {this.state.nodesToRender}
         <Surface
           width={TREE_WIDTH}
