@@ -3111,9 +3111,6 @@ export const checkUserVoteTrackerHelper = (ravel_uid, passage_uid) => {
         .catch((error) => {
             reject(error)
         })
-
-
-
     })
 }
 
@@ -3142,6 +3139,46 @@ export const userDownVoteTrackerHelper = (ravel_uid, passage_uid) => {
 
 
 
+    })
+}
+
+export const checkUserVote = (ravel_uid, passage_uid) => dispatch => {
+
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+
+        firebase.database().ref(`track_user_vote/${ravel_uid}/${passage_uid}/${currentUid}`).once('value', (snapshot) => {
+
+            if (snapshot.val() === true) {
+                //console.log('I am in if statement' + snapshot.val())
+                // User has upvoted already
+                valueOfKey = true;
+
+            } else if (snapshot.val() === false) {
+
+                // User has downvoted already
+                valueOfKey = false;
+
+            } else {
+                valueOfKey = 0;
+                // User has never voted before
+
+            }
+
+            //console.log('Snapshot value:' + snapshot.val())
+        })
+        .then(() => {
+            return valueOfKey
+        })
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
     })
 }
 
