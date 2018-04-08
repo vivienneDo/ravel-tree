@@ -146,6 +146,7 @@ class Ravel extends Component {
               onNavigateToMerge={(screen, screenData) => this.navigateToMerge (screen, screenData)}
               onReportRavel={(ravelID) => this.reportRavel (ravelID)}
               passageMetaData={this.state.modalData.passage.passageMetaData}
+              ravelMetaData={this.state.ravel}
             />
           </View>
         );
@@ -253,7 +254,9 @@ class Ravel extends Component {
   navigateToMerge (screen, screenData) {
     console.log ('Trying to navigate...');
     // TODO: What do we need to navigate back properly? var screenData = ...
-    this.props.navigateForward ('Merge', screenData);
+    console.log ('\tRavel -> navigateToMerge () -> screenData:');
+    console.log (screenData);
+    this.props.navigateForward ('Merge', this.constructor.name, screenData);
   }
 
   // ---------------------------------------------------------------------------

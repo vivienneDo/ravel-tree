@@ -36,6 +36,7 @@ class PassagePopup extends React.Component {
     this.state = {
       loading: !this.props.passageMetaData,
       passageMetaData: this.props.passageMetaData || {},
+      ravelMetaData: this.props.ravelMetaData || {},
     };
   }
 
@@ -51,7 +52,12 @@ class PassagePopup extends React.Component {
 
   onPressMerge () {
     // We have to navigate from the parent 'Ravel' screen.
-    var screenData = Object.assign({}, this.props.passageMetaData);
+    var screenData = Object.assign({}, {
+      passage: this.state.passageMetaData,
+      ravel:   this.state.ravelMetaData
+    });
+    console.log ('\tPassagePopup -> onPressMerge () -> screenData:');
+    console.log (screenData);
     this.props.onNavigateToMerge ('Merge', screenData);
   }
 

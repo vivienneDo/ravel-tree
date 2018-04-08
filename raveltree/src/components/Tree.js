@@ -716,11 +716,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   const {
-    shouldReloadTree,
+    //shouldReloadTree,
   } = state.tree;
 
   return {
-    shouldReloadTree,
+    //shouldReloadTree,
   };
 }
 

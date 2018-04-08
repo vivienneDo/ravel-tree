@@ -79,10 +79,12 @@ class Merge extends Component {
     super (props);
     var screenData = this.props.screenData;
     this.state = {
-      passageIndex: '2-C', // TEMP: Will inherent from screenData
+      ravel: screenData.ravel,
+      passage: screenData.passage,
+      passageIndex: screenData.passage.passage_index, // TODO: Change to use IDs (also requires edits to Tree component...)
       showMergeButton: false,
       selectedPassageMetaData: undefined,
-      ...this.props.screenData,
+      //...this.props.screenData,
     };
   }
 
@@ -114,11 +116,13 @@ class Merge extends Component {
   showTree () {
     return (
       <Tree
-        tree={this.state.tree || TEST_RAVEL}
+        {...this.props}
+        //tree={this.state.tree || TEST_RAVEL}
+        ravel={this.state.ravel}
         mergeFrom={this.state.passageIndex}
         setScrollParams={(scrollParams) => this.setScrollParams (scrollParams)}
         onUpdateNodeCounts={(nodeCounts) => {;}/*this.onUpdateNodeCounts (nodeCounts)*/}
-        onAnalyzeTree={(tree) => this.setState ({ tree: tree })}
+        //onAnalyzeTree={(tree) => this.setState ({ tree: tree })}
         onPressPassage={(passageMetaData) => this.onSelectPassage (passageMetaData)}
         horizontalPadding={TREE_HORIZONTAL_PADDING}
       />
@@ -227,7 +231,7 @@ const mapStateToProps = (state) => {
     activeScreen,
     previousScreens,
     screenData,
-    currentUserProfile
+    currentUserProfile,
   };
 }
 
