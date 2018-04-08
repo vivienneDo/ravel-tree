@@ -490,18 +490,16 @@ class Tree extends Component {
       return Promise.all (Object.values (passages).map (async passage => {
 
         // If we're on the Merge screen:
-        // TODO: Test this block.
         if (this.props.mergeFrom) {
           // We want to exclude all levels <= the specified passage index.
           var mergeFromLevel = parseInt (this.props.mergeFrom.split ('-') [0]);
-          //var thisLevel = level + 1;
           if (level <= mergeFromLevel) {
             passage.disabled = true;
           }
 
           // We also want to exclude any of the node's existing children.
           var disabled = this.state.disabled.slice ();
-          if (passage.passageIndex == this.props.mergeFrom) {
+          if (passage.passage_index == this.props.mergeFrom) {
             // This is the passage we're merging from. Remember the passageIDs
             // of the passages to disable when we get to them.
             Object.keys (passage.child).map (id => { disabled.push (id); });

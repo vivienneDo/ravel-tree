@@ -50,6 +50,12 @@ class PassagePopup extends React.Component {
     }
   }
 
+  checkIfOnLastLevel () {
+    var levels = this.state.ravelMetaData.level_count;
+    var level = this.state.passageMetaData.level;
+    return level >= levels;
+  }
+
   onPressMerge () {
     // We have to navigate from the parent 'Ravel' screen.
     var screenData = Object.assign({}, {
@@ -142,7 +148,7 @@ class PassagePopup extends React.Component {
           </View>
         </ScrollView>
         <View style={styles.buttons}>
-          <ButtonReverse title={'Merge...'} width={0.30 * width} onPress={() => this.onPressMerge ()} />
+          <ButtonReverse title={'Merge...'} width={0.30 * width} disabled={this.checkIfOnLastLevel ()} onPress={() => this.onPressMerge ()} />
           <ButtonPlus size={36} onPress={() => this.onPressAdd ()} />
           <Button title={'Fork'} width={0.30 * width} onPress={() => this.onPressFork ()} />
         </View>

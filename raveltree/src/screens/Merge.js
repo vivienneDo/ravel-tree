@@ -119,6 +119,7 @@ class Merge extends Component {
         {...this.props}
         //tree={this.state.tree || TEST_RAVEL}
         ravel={this.state.ravel}
+        ravelID={this.state.ravel.ravel_uid}
         mergeFrom={this.state.passageIndex}
         setScrollParams={(scrollParams) => this.setScrollParams (scrollParams)}
         onUpdateNodeCounts={(nodeCounts) => {;}/*this.onUpdateNodeCounts (nodeCounts)*/}

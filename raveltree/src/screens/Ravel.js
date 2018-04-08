@@ -44,10 +44,12 @@ class Ravel extends Component {
     super (props);
     var screenData = this.props.screenData;
     console.log (screenData);
+    console.log (screenData.ravel_uid);
+    console.log ((screenData.ravel || {}).ravel_uid);
     this.state = {
       loading:      true,
       ravel:        undefined,
-      ravelID:      screenData.ravel_uid || '',
+      ravelID:      screenData.ravel_uid || (screenData.ravel || {}).ravel_uid || '',
       mode:         this.props.mode      || '',
       showModal:    screenData.showModal || '',
       modalData: {
@@ -71,7 +73,8 @@ class Ravel extends Component {
 
   componentWillMount () {
     // Retrieve the ravel's metadata.
-    this.props.getRavelMetaData (this.props.screenData.ravel_uid)
+    // this.props.getRavelMetaData (this.props.screenData.ravel_uid)
+    this.props.getRavelMetaData (this.state.ravelID)
     // Load the ravel locally.
     .then (ravel => { this.loadRavel (ravel); })
     .catch (error => { console.error (error); });
@@ -252,10 +255,8 @@ class Ravel extends Component {
   }
 
   navigateToMerge (screen, screenData) {
-    console.log ('Trying to navigate...');
     // TODO: What do we need to navigate back properly? var screenData = ...
-    console.log ('\tRavel -> navigateToMerge () -> screenData:');
-    console.log (screenData);
+
     this.props.navigateForward ('Merge', this.constructor.name, screenData);
   }
 
@@ -339,8 +340,6 @@ class Ravel extends Component {
     }
 
     if (!this.state.ravel || _.size (this.state.ravel) == 0) { return; }
-
-    console.log (this.state.ravel);
 
     return (
       <Tree
