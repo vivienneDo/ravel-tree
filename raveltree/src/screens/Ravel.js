@@ -217,15 +217,12 @@ class Ravel extends Component {
   onAdd (passage) {
     this.props.getRavelMetaData (this.props.screenData.ravel_uid)
     .then (ravel => {
-      //this.loadRavel (ravel);
       var screenData = {
         ravel_uid: this.props.screenData.ravel_uid,
+        loadPassage: passage.passage_uid,
       }
       this.props.refresh ('Ravel', screenData);
     })
-    // .then (() => {
-    //   this.switchToPassage (passage);
-    // })
     .catch (error => { console.error (error); });
   }
 
