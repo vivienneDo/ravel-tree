@@ -37,7 +37,10 @@
  - 04/07/2018 - VD Do - Added userNoVoteTrackerHelper() which sets the field to 'novote' when a user is in no-vote state
                       - Added searchAllRavelByTitle() that searches for allravels by title (public and private )
                       - Modified createUser() to set initial ravel_created field to false 
-                      - Converted all admin functions to return a promise back 
+                      - Converted all admin functions to return a promise back
+                      - Added fetchPassageExploreView() - Gets at max 30 passages for explore screen 
+                                                       - Based on the algorithm defined in the function 
+    
 
  */
 
@@ -1247,6 +1250,209 @@ export const declineRavelInvite = (ravel_uid) => dispatch => {
             }
         })
 
+    });
+}
+
+/** EXPLORE SCREEN */
+
+// Returns a object with random passage uids based on a user's: ravel_created ravels, ravel particpating ravels 
+// and public ravels 
+// Algorithm will first attempt to query in this priority: user_created_ravels, user_participating_ravels, all_public_ravels 
+// Max ravels queried will be 10. Currently, the number of passages queried back returned max is 30 passages*
+// 
+// If user has no ravels from "My Ravels" tab, function will query 10 public ravels (max)
+
+export const fetchPassageExploreView = () => dispatch => {
+
+    var currentUserUid = firebase.auth().currentUser.uid;
+    var array = {}
+    var count = 0 
+  
+    return new Promise ((resolve, reject) => {
+
+        fetchUserCreatedRavelExploreHelper().then((userCreatedResult) => {
+
+            array = {...userCreatedResult}
+
+            fetchUserParticipantRavelExploreHelper().then((userNonCreatedResult) => {
+
+                array = {...array, ...userNonCreatedResult}
+
+                // Query at least 10 random ravels 
+                var totalCountWithNoPublic = Object.keys(userCreatedResult).length + Object.keys(userNonCreatedResult).length; 
+                var countToQueryPublic = 10 - totalCountWithNoPublic; 
+
+                fetchUserPublicRavelExploreHelper(countToQueryPublic).then((publicRavelResult) => {
+
+                    array = {...userCreatedResult, ...userNonCreatedResult, ...publicRavelResult}
+
+                    // Pass in an empty list and the full list 
+                    populatePassageListExploreHelper(array).then((unsortedPassageList) => {
+
+                        shuffleList(unsortedPassageList).then((shuffledPassageList) => {
+                        
+                            dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: shuffledPassageList})
+                        })
+
+                    })
+                    
+                })
+ 
+            })
+
+        })
+        .catch(() => {
+            reject('Error getting explore view')
+        }) 
+    });
+
+};
+
+// Gets a user created ravel list 
+export const fetchUserCreatedRavelExploreHelper = () => {
+
+    var currentUserUid = firebase.auth().currentUser.uid;
+    return new Promise ((resolve, reject) => {
+
+    firebase.database().ref(`/users/${currentUserUid}/ravel_created`).once('value', function(snapshotRavels) {
+        if (snapshotRavels.val() === false) {
+            resolve({})
+        } else {
+            resolve (snapshotRavels.val());
+        }      
+    })
+    .catch(() => {
+        reject(false)
+    })
+
+        
+    });
+}
+
+// Gets a user's participanting ravels 
+export const fetchUserParticipantRavelExploreHelper = () => {
+
+    var currentUserUid = firebase.auth().currentUser.uid;
+    return new Promise ((resolve, reject) => {
+
+        firebase.database().ref(`ravels`).orderByChild(`ravel_participants/${currentUserUid}`).equalTo(true).once('value', (snapshot) => {
+
+            if(snapshot.exists() === false) {
+                resolve({})
+            } else {
+                resolve (snapshot.val());
+                
+                
+            }           
+          })
+          .catch((error) => {
+            reject ('Error loading invited ravels.');
+          })
+
+        
+    });
+}
+
+// Gets a user public ravel 
+export const fetchUserPublicRavelExploreHelper = (countToQueryPublic) =>  {
+
+    var currentUserUid = firebase.auth().currentUser.uid;
+
+    return new Promise ((resolve, reject) => {
+
+        firebase.database().ref(`/ravels/`).orderByChild("visibility").equalTo(true).limitToLast(countToQueryPublic).once('value', snapshot => {
+            if (snapshot.exists() === false) {
+                resolve({})
+            } else {
+                resolve (snapshot.val());
+                
+            }
+            
+        })
+        .catch((error) => {
+            reject ('Error searching for ravel.');
+        })
+
+        
+    });
+}
+
+// Shuffles an object list 
+export const shuffleList = (array) => {
+
+    return new Promise((resolve,reject) => {
+
+            for (let i = (Object.keys(array).length) - 1; i > 0; i--) {
+
+                var j = i + Math.floor(Math.random() * ((Object.keys(array).length) - i));
+
+                var temp = array[Object.keys(array)[j]];
+                array[Object.keys(array)[j]] = array[Object.keys(array)[i]];
+                array[Object.keys(array)[i]] = temp;
+            }
+
+        resolve(array)
+    })
+}
+
+
+
+export const populatePassageListExploreHelper = (array) =>  {
+
+    var currentUserUid = firebase.auth().currentUser.uid;
+    
+    return new Promise ((resolve, reject) => {
+
+        var unsortPassageList = {}; 
+        var response = [];
+        var promises = [];
+
+        Object.keys(array).forEach((elm) => {       
+
+            // Get passages from ravels and assign to list.
+            promises.push(fetchPassageExploreViewFromEachRavelHelper(elm));
+     
+        })
+
+        Promise.all(promises)
+            .then((results) => {
+                results.forEach((result) => {
+                    Object.assign(unsortPassageList, result);
+                })
+
+                resolve(unsortPassageList);
+            })
+            .catch((error) => {
+                reject(unsortPassageList);
+            })        
+    })
+}
+
+
+// array = key,value pair of ravel uids 
+export const fetchPassageExploreViewFromEachRavelHelper = (ravel_uid) =>  {
+
+    var currentUserUid = firebase.auth().currentUser.uid;
+
+    return new Promise ((resolve, reject) => {
+
+        firebase.database().ref(`/passages/${ravel_uid}`).limitToLast(3).once('value', snapshot => {
+            if (snapshot.exists() === false) {
+
+                // Empty 
+                resolve({})
+            } else {
+                
+                resolve (snapshot.val());
+                
+            }
+            
+        })
+        .catch((error) => {
+            reject ('Error searching for ravel.');
+        })
+
+        
     });
 }
 
