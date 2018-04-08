@@ -40,6 +40,11 @@
                       - Converted all admin functions to return a promise back
                       - Added fetchPassageExploreView() - Gets at max 30 passages for explore screen 
                                                        - Based on the algorithm defined in the function 
+                      - Modified getRavelMetaData() to add user_uid to trending_view_list 
+                      - Modfied createStartRavel() to set view count to 0 in ravel object
+                      - Added searchRavelByTrending() - returns a list of ravels in ascending order. 
+
+
     
 
  */
@@ -808,7 +813,7 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
     var level_count = 0;
     var nodeCount = false;
     var has_child = false;
-
+    var views = 0; 
 
     if (visibility === true) {
 
@@ -845,7 +850,7 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
         .then(() => {
 
             firebase.database().ref(`/ravels`)
-            .push({ roots, nodeCount, user_created, user_created_photoURL, ravel_title, ravel_category, passage_length,
+            .push({ views, roots, nodeCount, user_created, user_created_photoURL, ravel_title, ravel_category, passage_length,
                 visibility, enable_voting, enable_comment, ravel_concept, ravel_status,ravel_number_participants,
                 ravel_participants, m_ravel_participants, ravel_create_date, public_tag_set, ravel_points, public_ravel_title,
                 public_cat_fiction, public_cat_nonfiction, public_cat_other, level_count,  has_child})
@@ -920,14 +925,26 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
  * actions: attempts to get a particular ravel object's metadata (public/private)
  */
 export const getRavelMetaData = (ravel_uid) => dispatch => {
+
+  var currentUserUid = firebase.auth().currentUser.uid; 
+
   return new Promise ((resolve, reject) => {
 
       calculateNodeCountOnRavelFetch(ravel_uid)
       .then(() => {
+
           firebase.database().ref(`/ravels/${ravel_uid}`).once('value', function (snapshot) {
               resolve (snapshot.val());
               dispatch({ type: 'GET_RAVEL_META_DATA', payload: snapshot.val()})
           })
+      })
+      .then(() => {
+        // Sets a unique user ID when user views this ravel 
+        firebase.database().ref(`trending_view_tracker/${ravel_uid}/${currentUserUid}`).set(true)
+      })
+      .then(() => {
+        // Update the view count for unique users 
+        updateRavelViewCount(ravel_uid)
       })
       .catch((error) => {
           reject ('Error getting ravel metadata.');
@@ -935,6 +952,34 @@ export const getRavelMetaData = (ravel_uid) => dispatch => {
 
   });
 }
+
+export const updateRavelViewCount = (ravel_uid) => {
+
+    var currentUserUid = firebase.auth().currentUser.uid; 
+    var numCount = 0; 
+
+    return new Promise ((resolve, reject) => {
+  
+        firebase.database().ref(`trending_view_tracker/${ravel_uid}`).once('value', (snapshot) => {
+            numCount = snapshot.numChildren(); 
+        })
+        .then(() => {
+
+            firebase.database().ref(`ravels/${ravel_uid}/views`).once('value', (snapshotView) => {
+                firebase.database().ref(`ravels/${ravel_uid}/views`).set(numCount)
+
+            })
+        })
+        .then(() => {
+            resolve(true)
+        })
+        .catch((error) => {
+            reject('Error')
+        })
+  
+    });
+  }
+
 
 /**
  * @param: ravel_uid
@@ -1290,8 +1335,9 @@ export const fetchPassageExploreView = () => dispatch => {
                     populatePassageListExploreHelper(array).then((unsortedPassageList) => {
 
                         shuffleList(unsortedPassageList).then((shuffledPassageList) => {
-                        
-                            dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: shuffledPassageList})
+                            
+                            resolve(shuffledPassageList); 
+                            //dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: shuffledPassageList})
                         })
 
                     })
@@ -1667,6 +1713,29 @@ export const searchRavelByCategory = (category) => dispatch => {
             }
         }
 
+    });
+}
+
+/**
+ * @param: nothing
+ * @returns:
+ * resolve - an object list (key,value) of ravels in ASC order (with metadata)
+ * actions: 
+ *
+ *
+ */
+export const searchRavelByTrending = () => dispatch => {
+
+    return new Promise ((resolve, reject) => {
+        firebase.database().ref(`ravels`).orderByChild('views').once('value', snapshot => {
+
+            resolve(snapshot.val())
+            //dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val().reverse()})
+
+        })
+        .catch((error) => {
+            reject ('Error searching for ravel.');
+        })
     });
 }
 
@@ -2094,6 +2163,8 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
  * actions: Attempts to get the metadata for a particular ravel
  */
 export const getPassageMetaData = (passage_uid, ravel_uid) => dispatch => {
+
+    var currentUserUid = firebase.auth().currentUser.uid;
 
     return new Promise ((resolve, reject) => {
 
@@ -3630,55 +3701,6 @@ export const getPassageComment = (ravel_uid, passage_uid) => dispatch => {
         })
     });
 }
-
-
-/** EXPLORE SCREEN FUNCTIONS */
-
-/**
- * @param: nothing
- * @returns:
- * mapStateToProps = state => all_user_created_ravels =
- * state.current_user_ravel:
- *      'INITIAL_USER_RAVEL_FETCH' : a list of ravels that the current user created
- *          - this.props.all_user_created_ravels.enable_comment
-            - this.props.all_user_created_ravels.enable_voting
-            - this.props.all_user_created_ravels.m_ravel_participants
-            - this.props.all_user_created_ravels.passage_length
-            - this.props.all_user_created_ravels.ravel_category
-            - this.props.all_user_created_ravels.ravel_concept
-            - this.props.all_user_created_ravels.ravel_create_date
-            - this.props.all_user_created_ravels.ravel_number_participants
-            - this.props.all_user_created_ravels.ravel_participants{}
-            - this.props.all_user_created_ravels.ravel_points
-            - this.props.all_user_created_ravels.ravel_title
-            - this.props.all_user_created_ravels.user_created
-            - this.props.all_user_created_ravels.user_created_photoURL
- * actions: gets the current user's created ravels
- *
- */
-// Gets a list of random passages associated to a ravel that is in public_list
-export const loadPassageExplore = () => {
-
-    var currentUserUid = firebase.auth().currentUser.uid;
-    var listOfPublicRavel = {};
-    var randomElm;
-
-    return (dispatch) => {
-        firebase.database().ref(`ravels`).orderByChild(`visibility`).equalTo(true).once('value', (snapshotPublicRavel) => {
-            listOfPublicRavel = snapshotPublicRavel.val();
-            console.log('snapshotPublicRavel elm = ' + snapshotPublicRavel.val())
-            console.log('listOfPublicRavel elm = ' + listOfPublicRavel.val())
-        })
-        .then(() => {
-            randomElm = listOfPublicRavel[Math.floor(Math.random() * listOfPublicRavel.length)]
-        })
-
-        console.log('random elm = ' + randomElm)
-
-
-
-    };
-};
 
 
 /** HELPER FUNCTION  */
