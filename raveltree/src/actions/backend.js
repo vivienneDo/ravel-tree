@@ -218,6 +218,9 @@ export const signInWithEmail = (email, password) => dispatch => {
          dispatch({ type: 'GET_CURRENT_USER_PROFILE',
                     payload: snapshot.val() });
      })
+     .then(() => {
+        banReportedUser();
+     })
      .catch((error) => {
          alert('Error loading user profile at this time...')
      })
@@ -4397,12 +4400,13 @@ export const dismissReportedUser = (user_uid) => dispatch => {
             if (valueOfKey) {
                 firebase.database().ref(`user_report_list/${user_uid}`).remove()
                 .then(() => {
+                    resolve(true)
                     dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: true})
                 })
             }
         })
         .catch((error) => {
-            alert('Cannot dismiss this user at this time...')
+            reject('Cannot dismiss this user at this time...')
             dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: false})
         })
 
@@ -4484,17 +4488,52 @@ export const deleteRavel = (ravel_uid) => dispatch => {
       });
 }
 
-// TODO
-export const banReportedUser = () => {
+/**
+ * @param: user_uid
+ * @returns: 
+ *
+ * Actions: Attempts to flag user as banned (value is true)
+ */
+export const flagReportedUser = (user_uid) => dispatch => {
 
-    return (dispatch) => {
+    return new Promise ((resolve, reject) => {
+
         checkCurrentUserIsAdmin().then(valueOfKey => {
             if (valueOfKey) {
-                // Do stuff
+                firebase.database().ref(`user_report_list/${user_uid}`).set(true)
+                .then(() => {
+                    dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: true})
+                })
             }
         })
+        .catch((error) => {
+            alert('Cannot dismiss this user at this time...')
+            dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: false})
+        })
 
-    }
+    })
+}
+
+// TODO
+export const banReportedUser = () => dispatch => {
+
+var user_uid = firebase.auth().currentUser.uid; 
+
+    return new Promise ((resolve, reject) => {
+
+                firebase.database().ref(`user_report_list`).orderByChild(`${user_uid}`).equalTo(true).once('value', (snapshot) => {
+                    if(snapshot.exists === true && snapshot.val() === true) {
+
+                        // Alert user has been deleted, edit message...or create pop-up screen 
+                        alert('You have been removed from raveltree due to violation of terms of services.')
+                        firebase.auth().currentUser.delete(); 
+
+                    } else {
+                        
+                    }
+                })
+
+    })
 }
 
 /**
