@@ -38,6 +38,7 @@ import Home from './screens/Home'
 import Explore from './screens/Explore'
 import Ravel from './screens/Ravel'
 import Merge from './screens/Merge'
+import Refresh from './screens/Refresh'
 
 import GraphicsTest from './screens/GraphicsTest';
 
@@ -99,6 +100,8 @@ class Screen extends Component {
         return <Ravel {...this.props} />;
       case ('Merge'):
         return <Merge {...this.props} />;
+      case ('Refresh'):
+        return <Refresh {...this.props} />;
       default:
         return <Login {...this.props} />;
     }

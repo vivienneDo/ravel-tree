@@ -64,62 +64,120 @@ TREE_WIDTH  = undefined;
 // 5          220       100
 // 6          270       125
 
+var initialState = {
+  nodesToRender: [],
+  arrowsToRender: [],
+  stagedArrowData: [],
+  optimal: [],
+  disabled: [],
+  loading: true,
+  loadingLevel: 1,
+  shouldLoadLevel: false,
+  showInitialAddButton: false,
+  selectedNodeIndex: undefined,
+  connectingArrow: {},
+}
+
 class Tree extends Component {
   constructor (props) {
     super (props);
+
+    var ravel = this.props.ravel;
+
+    var tree = {
+      data: ravel.roots,
+      nodeCounts: ravel.nodeCount,
+      nodesProcessed: {},
+      depth: ravel.level_count,
+      breadth: Math.max (...Object.values (ravel.nodeCount)),
+      height: 0,
+      width: 0,
+      analyzed: false,
+    };
+
     this.state = {
-      ...this.props,
-      //tree: {},
-      nodesToRender: [],
-      arrowsToRender: [],
-      stagedArrowData: [],
-      optimal: [],
-      disabled: [],
-      loading: true,
-      loadingLevel: 1,
-      shouldLoadLevel: false,
-      showInitialAddButton: false,
-      selectedNodeIndex: undefined,
-      connectingArrow: {},
+      tree: tree,
+      ravel: ravel || {},
+      ...initialState,
     };
 
     TREE_HORIZONTAL_PADDING = this.props.horizontalPadding || 20;
+
+    console.log ('\tCONSTRUCTOR: Tree component.');
   }
 
-  renderTestNode () {
-    return (
-      <View
-        key={'12345'}
-        style={{
-          position: 'absolute',
-          zIndex: 2,
-          left: this.getXPosition ({ level: 1 }),
-          top: 0,
-          width: NODE_WIDTH,
-          height: NODE_HEIGHT,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <PassageStub
-          key={'1234567890'}
-          {...this.props}
-          name={'Test Title'}
-          passageIndex={'1-A'}
-          score={0}
-          active={true}
-          disabled={false}
-          author={firebase.auth().currentUser.uid}
-          onPress={() => this.onPressPassage ({})}
-          onPressAdd={() => this.props.onPressAdd ({})}
-          showAddButton={
-            ((this.state.screenData.ravel_participants || {}) [firebase.auth ().currentUser.uid]) ||
-            (this.props.screenData.user_created == firebase.auth ().currentUser.uid)
-          }
-          highlighted={false}
-        />
-      </View>
-    );
+  shouldComponentUpdate (newProps) {
+    if (this.props.shouldReloadTree) {
+      console.log ("\tshouldComponentUpdate returns TRUE");
+    }
+    return this.props.shouldReloadTree;
+  }
+
+  componentWillReceiveProps (newProps) {
+    if (this.props.shouldReloadTree) {
+      if (newProps.ravel) {
+        // TODO: Reload tree.
+
+        console.log ('\t\tTHIS IS WHERE WE WOULD RELOAD THE TREE.');
+
+        // TODO: Configure this.
+        // this.props.refresh ('Ravel', undefined);
+
+        // var ravel = newProps.ravel;
+        //
+        // var tree = {
+        //   data: ravel.roots,
+        //   nodeCounts: ravel.nodeCount,
+        //   nodesProcessed: {},
+        //   depth: ravel.level_count,
+        //   breadth: Math.max (...Object.values (ravel.nodeCount)),
+        //   height: 0,
+        //   width: 0,
+        //   analyzed: false,
+        // };
+        //
+        // this.setState ({
+        //   ...initialState,
+        //   tree: tree,
+        //   ravel: ravel,
+        // });
+
+        // Reset the reload flag.
+        this.props.setShouldReloadTree (false);
+      }
+    }
+
+    //if (newProps.ravel) {
+      // var ravel = newProps.ravel;
+      //
+      // var tree = {
+      //   data: ravel.roots,
+      //   nodeCounts: ravel.nodeCount,
+      //   nodesProcessed: {},
+      //   depth: ravel.level_count,
+      //   breadth: Math.max (...Object.values (ravel.nodeCount)),
+      //   height: 0,
+      //   width: 0,
+      //   analyzed: false,
+      // };
+      //
+      // this.setState ({
+      //   ...initialState,
+      //   tree: tree,
+      //   ravel: ravel,
+      // })
+  //  }
+
+    // if (newProps.tree) {
+    //   this.setState ({
+    //     tree: newProps.tree,
+    //   });
+    // }
+
+    // if (newProps.tree) {
+    //   this.setState (initialState);
+    // }
+    //console.log (newProps.tree.analyzed);
   }
 
   showInitialAddButton () {
@@ -401,10 +459,10 @@ class Tree extends Component {
           author={content.user_created}
           onPress={() => this.onPressPassage (content)}
           onPressAdd={() => this.props.onPressAdd (content)}
-          showAddButton={
-            ((this.state.screenData.ravel_participants || {}) [firebase.auth ().currentUser.uid]) ||
-            (this.props.screenData.user_created == firebase.auth ().currentUser.uid)
-          }
+          // showAddButton={
+          //   ((this.state.screenData.ravel_participants || {}) [firebase.auth ().currentUser.uid]) ||
+          //   (this.props.screenData.user_created == firebase.auth ().currentUser.uid)
+          // }
           highlighted={
             this.state.selectedNodeIndex ?
             this.state.selectedNodeIndex == content.passage_index :
@@ -419,9 +477,15 @@ class Tree extends Component {
     this.props.getPassageUidOnLevel (this.props.ravelID, level)
     .then (passageIDs => {
 
-      if (!passageIDs) {
+      if (level == 1 && !passageIDs) {
         this.setState ({
           showInitialAddButton: true,
+          loading: false,
+        });
+        return;
+      }
+      if (!passageIDs) {
+        this.setState ({
           loading: false,
         });
         return;
@@ -432,13 +496,12 @@ class Tree extends Component {
         });
       }
 
-      if (DEBUG) console.log ('Got ' + _.size (passageIDs) + ' passages at level ' + 1 + ':')
+      if (DEBUG) console.log ('Got ' + _.size (passageIDs) + ' passages at level ' + level + ':')
       if (DEBUG) console.log (passageIDs);
 
       // Get the metadata for each passage.
       return Promise.all (Object.keys (passageIDs).map (async passageID => {
         return this.props.getPassageMetaData (passageID, this.props.ravelID);
-
       }))
     })
     .then (passages => {
@@ -638,7 +701,7 @@ class Tree extends Component {
     if (!tree.analyzed) {
       if (DEBUG) console.log ('Tree needs to be analyzed. Analyzing...');
       tree = this.analyzeTree (tree);
-      this.props.onAnalyzeTree (tree);
+      //TEMP //this.props.onAnalyzeTree (tree);
       this.setState ({ tree: tree });
 
       if (DEBUG) console.log ('Tree:');
@@ -707,10 +770,9 @@ class Tree extends Component {
   }
 
   render () {
-    const tree = this.props.tree;
     return (
       <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, zIndex: 1,}}>
-        {this.renderTree (tree)}
+        {this.renderTree (this.state.tree)}
         {this.renderLoader ()}
       </View>
     );
@@ -728,18 +790,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   const {
-    activeScreen,
-    previousScreens,
-  } = state.navigation;
-
-  const {
-    passage_meta_data,
-  } = state.passage
+    shouldReloadTree,
+  } = state.tree;
 
   return {
-    activeScreen,
-    previousScreens,
-    passage_meta_data
+    shouldReloadTree,
   };
 }
 

@@ -250,7 +250,6 @@ class InviteParticipants extends Component {
     // Get the array of participants, convert it to an array of userIDs only,
     // and push the current user's ID to it.
     var participants = this.state.participants.map (participant => participant.user_uid);
-    //participants.push (firebase.auth ().currentUser.uid);
 
     this.setState ({ readyToNavigate: true });
 

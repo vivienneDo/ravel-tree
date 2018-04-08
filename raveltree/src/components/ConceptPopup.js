@@ -32,18 +32,16 @@ export default class ConceptPopup extends React.Component {
   }
 
   render () {
-    const {
-      title,
-      author,
-      ravelID,
-      score,
-      concept,
-      //participants,
-      onPressClose,
-      testID,
-    } = this.props;
+    var ravel = this.props.ravel;
+    if (!ravel) { return; }
 
-    const participantCount = this.props.ravel_meta_data.ravel_number_participants + 1;
+    const ravelID = ravel.ravel_uid;
+    const title = ravel.ravel_title;
+    const author = ravel.user_created;
+    const participants = ravel.ravel_participants;
+    const participantCount = ravel.ravel_number_participants + 1;
+    const score = ravel.ravel_points;
+    const concept = ravel.ravel_concept;
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 

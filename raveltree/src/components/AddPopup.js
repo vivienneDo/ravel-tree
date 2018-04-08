@@ -48,17 +48,10 @@ class AddPopup extends React.Component {
     }
 
     this.state = {
-      title: (this.props.passageMetaData || {}).passage_title || '',
-      passage: (this.props.passageMetaData || {}).passage_body || '',
+      title: '',
+      passage: '',
       passageIndex: passageIndex,
     };
-  }
-
-  switchToPassage (passageMetaData) {
-    // Triggered after Add button is pressed and the passage is ready.
-    if (passageMetaData) {
-      this.props.onSwitchToPassage (passageMetaData);
-    }
   }
 
   onPressAdd () {
@@ -66,29 +59,25 @@ class AddPopup extends React.Component {
     const title = this.state.title;
     const passage = this.state.passage;
 
+    // Initial Passage Addition
     if (this.state.passageIndex == '1-A' || !this.state.passageIndex) {
-        this.props.addInitialPassage ({
-          ravel_uid: ravelID,
-          passage_title: title,
-          passage_body: passage,
-        })
-      .then (passageMetaData => {
-        this.props.onAdd ();
-        this.switchToPassage (passageMetaData);
-      })
-      .catch (error => { console.log (error); });
-    } else {
-      this.props.addPassage ({
+      var addData = {
+        ravel_uid: ravelID,
+        passage_title: title,
+        passage_body: passage,
+      };
+      this.props.addInitialPassage (addData);
+    }
+
+    // Normal Addition
+    else {
+      var addData = {
         ravel_uid: ravelID,
         parent_passage_uid: this.props.passageMetaData.passage_uid,
         passage_title: title,
         passage_body: passage,
-      })
-      .then (passageMetaData => {
-        this.props.onAdd ();
-        this.switchToPassage (passageMetaData)
-      })
-      .catch (error => { console.log (error); });
+      };
+      this.props.addPassage (addData);
     }
   }
 
@@ -133,16 +122,8 @@ class AddPopup extends React.Component {
   }
 
   render () {
-    var {
-      isActive,
-      //passageIndex,
-      nodeCounts,
-      //passageMetaData,
-      testID,
-    } = this.props;
-
+    var isActive = this.props.isActive;
     var passageIndex = this.state.passageIndex;
-    var passageMetaData = this.state.passageMetaData;
 
     const ravel = this.props.title;
 
@@ -151,7 +132,7 @@ class AddPopup extends React.Component {
     var {height, width} = Dimensions.get ('window');
 
     return (
-        <ModalContainer name='PassagePopup' isActive={isActive} style={{flex: 1, flexDirection: 'column', backgroundColor: '#000000'}} onPressClose={() => this.props.onPressClose ()}>
+        <ModalContainer name='AddPopup' isActive={isActive} style={{flex: 1, flexDirection: 'column', backgroundColor: '#000000'}} onPressClose={() => this.props.onPressClose ()}>
           <View style={styles.container}>
             <View style={styles.head}>
               <View style={styles.row1}>
@@ -160,7 +141,7 @@ class AddPopup extends React.Component {
               </View>
               <View style={styles.row2}>
                 <InputText width={'auto'} placeholder={'Type a passage name (e.g., "The Reckoning").'} onChangeText={(text) => this.onChangeTitle (text)} />
-                <UserImage {...this.props} userID={this.props.currentUserProfile.user_uid} size={26}/>
+                <UserImage {...this.props} userID={firebase.auth ().currentUser.uid} size={26}/>
               </View>
             </View>
             <View style={styles.passage}>
@@ -229,15 +210,8 @@ const mapStateToProps = (state) => {
     currentUserProfile,
   } = state.current_user;
 
-  const {
-    passage,
-    passage_meta_data,
-  } = state.passage;
-
   return {
-    currentUserProfile,
-    passage,
-    passage_meta_data,
+    currentUserProfile
   };
 }
 

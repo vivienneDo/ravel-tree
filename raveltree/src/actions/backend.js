@@ -1584,9 +1584,9 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => d
                                     addPassageToRavelRootList(ravel_uid, passage_uid);
                                 })
                                 .then(() => {
-                                    console.log('before index calc')
+                                    //console.log('before index calc')
                                     calculatePassageIndexField(ravel_uid,level,passage_uid).then(passage_index => {
-                                        console.log(passage_index)
+                                        //console.log(passage_index)
                                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_index`).set(passage_index)
                                     })
                                     .then(() => {
@@ -2023,8 +2023,8 @@ export const checkParticipantExistRavel = (ravel_uid) => {
         var currentUid = firebase.auth().currentUser.uid;
         var snapShotVal;
         firebase.database().ref(`ravels/${ravel_uid}/ravel_participants/${currentUid}`).once('value', (snapshot) => {
-            console.log('ravel uid = ' + ravel_uid);
-            console.log('Current uid = ' + currentUid);
+            //console.log('ravel uid = ' + ravel_uid);
+            //console.log('Current uid = ' + currentUid);
             if (snapshot.val() === true) {
                 valueOfKey = true
             }
@@ -3361,14 +3361,14 @@ export const loadPassageExplore = () => {
     return (dispatch) => {
         firebase.database().ref(`ravels`).orderByChild(`visibility`).equalTo(true).once('value', (snapshotPublicRavel) => {
             listOfPublicRavel = snapshotPublicRavel.val();
-            console.log('snapshotPublicRavel elm = ' + snapshotPublicRavel.val())
-            console.log('listOfPublicRavel elm = ' + listOfPublicRavel.val())
+            //console.log('snapshotPublicRavel elm = ' + snapshotPublicRavel.val())
+            //console.log('listOfPublicRavel elm = ' + listOfPublicRavel.val())
         })
         .then(() => {
             randomElm = listOfPublicRavel[Math.floor(Math.random() * listOfPublicRavel.length)]
         })
 
-        console.log('random elm = ' + randomElm)
+        //console.log('random elm = ' + randomElm)
 
 
 
@@ -3393,7 +3393,7 @@ export const userRavelPointCalculationHelper = (user_uid) => {
        stat_ravel_led:
        up_votes:
      */
-    console.log('inside user ravel point calc')
+    //console.log('inside user ravel point calc')
      /** ravel_points = f(userProfile) = stat_ravel_led + stat_ravel_contributed + stat_passage_written + up_votes*/
      var m_stat_ravel_led;
      var m_stat_ravel_contributed;
@@ -3454,7 +3454,7 @@ export const reCalculateCurrentPassagesOptimalityScore = (ravel_uid, passage_uid
             valueOfKey = true
         })
             .then(() => {
-                console.log('value of value of key inside recalcu' + valueOfKey)
+                //console.log('value of value of key inside recalcu' + valueOfKey)
                 return valueOfKey
             })
             .then((valueOfKey) => {
@@ -3584,7 +3584,7 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
      reCalculateCurrentPassagesOptimalityScore(ravel_uid, passage_uid).then(valueOfKey => {
 
 
-        console.log('value of key after recal = ' + valueOfKey)
+        //console.log('value of key after recal = ' + valueOfKey)
         if (valueOfKey) {
 
             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/child`).once('value', (snapshot) => {
@@ -3594,7 +3594,7 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
                         this_passage_score = valueOfKey;
                     })
                     .then(() => {
-                        console.log('m_optimalityScore AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
+                        //console.log('m_optimalityScore AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
                         m_optimalityScore = this_passage_score + 0;
                         firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({optimalityScore : m_optimalityScore})
                     })

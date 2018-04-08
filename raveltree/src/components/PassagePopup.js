@@ -52,7 +52,7 @@ class PassagePopup extends React.Component {
   onPressMerge () {
     // We have to navigate from the parent 'Ravel' screen.
     var screenData = Object.assign({}, this.props.passageMetaData);
-    this.props.onNavigate ('Merge', screenData);
+    this.props.onNavigateToMerge ('Merge', screenData);
   }
 
   onPressFork () {
@@ -102,7 +102,7 @@ class PassagePopup extends React.Component {
   render () {
     var passageMetaData = this.state.passageMetaData || {};
 
-    isActive = passageMetaData.isOptimal || this.props.isActive;
+    isActive = passageMetaData.optimal || this.props.isActive;
 
     console.log (passageMetaData);
 
@@ -146,11 +146,11 @@ class PassagePopup extends React.Component {
           </Touchable>
           <View style={styles.voteBar}>
             <VoteBar
-              upvotes={passageMetaData.passage_upvote}
-              downvotes={passageMetaData.passage_downvote}
+              {...this.props}
               ravelID={passageMetaData.ravel_uid}
               passageID={passageMetaData.passage_uid}
-              {...this.props}
+              upvotes={passageMetaData.passage_upvote}
+              downvotes={passageMetaData.passage_downvote}
             />
           </View>
         </View>
@@ -209,19 +209,10 @@ const styles = StyleSheet.create ({
 
 const mapStateToProps = (state) => {
   const {
-    activeScreen,
-    previousScreens,
-    screenData,
-  } = state.navigation;
-
-  const {
     currentUserProfile,
   } = state.current_user;
 
   return {
-    activeScreen,
-    previousScreens,
-    screenData,
     currentUserProfile
   };
 }

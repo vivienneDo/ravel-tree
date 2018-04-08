@@ -6,6 +6,10 @@ export const SET_NAVBAR_TAB       = 'SET_NAVBAR_TAB'
 export const SET_PROFILE_IS_OWNED = 'SET_PROFILE_IS_OWNED'
 export const NAVIGATE_FORWARD     = 'NAV_FORWARD'
 export const NAVIGATE_BACK        = 'NAV_BACK'
+export const REFRESH              = 'REFRESH'
+
+// Tree
+export const SET_SHOULD_RELOAD_TREE = 'SET_SHOULD_RELOAD_TREE'
 
 // Reset
 export const RESET_STATE_PASSAGE = 'RESET_STATE_PASSAGE'
