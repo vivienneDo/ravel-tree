@@ -46,8 +46,9 @@
                       - Added searchRavelByTrending() - returns a list of ravels in ascending order. 
  - 04/09/2018 - VD Do - Fixed addAllParentPassageToChildPassageOnFork() by setting each uid uniquely 
                       - Added addAllChildPassageToParentPassageOnFork() to add new passage to the `child` array of the common parent
-
+                      - Fixed level_count bug 
  */
+
 
 import firebase from 'firebase';
 import _ from 'lodash';
@@ -1865,20 +1866,20 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => d
                                     firebase.database().ref(`ravels/${ravel_uid}`).update({has_child : true});
                                 })
                                 .then(() => {
-                                    updateRavelLevelCountByIncrementOne(ravel_uid);
-                                })
-                                .then(() => {
-                                    addPassageToRavelRootList(ravel_uid, passage_uid);
-                                })
-                                .then(() => {
-                                    //console.log('before index calc')
+
                                     calculatePassageIndexField(ravel_uid,level,passage_uid).then(passage_index => {
-                                        //console.log(passage_index)
+
                                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_index`).set(passage_index)
                                     })
                                     .then(() => {
                                         addPassageToRavelLevelTree(ravel_uid, level, passage_uid);
 
+                                    })
+                                    .then(() => {
+                                        addPassageToRavelRootList(ravel_uid, passage_uid);
+                                    })
+                                    .then(() => {
+                                        updateRavelLevelCountOnAddPassage(ravel_uid);
                                     })
                                 })
 
@@ -2070,9 +2071,6 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
                                         addParentPassageToChildPassage(ravel_uid, parent_passage_uid, passage_uid);
                                     })
                                     .then(() => {
-                                        updateRavelLevelCountByIncrementOne(ravel_uid);
-                                    })
-                                    .then(() => {
 
                                         updateAddPassageLevel(ravel_uid, parent_passage_uid, passage_uid).then(valueOfKey => {
 
@@ -2083,6 +2081,9 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
                                             .then(() => {
                                                 addPassageToRavelLevelTree(ravel_uid, valueOfKey, passage_uid)
                                             })
+                                            .then(() => {
+                                            updateRavelLevelCountOnAddPassage(ravel_uid);
+                                             })
 
 
                                         });
@@ -2513,7 +2514,7 @@ export const addParentPassageToChildPassage = (ravel_uid, parent_passage_uid, pa
  *
  */
 
-export const updateRavelLevelCountByIncrementOne = (ravel_uid) => {
+export const updateRavelLevelCountOnAddPassage = (ravel_uid) => {
 
     return new Promise((resolve,reject) => {
 
@@ -2522,16 +2523,14 @@ export const updateRavelLevelCountByIncrementOne = (ravel_uid) => {
         var snapShotVal;
         var m_level_count = 0;
 
-        firebase.database().ref(`ravels/${ravel_uid}/level_count`).once('value', (snapshot) => {
-            if ( snapshot.val() != null ) {
+        // Check to see if adding passage actually introduces a new level 
+        // we should check the numChildren in ravel_level_passage/m_level_count + 1. 
+        // If exist, that means there are children, therefore, do not update the ravel level. 
+        firebase.database().ref(`ravel_level_passage/${ravel_uid}`).once('value', (snapshot) => {
 
-                m_level_count = snapshot.val() + 1;
-            } else {
-                alert('Error getting ravel level count, was not set in database...')
-            }
-        })
-        .then(() => {
-            firebase.database().ref(`ravels/${ravel_uid}`).update({level_count : m_level_count})
+            var numChildLevel = snapshot.numChildren(); 
+
+            firebase.database().ref(`ravels/${ravel_uid}`).update({level_count : numChildLevel})
         })
         .then(() => {
             valueOfKey = true;
