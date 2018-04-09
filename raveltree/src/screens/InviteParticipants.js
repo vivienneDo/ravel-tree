@@ -250,7 +250,6 @@ class InviteParticipants extends Component {
     // Get the array of participants, convert it to an array of userIDs only,
     // and push the current user's ID to it.
     var participants = this.state.participants.map (participant => participant.user_uid);
-    //participants.push (firebase.auth ().currentUser.uid);
 
     this.setState ({ readyToNavigate: true });
 
@@ -258,7 +257,7 @@ class InviteParticipants extends Component {
       ravel_title: this.state.ravelName,
       ravel_category: this.state.category,
       passage_length: this.state.passageLength,
-      visibility: this.state.visibility,
+      visibility: this.state.visibility == 'public' ? true : false,
       enable_voting: !this.state.restrictVotingToParticipants,
       enable_comment: this.state.enablePassageComments,
       ravel_concept: this.state.concept,

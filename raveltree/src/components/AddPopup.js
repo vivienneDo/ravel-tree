@@ -31,17 +31,27 @@ import InputText from './InputText'
 class AddPopup extends React.Component {
   constructor (props) {
     super (props);
+
+    var passageIndex = this.props.passageIndex;
+    var passageMetaData = this.props.passageMetaData;
+
+    // If we haven't been passed the passage index for the new passage...
+    if (!passageIndex) {
+      // Check whether we've recieved the metadata from the parent passage.
+      if (passageMetaData) {
+        // If so, generate the next available passage index (for display purposes only).
+        passageIndex = this.getNextPassageIndex (passageMetaData.passage_index);
+      } else {
+        // If not, assume this is 1-A.
+        passageIndex = '1-A';
+      }
+    }
+
     this.state = {
       title: '',
       passage: '',
+      passageIndex: passageIndex,
     };
-  }
-
-  componentWillReceiveProps (newProps) {
-    // Triggered after Add button is pressed and the passage is ready.
-    if (newProps.passage_meta_data) {
-      this.props.onSwitchToPassage (newProps.passage_meta_data);
-    }
   }
 
   onPressAdd () {
@@ -49,20 +59,25 @@ class AddPopup extends React.Component {
     const title = this.state.title;
     const passage = this.state.passage;
 
-    // Will trigger new props containing 'passage_meta_data'.
-    if (this.props.passageIndex == '1-A') {
-      this.props.addInitialPassage ({
+    // Initial Passage Addition
+    if (this.state.passageIndex == '1-A' || !this.state.passageIndex) {
+      var addData = {
         ravel_uid: ravelID,
         passage_title: title,
         passage_body: passage,
-      });
-    } else {
-      this.props.addPassage ({
+      };
+      this.props.addInitialPassage (addData);
+    }
+
+    // Normal Addition
+    else {
+      var addData = {
         ravel_uid: ravelID,
         parent_passage_uid: this.props.passageMetaData.passage_uid,
         passage_title: title,
         passage_body: passage,
-      });
+      };
+      this.props.addPassage (addData);
     }
   }
 
@@ -107,25 +122,8 @@ class AddPopup extends React.Component {
   }
 
   render () {
-    var {
-      isActive,
-      passageIndex,
-      nodeCounts,
-      passageMetaData,
-      testID,
-    } = this.props;
-
-    // If we haven't been passed the passage index for the new passage...
-    if (!passageIndex) {
-      // Check whether we've recieved the metadata from the parent passage.
-      if (passageMetaData) {
-        // If so, generate the next available passage index (for display purposes only).
-        passageIndex = this.getNextPassageIndex (passageMetaData.passage_index);
-      } else {
-        // If not, just set it to a blank value.
-        passageIndex = '';
-      }
-    }
+    var isActive = this.props.isActive;
+    var passageIndex = this.state.passageIndex;
 
     const ravel = this.props.title;
 
@@ -134,7 +132,7 @@ class AddPopup extends React.Component {
     var {height, width} = Dimensions.get ('window');
 
     return (
-        <ModalContainer name='PassagePopup' isActive={isActive} style={{flex: 1, flexDirection: 'column', backgroundColor: '#000000'}} onPressClose={() => this.props.onPressClose ()}>
+        <ModalContainer name='AddPopup' isActive={isActive} style={{flex: 1, flexDirection: 'column', backgroundColor: '#000000'}} onPressClose={() => this.props.onPressClose ()}>
           <View style={styles.container}>
             <View style={styles.head}>
               <View style={styles.row1}>
@@ -143,7 +141,7 @@ class AddPopup extends React.Component {
               </View>
               <View style={styles.row2}>
                 <InputText width={'auto'} placeholder={'Type a passage name (e.g., "The Reckoning").'} onChangeText={(text) => this.onChangeTitle (text)} />
-                <UserImage {...this.props} size={26}/>
+                <UserImage {...this.props} userID={firebase.auth ().currentUser.uid} size={26}/>
               </View>
             </View>
             <View style={styles.passage}>
@@ -212,15 +210,8 @@ const mapStateToProps = (state) => {
     currentUserProfile,
   } = state.current_user;
 
-  const {
-    passage,
-    passage_meta_data,
-  } = state.passage;
-
   return {
-    currentUserProfile,
-    passage,
-    passage_meta_data,
+    currentUserProfile
   };
 }
 

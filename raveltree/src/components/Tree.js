@@ -26,6 +26,7 @@ import _ from 'lodash';
 import PassageStub from './PassageStub';
 // -----------------------------------------------------------------------------
 
+import ButtonPlus from './ButtonPlus';
 import Loader from './Loader';
 
 const {
@@ -54,9 +55,6 @@ const ARROW_HEIGHT = NODE_HEIGHT;
 TREE_HEIGHT = undefined;
 TREE_WIDTH  = undefined;
 
-// var nodesToRender = [];
-// var arrowsToRender = [];
-
 // MAGIC_NUMBER:
 // MaxNodes   Height    Magic Number
 // 1          20        0
@@ -66,61 +64,54 @@ TREE_WIDTH  = undefined;
 // 5          220       100
 // 6          270       125
 
+var initialState = {
+  nodesToRender: [],
+  arrowsToRender: [],
+  stagedArrowData: [],
+  optimal: [],
+  disabled: [],
+  loading: true,
+  loadingLevel: 1,
+  shouldLoadLevel: false,
+  showInitialAddButton: false,
+  selectedNodeIndex: undefined,
+  connectingArrow: {},
+}
+
 class Tree extends Component {
   constructor (props) {
     super (props);
+
+    var ravel = this.props.ravel;
+
+    var tree = {
+      data: ravel.roots,
+      nodeCounts: ravel.nodeCount,
+      nodesProcessed: {},
+      depth: ravel.level_count,
+      breadth: Math.max (...Object.values (ravel.nodeCount)),
+      height: 0,
+      width: 0,
+      analyzed: false,
+    };
+
     this.state = {
-      ...this.props,
-      //tree: {},
-      nodesToRender: [],
-      arrowsToRender: [],
-      stagedArrowData: [],
-      optimal: [],
-      disabled: [],
-      loading: true,
-      loadingLevel: 1,
-      shouldLoadLevel: false,
-      selectedNodeIndex: undefined,
-      connectingArrow: {},
+      tree: tree,
+      ravel: ravel || {},
+      ...initialState,
     };
 
     TREE_HORIZONTAL_PADDING = this.props.horizontalPadding || 20;
+
+    console.log ('\tCONSTRUCTOR: Tree component.');
   }
 
-  renderTestNode () {
-    return (
-      <View
-        key={'12345'}
-        style={{
-          position: 'absolute',
-          zIndex: 2,
-          left: this.getXPosition ({ level: 1 }),
-          top: 0,
-          width: NODE_WIDTH,
-          height: NODE_HEIGHT,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <PassageStub
-          key={'1234567890'}
-          {...this.props}
-          name={'Test Title'}
-          passageIndex={'1-A'}
-          score={0}
-          active={true}
-          disabled={false}
-          author={firebase.auth().currentUser.uid}
-          onPress={() => this.onPressPassage ({})}
-          onPressAdd={() => this.props.onPressAdd ({})}
-          showAddButton={
-            ((this.state.screenData.ravel_participants || {}) [firebase.auth ().currentUser.uid]) ||
-            (this.props.screenData.user_created == firebase.auth ().currentUser.uid)
-          }
-          highlighted={false}
-        />
-      </View>
-    );
+  showInitialAddButton () {
+    if (this.state.showInitialAddButton) {
+      return (
+        <ButtonPlus size={40} onPress={() => this.props.onPressInitialAddButton ()} />
+      );
+    }
   }
 
   addToTree (passage) {
@@ -153,8 +144,6 @@ class Tree extends Component {
     // We're at the target level. Check this group for the passageID.
     for (let id of Object.keys (tree)) {
       if (id == passage.passage_uid) {
-        // if (DEBUG) { console.log ('FOUND:'); }
-        // if (DEBUG) { console.log (id); }
 
         // If found, replace the entry with the passage's metadata.
         tree [id] = passage;
@@ -167,7 +156,7 @@ class Tree extends Component {
 
   findPosition (index) {
     // Returns the screen position of the node with the passed passage index.
-    return this._findPosition (index, this.props.tree.data, 0, this.props.tree.data.length);
+    return this._findPosition (index, this.state.tree.data, 1, this.state.tree.data.length);
   }
 
   _findPosition (index, tree, level, groupCount) {
@@ -175,13 +164,15 @@ class Tree extends Component {
 
     var position;
 
-    // Tree levels are zero-indexed; Passage indexes are 1-indexed.
-    var targetLevel = parseInt (index.split ('-') [0]) - 1;
+    var targetLevel = parseInt (index.split ('-') [0]);
+    console.log ('Index: ' + index);
+    console.log ('Target Level: ' + targetLevel)
+    console.log ('Current Level: ' + level)
 
     if (level < targetLevel) {
       // For each node in this group, try to get to the target level.
-      for (var i = 0; i < tree.length; i++) {
-        position = this._findPosition (index, tree [i].children, level + 1, tree [i].children.length);
+      for (let id of Object.keys (tree)) {
+        position = this._findPosition (index, tree [id].child, level + 1, _.size (tree [id].child));
         if (position) { return position; }
       }
       return null;
@@ -191,11 +182,9 @@ class Tree extends Component {
     if (level > targetLevel) { return null; }
 
     // We're at the target level. Check this group for the node.
-    for (var i = 0; i < groupCount; i++) {
-      if (tree [i].passageIndex == index) {
-        if (DEBUG) { console.log ('FOUND:'); }
-        if (DEBUG) { console.log (tree [i]); }
-        return tree [i].position;
+    for (let id of Object.keys (tree)) {
+      if (tree [id].passage_index == index) {
+        return tree [id].position;
       }
     }
     return null;
@@ -394,10 +383,10 @@ class Tree extends Component {
           author={content.user_created}
           onPress={() => this.onPressPassage (content)}
           onPressAdd={() => this.props.onPressAdd (content)}
-          showAddButton={
-            ((this.state.screenData.ravel_participants || {}) [firebase.auth ().currentUser.uid]) ||
-            (this.props.screenData.user_created == firebase.auth ().currentUser.uid)
-          }
+          // showAddButton={
+          //   ((this.state.screenData.ravel_participants || {}) [firebase.auth ().currentUser.uid]) ||
+          //   (this.props.screenData.user_created == firebase.auth ().currentUser.uid)
+          // }
           highlighted={
             this.state.selectedNodeIndex ?
             this.state.selectedNodeIndex == content.passage_index :
@@ -409,19 +398,40 @@ class Tree extends Component {
   }
 
   getLevel (level) {
-    this.props.getPassageUidOnLevel (this.props.ravelID, level)
+    //this.props.getPassageUidOnLevel (this.props.ravelID, level)
+    this.props.getPassageUidOnLevel (this.state.ravel.ravel_uid, level)
     .then (passageIDs => {
 
-      if (DEBUG) console.log ('Got ' + _.size (passageIDs) + ' passages at level ' + 1 + ':')
+      if (level == 1 && !passageIDs) {
+        this.setState ({
+          showInitialAddButton: true,
+          loading: false,
+        });
+        return;
+      }
+      if (!passageIDs) {
+        this.setState ({
+          loading: false,
+        });
+        return;
+      }
+      else {
+        this.setState ({
+          showInitialAddButton: false,
+        });
+      }
+
+      if (DEBUG) console.log ('Got ' + _.size (passageIDs) + ' passages at level ' + level + ':')
       if (DEBUG) console.log (passageIDs);
 
       // Get the metadata for each passage.
       return Promise.all (Object.keys (passageIDs).map (async passageID => {
         return this.props.getPassageMetaData (passageID, this.props.ravelID);
-
       }))
     })
     .then (passages => {
+
+      if (!passages) { return; }
 
       // Designate the optimal node on this level (if any).
       var optimal = this.state.optimal;
@@ -479,21 +489,21 @@ class Tree extends Component {
       return Promise.all (Object.values (passages).map (async passage => {
 
         // If we're on the Merge screen:
-        // TODO: Test this block.
         if (this.props.mergeFrom) {
           // We want to exclude all levels <= the specified passage index.
           var mergeFromLevel = parseInt (this.props.mergeFrom.split ('-') [0]);
-          //var thisLevel = level + 1;
           if (level <= mergeFromLevel) {
             passage.disabled = true;
           }
 
           // We also want to exclude any of the node's existing children.
           var disabled = this.state.disabled.slice ();
-          if (passage.passageIndex == this.props.mergeFrom) {
+          if (passage.passage_index == this.props.mergeFrom) {
             // This is the passage we're merging from. Remember the passageIDs
             // of the passages to disable when we get to them.
-            Object.keys (passage.child).map (id => { disabled.push (id); });
+            if (passage.child) {
+              Object.keys (passage.child).map (id => { disabled.push (id); });
+            }
           }
           if (disabled.includes (passage.passage_uid)) {
             // This is a child of the passage we're merging from. Disable it.
@@ -562,6 +572,8 @@ class Tree extends Component {
     })
     .then ((nodes) => {
 
+      if (!nodes) { return; }
+
       // Add the staged arrows to the array of arrows to render.
       var stagedArrowData = this.state.stagedArrowData.slice ();
       var arrowsToRender = this.state.arrowsToRender.slice ();
@@ -614,7 +626,7 @@ class Tree extends Component {
     if (!tree.analyzed) {
       if (DEBUG) console.log ('Tree needs to be analyzed. Analyzing...');
       tree = this.analyzeTree (tree);
-      this.props.onAnalyzeTree (tree);
+      //TEMP //this.props.onAnalyzeTree (tree);
       this.setState ({ tree: tree });
 
       if (DEBUG) console.log ('Tree:');
@@ -641,6 +653,7 @@ class Tree extends Component {
       var _nodeCounts = _.size (nodeCounts) - 1;
       var _nodesProcessed = _.size (nodesProcessed);
 
+      // TODO: Split up into increments? Detect scroll end?
       if (_nodesProcessed < _nodeCounts) {
         this.getLevel (_nodesProcessed + 1);
       }
@@ -660,6 +673,7 @@ class Tree extends Component {
 
     return (
       <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, top: MAGIC_NUMBER,}}>
+        {this.showInitialAddButton ()}
         {this.state.nodesToRender}
         <Surface
           width={TREE_WIDTH}
@@ -681,10 +695,9 @@ class Tree extends Component {
   }
 
   render () {
-    const tree = this.props.tree;
     return (
       <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, zIndex: 1,}}>
-        {this.renderTree (tree)}
+        {this.renderTree (this.state.tree)}
         {this.renderLoader ()}
       </View>
     );
@@ -702,18 +715,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   const {
-    activeScreen,
-    previousScreens,
-  } = state.navigation;
-
-  const {
-    passage_meta_data,
-  } = state.passage
+    //shouldReloadTree,
+  } = state.tree;
 
   return {
-    activeScreen,
-    previousScreens,
-    passage_meta_data
+    //shouldReloadTree,
   };
 }
 

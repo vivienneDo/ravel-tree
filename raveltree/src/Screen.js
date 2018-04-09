@@ -38,13 +38,16 @@ import Home from './screens/Home'
 import Explore from './screens/Explore'
 import Ravel from './screens/Ravel'
 import Merge from './screens/Merge'
+import Refresh from './screens/Refresh'
 
 import GraphicsTest from './screens/GraphicsTest';
 
 class Screen extends Component {
   constructor (props: any, context: any) {
     super (props, context);
-    this.state = {loggedIn: null};
+    this.state = {
+      loggedIn: null,
+    };
     this.props.setShowNavBar (false);
   }
 
@@ -60,9 +63,6 @@ class Screen extends Component {
   }
 
   showScreen () {
-    //return <InviteParticipants {...this.props} />;
-    //return <Merge {...this.props} />;
-    //return <Ravel {...this.props} />;
     switch (this.props.activeScreen) {
       case ('Splash'):
         return <Splash {...this.props} />;
@@ -100,6 +100,8 @@ class Screen extends Component {
         return <Ravel {...this.props} />;
       case ('Merge'):
         return <Merge {...this.props} />;
+      case ('Refresh'):
+        return <Refresh {...this.props} />;
       default:
         return <Login {...this.props} />;
     }
@@ -109,7 +111,7 @@ class Screen extends Component {
     if (this.props.showNavBar) {
       return (
         <View style={styles.navBar}>
-          <NavBar {...this.props} />
+          <NavBar {...this.props} /*profileIsOwned={this.state.profileIsOwned}*/ />
         </View>
       );
     }

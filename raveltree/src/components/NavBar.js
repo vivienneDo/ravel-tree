@@ -54,17 +54,31 @@ class NavBar extends React.Component {
     super (props);
   }
 
+  // componentWillReceiveProps (newProps) {
+  //   console.log (newProps.profileIsOwned);
+  //   var isOwned = newProps.profileIsOwned;
+  //   if (typeof isOwned != undefined && isOwned != null) {
+  //     this.props.setNavBarTab (isOwned ? 'Profile' : null);
+  //   }
+  // }
+
   handleSelect (selected) {
     if (this.props.activeTab != selected) {
-      this.props.setNavBarTab (selected);
+      //this.props.setNavBarTab (selected);
 
       if (selected == 'Profile') {
-        var screenData = Object.assign ({}, {isOwned: true, profile: this.props.currentUserProfile});
+        this.props.setProfileIsOwned (true);
+        var screenData = Object.assign ({}, {isOwned: true, userID: this.props.currentUserProfile.user_uid});
         this.props.setActiveScreen (selected, screenData);
       }
       else {
         this.props.setActiveScreen (selected);
       }
+    }
+    else if (this.props.activeTab == 'Profile') {
+      var screenData = Object.assign ({}, {isOwned: true, userID: this.props.currentUserProfile.user_uid});
+      //this.props.setNavBarTab ('Profile');
+      this.props.setActiveScreen (selected, screenData);
     }
   }
 
@@ -82,6 +96,14 @@ class NavBar extends React.Component {
     const tabs = ['Home', 'YourRavels', 'Messages', 'Notifications', 'Profile'];
     if (!tabs.includes(this.props.activeScreen)) {
       this.props.setNavBarTab (null);
+    }
+    else if (this.props.activeScreen == 'Profile') {
+      if (this.props.profileIsOwned) {
+         this.props.setNavBarTab ('Profile');
+      }
+      else {
+        this.props.setNavBarTab (null);
+      }
     }
     else {
       this.props.setNavBarTab (this.props.activeScreen);
@@ -150,7 +172,7 @@ class NavBar extends React.Component {
           </Touchable>
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Profile')}>
             <View style={styles.menuItemInner}>
-              <UserImage {...this.props} /*profile={this.props.currentUserProfile}*/ userID={this.props.currentUserProfile.user_uid} size={30} active={this.props.activeTab === 'Profile'} disabled />
+              <UserImage {...this.props} userID={this.props.currentUserProfile.user_uid} size={30} active={this.props.activeTab === 'Profile'} disabled />
               <Text style = {[styles.text, this.props.activeTab === 'Profile' ? styles.active : styles.inactive]}>
                 Profile
               </Text>
@@ -226,6 +248,7 @@ const mapStateToProps = (state) => {
     activeScreen,
     previousScreen,
     showNavBar,
+    profileIsOwned,
   } = state.navigation;
 
   const {
@@ -237,6 +260,7 @@ const mapStateToProps = (state) => {
     activeScreen,
     previousScreen,
     showNavBar,
+    profileIsOwned,
     currentUserProfile,
   };
 }
