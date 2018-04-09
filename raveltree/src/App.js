@@ -1,4 +1,7 @@
-// WARNING!!!!! DO NOT MERGE THIS INTO DEV WHEN MERGING!!!!
+// Change Log
+// 03/03/18 VD - Added backend imports, added combined reducers, moved firebase db credential to actions/index.js
+// 03/05/18 FF - Moved maps and navigation switch to AppContainer and Screen screens, respectively.
+// 03/06/18 FF - Moved Firebase authentication to Screen screen.
 
 import React, { Component } from 'react';
 import {
@@ -7,67 +10,36 @@ import {
   Text,
   View
 } from 'react-native';
-import firebase from 'firebase';
+
+// Backend imports
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import Login from '../src/screens/Login';
-import Ravel from '../src/screens/Ravel';
-import Profile from '../src/screens/Profile';
-import StartARavel from '../src/screens/StartARavel';
-import Loader from './Loader';
-import LoginEmail from '../src/screens/LoginEmail'
-//import MainPage from './MainPage';
-//import RavelPage from './RavelPage';
-import GetAllUserRavels from '../src/screens/GetAllUserRavels';
-//import Navigation from './Navigation';
-import rootReducer from '../src/reducers/index';
-//import reducers from '../reducers/UserReducer';
+import { createStore, compose, applyMiddleware } from 'redux';
 import Thunk from 'redux-thunk';
-import { connect } from 'react-redux';
-//import ComponentTemplate from './ComponentTemplate';
+//import { connect } from 'react-redux';
+import rootReducer from './reducers/index';
 
-const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), applyMiddleware(Thunk));
-export default class App extends Component { 
+import AppContainer from './AppContainer';
 
-  state = { loggedIn: null};
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-  componentWillMount() {
+const store = createStore (rootReducer, composeEnhancers (applyMiddleware (Thunk)));
 
-    firebase.auth().onAuthStateChanged((user) => {
-      console.log('Authentication state has changed');
-      if (user) {
-        this.setState({loggedIn: true})
-      } else {
-        this.setState({loggedIn: false})
-      }
-    });
-  }
+export default class App extends Component {
 
-  renderInitialView() {
-    switch (this.state.loggedIn) {
-      case true: 
-        return <GetAllUserRavels/>; 
-      case false: 
-        return <Login />; 
-      default:
-        return <Loader size="large"/>;
-    }
-  }
+  render () {
 
-  render() {
+    // TEMP: Remove for testing and production.
+    // Temporarlity hide specified warnings.
+    console.ignoredYellowBox = [
+      'Warning: Cannot update during',
+      'FIREBASE WARNING: Using',
+      'Remote debugger',
+    ];
+
     return (
       <Provider store={store}>
-          {this.renderInitialView()}
+        <AppContainer />
       </Provider>
     );
-  }
+  };
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-});
