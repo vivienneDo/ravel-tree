@@ -42,10 +42,10 @@
                                                        - Based on the algorithm defined in the function
                       - Modified getRavelMetaData() to add user_uid to trending_view_list
                       - Modfied createStartRavel() to set view count to 0 in ravel object
-                      - Added searchRavelByTrending() - returns a list of ravels in ascending order.
 
-
-
+                      - Added searchRavelByTrending() - returns a list of ravels in ascending order. 
+ - 04/09/2018 - VD Do - Fixed addAllParentPassageToChildPassageOnFork() by setting each uid uniquely 
+                      - Added addAllChildPassageToParentPassageOnFork() to add new passage to the `child` array of the common parent
 
  */
 
@@ -209,7 +209,11 @@ export const signInWithEmail = (email, password) => dispatch => {
        console.log(error);
    })
    .then (function (user) {
-     console.log ('User signed in with email. Getting current user profile...');
+
+
+     console.log ('WHEEE User signed in with email. Getting current user profile...');
+     banReportedUser()
+     console.log ('User after ban user report END');
 
      var currentUid = firebase.auth().currentUser.uid;
 
@@ -290,7 +294,7 @@ export const createUserWithEmail = (email, password) => dispatch => {
          console.log(error);
      })
      .then (function (user) {
-       console.log ('User signed in with email. Getting current user profile...');
+       console.log ('WHEEE User signed in with email. Getting current user profile...');
 
        var currentUid = firebase.auth().currentUser.uid;
 
@@ -2886,6 +2890,9 @@ export const forkPassage = ({ravel_uid, parent_passage_uid, passage_title, passa
                                     addAllParentPassageToChildPassageOnFork(ravel_uid, parent_passage_uid, passage_uid);
                                 })
                                 .then(() => {
+                                    addAllChildPassageToParentPassageOnFork(ravel_uid, parent_passage_uid, passage_uid);
+                                })
+                                .then(() => {
 
                                     updatePassageLevelOnFork(ravel_uid, parent_passage_uid, passage_uid).then(valueOfKey => {
 
@@ -2964,10 +2971,44 @@ export const addAllParentPassageToChildPassageOnFork = (ravel_uid, parent_passag
         firebase.database().ref(`passages/${ravel_uid}/${parent_passage_uid}/parent`).once('value', (snapshot) => {
             p = snapshot.val();
             valueOfKey = true;
+
+            snapshot.forEach((elm) => {
+                firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/parent/${elm.key}`).set(true)
+            })
         })
-        .then(() => {
-            // Update child_passage_uid : parent{} to have the same parent as parent_passage_uid
-            firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/parent`).set(p)
+        .then((valueOfKey) => {
+            resolve(valueOfKey)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+
+
+
+    })
+}
+
+/**
+ * // Get the list of `parent` uids in parent_passage_uid and set passage_uid to it. 
+ * @param {*} ravel_uid, parent_passage_uid, passage_uid
+ * @returns {*} promise, true on success, false on fail
+ * actions: Attempts to add all parent{} from parent_passage_uid to the child passage uid 'parent{}' field
+ */
+export const addAllChildPassageToParentPassageOnFork = (ravel_uid, parent_passage_uid, passage_uid) => {
+
+    return new Promise((resolve,reject) => {
+
+        var valueOfKey = false;
+        var currentUid = firebase.auth().currentUser.uid;
+        var snapShotVal;
+        var p;
+
+        firebase.database().ref(`passages/${ravel_uid}/${parent_passage_uid}/parent`).once('value', (snapshot) => {
+            valueOfKey = true;
+            snapshot.forEach((elm) => {
+                firebase.database().ref(`passages/${ravel_uid}/${elm.key}/child/${passage_uid}`).set(true) 
+
+            })
         })
         .then((valueOfKey) => {
             resolve(valueOfKey)
@@ -4479,12 +4520,13 @@ export const dismissReportedUser = (user_uid) => dispatch => {
             if (valueOfKey) {
                 firebase.database().ref(`user_report_list/${user_uid}`).remove()
                 .then(() => {
+                    resolve(true)
                     dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: true})
                 })
             }
         })
         .catch((error) => {
-            alert('Cannot dismiss this user at this time...')
+            reject('Cannot dismiss this user at this time...')
             dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: false})
         })
 
@@ -4566,17 +4608,54 @@ export const deleteRavel = (ravel_uid) => dispatch => {
       });
 }
 
-// TODO
-export const banReportedUser = () => {
+/**
+ * @param: user_uid
+ * @returns: 
+ *
+ * Actions: Attempts to flag user as banned (value is true)
+ */
+export const flagReportedUser = (user_uid) => dispatch => {
 
-    return (dispatch) => {
+    return new Promise ((resolve, reject) => {
+
         checkCurrentUserIsAdmin().then(valueOfKey => {
             if (valueOfKey) {
-                // Do stuff
+                firebase.database().ref(`user_report_list/${user_uid}`).set(true)
+                .then(() => {
+                    dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: true})
+                })
             }
         })
+        .catch((error) => {
+            alert('Cannot dismiss this user at this time...')
+            dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: false})
+        })
 
-    }
+    })
+}
+
+// TODO
+export const banReportedUser = () => dispatch => {
+
+console.log('You ARE NOT REPORTED')
+
+var user_uid = firebase.auth().currentUser.uid; 
+
+    return new Promise ((resolve, reject) => {
+
+                firebase.database().ref(`user_report_list`).orderByChild(`${user_uid}`).equalTo(true).once('value', (snapshot) => {
+                    if(snapshot.exists === true && snapshot.val() === true) {
+
+                        // Alert user has been deleted, edit message...or create pop-up screen 
+                        alert('You have been removed from raveltree due to violation of terms of services.')
+                        firebase.auth().currentUser.delete(); 
+
+                    } else {
+                        alert('You ARE NOT REPORTED')
+                    }
+                })
+
+    })
 }
 
 /**
