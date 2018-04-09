@@ -291,6 +291,18 @@ class Ravel extends Component {
     this.props.navigateBack ();
   }
 
+  onPressEditTags () {
+    var screenData = {
+      ravel: this.state.ravel,
+    }
+    this.props.setPreviousScreen ('Ravel');
+    this.props.setActiveScreen ('EditTags', screenData);
+  }
+
+  onPressInviteParticipants () {
+    console.log ('Pressed Invite Participants');
+  }
+
   navigateToMerge (screen, screenData) {
     // TODO: What do we need to navigate back properly?
     this.props.navigateForward ('Merge', this.constructor.name, screenData);
@@ -333,8 +345,8 @@ class Ravel extends Component {
     if (!show) {return}
     return (
       <View style={styles.links2}>
-        <TextLink size={14}>Edit Tags</TextLink>
-        <TextLink size={14}>Invite Participants</TextLink>
+        <TextLink size={14} onPress={() => this.onPressEditTags ()}>Edit Tags</TextLink>
+        <TextLink size={14} onPress={() => this.onPressInviteParticipants ()}>Invite Participants</TextLink>
       </View>
     )
   }

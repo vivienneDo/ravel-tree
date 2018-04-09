@@ -1093,6 +1093,35 @@ export const loadAllRavel = () => dispatch => {
 
 /*
 /**
+ * @param: ravel_uid
+ * @returns: Existing ravel tags; error on failure.
+ * actions: Attempts to get a ravel's existing tags.
+ */
+export const getRavelTags = (ravel_uid) => dispatch => {
+  return new Promise ((resolve, reject) => {
+
+    firebase.database().ref(`ravels/${ravel_uid}/public_tag_set`).once('value', (snapshot) => {
+      var currentTags = snapshot.val();
+      var tags = Object.keys (currentTags).map (tag => {
+        return tag.replace (/^(public_)/,"");
+      });
+      resolve (tags);
+    })
+    // .then(() => {
+    //     // var tags = Object.keys (get_current_tags).map (tag => {
+    //     //   return tag.replace (/^(public_)/,"");
+    //     // });
+    //     // resolve (tags);
+    // })
+    .catch((error) => {
+        reject ('Error retrieving ravel tags.');
+    })
+
+  });
+}
+
+/*
+/**
  * @param: ravel uid, a new set of ravel_tags[ARRAY]
  * @returns:
  * mapStateToProps = state => ravel_tag_update
