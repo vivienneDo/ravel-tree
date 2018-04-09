@@ -57,6 +57,9 @@ class Ravel extends Component {
           passageIndex:    undefined,
           passageMetaData: undefined,
         },
+        fork : {
+          passageMetaData: undefined,
+        },
         passage: {
           loadPassage:     screenData.loadPassage,
           passageMetaData: undefined,
@@ -146,6 +149,7 @@ class Ravel extends Component {
               {...this.props}
               onPressClose={() => this.setState ({ showModal: '' })}
               onSwitchToAdd={(passage) => this.switchToAdd (passage)}
+              onSwitchToFork={(passage) => this.switchToFork (passage)}
               onNavigateToMerge={(screen, screenData) => this.navigateToMerge (screen, screenData)}
               onReportRavel={(ravelID) => this.reportRavel (ravelID)}
               passageMetaData={this.state.modalData.passage.passageMetaData}
@@ -153,29 +157,22 @@ class Ravel extends Component {
             />
           </View>
         );
-      // ----
-      // TODO
-      // ----
-      // case 'fork':
-      //   Popup = ForkPopup;
-      //   break;
+      case 'fork':
+        return (
+          <View style={styles.modal}>
+            <ForkPopup
+              {...this.props}
+              onPressClose={() => this.setState ({ showModal: '' })}
+              ravelID={this.state.ravelID}
+              passageMetaData={this.state.modalData.fork.passageMetaData}
+              ravelMetaData={this.state.ravel}
+              forkPassage={(forkData) => this.forkPassage (forkData)}
+            />
+          </View>
+        );
       default:
         return;
     }
-
-    // return (
-    //   <View style={styles.modal}>
-    //     <Popup
-    //       onPressClose={() => this.setState ({ showModal: '' })}
-    //       onSwitchToPassage={(passageMetaData) => this.switchToPassage (passageMetaData)}
-    //       onSwitchToAdd={(passageMetaData) => this.switchToAdd (passageMetaData)}
-    //       onNavigate={(screen, screenData) => this.onNavigate (screen, screenData)}
-    //       // TODO: Figure out what we need for this. Don't just pass it all indiscriminately. This is biting you in the ass.
-    //       {...this.props}
-    //       {...this.state}
-    //     />
-    //   </View>
-    // );
   }
 
   // ---------------------------------------------------------------------------
@@ -195,7 +192,7 @@ class Ravel extends Component {
   switchToAdd (passageMetaData) {
     var modalData = this.state.modalData;
     modalData.add.passageMetaData = passageMetaData;
-    modalData.add.nodeCounts = (this.state.analyzedtree || {}).nodeCounts;
+    modalData.add.nodeCounts = (this.state.analyzedtree || {}).nodeCounts; // TODO: Still in use?
     this.setState ({
       modalData: modalData,
       showModal: 'add',
@@ -219,6 +216,39 @@ class Ravel extends Component {
   }
 
   onAdd (passage) {
+    this.props.getRavelMetaData (this.props.screenData.ravel_uid)
+    .then (ravel => {
+      var screenData = {
+        ravel_uid: this.props.screenData.ravel_uid,
+        loadPassage: passage.passage_uid,
+      }
+      this.props.refresh ('Ravel', screenData);
+    })
+    .catch (error => { console.error (error); });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Fork
+  // ---------------------------------------------------------------------------
+  switchToFork (passageMetaData) {
+    var modalData = this.state.modalData;
+    modalData.fork.passageMetaData = passageMetaData;
+    //modalData.fork.nodeCounts = (this.state.analyzedtree || {}).nodeCounts;
+    this.setState ({
+      modalData: modalData,
+      showModal: 'fork',
+    });
+  }
+
+  forkPassage (forkData) {
+    this.props.forkPassage (forkData)
+    .then (passage => {
+      this.onFork (passage);
+    })
+    .catch (error => { console.log (error); });
+  }
+
+  onFork (passage) {
     this.props.getRavelMetaData (this.props.screenData.ravel_uid)
     .then (ravel => {
       var screenData = {
@@ -255,8 +285,7 @@ class Ravel extends Component {
   }
 
   navigateToMerge (screen, screenData) {
-    // TODO: What do we need to navigate back properly? var screenData = ...
-
+    // TODO: What do we need to navigate back properly?
     this.props.navigateForward ('Merge', this.constructor.name, screenData);
   }
 
