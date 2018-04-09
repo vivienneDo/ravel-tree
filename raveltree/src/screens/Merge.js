@@ -81,9 +81,9 @@ class Merge extends Component {
     this.state = {
       ravel: screenData.ravel,
       passage: screenData.passage,
-      passageIndex: screenData.passage.passage_index, // TODO: Change to use IDs (also requires edits to Tree component...)
+      passageIndex: screenData.passage.passage_index,
       showMergeButton: false,
-      selectedPassageMetaData: undefined,
+      selectedPassage: undefined,
       //...this.props.screenData,
     };
   }
@@ -92,14 +92,24 @@ class Merge extends Component {
     // Show the merge button and store the selected passage's metadata.
     this.setState ({
       showMergeButton: true,
-      selectedPassageMetaData: passageMetaData,
+      selectedPassage: passageMetaData,
     });
 
   }
 
   onPressMerge () {
     // TODO: Backend call.
-
+    var mergeData = {
+      ravel_uid: this.state.ravel.ravel_uid,
+      parent_passage_uid: this.state.passage.passage_uid,
+      child_passage_uid: this.state.selectedPassage.passage_uid,
+    };
+    var screenData = {
+      ravel_uid: this.state.ravel.ravel_uid,
+    };
+    this.props.mergeTwoPassage (mergeData)
+    .then (this.props.setActiveScreen ('Ravel', screenData))
+    .catch (error => { console.log (error); });
 
 
   }

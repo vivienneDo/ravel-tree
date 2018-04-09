@@ -144,8 +144,6 @@ class Tree extends Component {
     // We're at the target level. Check this group for the passageID.
     for (let id of Object.keys (tree)) {
       if (id == passage.passage_uid) {
-        // if (DEBUG) { console.log ('FOUND:'); }
-        // if (DEBUG) { console.log (id); }
 
         // If found, replace the entry with the passage's metadata.
         tree [id] = passage;
@@ -158,7 +156,7 @@ class Tree extends Component {
 
   findPosition (index) {
     // Returns the screen position of the node with the passed passage index.
-    return this._findPosition (index, this.props.tree.data, 0, this.props.tree.data.length);
+    return this._findPosition (index, this.state.tree.data, 1, this.state.tree.data.length);
   }
 
   _findPosition (index, tree, level, groupCount) {
@@ -166,13 +164,15 @@ class Tree extends Component {
 
     var position;
 
-    // Tree levels are zero-indexed; Passage indexes are 1-indexed.
-    var targetLevel = parseInt (index.split ('-') [0]) - 1;
+    var targetLevel = parseInt (index.split ('-') [0]);
+    console.log ('Index: ' + index);
+    console.log ('Target Level: ' + targetLevel)
+    console.log ('Current Level: ' + level)
 
     if (level < targetLevel) {
       // For each node in this group, try to get to the target level.
-      for (var i = 0; i < tree.length; i++) {
-        position = this._findPosition (index, tree [i].children, level + 1, tree [i].children.length);
+      for (let id of Object.keys (tree)) {
+        position = this._findPosition (index, tree [id].child, level + 1, _.size (tree [id].child));
         if (position) { return position; }
       }
       return null;
@@ -182,11 +182,9 @@ class Tree extends Component {
     if (level > targetLevel) { return null; }
 
     // We're at the target level. Check this group for the node.
-    for (var i = 0; i < groupCount; i++) {
-      if (tree [i].passageIndex == index) {
-        if (DEBUG) { console.log ('FOUND:'); }
-        if (DEBUG) { console.log (tree [i]); }
-        return tree [i].position;
+    for (let id of Object.keys (tree)) {
+      if (tree [id].passage_index == index) {
+        return tree [id].position;
       }
     }
     return null;
