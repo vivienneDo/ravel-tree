@@ -36,6 +36,7 @@ class PassagePopup extends React.Component {
     this.state = {
       loading: !this.props.passageMetaData,
       passageMetaData: this.props.passageMetaData || {},
+      ravelMetaData: this.props.ravelMetaData || {},
     };
   }
 
@@ -49,10 +50,21 @@ class PassagePopup extends React.Component {
     }
   }
 
+  checkIfOnLastLevel () {
+    var levels = this.state.ravelMetaData.level_count;
+    var level = this.state.passageMetaData.level;
+    return level >= levels;
+  }
+
   onPressMerge () {
     // We have to navigate from the parent 'Ravel' screen.
-    var screenData = Object.assign({}, this.props.passageMetaData);
-    this.props.onNavigate ('Merge', screenData);
+    var screenData = Object.assign({}, {
+      passage: this.state.passageMetaData,
+      ravel:   this.state.ravelMetaData
+    });
+    console.log ('\tPassagePopup -> onPressMerge () -> screenData:');
+    console.log (screenData);
+    this.props.onNavigateToMerge ('Merge', screenData);
   }
 
   onPressFork () {
@@ -102,7 +114,7 @@ class PassagePopup extends React.Component {
   render () {
     var passageMetaData = this.state.passageMetaData || {};
 
-    isActive = passageMetaData.isOptimal || this.props.isActive;
+    isActive = passageMetaData.optimal || this.props.isActive;
 
     console.log (passageMetaData);
 
@@ -136,7 +148,7 @@ class PassagePopup extends React.Component {
           </View>
         </ScrollView>
         <View style={styles.buttons}>
-          <ButtonReverse title={'Merge...'} width={0.30 * width} onPress={() => this.onPressMerge ()} />
+          <ButtonReverse title={'Merge...'} width={0.30 * width} disabled={this.checkIfOnLastLevel ()} onPress={() => this.onPressMerge ()} />
           <ButtonPlus size={36} onPress={() => this.onPressAdd ()} />
           <Button title={'Fork'} width={0.30 * width} onPress={() => this.onPressFork ()} />
         </View>
@@ -148,10 +160,11 @@ class PassagePopup extends React.Component {
           </Touchable>
           <View style={styles.voteBar}>
             <VoteBar
-              upvotes={passageMetaData.passage_upvote}
-              downvotes={passageMetaData.passage_downvote}
+              {...this.props}
               ravelID={passageMetaData.ravel_uid}
               passageID={passageMetaData.passage_uid}
+              upvotes={passageMetaData.passage_upvote}
+              downvotes={passageMetaData.passage_downvote}
             />
           </View>
         </View>
@@ -210,19 +223,10 @@ const styles = StyleSheet.create ({
 
 const mapStateToProps = (state) => {
   const {
-    activeScreen,
-    previousScreens,
-    screenData,
-  } = state.navigation;
-
-  const {
     currentUserProfile,
   } = state.current_user;
 
   return {
-    activeScreen,
-    previousScreens,
-    screenData,
     currentUserProfile
   };
 }
