@@ -398,7 +398,8 @@ class Tree extends Component {
   }
 
   getLevel (level) {
-    this.props.getPassageUidOnLevel (this.props.ravelID, level)
+    //this.props.getPassageUidOnLevel (this.props.ravelID, level)
+    this.props.getPassageUidOnLevel (this.state.ravel.ravel_uid, level)
     .then (passageIDs => {
 
       if (level == 1 && !passageIDs) {
@@ -500,7 +501,9 @@ class Tree extends Component {
           if (passage.passage_index == this.props.mergeFrom) {
             // This is the passage we're merging from. Remember the passageIDs
             // of the passages to disable when we get to them.
-            Object.keys (passage.child).map (id => { disabled.push (id); });
+            if (passage.child) {
+              Object.keys (passage.child).map (id => { disabled.push (id); });
+            }
           }
           if (disabled.includes (passage.passage_uid)) {
             // This is a child of the passage we're merging from. Disable it.
