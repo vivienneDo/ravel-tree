@@ -27,6 +27,14 @@ export default (state = initialState, action) => {
         previousScreens: previousScreens,
       };
 
+    case types.RESET_PREVIOUS_SCREENS:
+      console.log ("Trying to reset previous screens...");
+      var previousScreens = state.previousScreens;
+      return {
+        ...state,
+        previousScreens: ['Home'],
+      };
+
     case types.NAVIGATE_FORWARD:
       var previousScreens = state.previousScreens;
       previousScreens.push (action.current);

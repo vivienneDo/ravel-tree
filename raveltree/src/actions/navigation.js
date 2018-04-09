@@ -69,6 +69,23 @@ export const setPreviousScreen = (screen) => {
 }
 
 /**
+ * @param: nothing
+ * @returns:
+ *  mapStateToProps:
+ *    state.previousScreens
+ * actions: Resets the array of previous screens to its initial state.
+ *
+ */
+export const resetPreviousScreens = () => {
+ return (dispatch) => {
+   console.log ("Resetting previous screens.");
+   dispatch ({
+     type: types.RESET_PREVIOUS_SCREENS,
+   });
+ };
+}
+
+/**
  * @param: Next screen, Current screen, Screen-related data to pass
  * @returns:
  *  mapStateToProps:

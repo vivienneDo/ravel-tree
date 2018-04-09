@@ -72,6 +72,12 @@ class Ravel extends Component {
       score:        undefined,
       concept:      undefined,
     };
+
+    // Make sure navigating back doesn't bring us back to the creation process.
+    var previousScreens = this.props.previousScreens;
+    if (previousScreens [previousScreens.length - 1] == 'AddTags') {
+      this.props.resetPreviousScreens ();
+    }
   }
 
   componentWillMount () {
