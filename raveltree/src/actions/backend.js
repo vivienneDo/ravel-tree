@@ -1866,19 +1866,9 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => d
                                     firebase.database().ref(`ravels/${ravel_uid}`).update({has_child : true});
                                 })
                                 .then(() => {
-<<<<<<< HEAD
-                                    console.log('before index calc')
-=======
-                                    updateRavelLevelCountByIncrementOne(ravel_uid);
-                                })
-                                .then(() => {
-                                    addPassageToRavelRootList(ravel_uid, passage_uid);
-                                })
-                                .then(() => {
-                                    //console.log('before index calc')
->>>>>>> a2fc78c3978e871d22ec3710d889ca2b0dd9d643
+
                                     calculatePassageIndexField(ravel_uid,level,passage_uid).then(passage_index => {
-                                        //console.log(passage_index)
+
                                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}/passage_index`).set(passage_index)
                                     })
                                     .then(() => {
