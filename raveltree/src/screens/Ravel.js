@@ -143,6 +143,7 @@ class Ravel extends Component {
               ravelID={this.state.ravelID}
               passageIndex={this.state.modalData.add.passageIndex}
               passageMetaData={this.state.modalData.add.passageMetaData}
+              ravelMetaData={this.state.ravel}
               addInitialPassage={(addData) => this.addInitialPassage (addData)}
               addPassage={(addData) => this.addPassage (addData)}
             />

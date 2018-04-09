@@ -46,6 +46,7 @@ class ForkPopup extends React.Component {
       existingPassage: existingPassage,
       existingPassageIndex: existingPassage.passage_index,
       newPassageIndex: newPassageIndex,
+      ravel: this.props.ravelMetaData,
     };
   }
 
@@ -103,7 +104,7 @@ class ForkPopup extends React.Component {
 
   render () {
 
-    const ravel = this.props.title;
+    const ravelTitle = this.state.ravel.ravel_title;
     const forkedPassageIndex = (this.state.existingPassageIndex || '');
     const newPassageIndex = (this.state.newPassageIndex || '');
 
@@ -116,7 +117,7 @@ class ForkPopup extends React.Component {
           <View style={styles.container}>
             <View style={styles.head}>
               <View style={styles.row1}>
-                <TextSerif size={16}>{ravel}</TextSerif>
+                <TextSerif size={16}>{ravelTitle}</TextSerif>
                 <TextSans size={13} color={'#95989A'}>{newPassageIndex}</TextSans>
               </View>
               <View style={styles.row2}>
