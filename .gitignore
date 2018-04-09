@@ -52,6 +52,7 @@ buck-out/
 */fastlane/Preview.html
 */fastlane/screenshots
 
+
 # OS generated files #
 ######################
 .DS_Store
@@ -62,10 +63,3 @@ buck-out/
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Local?
-raveltree/src/components/RavelStub.js.orig
-raveltree/src/components/RavelStub_BACKUP_20750.js
-raveltree/src/components/RavelStub_BASE_20750.js
-raveltree/src/components/RavelStub_LOCAL_20750.js
-raveltree/src/components/RavelStub_REMOTE_20750.js

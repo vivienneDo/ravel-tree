@@ -43,122 +43,226 @@ class Ravel extends Component {
   constructor (props) {
     super (props);
     var screenData = this.props.screenData;
+    console.log (screenData);
+    console.log (screenData.ravel_uid);
+    console.log ((screenData.ravel || {}).ravel_uid);
     this.state = {
-      loading: true,
-      ravelID: screenData.ravel_uid || '',
-      mode: this.props.mode || '',
-      showModal: '',
-      loadPassage: screenData.loadPassage || false,
-      passageID: screenData.passage_uid || '',
-      //passageMetaData: screenData.passageMetaData || {},
+      loading:      true,
+      ravel:        undefined,
+      ravelID:      screenData.ravel_uid || (screenData.ravel || {}).ravel_uid || '',
+      mode:         this.props.mode      || '',
+      showModal:    screenData.showModal || '',
+      modalData: {
+        add: {
+          passageIndex:    undefined,
+          passageMetaData: undefined,
+        },
+        passage: {
+          loadPassage:     screenData.loadPassage,
+          passageMetaData: undefined,
+        },
+      },
+      title:        undefined,
+      author:       undefined,
+      participants: undefined,
+      numberParticipants: undefined,
+      score:        undefined,
+      concept:      undefined,
     };
-
-    //console.log (screenData);
   }
 
   componentWillMount () {
-    this.props.getRavelMetaData (this.props.screenData.ravel_uid)
-    .then (ravel => { this.handleRavelMetaData (ravel); })
+    // Retrieve the ravel's metadata.
+    // this.props.getRavelMetaData (this.props.screenData.ravel_uid)
+    this.props.getRavelMetaData (this.state.ravelID)
+    // Load the ravel locally.
+    .then (ravel => { this.loadRavel (ravel); })
     .catch (error => { console.error (error); });
   }
 
-  handleRavelMetaData (ravel) {
-    if ((ravel || {}).ravel_uid == this.props.screenData.ravel_uid) {
-      var tree = {
-        data: ravel.roots,
-        nodeCounts: ravel.nodeCount,
-        nodesProcessed: {},
-        depth: ravel.level_count,
-        breadth: Math.max (...Object.values (ravel.nodeCount)),
-        height: 0,
-        width: 0,
-        analyzed: false,
-      };
-
+  loadRavel (ravel) {
+    return new Promise ((resolve, reject) => {
       this.setState ({
-        tree: tree,
+        ravel: ravel,
         ravelID: ravel.ravel_uid,
         title: ravel.ravel_title,
         author: ravel.user_created,
         participants: ravel.ravel_participants,
+        numberParticipants: ravel.ravel_number_participants,
         score: ravel.ravel_points,
         concept: ravel.ravel_concept,
         mode: (firebase.auth ().currentUser.uid == ravel.user_created) ? 'owned' : '',
-        loading: false,
       });
 
-      // If we're supposed to be loading a passage.
-      if (this.state.loadPassage) {
+      // If we're supposed to be loading a passage...
+      if (this.state.modalData.passage.loadPassage) {
         // ...then we need to get the passage metadata as well.
-        this.props.getPassageMetaData (this.state.passageID, this.state.ravelID)
-        .then (passage => { this.handlePassageMetaData (passage); })
+        this.props.getPassageMetaData (this.state.modalData.passage.loadPassage, this.state.ravelID)
+        .then (passage => { this.switchToPassage (passage); })
         .catch (error => { console.error (error); });
+        resolve ();
       }
-    }
-  }
 
-  handlePassageMetaData (passage) {
-    this.setState ({
-      passageMetaData: passage,
-      loadPassage: false,
-      showModal: 'passage',
+      // Otherwise, we're done here.
+      else {
+        // Reload the tree.
+        this.props.setShouldReloadTree (true);
+        this.setState ({ loading: false });
+        resolve ();
+      }
     });
   }
 
   showModal (modalToShow) {
-    var Popup;
     switch (modalToShow) {
       case 'concept':
-        Popup = ConceptPopup;
-        break;
+        return (
+          <View style={styles.modal}>
+            <ConceptPopup
+              {...this.props}
+              onPressClose={() => this.setState ({ showModal: '' })}
+              ravel={this.state.ravel}
+            />
+          </View>
+        );
       case 'add':
-        Popup = AddPopup;
-        break;
-      case 'fork':
-        Popup = ForkPopup;
-        break;
+        return (
+          <View style={styles.modal}>
+            <AddPopup
+              {...this.props}
+              onPressClose={() => this.setState ({ showModal: '' })}
+              ravelID={this.state.ravelID}
+              passageIndex={this.state.modalData.add.passageIndex}
+              passageMetaData={this.state.modalData.add.passageMetaData}
+              addInitialPassage={(addData) => this.addInitialPassage (addData)}
+              addPassage={(addData) => this.addPassage (addData)}
+            />
+          </View>
+        );
       case 'passage':
-        Popup = PassagePopup;
-        break;
+        return (
+          <View style={styles.modal}>
+            <PassagePopup
+              {...this.props}
+              onPressClose={() => this.setState ({ showModal: '' })}
+              onSwitchToAdd={(passage) => this.switchToAdd (passage)}
+              onNavigateToMerge={(screen, screenData) => this.navigateToMerge (screen, screenData)}
+              onReportRavel={(ravelID) => this.reportRavel (ravelID)}
+              passageMetaData={this.state.modalData.passage.passageMetaData}
+              ravelMetaData={this.state.ravel}
+            />
+          </View>
+        );
+      // ----
+      // TODO
+      // ----
+      // case 'fork':
+      //   Popup = ForkPopup;
+      //   break;
       default:
         return;
     }
 
-    return (
-      <View style={styles.modal}>
-        <Popup
-          onPressClose={() => this.setState ({ showModal: '' })}
-          onSwitchToPassage={(passageMetaData) => this.onSwitchToPassage (passageMetaData)}
-          onSwitchToAdd={(passageMetaData) => this.onSwitchToAdd (passageMetaData)}
-          onNavigate={(screen, screenData) => this.onNavigate (screen, screenData)}
-          {...this.props}
-          {...this.state}
-        />
-      </View>
-    );
+    // return (
+    //   <View style={styles.modal}>
+    //     <Popup
+    //       onPressClose={() => this.setState ({ showModal: '' })}
+    //       onSwitchToPassage={(passageMetaData) => this.switchToPassage (passageMetaData)}
+    //       onSwitchToAdd={(passageMetaData) => this.switchToAdd (passageMetaData)}
+    //       onNavigate={(screen, screenData) => this.onNavigate (screen, screenData)}
+    //       // TODO: Figure out what we need for this. Don't just pass it all indiscriminately. This is biting you in the ass.
+    //       {...this.props}
+    //       {...this.state}
+    //     />
+    //   </View>
+    // );
   }
 
-  onSwitchToPassage (passageMetaData) {
-    this.setState ({
-      passageMetaData: passageMetaData,
-      showModal: 'passage',
-    });
+  // ---------------------------------------------------------------------------
+  // Public Links
+  // ---------------------------------------------------------------------------
+  onPressConcept () {
+    this.setState ({ showModal: 'concept' });
   }
 
-  onSwitchToAdd (passageMetaData) {
+  onPressShare () {
+    // TODO
+  }
+
+  // ---------------------------------------------------------------------------
+  // Add
+  // ---------------------------------------------------------------------------
+  switchToAdd (passageMetaData) {
+    var modalData = this.state.modalData;
+    modalData.add.passageMetaData = passageMetaData;
+    modalData.add.nodeCounts = (this.state.analyzedtree || {}).nodeCounts;
     this.setState ({
-      passageMetaData: passageMetaData,
-      nodeCounts: this.state.tree.nodeCounts,
+      modalData: modalData,
       showModal: 'add',
     });
   }
 
-  onNavigate (screen, screenData) {
-    console.log ('Trying to navigate...');
-    // TODO: What do we need to navigate back properly? var screenData = ...
-    this.props.navigateForward ('Merge', screenData);
+  addInitialPassage (addData) {
+    this.props.addInitialPassage (addData)
+    .then (passage => {
+      this.onAdd (passage);
+    })
+    .catch (error => { console.log (error); });
   }
 
+  addPassage (addData) {
+    this.props.addPassage (addData)
+    .then (passage => {
+      this.onAdd (passage);
+    })
+    .catch (error => { console.log (error); });
+  }
+
+  onAdd (passage) {
+    this.props.getRavelMetaData (this.props.screenData.ravel_uid)
+    .then (ravel => {
+      var screenData = {
+        ravel_uid: this.props.screenData.ravel_uid,
+        loadPassage: passage.passage_uid,
+      }
+      this.props.refresh ('Ravel', screenData);
+    })
+    .catch (error => { console.error (error); });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Passage
+  // ---------------------------------------------------------------------------
+  switchToPassage (passageMetaData) {
+    var modalData = this.state.modalData;
+    modalData.passage.passageMetaData = passageMetaData;
+    this.setState ({
+      modalData: modalData,
+      showModal: 'passage',
+      loading: false,
+    });
+  }
+
+  reportRavel (ravelID) {
+    // TODO
+  }
+
+  // ---------------------------------------------------------------------------
+  // Navigation
+  // ---------------------------------------------------------------------------
+  onPressBack () {
+    this.props.navigateBack ();
+  }
+
+  navigateToMerge (screen, screenData) {
+    // TODO: What do we need to navigate back properly? var screenData = ...
+
+    this.props.navigateForward ('Merge', this.constructor.name, screenData);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Elements to Show
+  // ---------------------------------------------------------------------------
   showLoader () {
     return <Loader />;
   }
@@ -199,7 +303,7 @@ class Ravel extends Component {
     )
   }
 
-  showButton (show) {
+  showInvitationButton (show) {
     if (!show) {return}
     return (
       <View style={styles.button}>
@@ -215,6 +319,14 @@ class Ravel extends Component {
     )
   }
 
+  onPressAcceptInvitation () {
+    // TODO
+  }
+
+  onPressDeclineInvitation () {
+    // TODO
+  }
+
   showPlus (show) {
     if (!show) {return}
     return (
@@ -227,40 +339,22 @@ class Ravel extends Component {
       this.showLoader ();
     }
 
-    if (!this.state.tree || _.size (this.state.tree) == 0) { return; }
+    if (!this.state.ravel || _.size (this.state.ravel) == 0) { return; }
 
     return (
       <Tree
-        tree={this.state.tree}
-        mode={this.state.mode}
-        onAnalyzeTree={(tree) => this.setState ({ tree: tree })}
-        onPressPassage={(passageMetaData) => this.onSwitchToPassage (passageMetaData)}
-        onPressAdd={(passageMetaData) => this.onSwitchToAdd (passageMetaData)}
-        horizontalPadding={TREE_HORIZONTAL_PADDING}
-        ravelID={this.state.ravelID}
         {...this.props}
+        //tree={this.state.tree}
+        ravel={this.state.ravel}
+        mode={this.state.mode}
+        ravelID={this.state.ravelID}
+        onAnalyzeTree={(analyzedTree) => this.setState ({ analyzedTree: analyzedTree })}
+        onPressPassage={(passageMetaData) => this.switchToPassage (passageMetaData)}
+        onPressAdd={(passageMetaData) => this.switchToAdd (passageMetaData)}
+        onPressInitialAddButton={(passageMetaData) => this.switchToAdd (passageMetaData)}
+        horizontalPadding={TREE_HORIZONTAL_PADDING}
       />
     );
-  }
-
-  onPressBack () {
-    this.props.navigateBack ();
-  }
-
-  onPressAcceptInvitation () {
-    // TODO
-  }
-
-  onPressDeclineInvitation () {
-    // TODO
-  }
-
-  onPressConcept () {
-    this.setState ({ showModal: 'concept' });
-  }
-
-  onPressShare () {
-    // TODO
   }
 
   render (){
@@ -294,7 +388,7 @@ class Ravel extends Component {
           </View>
           <Divider />
           {this.showAdminLinks (this.state.mode == 'owned')}
-          {this.showButton (this.state.mode == 'invitation')}
+          {this.showInvitationButton (this.state.mode == 'invitation')}
         </View>
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           {this.showTree ()}
@@ -407,20 +501,15 @@ const mapStateToProps = (state) => {
   } = state.current_user;
 
   const {
-    ravel_meta_data,
-  } = state.ravel;
-
-  const {
-    passage_meta_data,
-  } = state.passage;
+    shouldReloadTree,
+  } = state.tree;
 
   return {
     activeScreen,
     previousScreens,
     screenData,
     currentUserProfile,
-    ravel_meta_data,
-    passage_meta_data,
+    shouldReloadTree
   };
 }
 

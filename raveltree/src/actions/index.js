@@ -3,6 +3,7 @@ import _ from 'lodash';
 
 import * as BackendActions from './backend';
 import * as NavigationActions from './navigation';
+import * as TreeActions from './tree';
 
 firebase.initializeApp({
     apiKey: "AIzaSyCmt6Cq6wj2NJZ-WOCE27brxfW-kg6TUKQ",
@@ -16,4 +17,5 @@ firebase.initializeApp({
 export const ActionCreators = Object.assign ({},
   BackendActions,
   NavigationActions,
+  TreeActions,
 );

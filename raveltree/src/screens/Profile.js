@@ -46,108 +46,55 @@ const {
   AccessToken
 } = FBSDK;
 
-const TEST_USER = 'Rebecca Bates';
-const TEST_SCORE = 1064;
-const TEST_BIO = 'Rebecca Bates was born on a dairy farm in upstate New York. Her parents made it a point to rear her with a thorough appreciation of manual labor. She seeks to bring all that appreciation into her writing—though it usually finds its way in there pretty much on its own.\n\nRebecca earned an MFA from Georgetown in 2015. She lives in Manhattan with six pugs.';
-const TEST_STATISTICS = {
-  ravelsLed: 5,
-  ravelsContributedTo: 29,
-  passagesWritten: 213,
-  upvotesReceived: 731,
-}
-
 class Profile extends Component {
   constructor (props) {
     super (props);
-    // this.state = {
-    //   isOwned: false,
-    //   mode: 'view',
-    //   //showCameraPicker: false,
-    //   //
-    //   // firstName: this.props.currentUserProfile.first_name,
-    //   // lastName: this.props.currentUserProfile.last_name,
-    //   // score: this.props.currentUserProfile.ravel_points,
-    //   // photoURL: this.props.currentUserProfile.photoURL,
-    //   // bio: this.props.currentUserProfile.bio,
-    //   // bioEdit: this.props.currentUserProfile.bio,
-    //   // ravelsLed: this.props.currentUserProfile.stat_ravel_led,
-    //   // ravelsContributedTo: this.props.currentUserProfile.stat_ravel_contributed,
-    //   // passagesWritten: this.props.currentUserProfile.stat_passage_written,
-    //   // upvotesReceived: this.props.currentUserProfile.upvotes,
-    //   //
-    //   ...this.props.screenData,
-    // };
 
-    var profile = this.props.profile || this.props.currentUserProfile;
+    console.log (this.props.screenData);
+
+    var userID = this.props.screenData.userID;
 
     this.state = {
-      profile: profile,
-      isOwned: profile.user_uid == this.props.currentUserProfile.user_uid,
       mode: 'view',
-      firstName: profile.first_name,
-      lastName: profile.last_name,
-      score: profile.ravel_points,
-      photoURL: profile.photoURL,
-      bio: profile.bio,
-      bioEdit: profile.bio,
-      ravelsLed: profile.stat_ravel_led,
-      ravelsContributedTo: profile.stat_ravel_contributed,
-      passagesWritten: profile.stat_passage_written,
-      upvotesReceived: profile.upvotes,
       ...this.props.screenData,
     };
 
-    console.log ('Current user profile: ' + this.props.currentUserProfile.user_uid);
-    console.log ('Passed user profile: ' + this.props.profile);
-
-
-    // if (this.props.userID == this.props.currentUserProfile.user_uid) {
-    //   this.state = {
-    //     isOwned: true,
-    //     mode: 'view',
-    //     firstName: this.props.currentUserProfile.first_name,
-    //     lastName: this.props.currentUserProfile.last_name,
-    //     score: this.props.currentUserProfile.ravel_points,
-    //     photoURL: this.props.currentUserProfile.photoURL,
-    //     bio: this.props.currentUserProfile.bio,
-    //     bioEdit: this.props.currentUserProfile.bio,
-    //     ravelsLed: this.props.currentUserProfile.stat_ravel_led,
-    //     ravelsContributedTo: this.props.currentUserProfile.stat_ravel_contributed,
-    //     passagesWritten: this.props.currentUserProfile.stat_passage_written,
-    //     upvotesReceived: this.props.currentUserProfile.upvotes,
-    //     ...this.props.screenData,
-    //   };
-    // } else {
-    //   this.state = {
-    //     isOwned: false,
-    //     mode: 'view',
-    //     firstName: this.props.userProfile.first_name,
-    //     lastName: this.props.userProfile.last_name,
-    //     score: this.props.userProfile.ravel_points,
-    //     photoURL: this.props.userProfile.photoURL,
-    //     bio: this.props.userProfile.bio,
-    //     bioEdit: this.props.userProfile.bio,
-    //     ravelsLed: this.props.userProfile.stat_ravel_led,
-    //     ravelsContributedTo: this.props.userProfile.stat_ravel_contributed,
-    //     passagesWritten: this.props.userProfile.stat_passage_written,
-    //     upvotesReceived: this.props.userProfile.upvotes,
-    //     ...this.props.screenData,
-    //   };
-    // }
+    this.getUserProfile (userID);
   }
 
-  // componentWillReceiveProps (newProps) {
-  //   if (newProps.currentUserProfile) {
-  //     this.setState ({
-  //       bio: newProps.currentUserProfile.bio,
-  //       photoURL: newProps.currentUserProfile.photoURL,
-  //       mode: 'view',
-  //     });
-  //   }
-  //   else if (newProps.userProfile) {
-  //
-  //   }
-  // }
+  componentWillReceiveProps (newProps) {
+    console.log (newProps);
+    var newID = newProps.screenData.userID;
+    var oldID = this.props.screenData.userID;
+    if (newID && newID != oldID) {
+      this.getUserProfile (newID);
+    }
+  }
+
+  getUserProfile (userID) {
+    this.props.getUserProfile (userID)
+    .then (profile => {
+      var isOwned = profile.user_uid == this.props.currentUserProfile.user_uid;
+      console.log (profile.user_uid);
+      this.setState ({
+        profile: profile,
+        isOwned: isOwned,
+        userID: profile.user_uid,
+        firstName: profile.first_name,
+        lastName: profile.last_name,
+        score: profile.ravel_points,
+        photoURL: profile.photoURL,
+        bio: profile.bio,
+        bioEdit: profile.bio,
+        ravelsLed: profile.stat_ravel_led,
+        ravelsContributedTo: profile.stat_ravel_contributed,
+        passagesWritten: profile.stat_passage_written,
+        upvotesReceived: profile.upvotes,
+      });
+      this.props.setProfileIsOwned (isOwned);
+    })
+    .catch (error => { console.log (error); });
+  }
 
   onPressChangeImage () {
     SelectImage().then((url) => {
@@ -187,7 +134,28 @@ class Profile extends Component {
     var firstName = this.state.firstName;
     var lastName = this.state.lastName;
     var bioEdit = this.state.bioEdit;
-    this.props.updateCurrentUserProfile ({first_name: firstName, last_name: lastName, bio: bioEdit});
+
+    this.props.updateCurrentUserProfile ({first_name: firstName, last_name: lastName, bio: bioEdit})
+    .then (profile => {
+      var isOwned = profile.user_uid == this.props.currentUserProfile.user_uid;
+      console.log (profile.user_uid);
+      this.setState ({
+        profile: profile,
+        userID: profile.user_uid,
+        firstName: profile.first_name,
+        lastName: profile.last_name,
+        score: profile.ravel_points,
+        photoURL: profile.photoURL,
+        bio: profile.bio,
+        bioEdit: profile.bio,
+        ravelsLed: profile.stat_ravel_led,
+        ravelsContributedTo: profile.stat_ravel_contributed,
+        passagesWritten: profile.stat_passage_written,
+        upvotesReceived: profile.upvotes,
+        mode: 'view',
+      })
+    })
+    .catch (error => { console.log (error); });
   }
 
   render (){
@@ -199,6 +167,8 @@ class Profile extends Component {
       testID,
     } = this.props;
 
+    console.log (this.state.userID);
+
     return (
       <View style={styles.layout}>
         <View style={styles.logo}>
@@ -206,7 +176,7 @@ class Profile extends Component {
         </View>
         <View style={styles.top}>
           <View style={styles.topLeft}>
-            <UserImage {...this.props} profile={this.state.profile} size={100} />
+            <UserImage {...this.props} userID={this.state.userID} size={100} />
 
             {this.state.isOwned ? (
               <TextLink onPress={() => this.onPressChangeImage ()} size={12}>Change Image</TextLink>
@@ -399,6 +369,7 @@ const mapStateToProps = (state) => {
     activeScreen,
     previousScreens,
     showNavBar,
+    profileIsOwned,
     screenData,
   } = state.navigation;
 
@@ -414,9 +385,10 @@ const mapStateToProps = (state) => {
     activeScreen,
     previousScreens,
     showNavBar,
+    profileIsOwned,
     screenData,
     currentUserProfile,
-    userProfile
+    userProfile,
   };
 }
 
