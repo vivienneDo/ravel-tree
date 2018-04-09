@@ -523,6 +523,7 @@ class Tree extends Component {
         // (Yeah, this constructs a "path" to the passage using strings. If you
         // know of a better way, please change this. It is super gross.)
         var pathToPassage = this.addToTree (passage);
+        console.log (pathToPassage);
         var indexedPath = pathToPassage.map (id => [id]);
         var indexedPathString = JSON.stringify (indexedPath);
         indexedPathString = indexedPathString.replace (/,/g , "['child']");
