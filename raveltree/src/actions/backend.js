@@ -48,6 +48,9 @@
                       - Fixed level_count bug
  - 04/10/2018 - Frank - Fixed potential null reference error on get_curr_tags2 in updateRavelParticipant ().
                       - Fixed negative index bug in fetchPassageExploreView (fetchUserPublicRavelExploreHelper () -> limitToLast ()).
+                      - Fixed potential undefined/null object conversion in getRavelTags ().
+                      - Fixed potential undefined/null object conversion in fetchPassageExploreView ().
+                      - Fixed continued evaluation after auth () error that caused null reference in signInWithEmail ().
  */
 
 
@@ -198,20 +201,20 @@ export const signInWithEmail = (email, password) => dispatch => {
 
    firebase.auth().signInWithEmailAndPassword(email, password)
    .catch(function(error) {
-   var errorCode = error.code;
-   var errorMessage = error.message;
+     var errorCode = error.code;
+     var errorMessage = error.message;
 
-   if (errorCode === 'auth/wrong-password') {
-     alert('Wrong password.');
-   } else if (errorCode === 'auth/user-not-found') {
-     alert('There is no user corresponding to the given email address.');
-   } else {
-     alert(errorMessage);
-   }
-       console.log(error);
+     if (errorCode === 'auth/wrong-password') {
+       alert('Wrong password.');
+     } else if (errorCode === 'auth/user-not-found') {
+       alert('There is no user corresponding to the given email address.');
+     } else {
+       alert(errorMessage);
+     }
+     console.log(error);
    })
    .then (function (user) {
-
+     if (!user) { return; }
 
      console.log ('WHEEE User signed in with email. Getting current user profile...');
      banReportedUser()
@@ -225,7 +228,7 @@ export const signInWithEmail = (email, password) => dispatch => {
                     payload: snapshot.val() });
      })
      .catch((error) => {
-         alert('Error loading user profile at this time...')
+         alert('Error loading user profile.')
      })
    });
 };
@@ -1109,10 +1112,15 @@ export const getRavelTags = (ravel_uid) => dispatch => {
 
     firebase.database().ref(`ravels/${ravel_uid}/public_tag_set`).once('value', (snapshot) => {
       var currentTags = snapshot.val();
-      var tags = Object.keys (currentTags).map (tag => {
-        return tag.replace (/^(public_)/,"");
-      });
-      resolve (tags);
+      if (!currentTags) {
+        resolve ([]);
+      }
+      else {
+        var tags = Object.keys (currentTags).map (tag => {
+          return tag.replace (/^(public_)/,"");
+        });
+        resolve (tags);
+      }
     })
     // .then(() => {
     //     // var tags = Object.keys (get_current_tags).map (tag => {
@@ -1362,7 +1370,7 @@ export const fetchPassageExploreView = () => dispatch => {
         array = {...array, ...userNonCreatedResult}
 
         // Query at least 10 random ravels
-        var totalCountWithNoPublic = Object.keys(userCreatedResult).length + Object.keys(userNonCreatedResult).length;
+        var totalCountWithNoPublic = Object.keys(userCreatedResult || []).length + Object.keys(userNonCreatedResult || []).length;
         var countToQueryPublic = 10 - totalCountWithNoPublic;
 
         if (countToQueryPublic < 1) {
