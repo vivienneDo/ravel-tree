@@ -831,7 +831,7 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
             case 'fiction': {
                 public_cat_fiction = true
             }
-            case 'non_fiction': {
+            case 'nonfiction': {
                 public_cat_nonfiction = true
             }
             case 'other': {
@@ -1711,23 +1711,23 @@ export const searchRavelByTitle = (title) => dispatch => {
 export const searchRavelByCategory = (category) => dispatch => {
     return new Promise ((resolve, reject) => {
 
-        switch (ravel_category) {
+        switch (category) {
             case 'fiction': {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_fiction").equalTo(true).once('value', snapshot => {
                     resolve (snapshot.val());
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
                 })
                 .catch((error) => {
-                    reject ('Error searching for ravel.');
+                    reject ('Error searching for ravels.');
                 })
             }
-            case 'non_fiction': {
+            case 'nonfiction': {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_nonfiction").equalTo(true).once('value', snapshot => {
                     resolve (snapshot.val());
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
                 })
                 .catch((error) => {
-                    reject ('Error searching for ravel.');
+                    reject ('Error searching for ravels.');
                 })
             }
             case 'other': {
@@ -1736,7 +1736,7 @@ export const searchRavelByCategory = (category) => dispatch => {
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
                 })
                 .catch((error) => {
-                    reject ('Error searching for ravel.');
+                    reject ('Error searching for ravels.');
                 })
             }
             default: {
@@ -1745,7 +1745,7 @@ export const searchRavelByCategory = (category) => dispatch => {
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
                 })
                 .catch((error) => {
-                    reject ('Error searching for ravel.');
+                    reject ('Error searching for ravels.');
                 })
             }
         }

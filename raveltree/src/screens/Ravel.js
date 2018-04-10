@@ -1,6 +1,6 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/27/18
-// Modified: 03/28/18
+// Modified: 04/10/18
 //
 // "Ravel" screen for RavelTree.
 //
@@ -49,7 +49,7 @@ class Ravel extends Component {
     this.state = {
       loading:      true,
       ravel:        undefined,
-      ravelID:      screenData.ravel_uid || (screenData.ravel || {}).ravel_uid || '',
+      ravelID:      screenData.ravelID || screenData.ravel_uid || (screenData.ravel || {}).ravel_uid || '',
       mode:         this.props.mode      || '',
       showModal:    screenData.showModal || '',
       modalData: {
@@ -91,6 +91,7 @@ class Ravel extends Component {
 
   loadRavel (ravel) {
     return new Promise ((resolve, reject) => {
+
       this.setState ({
         ravel: ravel,
         ravelID: ravel.ravel_uid,
@@ -226,7 +227,8 @@ class Ravel extends Component {
     this.props.getRavelMetaData (this.props.screenData.ravel_uid)
     .then (ravel => {
       var screenData = {
-        ravel_uid: this.props.screenData.ravel_uid,
+        // ravel_uid: this.props.screenData.ravel_uid,
+        ravel_uid: this.state.ravelID,
         loadPassage: passage.passage_uid,
       }
       this.props.refresh ('Ravel', screenData);
@@ -259,7 +261,8 @@ class Ravel extends Component {
     this.props.getRavelMetaData (this.props.screenData.ravel_uid)
     .then (ravel => {
       var screenData = {
-        ravel_uid: this.props.screenData.ravel_uid,
+        //ravel_uid: this.props.screenData.ravel_uid,
+        ravel_uid: this.state.ravelID,
         loadPassage: passage.passage_uid,
       }
       this.props.refresh ('Ravel', screenData);
