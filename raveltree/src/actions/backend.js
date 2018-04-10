@@ -46,6 +46,7 @@
  - 04/09/2018 - VD Do - Fixed addAllParentPassageToChildPassageOnFork() by setting each uid uniquely
                       - Added addAllChildPassageToParentPassageOnFork() to add new passage to the `child` array of the common parent
                       - Fixed level_count bug
+ - 04/10/2018 - Frank - Fixed potential null reference error on get_curr_tags2 in updateRavelParticipant ().
  */
 
 
@@ -1205,7 +1206,12 @@ export const updateRavelParticipant = (ravel_uid, ravel_tags) => dispatch => {
 
                 firebase.database().ref(`ravels/${ravel_uid}/m_ravel_participants`).once('value', (snapshot) => {
                   get_curr_tags2 = snapshot.val();
-                  var master_set = arrayUnique(get_curr_tags2.concat(ravel_tags));
+                  var master_set = [];
+                  if (get_curr_tags2) {
+                    master_set = arrayUnique(get_curr_tags2.concat(ravel_tags));
+                  } else {
+                    master_set = ravel_tags;
+                  }
                   firebase.database().ref(`ravels/${ravel_uid}`).update({m_ravel_participants : master_set})
                 })
 
