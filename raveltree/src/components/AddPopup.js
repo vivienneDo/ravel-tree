@@ -127,7 +127,7 @@ class AddPopup extends React.Component {
     var isActive = this.props.isActive;
     var passageIndex = this.state.passageIndex;
 
-    const ravelTitle = this.state.ravel.ravel_title;;
+    const ravelTitle = (this.state.ravel || {}).ravel_title || '';
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 

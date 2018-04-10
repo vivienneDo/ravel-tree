@@ -300,7 +300,11 @@ class Ravel extends Component {
   }
 
   onPressInviteParticipants () {
-    console.log ('Pressed Invite Participants');
+    var screenData = {
+      ravel: this.state.ravel,
+    }
+    this.props.setPreviousScreen ('Ravel');
+    this.props.setActiveScreen ('EditParticipants', screenData);
   }
 
   navigateToMerge (screen, screenData) {

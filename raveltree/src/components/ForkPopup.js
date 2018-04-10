@@ -104,7 +104,7 @@ class ForkPopup extends React.Component {
 
   render () {
 
-    const ravelTitle = this.state.ravel.ravel_title;
+    const ravelTitle = (this.state.ravel || {}).ravel_title || '';
     const forkedPassageIndex = (this.state.existingPassageIndex || '');
     const newPassageIndex = (this.state.newPassageIndex || '');
 

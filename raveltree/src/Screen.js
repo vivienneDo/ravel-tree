@@ -34,6 +34,7 @@ import StartARavel from './screens/StartARavel'
 import AddTags from './screens/AddTags'
 import EditTags from './screens/EditTags'
 import InviteParticipants from './screens/InviteParticipants'
+import EditParticipants from './screens/EditParticipants'
 import Splash from './screens/Splash'
 import Home from './screens/Home'
 import Explore from './screens/Explore'
@@ -99,6 +100,8 @@ class Screen extends Component {
         return <EditTags {...this.props} />;
       case ('InviteParticipants'):
         return <InviteParticipants {...this.props} />;
+      case ('EditParticipants'):
+        return <EditParticipants {...this.props} />;
       case ('Ravel'):
         return <Ravel {...this.props} />;
       case ('Merge'):
