@@ -47,6 +47,7 @@
                       - Added addAllChildPassageToParentPassageOnFork() to add new passage to the `child` array of the common parent
                       - Fixed level_count bug
  - 04/10/2018 - Frank - Fixed potential null reference error on get_curr_tags2 in updateRavelParticipant ().
+                      - Fixed negative index bug in fetchPassageExploreView (fetchUserPublicRavelExploreHelper () -> limitToLast ()).
  */
 
 
@@ -1346,48 +1347,62 @@ export const declineRavelInvite = (ravel_uid) => dispatch => {
 
 export const fetchPassageExploreView = () => dispatch => {
 
-    var currentUserUid = firebase.auth().currentUser.uid;
-    var array = {}
-    var count = 0
+  var currentUserUid = firebase.auth().currentUser.uid;
+  var array = {}
+  var count = 0
 
-    return new Promise ((resolve, reject) => {
+  return new Promise ((resolve, reject) => {
 
-        fetchUserCreatedRavelExploreHelper().then((userCreatedResult) => {
+    fetchUserCreatedRavelExploreHelper().then((userCreatedResult) => {
 
-            array = {...userCreatedResult}
+      array = {...userCreatedResult}
 
-            fetchUserParticipantRavelExploreHelper().then((userNonCreatedResult) => {
+      fetchUserParticipantRavelExploreHelper().then((userNonCreatedResult) => {
 
-                array = {...array, ...userNonCreatedResult}
+        array = {...array, ...userNonCreatedResult}
 
-                // Query at least 10 random ravels
-                var totalCountWithNoPublic = Object.keys(userCreatedResult).length + Object.keys(userNonCreatedResult).length;
-                var countToQueryPublic = 10 - totalCountWithNoPublic;
+        // Query at least 10 random ravels
+        var totalCountWithNoPublic = Object.keys(userCreatedResult).length + Object.keys(userNonCreatedResult).length;
+        var countToQueryPublic = 10 - totalCountWithNoPublic;
 
-                fetchUserPublicRavelExploreHelper(countToQueryPublic).then((publicRavelResult) => {
+        if (countToQueryPublic < 1) {
+          // Pass in an empty list and the full list
+          populatePassageListExploreHelper(array).then((unsortedPassageList) => {
 
-                    array = {...userCreatedResult, ...userNonCreatedResult, ...publicRavelResult}
+            shuffleList(unsortedPassageList).then((shuffledPassageList) => {
 
-                    // Pass in an empty list and the full list
-                    populatePassageListExploreHelper(array).then((unsortedPassageList) => {
+              resolve(shuffledPassageList);
+              //dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: shuffledPassageList})
+            })
+          })
+        }
 
-                        shuffleList(unsortedPassageList).then((shuffledPassageList) => {
+        else {
+          fetchUserPublicRavelExploreHelper(countToQueryPublic).then((publicRavelResult) => {
 
-                            resolve(shuffledPassageList);
-                            //dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: shuffledPassageList})
-                        })
+            array = {...userCreatedResult, ...userNonCreatedResult, ...publicRavelResult}
 
-                    })
+            // Pass in an empty list and the full list
+            populatePassageListExploreHelper(array).then((unsortedPassageList) => {
 
-                })
+              shuffleList(unsortedPassageList).then((shuffledPassageList) => {
+
+                resolve(shuffledPassageList);
+                //dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: shuffledPassageList})
+
+              })
 
             })
 
-        })
-        .catch(() => {
-            reject('Error getting explore view')
-        })
-    });
+          })
+        }
+      })
+
+    })
+    .catch(() => {
+        reject('Error getting explore view')
+    })
+  });
 
 };
 

@@ -56,47 +56,65 @@ class Home extends Component<{}> {
   }
 
   getPassages () {
-    // TODO: "Newsfeed" algorithm.
-    // For now, our newsfeed algorithm just gets n public passages.
-    // TODO: Select a subset at random and get more on scroll end.
-    this.props.loadAllPublicRavel ()
-    .then (ravels => {
+    this.props.fetchPassageExploreView ()
+    .then (passages => {
+      console.log (passages);
+      console.log (_.size (passages));
 
-      console.log (ravels);
+      var passagesToShow = [];
+      Object.values (passages).map (passage => {
+        if (_.size (passage) > 0 && passage.passage_title) {
+          passagesToShow.push (passage);
+        }
+      })
 
-      this.setState ({ ravels: ravels });
-
-      if (_.size (ravels) > 0) {
-        var passageIds = [];
-        Object.values (ravels).map (ravel => {
-          if (_.size (ravel.roots || {}) > 0) {
-            Object.keys (ravel.roots).map (passageID =>
-              passageIds.push ({
-                ravelID: ravel.ravel_uid,
-                passageID: passageID,
-              })
-            );
-          }
-        });
-
-        // For now, just get n passages.
-        passageIds.length = Math.min (passageIds.length, PASSAGE_LOAD_COUNT);
-
-        passageIds.map (passage =>
-          this.props.getPassageMetaData (passage.passageID, passage.ravelID)
-          .then (passage => {
-            if (_.size (passage) > 0) {
-              var passages = this.state.passages;
-              passages.push (passage);
-              this.setState ({ passages: passages });
-            }
-          })
-          .then (this.setState ({ loading: false }))
-          .catch (error => { console.error (error); })
-        );
-      }
+      this.setState ({
+        loading: false,
+        passages: passagesToShow,
+      })
     })
     .catch (error => { console.error (error); })
+
+
+
+    // this.props.loadAllPublicRavel ()
+    // .then (ravels => {
+    //
+    //   console.log (ravels);
+    //
+    //   this.setState ({ ravels: ravels });
+    //
+    //   if (_.size (ravels) > 0) {
+    //     var passageIds = [];
+    //     Object.values (ravels).map (ravel => {
+    //       if (_.size (ravel.roots || {}) > 0) {
+    //         Object.keys (ravel.roots).map (passageID =>
+    //           passageIds.push ({
+    //             ravelID: ravel.ravel_uid,
+    //             passageID: passageID,
+    //           })
+    //         );
+    //       }
+    //     });
+    //
+    //     // For now, just get n passages.
+    //     passageIds.length = Math.min (passageIds.length, PASSAGE_LOAD_COUNT);
+    //
+    //     passageIds.map (passage =>
+    //       this.props.getPassageMetaData (passage.passageID, passage.ravelID)
+    //       .then (passage => {
+    //         if (_.size (passage) > 0) {
+    //           var passages = this.state.passages;
+    //           passages.push (passage);
+    //           this.setState ({ passages: passages });
+    //         }
+    //       })
+    //       .then (this.setState ({ loading: false }))
+    //       .catch (error => { console.error (error); })
+    //     );
+    //   }
+    // })
+    // .catch (error => { console.error (error); })
   }
 
   renderPassages () {
