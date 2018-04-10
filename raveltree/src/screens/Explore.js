@@ -33,6 +33,7 @@ import TagCloud from '../components/TagCloud';
 import Tag from '../components/Tag';
 import OptionSet from '../components/OptionSet';
 import LinkBack from '../components/LinkBack'
+import Loader from '../components/Loader'
 
 const DEFAULT_ACTIVE = 'title';
 
@@ -80,6 +81,7 @@ class Explore extends Component<{}> {
   constructor (props) {
     super (props);
     this.state = {
+      loading: false,
       active: DEFAULT_ACTIVE,
       tagsShowing: [],
       nextTagIndex: 0,
@@ -95,28 +97,48 @@ class Explore extends Component<{}> {
   }
 
   searchRavelByTitle (text) {
+    this.setState ({ loading: true });
     this.props.searchRavelByTitle (text)
     .then (results => {
-      this.setState ({ results: results });
+      this.setState ({
+        results: results,
+        loading: false,
+      });
     })
   }
 
   searchRavelByTag (tagArray) {
+    this.setState ({ loading: true });
     this.props.searchRavelByTag (tagArray)
     .then (results => {
-      this.setState ({ results: results });
+      this.setState ({
+        results: results,
+        loading: false,
+      });
     })
   }
 
   searchRavelByCategory (category) {
+    this.setState ({ loading: true });
     this.props.searchRavelByCategory (category)
     .then (results => {
-      this.setState ({ results: results });
+      this.setState ({
+        results: results,
+        loading: false,
+      });
     })
   }
 
   searchRavelByTrending () {
-
+    this.setState ({ loading: true });
+    this.props.searchRavelByTrending ().
+    then (results => {
+      console.log (results);
+      this.setState ({
+        results: results,
+        loading: false,
+      });
+    })
   }
 
   onChangeText (text) {
@@ -141,11 +163,17 @@ class Explore extends Component<{}> {
   }
 
   onSetFormState (newState) {
-    console.log (newState);
     if (newState.active == 'category')
     {
       newState.search = 'fiction';
       this.searchRavelByCategory ('fiction');
+    }
+    if (newState.active == 'trending') {
+      newState.search = undefined;
+      this.searchRavelByTrending ();
+    }
+    else {
+      newState.search = undefined;
     }
     newState.results = {};
     this.setState (newState);
@@ -285,7 +313,15 @@ class Explore extends Component<{}> {
     }
   }
 
-  getRavels () {
+  showLoader () {
+    return (
+      <View style={styles.loader}>
+        <Loader />
+      </View>
+    );
+  }
+
+  showRavels () {
     if (!this.state.results) { return; }
     var results = Object.values (this.state.results);
 
@@ -294,6 +330,7 @@ class Explore extends Component<{}> {
         {results.map ((ravel) =>
           <View key={ravel.ravel_uid} style={styles.ravelCard}>
             <RavelCard
+              key={ravel.ravel_uid}
               title={ravel.ravel_title}
               ravelID={ravel.ravel_uid}
               author={ravel.user_created}
@@ -366,7 +403,7 @@ class Explore extends Component<{}> {
         <ScrollView style={styles.scroll} contentContainerStyle={scrollContentStyles}>
 
           {/* Related ravel cards will pop up here */}
-          {this.getRavels ()}
+          {this.state.loading ? this.showLoader () : this.showRavels ()}
 
         </ScrollView>
 
@@ -415,6 +452,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingHorizontal: 17,
     paddingVertical: 17,
+  },
+  loader: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   ravelCard: {
     marginBottom: 20,
