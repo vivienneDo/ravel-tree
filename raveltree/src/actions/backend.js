@@ -42,11 +42,10 @@
                                                        - Based on the algorithm defined in the function
                       - Modified getRavelMetaData() to add user_uid to trending_view_list
                       - Modfied createStartRavel() to set view count to 0 in ravel object
-
-                      - Added searchRavelByTrending() - returns a list of ravels in ascending order. 
- - 04/09/2018 - VD Do - Fixed addAllParentPassageToChildPassageOnFork() by setting each uid uniquely 
+                      - Added searchRavelByTrending() - returns a list of ravels in ascending order.
+ - 04/09/2018 - VD Do - Fixed addAllParentPassageToChildPassageOnFork() by setting each uid uniquely
                       - Added addAllChildPassageToParentPassageOnFork() to add new passage to the `child` array of the common parent
-                      - Fixed level_count bug 
+                      - Fixed level_count bug
  */
 
 
@@ -1096,6 +1095,35 @@ export const loadAllRavel = () => dispatch => {
 };
 
 /** RAVEL UPDATE FUNCTIONS  */
+
+/*
+/**
+ * @param: ravel_uid
+ * @returns: Existing ravel tags; error on failure.
+ * actions: Attempts to get a ravel's existing tags.
+ */
+export const getRavelTags = (ravel_uid) => dispatch => {
+  return new Promise ((resolve, reject) => {
+
+    firebase.database().ref(`ravels/${ravel_uid}/public_tag_set`).once('value', (snapshot) => {
+      var currentTags = snapshot.val();
+      var tags = Object.keys (currentTags).map (tag => {
+        return tag.replace (/^(public_)/,"");
+      });
+      resolve (tags);
+    })
+    // .then(() => {
+    //     // var tags = Object.keys (get_current_tags).map (tag => {
+    //     //   return tag.replace (/^(public_)/,"");
+    //     // });
+    //     // resolve (tags);
+    // })
+    .catch((error) => {
+        reject ('Error retrieving ravel tags.');
+    })
+
+  });
+}
 
 /*
 /**
@@ -2523,12 +2551,12 @@ export const updateRavelLevelCountOnAddPassage = (ravel_uid) => {
         var snapShotVal;
         var m_level_count = 0;
 
-        // Check to see if adding passage actually introduces a new level 
-        // we should check the numChildren in ravel_level_passage/m_level_count + 1. 
-        // If exist, that means there are children, therefore, do not update the ravel level. 
+        // Check to see if adding passage actually introduces a new level
+        // we should check the numChildren in ravel_level_passage/m_level_count + 1.
+        // If exist, that means there are children, therefore, do not update the ravel level.
         firebase.database().ref(`ravel_level_passage/${ravel_uid}`).once('value', (snapshot) => {
 
-            var numChildLevel = snapshot.numChildren(); 
+            var numChildLevel = snapshot.numChildren();
 
             firebase.database().ref(`ravels/${ravel_uid}`).update({level_count : numChildLevel})
         })
@@ -2988,7 +3016,7 @@ export const addAllParentPassageToChildPassageOnFork = (ravel_uid, parent_passag
 }
 
 /**
- * // Get the list of `parent` uids in parent_passage_uid and set passage_uid to it. 
+ * // Get the list of `parent` uids in parent_passage_uid and set passage_uid to it.
  * @param {*} ravel_uid, parent_passage_uid, passage_uid
  * @returns {*} promise, true on success, false on fail
  * actions: Attempts to add all parent{} from parent_passage_uid to the child passage uid 'parent{}' field
@@ -3005,7 +3033,7 @@ export const addAllChildPassageToParentPassageOnFork = (ravel_uid, parent_passag
         firebase.database().ref(`passages/${ravel_uid}/${parent_passage_uid}/parent`).once('value', (snapshot) => {
             valueOfKey = true;
             snapshot.forEach((elm) => {
-                firebase.database().ref(`passages/${ravel_uid}/${elm.key}/child/${passage_uid}`).set(true) 
+                firebase.database().ref(`passages/${ravel_uid}/${elm.key}/child/${passage_uid}`).set(true)
 
             })
         })
@@ -3016,11 +3044,9 @@ export const addAllChildPassageToParentPassageOnFork = (ravel_uid, parent_passag
             reject(error)
         })
 
-
-
     })
-}
 
+}
 
 /**
  *
@@ -4609,7 +4635,7 @@ export const deleteRavel = (ravel_uid) => dispatch => {
 
 /**
  * @param: user_uid
- * @returns: 
+ * @returns:
  *
  * Actions: Attempts to flag user as banned (value is true)
  */
@@ -4638,16 +4664,16 @@ export const banReportedUser = () => dispatch => {
 
 console.log('You ARE NOT REPORTED')
 
-var user_uid = firebase.auth().currentUser.uid; 
+var user_uid = firebase.auth().currentUser.uid;
 
     return new Promise ((resolve, reject) => {
 
                 firebase.database().ref(`user_report_list`).orderByChild(`${user_uid}`).equalTo(true).once('value', (snapshot) => {
                     if(snapshot.exists === true && snapshot.val() === true) {
 
-                        // Alert user has been deleted, edit message...or create pop-up screen 
+                        // Alert user has been deleted, edit message...or create pop-up screen
                         alert('You have been removed from raveltree due to violation of terms of services.')
-                        firebase.auth().currentUser.delete(); 
+                        firebase.auth().currentUser.delete();
 
                     } else {
                         alert('You ARE NOT REPORTED')

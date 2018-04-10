@@ -1,8 +1,8 @@
 // Author:   Frank Fusco (fr@nkfus.co)
-// Created:  02/20/18
+// Created:  04/09/18
 // Modified: 04/09/18
 //
-// "Add Tags" screen for RavelTree.
+// "Edit Tags" screen for RavelTree.
 //
 // - onTagCloudLayout gets the rendered dimensions of the TagCloud view.
 // - Tags are generated using getTags (), and onTagLayout () is automatically
@@ -24,7 +24,6 @@ import { connect } from 'react-redux'
 import _ from 'lodash';
 
 import LinkBack from '../components/LinkBack'
-import LinkContinue from '../components/LinkContinue'
 import LinkSave from '../components/LinkSave'
 import Divider from '../components/Divider'
 import TextHeader from '../components/TextHeader'
@@ -41,7 +40,7 @@ const TAG_CLOUD_HEIGHT = (ROWS * Tag.HEIGHT_SMALL)        +
                          (ROWS * 2 * Tag.MARGIN_VERTICAL) +
                          (2 * TagCloud.PADDING_VERTICAL);
 
-const DEFAULT_SUGGESTED_TAGS = [
+var tagQueue = [
   'Unconventional',
   'Mystery',
   'Comedy',
@@ -62,20 +61,44 @@ const DEFAULT_SUGGESTED_TAGS = [
   'Away',
 ];
 
-class AddTags extends Component {
+class EditTags extends Component {
   constructor (props) {
     super (props);
 
+    // Get the ravel's existing tags.
+    var mode = this.props.mode || this.props.screenData.mode;
+
     this.state = {
       ravel: this.props.screenData.ravel,
+      loading: true,
       search: '',
       tagsShowing: [],
       nextTagIndex: 0,
       tagsSelected: [],
+      existingTags: [],
       tagCloudWidth: 0,
       tagCloudHeight: TAG_CLOUD_HEIGHT,
-      ...this.props.screenData,
+      //...this.props.screenData,
     };
+  }
+
+  componentDidMount () {
+      this.props.getRavelTags (this.props.screenData.ravel.ravel_uid)
+      .then (tags => {
+        // Set the existing tags as selected.
+        this.setState ({
+          existingTags: tags.slice (),
+          tagsSelected: tags.slice (),
+          loading: false,
+        });
+
+        // Remove any existing tags from the tag queue.
+        tagQueue = tagQueue.filter (tag => !tags.includes (tag));
+
+        // Start getting tags from the queue to show.
+        this.getTag ();
+      })
+      .catch (error => { console.log (error); });
   }
 
   onTagCloudLayout = (e) => {
@@ -88,7 +111,9 @@ class AddTags extends Component {
       tagCloudHeight: e.nativeEvent.layout.height,
     });
 
-    this.getTag ();
+    if (!this.state.loading) {
+      this.getTag ();
+    }
   }
 
   onTagLayout (width, height, name) {
@@ -112,19 +137,27 @@ class AddTags extends Component {
     // Render a tag, get dimensions, rinse, repeat.
     var tagsToShow = this.state.tagsShowing;
     var nextTagIndex = this.state.nextTagIndex;
-    if (DEFAULT_SUGGESTED_TAGS.length < (nextTagIndex + 1))
+    if (tagQueue.length < (nextTagIndex + 1))
       return;
-    tagsToShow.push ({name: DEFAULT_SUGGESTED_TAGS [nextTagIndex], width: undefined, height: undefined});
+    tagsToShow.push ({name: tagQueue [nextTagIndex], width: undefined, height: undefined});
     this.setState ({tagsShowing: tagsToShow, nextTagIndex: ++nextTagIndex});
+  }
+
+  showRemoveLink (tagName) {
+    if (this.state.existingTags.includes (tagName)) { return; }
+
+    return (
+      <TextLink size={14} onPress={() => {this.onRemoveTag (tagName)}}>
+        Remove
+      </TextLink>
+    );
   }
 
   displaySelectedTag (tagName) {
     return (
       <View key={tagName} style={styles.selectedTag}>
         <Tag name={tagName} active mode={'displayOnly'}>{tagName}</Tag>
-        <TextLink size={14} onPress={() => {this.onRemoveTag (tagName)}}>
-          Remove
-        </TextLink>
+        {this.showRemoveLink (tagName)}
       </View>
     );
   }
@@ -143,8 +176,7 @@ class AddTags extends Component {
   }
 
   onRemoveTag (tagName) {
-    // When a tag is removed, remove it from the array of selected tags...
-    // TODO
+    // When a tag is removed, remove it from the array of selected tags.
     var tagsSelected = this.state.tagsSelected;
     tagsSelected.splice (tagsSelected.indexOf(tagName), 1);
     this.setState ({tagsSelected: tagsSelected});
@@ -174,23 +206,41 @@ class AddTags extends Component {
     this.props.navigateForward ('InviteParticipants', this.constructor.name, screenData);
   }
 
+  onPressSave () {
+    // Upload the new tags to the database.
+    var ravelID = this.state.ravel.ravel_uid;
+    var tagsToAdd = this.state.tagsSelected.filter (tag =>
+      !this.state.existingTags.includes (tag)
+    );
+    console.log ('Trying to add:');
+    console.log (tagsToAdd);
+    this.props.updateRavelTag (ravelID, tagsToAdd)
+    .then (() => {
+      var screenData = Object.assign ({}, {ravel_uid: this.state.ravel.ravel_uid});
+      this.props.setActiveScreen ('Ravel', screenData);
+    })
+    .catch (error => { console.log (error); });
+  }
+
   render (){
     const {
       onTagLayout,
       testID,
     } = this.props;
 
+    mode = this.props.screenData ? this.props.screenData.mode : this.props.mode;
+
     return (
       <View style={styles.layout}>
         <LinkBack onPress={() => this.onPressBack ()} />
-        <LinkContinue
-          onPress={() => this.onPressContinue ()}
+        <LinkSave
+          onPress={() => this.onPressSave ()}
           disabled={this.state.tagsSelected.length == 0}
         />
         <View style={styles.head}>
           <Divider style={styles.divider}/>
           <View style={styles.headText}>
-            <TextHeader>{'Add Tags'}</TextHeader>
+            <TextHeader>{'Edit Tags'}</TextHeader>
             <View style={styles.headBlurb}>
               <TextSans size={14} color={'#B1B1B1'}>
                 Add tags to your ravel to help other ravelers find it.
@@ -293,4 +343,4 @@ const mapStateToProps = (state) => {
   };
 }
 
-export default connect (mapStateToProps)(AddTags);
+export default connect (mapStateToProps)(EditTags);

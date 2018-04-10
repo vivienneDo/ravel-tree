@@ -57,6 +57,9 @@ class Ravel extends Component {
           passageIndex:    undefined,
           passageMetaData: undefined,
         },
+        fork : {
+          passageMetaData: undefined,
+        },
         passage: {
           loadPassage:     screenData.loadPassage,
           passageMetaData: undefined,
@@ -69,6 +72,12 @@ class Ravel extends Component {
       score:        undefined,
       concept:      undefined,
     };
+
+    // Make sure navigating back doesn't bring us back to the creation process.
+    var previousScreens = this.props.previousScreens;
+    if (previousScreens [previousScreens.length - 1] == 'AddTags') {
+      this.props.resetPreviousScreens ();
+    }
   }
 
   componentWillMount () {
@@ -134,6 +143,7 @@ class Ravel extends Component {
               ravelID={this.state.ravelID}
               passageIndex={this.state.modalData.add.passageIndex}
               passageMetaData={this.state.modalData.add.passageMetaData}
+              ravelMetaData={this.state.ravel}
               addInitialPassage={(addData) => this.addInitialPassage (addData)}
               addPassage={(addData) => this.addPassage (addData)}
             />
@@ -146,6 +156,7 @@ class Ravel extends Component {
               {...this.props}
               onPressClose={() => this.setState ({ showModal: '' })}
               onSwitchToAdd={(passage) => this.switchToAdd (passage)}
+              onSwitchToFork={(passage) => this.switchToFork (passage)}
               onNavigateToMerge={(screen, screenData) => this.navigateToMerge (screen, screenData)}
               onReportRavel={(ravelID) => this.reportRavel (ravelID)}
               passageMetaData={this.state.modalData.passage.passageMetaData}
@@ -153,29 +164,22 @@ class Ravel extends Component {
             />
           </View>
         );
-      // ----
-      // TODO
-      // ----
-      // case 'fork':
-      //   Popup = ForkPopup;
-      //   break;
+      case 'fork':
+        return (
+          <View style={styles.modal}>
+            <ForkPopup
+              {...this.props}
+              onPressClose={() => this.setState ({ showModal: '' })}
+              ravelID={this.state.ravelID}
+              passageMetaData={this.state.modalData.fork.passageMetaData}
+              ravelMetaData={this.state.ravel}
+              forkPassage={(forkData) => this.forkPassage (forkData)}
+            />
+          </View>
+        );
       default:
         return;
     }
-
-    // return (
-    //   <View style={styles.modal}>
-    //     <Popup
-    //       onPressClose={() => this.setState ({ showModal: '' })}
-    //       onSwitchToPassage={(passageMetaData) => this.switchToPassage (passageMetaData)}
-    //       onSwitchToAdd={(passageMetaData) => this.switchToAdd (passageMetaData)}
-    //       onNavigate={(screen, screenData) => this.onNavigate (screen, screenData)}
-    //       // TODO: Figure out what we need for this. Don't just pass it all indiscriminately. This is biting you in the ass.
-    //       {...this.props}
-    //       {...this.state}
-    //     />
-    //   </View>
-    // );
   }
 
   // ---------------------------------------------------------------------------
@@ -195,7 +199,7 @@ class Ravel extends Component {
   switchToAdd (passageMetaData) {
     var modalData = this.state.modalData;
     modalData.add.passageMetaData = passageMetaData;
-    modalData.add.nodeCounts = (this.state.analyzedtree || {}).nodeCounts;
+    modalData.add.nodeCounts = (this.state.analyzedtree || {}).nodeCounts; // TODO: Still in use?
     this.setState ({
       modalData: modalData,
       showModal: 'add',
@@ -231,6 +235,39 @@ class Ravel extends Component {
   }
 
   // ---------------------------------------------------------------------------
+  // Fork
+  // ---------------------------------------------------------------------------
+  switchToFork (passageMetaData) {
+    var modalData = this.state.modalData;
+    modalData.fork.passageMetaData = passageMetaData;
+    //modalData.fork.nodeCounts = (this.state.analyzedtree || {}).nodeCounts;
+    this.setState ({
+      modalData: modalData,
+      showModal: 'fork',
+    });
+  }
+
+  forkPassage (forkData) {
+    this.props.forkPassage (forkData)
+    .then (passage => {
+      this.onFork (passage);
+    })
+    .catch (error => { console.log (error); });
+  }
+
+  onFork (passage) {
+    this.props.getRavelMetaData (this.props.screenData.ravel_uid)
+    .then (ravel => {
+      var screenData = {
+        ravel_uid: this.props.screenData.ravel_uid,
+        loadPassage: passage.passage_uid,
+      }
+      this.props.refresh ('Ravel', screenData);
+    })
+    .catch (error => { console.error (error); });
+  }
+
+  // ---------------------------------------------------------------------------
   // Passage
   // ---------------------------------------------------------------------------
   switchToPassage (passageMetaData) {
@@ -254,9 +291,24 @@ class Ravel extends Component {
     this.props.navigateBack ();
   }
 
-  navigateToMerge (screen, screenData) {
-    // TODO: What do we need to navigate back properly? var screenData = ...
+  onPressEditTags () {
+    var screenData = {
+      ravel: this.state.ravel,
+    }
+    this.props.setPreviousScreen ('Ravel');
+    this.props.setActiveScreen ('EditTags', screenData);
+  }
 
+  onPressInviteParticipants () {
+    var screenData = {
+      ravel: this.state.ravel,
+    }
+    this.props.setPreviousScreen ('Ravel');
+    this.props.setActiveScreen ('EditParticipants', screenData);
+  }
+
+  navigateToMerge (screen, screenData) {
+    // TODO: What do we need to navigate back properly?
     this.props.navigateForward ('Merge', this.constructor.name, screenData);
   }
 
@@ -297,8 +349,8 @@ class Ravel extends Component {
     if (!show) {return}
     return (
       <View style={styles.links2}>
-        <TextLink size={14}>Edit Tags</TextLink>
-        <TextLink size={14}>Invite Participants</TextLink>
+        <TextLink size={14} onPress={() => this.onPressEditTags ()}>Edit Tags</TextLink>
+        <TextLink size={14} onPress={() => this.onPressInviteParticipants ()}>Invite Participants</TextLink>
       </View>
     )
   }
