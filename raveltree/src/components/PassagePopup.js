@@ -27,6 +27,7 @@ import ButtonReverse from './ButtonReverse'
 import Button from './Button'
 import ButtonPlus from './ButtonPlus'
 import VoteBar from './VoteBar'
+import ButtonComment from './ButtonComment'
 
 class PassagePopup extends React.Component {
   constructor (props, context) {
@@ -72,6 +73,20 @@ class PassagePopup extends React.Component {
     this.props.onSwitchToAdd (this.props.passageMetaData);
   }
 
+  onPressComment () {
+    var ravel = this.state.ravelMetaData;
+    var passage = this.state.passageMetaData;
+    var commentData = {
+      ravelID: ravel.ravel_uid,
+      ravelTitle: ravel.ravel_title,
+      passageID: passage.passage_uid,
+      passageIndex: passage.passage_index,
+      passageTitle: passage.passage_title,
+      author: passage.user_created,
+    }
+    this.props.onPressComment (commentData);
+  }
+
   onPressEllipsis () {
     var title = this.props.passageMetaData.passage_title;
     var message = 'Choose an action:';
@@ -111,6 +126,16 @@ class PassagePopup extends React.Component {
   checkIfCanEdit () {
     const mode = this.state.mode;
     return (mode == 'participant') || (mode == 'owned')
+  }
+
+  showCommentButton () {
+    if (this.state.ravelMetaData.enable_comment) {
+      return (
+        <View style={styles.buttonComment}>
+          <ButtonComment onPress={() => this.onPressComment ()}/>
+        </View>
+      );
+    }
   }
 
   render () {
@@ -155,11 +180,14 @@ class PassagePopup extends React.Component {
           <Button title={'Fork'} width={0.30 * width} disabled={!this.checkIfCanEdit ()} onPress={() => this.onPressFork ()} />
         </View>
         <View style={styles.bottom}>
-          <Touchable onPress={() => this.onPressEllipsis ()}>
-            <View>
-              <TextSans size={40} color={'#95989A'}>...</TextSans>
-            </View>
-          </Touchable>
+          <View style={styles.bottomLeft}>
+            <Touchable onPress={() => this.onPressEllipsis ()}>
+              <View>
+                <TextSans size={40} color={'#95989A'}>...</TextSans>
+              </View>
+            </Touchable>
+            {this.showCommentButton ()}
+          </View>
           <View style={styles.voteBar}>
             <VoteBar
               {...this.props}
@@ -218,6 +246,13 @@ const styles = StyleSheet.create ({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 17,
+  },
+  bottomLeft: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
+  buttonComment: {
+    marginLeft: 10,
   },
   voteBar: {
     top: 10,

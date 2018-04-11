@@ -33,6 +33,7 @@ import ConceptPopup from '../components/ConceptPopup'
 import AddPopup from '../components/AddPopup'
 import ForkPopup from '../components/ForkPopup'
 import PassagePopup from '../components/PassagePopup'
+import CommentPopup from '../components/CommentPopup'
 import Loader from '../components/Loader'
 
 import * as Test from '../test/Test'
@@ -64,6 +65,10 @@ class Ravel extends Component {
         passage: {
           loadPassage:     screenData.loadPassage,
           passageMetaData: undefined,
+        },
+        comment: {
+          show:            false,
+          commentData:     undefined,
         },
       },
       title:        undefined,
@@ -174,6 +179,7 @@ class Ravel extends Component {
               onSwitchToFork={(passage) => this.switchToFork (passage)}
               onNavigateToMerge={(screen, screenData) => this.navigateToMerge (screen, screenData)}
               onReportRavel={(ravelID) => this.reportRavel (ravelID)}
+              onPressComment={(commentData) => this.onPressComment (commentData)}
               passageMetaData={this.state.modalData.passage.passageMetaData}
               ravelMetaData={this.state.ravel}
               mode={this.state.mode}
@@ -299,6 +305,45 @@ class Ravel extends Component {
 
   reportRavel (ravelID) {
     // TODO
+  }
+
+  // ---------------------------------------------------------------------------
+  // Comments
+  // ---------------------------------------------------------------------------
+  onPressComment (commentData) {
+    var modalData = this.state.modalData;
+    modalData.comment.show = true;
+    modalData.comment.commentData = commentData;
+    this.setState ({ modalData: modalData });
+  }
+
+  showCommentModal () {
+    var commentState = (this.state.modalData || {}).comment;
+    if (!(commentState || {}).show) { return; }
+
+    var commentData = commentState.commentData;
+    if (!commentData) { return; }
+
+    return (
+      <View style={[styles.modal, {zIndex: 100}]}>
+        <CommentPopup
+          {...this.props}
+          onPressClose={() => this.onCloseCommentModal ()}
+          ravelID={commentData.ravelID}
+          ravelTitle={commentData.ravelTitle}
+          passageID={commentData.passageID}
+          passageIndex={commentData.passageIndex}
+          passageTitle={commentData.passageTitle}
+          author={commentData.author}
+        />
+      </View>
+    );
+  }
+
+  onCloseCommentModal () {
+    var modalData = this.state.modalData;
+    modalData.comment.show = false;
+    this.setState ({ modalData: modalData });
   }
 
   // ---------------------------------------------------------------------------
@@ -451,6 +496,7 @@ class Ravel extends Component {
 
     return (
       <View style={styles.layout}>
+      {this.showCommentModal ()}
       {this.showModal (this.state.showModal)}
         <LinkBack onPress={() => this.onPressBack ()} />
         <View style={styles.head}>

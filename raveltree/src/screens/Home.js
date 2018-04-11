@@ -28,6 +28,7 @@ import InputSearch from '../components/InputSearch';
 import TextSerif from '../components/TextSerif';
 import TextHeader from '../components/TextHeader';
 import PassageCard from '../components/PassageCard';
+import CommentPopup from '../components/CommentPopup';
 import Loader from '../components/Loader';
 
 const PASSAGE_LOAD_COUNT = 10;
@@ -39,6 +40,15 @@ class Home extends Component<{}> {
       loading: true,
       ravels: {},
       passages: [],
+      commentModal: {
+        show: false,
+        ravelID: '',
+        ravelTitle: '',
+        passageID: '',
+        passageIndex: '',
+        passageTitle: '',
+        author: '',
+      },
     }
     this.props.setShowNavBar (true);
   }
@@ -53,6 +63,43 @@ class Home extends Component<{}> {
 
   onPressStartARavel () {
     this.props.navigateForward ('StartARavel', this.constructor.name);
+  }
+
+  onPressComment (commentData) {
+    var commentModal = this.state.commentModal;
+    commentModal.show = true;
+    commentModal.ravelID = commentData.ravelID;
+    commentModal.ravelTitle = commentData.ravelTitle;
+    commentModal.passageID = commentData.passageID;
+    commentModal.passageIndex = commentData.passageIndex;
+    commentModal.passageTitle = commentData.passageTitle;
+    commentModal.author = commentData.author;
+    this.setState ({ commentModal: commentModal });
+  }
+
+  showCommentModal () {
+    if (!this.state.commentModal.show) { return; }
+
+    return (
+      <View style={styles.modal}>
+        <CommentPopup
+          {...this.props}
+          onPressClose={() => this.onCloseCommentModal ()}
+          ravelID={this.state.commentModal.ravelID}
+          ravelTitle={this.state.commentModal.ravelTitle}
+          passageID={this.state.commentModal.passageID}
+          passageIndex={this.state.commentModal.passageIndex}
+          passageTitle={this.state.commentModal.passageTitle}
+          author={this.state.commentModal.author}
+        />
+      </View>
+    );
+  }
+
+  onCloseCommentModal () {
+    var commentModal = this.state.commentModal;
+    commentModal.show = false;
+    this.setState ({ commentModal: commentModal });
   }
 
   getPassages () {
@@ -74,8 +121,6 @@ class Home extends Component<{}> {
       })
     })
     .catch (error => { console.error (error); })
-
-
 
     // this.props.loadAllPublicRavel ()
     // .then (ravels => {
@@ -154,6 +199,7 @@ class Home extends Component<{}> {
               downvotes={passage.passage_downvote}
               testID={passage.testID}
               parentScreen={this.constructor.name}
+              onPressComment={(commentData) => this.onPressComment (commentData)}
               {...this.props}
             />
           </View>
@@ -171,6 +217,8 @@ class Home extends Component<{}> {
     } = this.props;
     return (
       <View style={styles.layout}>
+
+        {this.showCommentModal ()}
 
         {/* RavelTree logo at the top in the center */}
         <View style = {styles.logo}>
@@ -229,6 +277,13 @@ class Home extends Component<{}> {
 
 const styles = StyleSheet.create({
   layout: {
+    width: '100%',
+    height: '100%',
+  },
+  modal: {
+    position: 'absolute',
+    zIndex: 10,
+    top: 25,
     width: '100%',
     height: '100%',
   },
