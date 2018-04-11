@@ -51,6 +51,8 @@
                       - Fixed potential undefined/null object conversion in getRavelTags ().
                       - Fixed potential undefined/null object conversion in fetchPassageExploreView ().
                       - Fixed continued evaluation after auth () error that caused null reference in signInWithEmail ().
+ - 04/11/2018 - Frank - Fixed 'category' bug by adding breaks to switch statement in createStartRavel ().
+
  */
 
 
@@ -832,18 +834,21 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
 
         // category
         switch (ravel_category) {
-            case 'fiction': {
-                public_cat_fiction = true
-            }
-            case 'nonfiction': {
-                public_cat_nonfiction = true
-            }
-            case 'other': {
-                pubic_cat_other = true
-            }
-            default: {
-                public_cat_other = true
-            }
+          case 'fiction': {
+              public_cat_fiction = true;
+              break;
+          }
+          case 'nonfiction': {
+              public_cat_nonfiction = true;
+              break;
+          }
+          case 'other': {
+              pubic_cat_other = true
+              break;
+          }
+          default: {
+              public_cat_other = true
+          }
         }
 
     }
