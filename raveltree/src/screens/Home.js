@@ -194,6 +194,7 @@ class Home extends Component<{}> {
               passageIndex={passage.passage_index}
               title={passage.passage_title}
               author={passage.user_created}
+              photoURL={passage.user_created_photoURL}
               passage={passage.passage_body}
               upvotes={passage.passage_upvote}
               downvotes={passage.passage_downvote}

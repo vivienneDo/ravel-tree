@@ -59,7 +59,7 @@ class UserImage extends Component {
       if (this.props.photoURL) {
         this.setState ({ photoURL: this.props.photoURL });
       }
-      if (this.props.userID) {
+      else if (this.props.userID) {
         // Get the profile associated with the user id.
         console.log ("Getting user profile for " + this.props.userID);
         this.props.getUserProfile (this.props.userID)

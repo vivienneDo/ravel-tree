@@ -78,7 +78,7 @@ class RavelStub extends Component<{}> {
         <View style={styles.inner}>
           <View style={styles.left}>
             <View style={styles.userImage}>
-              <UserImage {...this.props} userID={ravel.user_created} size={26} />
+              <UserImage {...this.props} userID={ravel.user_created} photoURL={ravel.user_created_photoURL} size={26} />
             </View>
             <TextSerif size={16}>{ravel.ravel_title}</TextSerif>
           </View>
