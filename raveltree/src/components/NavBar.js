@@ -54,13 +54,11 @@ class NavBar extends React.Component {
     super (props);
   }
 
-  // componentWillReceiveProps (newProps) {
-  //   console.log (newProps.profileIsOwned);
-  //   var isOwned = newProps.profileIsOwned;
-  //   if (typeof isOwned != undefined && isOwned != null) {
-  //     this.props.setNavBarTab (isOwned ? 'Profile' : null);
-  //   }
-  // }
+  componentWillReceiveProps (newProps) {
+    // if (newProps.currentUserProfile) {
+    //
+    // }
+  }
 
   handleSelect (selected) {
     if (this.props.activeTab != selected) {
@@ -172,7 +170,7 @@ class NavBar extends React.Component {
           </Touchable>
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Profile')}>
             <View style={styles.menuItemInner}>
-              <UserImage {...this.props} userID={this.props.currentUserProfile.user_uid} size={30} active={this.props.activeTab === 'Profile'} disabled />
+              <UserImage {...this.props} userID={(this.props.currentUserProfile || {}).user_uid} size={30} active={this.props.activeTab === 'Profile'} disabled />
               <Text style = {[styles.text, this.props.activeTab === 'Profile' ? styles.active : styles.inactive]}>
                 Profile
               </Text>

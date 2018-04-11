@@ -35,6 +35,7 @@ class PassagePopup extends React.Component {
       loading: !this.props.passageMetaData,
       passageMetaData: this.props.passageMetaData || {},
       ravelMetaData: this.props.ravelMetaData || {},
+      mode: this.props.mode || '',
     };
   }
 
@@ -107,6 +108,11 @@ class PassagePopup extends React.Component {
     console.log ('Opening share menu for ' + passageTitle);
   }
 
+  checkIfCanEdit () {
+    const mode = this.state.mode;
+    return (mode == 'participant') || (mode == 'owned')
+  }
+
   render () {
     var passageMetaData = this.state.passageMetaData || {};
 
@@ -144,9 +150,9 @@ class PassagePopup extends React.Component {
           </View>
         </ScrollView>
         <View style={styles.buttons}>
-          <ButtonReverse title={'Merge...'} width={0.30 * width} disabled={this.checkIfOnLastLevel ()} onPress={() => this.onPressMerge ()} />
-          <ButtonPlus size={36} onPress={() => this.onPressAdd ()} />
-          <Button title={'Fork'} width={0.30 * width} onPress={() => this.onPressFork ()} />
+          <ButtonReverse title={'Merge...'} width={0.30 * width} disabled={this.checkIfOnLastLevel () || !this.checkIfCanEdit ()} onPress={() => this.onPressMerge ()} />
+          <ButtonPlus size={36} disabled={!this.checkIfCanEdit ()} onPress={() => this.onPressAdd ()} />
+          <Button title={'Fork'} width={0.30 * width} disabled={!this.checkIfCanEdit ()} onPress={() => this.onPressFork ()} />
         </View>
         <View style={styles.bottom}>
           <Touchable onPress={() => this.onPressEllipsis ()}>
@@ -161,6 +167,7 @@ class PassagePopup extends React.Component {
               passageID={passageMetaData.passage_uid}
               upvotes={passageMetaData.passage_upvote}
               downvotes={passageMetaData.passage_downvote}
+              disabled={!this.checkIfCanEdit ()}
             />
           </View>
         </View>

@@ -147,7 +147,7 @@ class YourRavels extends Component {
 
     return (
       Object.values (this.state.ravelsIn).map (ravel => {
-        return this.renderRavelStub (ravel);
+        return this.renderRavelStub (ravel, ravel.user_created);
       })
     );
   }
@@ -167,7 +167,7 @@ class YourRavels extends Component {
 
     return (
       Object.values (this.state.ravelsInvited).map (ravel => {
-        return this.renderRavelStub (ravel);
+        return this.renderRavelStub (ravel, ravel.user_created);
       })
     );
   }
