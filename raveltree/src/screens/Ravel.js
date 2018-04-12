@@ -33,6 +33,7 @@ import ConceptPopup from '../components/ConceptPopup'
 import AddPopup from '../components/AddPopup'
 import ForkPopup from '../components/ForkPopup'
 import PassagePopup from '../components/PassagePopup'
+import CommentPopup from '../components/CommentPopup'
 import Loader from '../components/Loader'
 
 import * as Test from '../test/Test'
@@ -46,10 +47,11 @@ class Ravel extends Component {
     console.log (screenData);
     console.log (screenData.ravel_uid);
     console.log ((screenData.ravel || {}).ravel_uid);
+
     this.state = {
       loading:      true,
       ravel:        undefined,
-      ravelID:      screenData.ravelID || screenData.ravel_uid || (screenData.ravel || {}).ravel_uid || '',
+      ravelID:      screenData.ravelID   || screenData.ravel_uid || (screenData.ravel || {}).ravel_uid || '',
       mode:         this.props.mode      || '',
       showModal:    screenData.showModal || '',
       modalData: {
@@ -63,6 +65,10 @@ class Ravel extends Component {
         passage: {
           loadPassage:     screenData.loadPassage,
           passageMetaData: undefined,
+        },
+        comment: {
+          show:            false,
+          commentData:     undefined,
         },
       },
       title:        undefined,
@@ -92,6 +98,19 @@ class Ravel extends Component {
   loadRavel (ravel) {
     return new Promise ((resolve, reject) => {
 
+      // Determine the mode.
+      var mode = '';
+      var currentUserID = firebase.auth ().currentUser.uid;
+      if (currentUserID == ravel.user_created) {
+        mode = 'owned';
+      }
+      else if ((ravel.ravel_participants || {}) [currentUserID] === false) {
+        mode = 'invited';
+      }
+      else if ((ravel.ravel_participants || {}) [currentUserID] === true) {
+        mode = 'participant';
+      }
+
       this.setState ({
         ravel: ravel,
         ravelID: ravel.ravel_uid,
@@ -101,7 +120,7 @@ class Ravel extends Component {
         numberParticipants: ravel.ravel_number_participants,
         score: ravel.ravel_points,
         concept: ravel.ravel_concept,
-        mode: (firebase.auth ().currentUser.uid == ravel.user_created) ? 'owned' : '',
+        mode: mode,
       });
 
       // If we're supposed to be loading a passage...
@@ -160,8 +179,10 @@ class Ravel extends Component {
               onSwitchToFork={(passage) => this.switchToFork (passage)}
               onNavigateToMerge={(screen, screenData) => this.navigateToMerge (screen, screenData)}
               onReportRavel={(ravelID) => this.reportRavel (ravelID)}
+              onPressComment={(commentData) => this.onPressComment (commentData)}
               passageMetaData={this.state.modalData.passage.passageMetaData}
               ravelMetaData={this.state.ravel}
+              mode={this.state.mode}
             />
           </View>
         );
@@ -261,7 +282,6 @@ class Ravel extends Component {
     this.props.getRavelMetaData (this.props.screenData.ravel_uid)
     .then (ravel => {
       var screenData = {
-        //ravel_uid: this.props.screenData.ravel_uid,
         ravel_uid: this.state.ravelID,
         loadPassage: passage.passage_uid,
       }
@@ -285,6 +305,45 @@ class Ravel extends Component {
 
   reportRavel (ravelID) {
     // TODO
+  }
+
+  // ---------------------------------------------------------------------------
+  // Comments
+  // ---------------------------------------------------------------------------
+  onPressComment (commentData) {
+    var modalData = this.state.modalData;
+    modalData.comment.show = true;
+    modalData.comment.commentData = commentData;
+    this.setState ({ modalData: modalData });
+  }
+
+  showCommentModal () {
+    var commentState = (this.state.modalData || {}).comment;
+    if (!(commentState || {}).show) { return; }
+
+    var commentData = commentState.commentData;
+    if (!commentData) { return; }
+
+    return (
+      <View style={[styles.modal, {zIndex: 100}]}>
+        <CommentPopup
+          {...this.props}
+          onPressClose={() => this.onCloseCommentModal ()}
+          ravelID={commentData.ravelID}
+          ravelTitle={commentData.ravelTitle}
+          passageID={commentData.passageID}
+          passageIndex={commentData.passageIndex}
+          passageTitle={commentData.passageTitle}
+          author={commentData.author}
+        />
+      </View>
+    );
+  }
+
+  onCloseCommentModal () {
+    var modalData = this.state.modalData;
+    modalData.comment.show = false;
+    this.setState ({ modalData: modalData });
   }
 
   // ---------------------------------------------------------------------------
@@ -361,25 +420,42 @@ class Ravel extends Component {
   showInvitationButton (show) {
     if (!show) {return}
     return (
-      <View style={styles.button}>
-        <Button
-          title={'Accept Invitation'}
-          onPress={() => this.onPressAcceptInvitation ()}
-        />
-        <Button
-          title={'Decline Invitation'}
-          onPress={() => this.onPressDeclineInvitation ()}
-        />
+      <View style={styles.buttonContainer}>
+        <TextSans size={14}>You&#39;ve been invited to this ravel!</TextSans>
+        <View style={styles.buttons}>
+          <View style={styles.button}>
+            <Button
+              title={'Accept'}
+              onPress={() => this.onPressAcceptInvitation ()}
+            />
+          </View>
+          <View style={styles.button}>
+            <Button
+              title={'Decline'}
+              onPress={() => this.onPressDeclineInvitation ()}
+            />
+          </View>
+        </View>
       </View>
     )
   }
 
   onPressAcceptInvitation () {
-    // TODO
+    this.props.acceptRavelInvite (this.state.ravelID)
+    .then (() => {
+      var screenData = { ravel_uid: this.state.ravelID };
+      this.props.refresh ('Ravel', screenData);
+    })
+    .catch ((error) => { console.error (error); });
   }
 
   onPressDeclineInvitation () {
-    // TODO
+    this.props.declineRavelInvite (this.state.ravelID)
+    .then (() => {
+      var screenData = { ravel_uid: this.state.ravelID };
+      this.props.refresh ('Ravel', screenData);
+    })
+    .catch ((error) => { console.error (error); });
   }
 
   showPlus (show) {
@@ -420,6 +496,7 @@ class Ravel extends Component {
 
     return (
       <View style={styles.layout}>
+      {this.showCommentModal ()}
       {this.showModal (this.state.showModal)}
         <LinkBack onPress={() => this.onPressBack ()} />
         <View style={styles.head}>
@@ -443,7 +520,7 @@ class Ravel extends Component {
           </View>
           <Divider />
           {this.showAdminLinks (this.state.mode == 'owned')}
-          {this.showInvitationButton (this.state.mode == 'invitation')}
+          {this.showInvitationButton (this.state.mode == 'invited')}
         </View>
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           {this.showTree ()}
@@ -519,8 +596,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 10,
   },
-  button :{
-    marginTop: 20,
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+  },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  button: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 4,
   },
   scroll: {
     minWidth: '100%',

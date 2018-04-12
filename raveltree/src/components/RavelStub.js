@@ -78,7 +78,7 @@ class RavelStub extends Component<{}> {
         <View style={styles.inner}>
           <View style={styles.left}>
             <View style={styles.userImage}>
-              <UserImage {...this.props} userID={ravel.user_created} size={26} />
+              <UserImage {...this.props} userID={ravel.user_created} photoURL={ravel.user_created_photoURL} size={26} />
             </View>
             <TextSerif size={16}>{ravel.ravel_title}</TextSerif>
           </View>
@@ -88,7 +88,7 @@ class RavelStub extends Component<{}> {
                 <IconUser />
               </View>
               <View style={styles.hpad}>
-                <TextSerif size={16}>{ravel.ravel_number_participants}</TextSerif>
+                <TextSerif size={16}>{ravel.ravel_number_participants + 1}</TextSerif>
               </View>
             </View>
             <View style={styles.score}>

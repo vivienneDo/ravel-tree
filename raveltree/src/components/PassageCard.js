@@ -1,6 +1,6 @@
 // Author:    Alex Aguirre
 // Created:   02/5/18
-// Modified:  04/02/18 by Frank Fusco (fr@nkfus.co)
+// Modified:  04/10/18 by Frank Fusco (fr@nkfus.co)
 
 // Standard passage card component for RavelTree.
 //
@@ -27,6 +27,7 @@ import TextSerif from './TextSerif'
 import TextSans from './TextSans'
 import UserImage from './UserImage'
 import VoteBar from './VoteBar'
+import ButtonComment from './ButtonComment'
 
 // Number of characters of passage text to display on the card.
 PASSAGE_TRUNCATION = 330;
@@ -37,10 +38,21 @@ class PassageCard extends React.Component {
   }
 
   componentWillReceiveProps (newProps) {
-
     if (newProps.ravel_report_success) {
       Alert.alert ('Reported', 'Thank you for reporting a violation of RavelTree\'s Terms of Use. We\'ll review your report and take action as necessary.');
     }
+  }
+
+  onPressComment () {
+    var commentData = {
+      ravelID: this.props.ravelID,
+      ravelTitle: this.props.ravel,
+      passageID: this.props.passageID,
+      passageIndex: this.props.passageIndex,
+      passageTitle: this.props.passage,
+      author: this.props.author,
+    }
+    this.props.onPressComment (commentData);
   }
 
   onPressRavel () {
@@ -114,6 +126,7 @@ class PassageCard extends React.Component {
       passageID,
       title,
       author,
+      photoURL,
       passage,
       upvotes,
       downvotes,
@@ -150,7 +163,7 @@ class PassageCard extends React.Component {
                 <TextSans size={13} color={'#95989A'}>{this.props.title}</TextSans>
               </View>
             </Touchable>
-            <UserImage {...this.props} userID={author} size={26}/>
+            <UserImage {...this.props} userID={author} photoURL={photoURL} size={26}/>
           </View>
         </View>
         <Touchable onPress={() => this.onPressPassage ()} style={styles.passage}>
@@ -161,18 +174,25 @@ class PassageCard extends React.Component {
           </View>
         </Touchable>
         <View style={styles.buttons}>
-          <Touchable onPress={() => this.onPressEllipsis ()}>
-            <View>
-              <TextSans size={40} color={'#95989A'}>...</TextSans>
+          <View style={styles.buttonsLeft}>
+            <Touchable onPress={() => this.onPressEllipsis ()}>
+              <View>
+                <TextSans size={40} color={'#95989A'}>...</TextSans>
+              </View>
+            </Touchable>
+            <View style={styles.buttonComment}>
+              <ButtonComment onPress={() => this.onPressComment ()}/>
             </View>
-          </Touchable>
-          <VoteBar
-            ravelID={ravelID}
-            passageID={passageID}
-            upvotes={upvotes}
-            downvotes={downvotes}
-            {...this.props}
-          />
+          </View>
+          <View style={styles.voteBar}>
+            <VoteBar
+              ravelID={ravelID}
+              passageID={passageID}
+              upvotes={upvotes}
+              downvotes={downvotes}
+              {...this.props}
+            />
+          </View>
         </View>
       </View>
     )
@@ -205,20 +225,25 @@ const styles = StyleSheet.create ({
   },
   passage: {
     marginTop: 6,
-    //marginBottom: 20,
-    // paddingLeft: 17,
-    // paddingRight: 17,
   },
   passageIndex: {
     alignSelf: 'flex-end',
   },
   buttons: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
     marginTop: -10,
-    // paddingLeft: 21,
-    // paddingRight: 21,
+  },
+  buttonsLeft: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
+  buttonComment: {
+    marginLeft: 10,
+  },
+  voteBar: {
+    marginBottom: 6,
   },
 });
 

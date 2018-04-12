@@ -1,8 +1,10 @@
 // Author:    Alex Aguirre
 // Created:   01/20/18
-// Modified:  02/30/18 by Frank Fusco (fr@nkfus.co)
+// Modified:  04/10/18 by Frank Fusco (fr@nkfus.co)
 
 // Standard "vote bar" component for RavelTree.
+//
+// TODO: "Disabled"?
 
 import React, {Component} from 'react';
 import {
@@ -27,6 +29,7 @@ class VoteBar extends Component {
       downvotes: this.props.downvotes || 0,
       hasUpvoted: false,
       hasDownvoted: false,
+      disabled: this.props.disabled || false,
     };
   }
 

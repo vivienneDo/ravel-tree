@@ -1,6 +1,6 @@
 // Author:   Alex Aguirre
 // Created:  02/07/18
-// Modified: 04/03/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 04/10/18 by Frank Fusco (fr@nkfus.co)
 //
 // Home screen for RavelTree.
 //
@@ -28,6 +28,7 @@ import InputSearch from '../components/InputSearch';
 import TextSerif from '../components/TextSerif';
 import TextHeader from '../components/TextHeader';
 import PassageCard from '../components/PassageCard';
+import CommentPopup from '../components/CommentPopup';
 import Loader from '../components/Loader';
 
 const PASSAGE_LOAD_COUNT = 10;
@@ -39,6 +40,15 @@ class Home extends Component<{}> {
       loading: true,
       ravels: {},
       passages: [],
+      commentModal: {
+        show: false,
+        ravelID: '',
+        ravelTitle: '',
+        passageID: '',
+        passageIndex: '',
+        passageTitle: '',
+        author: '',
+      },
     }
     this.props.setShowNavBar (true);
   }
@@ -55,48 +65,101 @@ class Home extends Component<{}> {
     this.props.navigateForward ('StartARavel', this.constructor.name);
   }
 
+  onPressComment (commentData) {
+    var commentModal = this.state.commentModal;
+    commentModal.show = true;
+    commentModal.ravelID = commentData.ravelID;
+    commentModal.ravelTitle = commentData.ravelTitle;
+    commentModal.passageID = commentData.passageID;
+    commentModal.passageIndex = commentData.passageIndex;
+    commentModal.passageTitle = commentData.passageTitle;
+    commentModal.author = commentData.author;
+    this.setState ({ commentModal: commentModal });
+  }
+
+  showCommentModal () {
+    if (!this.state.commentModal.show) { return; }
+
+    return (
+      <View style={styles.modal}>
+        <CommentPopup
+          {...this.props}
+          onPressClose={() => this.onCloseCommentModal ()}
+          ravelID={this.state.commentModal.ravelID}
+          ravelTitle={this.state.commentModal.ravelTitle}
+          passageID={this.state.commentModal.passageID}
+          passageIndex={this.state.commentModal.passageIndex}
+          passageTitle={this.state.commentModal.passageTitle}
+          author={this.state.commentModal.author}
+        />
+      </View>
+    );
+  }
+
+  onCloseCommentModal () {
+    var commentModal = this.state.commentModal;
+    commentModal.show = false;
+    this.setState ({ commentModal: commentModal });
+  }
+
   getPassages () {
-    // TODO: "Newsfeed" algorithm.
-    // For now, our newsfeed algorithm just gets n public passages.
-    // TODO: Select a subset at random and get more on scroll end.
-    this.props.loadAllPublicRavel ()
-    .then (ravels => {
+    this.props.fetchPassageExploreView ()
+    .then (passages => {
+      console.log (passages);
+      console.log (_.size (passages));
 
-      console.log (ravels);
+      var passagesToShow = [];
+      Object.values (passages).map (passage => {
+        if (_.size (passage) > 0 && passage.passage_title) {
+          passagesToShow.push (passage);
+        }
+      })
 
-      this.setState ({ ravels: ravels });
-
-      if (_.size (ravels) > 0) {
-        var passageIds = [];
-        Object.values (ravels).map (ravel => {
-          if (_.size (ravel.roots || {}) > 0) {
-            Object.keys (ravel.roots).map (passageID =>
-              passageIds.push ({
-                ravelID: ravel.ravel_uid,
-                passageID: passageID,
-              })
-            );
-          }
-        });
-
-        // For now, just get n passages.
-        passageIds.length = Math.min (passageIds.length, PASSAGE_LOAD_COUNT);
-
-        passageIds.map (passage =>
-          this.props.getPassageMetaData (passage.passageID, passage.ravelID)
-          .then (passage => {
-            if (_.size (passage) > 0) {
-              var passages = this.state.passages;
-              passages.push (passage);
-              this.setState ({ passages: passages });
-            }
-          })
-          .then (this.setState ({ loading: false }))
-          .catch (error => { console.error (error); })
-        );
-      }
+      this.setState ({
+        loading: false,
+        passages: passagesToShow,
+      })
     })
     .catch (error => { console.error (error); })
+
+    // this.props.loadAllPublicRavel ()
+    // .then (ravels => {
+    //
+    //   console.log (ravels);
+    //
+    //   this.setState ({ ravels: ravels });
+    //
+    //   if (_.size (ravels) > 0) {
+    //     var passageIds = [];
+    //     Object.values (ravels).map (ravel => {
+    //       if (_.size (ravel.roots || {}) > 0) {
+    //         Object.keys (ravel.roots).map (passageID =>
+    //           passageIds.push ({
+    //             ravelID: ravel.ravel_uid,
+    //             passageID: passageID,
+    //           })
+    //         );
+    //       }
+    //     });
+    //
+    //     // For now, just get n passages.
+    //     passageIds.length = Math.min (passageIds.length, PASSAGE_LOAD_COUNT);
+    //
+    //     passageIds.map (passage =>
+    //       this.props.getPassageMetaData (passage.passageID, passage.ravelID)
+    //       .then (passage => {
+    //         if (_.size (passage) > 0) {
+    //           var passages = this.state.passages;
+    //           passages.push (passage);
+    //           this.setState ({ passages: passages });
+    //         }
+    //       })
+    //       .then (this.setState ({ loading: false }))
+    //       .catch (error => { console.error (error); })
+    //     );
+    //   }
+    // })
+    // .catch (error => { console.error (error); })
   }
 
   renderPassages () {
@@ -131,11 +194,13 @@ class Home extends Component<{}> {
               passageIndex={passage.passage_index}
               title={passage.passage_title}
               author={passage.user_created}
+              photoURL={passage.user_created_photoURL}
               passage={passage.passage_body}
               upvotes={passage.passage_upvote}
               downvotes={passage.passage_downvote}
               testID={passage.testID}
               parentScreen={this.constructor.name}
+              onPressComment={(commentData) => this.onPressComment (commentData)}
               {...this.props}
             />
           </View>
@@ -153,6 +218,8 @@ class Home extends Component<{}> {
     } = this.props;
     return (
       <View style={styles.layout}>
+
+        {this.showCommentModal ()}
 
         {/* RavelTree logo at the top in the center */}
         <View style = {styles.logo}>
@@ -211,6 +278,13 @@ class Home extends Component<{}> {
 
 const styles = StyleSheet.create({
   layout: {
+    width: '100%',
+    height: '100%',
+  },
+  modal: {
+    position: 'absolute',
+    zIndex: 10,
+    top: 25,
     width: '100%',
     height: '100%',
   },

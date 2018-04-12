@@ -47,8 +47,12 @@
                       - Added addAllChildPassageToParentPassageOnFork() to add new passage to the `child` array of the common parent
                       - Fixed level_count bug
  - 04/10/2018 - Frank - Fixed potential null reference error on get_curr_tags2 in updateRavelParticipant ().
-
- - 04/12/2018 - VD Do
+                      - Fixed negative index bug in fetchPassageExploreView (fetchUserPublicRavelExploreHelper () -> limitToLast ()).
+                      - Fixed potential undefined/null object conversion in getRavelTags ().
+                      - Fixed potential undefined/null object conversion in fetchPassageExploreView ().
+                      - Fixed continued evaluation after auth () error that caused null reference in signInWithEmail ().
+ - 04/11/2018 - Frank - Fixed 'category' bug by adding breaks to switch statement in createStartRavel ().
+ - 04/12/2018 - VD Do -
                     Added:
                       - getCompletePassageReportList - fetches all passages that are reported
                       - addReportMessage - helper function, do not call directly
@@ -209,21 +213,22 @@ export const userResetPassword = (email) => dispatch => {
 */
 export const signInWithEmail = (email, password) => dispatch => {
 
-    firebase.auth().signInWithEmailAndPassword(email, password)
-    .catch(function(error) {
-    var errorCode = error.code;
-    var errorMessage = error.message;
+   firebase.auth().signInWithEmailAndPassword(email, password)
+   .catch(function(error) {
+     var errorCode = error.code;
+     var errorMessage = error.message;
 
-    if (errorCode === 'auth/wrong-password') {
-      alert('Wrong password.');
-    } else if (errorCode === 'auth/user-not-found') {
-      alert('There is no user corresponding to the given email address.');
-    } else {
-      alert(errorMessage);
-    }
-        console.log(error);
-    })
-    .then (function (user) {
+     if (errorCode === 'auth/wrong-password') {
+       alert('Wrong password.');
+     } else if (errorCode === 'auth/user-not-found') {
+       alert('There is no user corresponding to the given email address.');
+     } else {
+       alert(errorMessage);
+     }
+     console.log(error);
+   })
+   .then (function (user) {
+     if (!user) { return; }
 
       var currentUid = firebase.auth().currentUser.uid;
 
@@ -233,7 +238,7 @@ export const signInWithEmail = (email, password) => dispatch => {
                      payload: snapshot.val() });
       })
       .catch((error) => {
-          alert('Error loading user profile at this time...')
+          alert('Error loading user profile.')
       })
     });
  };
@@ -955,18 +960,21 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
 
         // category
         switch (ravel_category) {
-            case 'fiction': {
-                public_cat_fiction = true
-            }
-            case 'nonfiction': {
-                public_cat_nonfiction = true
-            }
-            case 'other': {
-                pubic_cat_other = true
-            }
-            default: {
-                public_cat_other = true
-            }
+          case 'fiction': {
+              public_cat_fiction = true;
+              break;
+          }
+          case 'nonfiction': {
+              public_cat_nonfiction = true;
+              break;
+          }
+          case 'other': {
+              pubic_cat_other = true
+              break;
+          }
+          default: {
+              public_cat_other = true
+          }
         }
 
     }
@@ -1235,10 +1243,15 @@ export const getRavelTags = (ravel_uid) => dispatch => {
 
     firebase.database().ref(`ravels/${ravel_uid}/public_tag_set`).once('value', (snapshot) => {
       var currentTags = snapshot.val();
-      var tags = Object.keys (currentTags).map (tag => {
-        return tag.replace (/^(public_)/,"");
-      });
-      resolve (tags);
+      if (!currentTags) {
+        resolve ([]);
+      }
+      else {
+        var tags = Object.keys (currentTags).map (tag => {
+          return tag.replace (/^(public_)/,"");
+        });
+        resolve (tags);
+      }
     })
     // .then(() => {
     //     // var tags = Object.keys (get_current_tags).map (tag => {
@@ -1473,48 +1486,62 @@ export const declineRavelInvite = (ravel_uid) => dispatch => {
 
 export const fetchPassageExploreView = () => dispatch => {
 
-    var currentUserUid = firebase.auth().currentUser.uid;
-    var array = {}
-    var count = 0
+  var currentUserUid = firebase.auth().currentUser.uid;
+  var array = {}
+  var count = 0
 
-    return new Promise ((resolve, reject) => {
+  return new Promise ((resolve, reject) => {
 
-        fetchUserCreatedRavelExploreHelper().then((userCreatedResult) => {
+    fetchUserCreatedRavelExploreHelper().then((userCreatedResult) => {
 
-            array = {...userCreatedResult}
+      array = {...userCreatedResult}
 
-            fetchUserParticipantRavelExploreHelper().then((userNonCreatedResult) => {
+      fetchUserParticipantRavelExploreHelper().then((userNonCreatedResult) => {
 
-                array = {...array, ...userNonCreatedResult}
+        array = {...array, ...userNonCreatedResult}
 
-                // Query at least 10 random ravels
-                var totalCountWithNoPublic = Object.keys(userCreatedResult).length + Object.keys(userNonCreatedResult).length;
-                var countToQueryPublic = 10 - totalCountWithNoPublic;
+        // Query at least 10 random ravels
+        var totalCountWithNoPublic = Object.keys(userCreatedResult || []).length + Object.keys(userNonCreatedResult || []).length;
+        var countToQueryPublic = 10 - totalCountWithNoPublic;
 
-                fetchUserPublicRavelExploreHelper(countToQueryPublic).then((publicRavelResult) => {
+        if (countToQueryPublic < 1) {
+          // Pass in an empty list and the full list
+          populatePassageListExploreHelper(array).then((unsortedPassageList) => {
 
-                    array = {...userCreatedResult, ...userNonCreatedResult, ...publicRavelResult}
+            shuffleList(unsortedPassageList).then((shuffledPassageList) => {
 
-                    // Pass in an empty list and the full list
-                    populatePassageListExploreHelper(array).then((unsortedPassageList) => {
+              resolve(shuffledPassageList);
+              //dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: shuffledPassageList})
+            })
+          })
+        }
 
-                        shuffleList(unsortedPassageList).then((shuffledPassageList) => {
+        else {
+          fetchUserPublicRavelExploreHelper(countToQueryPublic).then((publicRavelResult) => {
 
-                            resolve(shuffledPassageList);
-                            //dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: shuffledPassageList})
-                        })
+            array = {...userCreatedResult, ...userNonCreatedResult, ...publicRavelResult}
 
-                    })
+            // Pass in an empty list and the full list
+            populatePassageListExploreHelper(array).then((unsortedPassageList) => {
 
-                })
+              shuffleList(unsortedPassageList).then((shuffledPassageList) => {
+
+                resolve(shuffledPassageList);
+                //dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: shuffledPassageList})
+
+              })
 
             })
 
-        })
-        .catch(() => {
-            reject('Error getting explore view')
-        })
-    });
+          })
+        }
+      })
+
+    })
+    .catch(() => {
+        reject('Error getting explore view')
+    })
+  });
 
 };
 
