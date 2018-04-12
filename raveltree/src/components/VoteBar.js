@@ -31,7 +31,7 @@ class VoteBar extends Component {
   }
 
   componentWillMount () {
-    // Get whether the current user has already voted.
+    // Get whether and how the current user has already voted.
     this.props.checkUserVote (this.props.ravelID, this.props.passageID)
     .then (vote => {
       if (vote === true)  { this.setState ({ hasUpvoted:   true }); }
@@ -41,31 +41,53 @@ class VoteBar extends Component {
   }
 
   onPressUp () {
-    // If the user has already downvoted...
-
-
     this.props.upVotePassage (this.props.ravelID, this.props.passageID)
     .then (success => {
-      var upvotes = this.state.upvotes + 1;
-      this.setState ({
-        upvotes: upvotes,
-        hasUpvoted: true,
-      });
+      this.props.checkUserVote (this.props.ravelID, this.props.passageID)
+      .then (vote => {
+        if (vote === true) {
+          var upvotes = this.state.upvotes + 1;
+          this.setState ({
+            hasUpvoted: true,
+            upvotes: upvotes,
+          });
+        }
+        else {
+          var downvotes = this.state.downvotes - 1;
+          this.setState ({
+            hasUpvoted:   false,
+            hasDownvoted: false,
+            downvotes: downvotes,
+          });
+        }
+      })
+      .catch (error => { console.log (error) });
     })
     .catch (error => { console.log (error); });
   }
 
   onPressDown () {
-    // If the user has already upvoted...
-
-
     this.props.downVotePassage (this.props.ravelID, this.props.passageID)
     .then (success => {
-      var downvotes = this.state.downvotes + 1;
-      this.setState ({
-        downvotes: downvotes,
-        hasDownvoted: true,
-      });
+      this.props.checkUserVote (this.props.ravelID, this.props.passageID)
+      .then (vote => {
+        if (vote === false) {
+          var downvotes = this.state.downvotes + 1;
+          this.setState ({
+            hasDownvoted: true,
+            downvotes: downvotes,
+          });
+        }
+        else {
+          var upvotes = this.state.upvotes - 1;
+          this.setState ({
+            hasUpvoted:   false,
+            hasDownvoted: false,
+            upvotes: upvotes,
+          });
+        }
+      })
+      .catch (error => { console.log (error) });
     })
     .catch (error => { console.log (error); });
   }
@@ -83,15 +105,25 @@ class VoteBar extends Component {
     var downVoteStyles = [styles.downVote];
     var numStyles = [styles.num];
 
-    if (this.state.hasUpvoted) {
-      upVoteStyles.push ({ borderBottomColor: '#2E8AF7' });
-      numStyles.push ({ color: '#2E8AF7' });
-    }
-
-    if (this.state.hasDownvoted) {
-      downVoteStyles.push ({ borderTopColor: '#2E8AF7' });
-      numStyles.push ({ color: '#2E8AF7' });
-    }
+    // if (this.state.hasUpvoted) {
+    //   upVoteStyles.push ({ borderBottomColor: '#2E8AF7' });
+    //   numStyles.push ({ color: '#2E8AF7' });
+    // }
+    // else {
+    //   upVoteStyles.push ({ borderBottomColor: '#939393' });
+    // }
+    //
+    // if (this.state.hasDownvoted) {
+    //   downVoteStyles.push ({ borderTopColor: '#2E8AF7' });
+    //   numStyles.push ({ color: '#2E8AF7' });
+    // }
+    // else {
+    //   downVoteStyles.push ({ borderBottomColor: '#939393' });
+    // }
+    //
+    // if (!this.state.hasUpvoted && !this.state.hasUpvoted) {
+    //   numStyles.push ({ color: '#939393' });
+    // }
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 

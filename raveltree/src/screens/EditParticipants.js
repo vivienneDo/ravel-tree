@@ -1,13 +1,11 @@
-// Author: Frank Fusco (fr@nkfus.co)
-// Created: 02/23/18
+// Author:   Frank Fusco (fr@nkfus.co)
+// Created:  04/09/18
 // Modified: 04/09/18
 //
-// "Invite Participants" screen for RavelTree.
-//
-// - 'mode' prop denotes whether this is part of the ravel creation process or
-//   later editing.
+// "Edit Participants" screen for RavelTree.
 //
 // TODO: onPressByLink (): Invite by link functionality (Would like to have)
+
 
 import React, { Component } from 'react';
 import {
@@ -40,11 +38,13 @@ import ModalContainer from '../components/ModalContainer'
 const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 var {height, width} = Dimensions.get ('window');
 
-class InviteParticipants extends Component {
+class EditParticipants extends Component {
   constructor (props) {
     super (props);
     this.state = {
-      participants: [],
+      ravel: this.props.screenData.ravel,
+      loading: true,
+      participants: {},
       mode: this.props.mode,
       showModal: '',
       searchedName: '',
@@ -53,35 +53,30 @@ class InviteParticipants extends Component {
       oldUserResults: this.props.users_first_name_search,
       oldRavelMetaData: this.props.ravel_meta_data,
       readyToNavigate: false,
-      ...this.props.screenData,
+      //...this.props.screenData,
     };
   }
 
-  componentWillReceiveProps (nextProps) {
-    // Update the username search results.
-    var userResults = nextProps.users_first_name_search;
-    if (userResults && userResults != this.state.oldUserResults) {
-      this.setState ({ userResults: userResults });
-    }
+  componentDidMount () {
+    // Get the participants' user profiles.
+    var participantIDs = this.props.screenData.ravel.ravel_participants;
+    if (!participantIDs) { return; }
+    console.log (participantIDs);
 
-    // When the created ravel's metadata is received, go to its Ravel screen.
-    if (nextProps.ravel_meta_data && nextProps.ravel_meta_data != this.state.oldRavelMetaData) {
-      const ravelMetaData = nextProps.ravel_meta_data;
-
-      // "Accept the invite" for ourselves, the initial user...
-      //this.props.acceptRavelInvite (ravelMetaData.ravel_uid);
-
-      var screenData = Object.assign ({},
-        ravelMetaData,
-        {
-          showModal: 'add',
-          passageIndex: '1-A',
-        }
-      );
-      if (this.state.readyToNavigate) {
-        this.props.setActiveScreen ('Ravel', screenData);
-      }
-    }
+    Object.keys (participantIDs).map (userID => {
+      return this.props.getUserProfile (userID)
+      .then (user => {
+        var participants = this.state.participants;
+        participants [userID] = user;
+        participants [userID].accepted = participantIDs [userID];
+        console.log (participants);
+        this.setState ({
+          participants: participants,
+          loading: false,
+        });
+      })
+      .catch (error => { console.log (error); });
+    })
   }
 
   showModal (modalToShow) {
@@ -134,7 +129,7 @@ class InviteParticipants extends Component {
       var currentUid = firebase.auth().currentUser.uid;
       if (user.user_uid == currentUid) { show = false; }
       if (user.first_name == '') { show = false; }
-      this.state.participants.map (participant => {
+      Object.values (this.state.participants).map (participant => {
         if (user.user_uid == participant.user_uid) { show = false; }
       });
 
@@ -174,7 +169,7 @@ class InviteParticipants extends Component {
     var participants = this.state.participants;
     var oldUserResults = this.state.userResults;
     var oldRavelMetaData = this.state.ravelMetaData;
-    participants.push (user);
+    participants [user.user_uid] = user;
     this.setState ({
       participants: participants,
       searchedName: '',
@@ -187,29 +182,49 @@ class InviteParticipants extends Component {
 
   onChangeName (text) {
     this.setState ({ searchedName: text });
-    this.props.searchUserByName (text);
+    this.props.searchUserByName (text)
+    .then (userResults => {
+      // Update the username search results.
+      if (userResults) {
+        this.setState ({ userResults: userResults });
+      }
+    })
   }
 
   onAddUser (user) {
-    // When a user is added, add it to the list...
-    var participants = this.state.participants;
-    participants.push (user);
-    this.setState ({participants: participants});
+    // When a user is added, add it to the list.
+    var participants = Object.assign ({}, this.state.participants, user);
+    this.setState ({
+      participants: Object.assign ({}, participants),
+      newParticipants: Object.assign ({}, participants),
+    });
   }
 
   onRemoveUser (user) {
-    // When a user is removed, remove it from the array of participants...
-    var participants = this.state.participants;
-    participants.splice (participants.indexOf(user), 1);
+    // When a user is removed, remove it from the list of participants.
+    var participants = Object.assign ({}, this.state.participants);
+    delete participants [user.user_uid];
     this.setState ({participants: participants});
   }
 
+  showRemoveLink (user, isNew) {
+    if (!isNew) { return; }
+
+    return (
+      <TextLink size={14} onPress={() => {this.onRemoveUser (user)}}>
+        Remove
+      </TextLink>
+    );
+  }
+
   displayParticipant (user) {
+    var isNew = !(user.accepted === true || user.accepted === false);
+
     return (
       <View key={user.user_uid} style={styles.participant}>
         <View style={styles.participantLeft}>
           <View style={styles.userImage}>
-            <UserImage profile={user} {...this.props} size={26} />
+            <UserImage {...this.props} userID={user.uid} size={26} />
           </View>
           <View style={styles.userName}>
             <TextSans size={14}>{user.first_name} {user.last_name}</TextSans>
@@ -220,36 +235,42 @@ class InviteParticipants extends Component {
           <View style={[styles.userScore, {display: user.ravel_points ? 'flex' : 'none'}]}>
             <TextSerif size={17}>{user.ravel_points}</TextSerif>
           </View>
+          <View style={{marginLeft: 10}}>
+            <TextSans size={11} color={'#aaaaaa'}>{isNew ? '' : '(Invited)'}</TextSans>
+          </View>
         </View>
-        <TextLink size={14} onPress={() => {this.onRemoveUser (user)}}>
-          Remove
-        </TextLink>
+        {this.showRemoveLink (user, isNew)}
       </View>
     );
+  }
+
+  showParticipants () {
+    return Object.values (this.state.participants).map (user => this.displayParticipant (user))
   }
 
   onPressBack () {
     this.props.navigateBack ();
   }
 
-  onPressStartRavel () {
-    // Get the array of participants, convert it to an array of userIDs only,
+  onPressSaveChanges () {
+    // Get the list of participants, convert it to an array of userIDs only,
     // and push the current user's ID to it.
-    var participants = this.state.participants.map (participant => participant.user_uid);
+    var ravelID = this.state.ravel.ravel_uid;
+    var participants = Object.values (this.state.participants);
+    var newParticipants = participants.filter (p =>
+      !(p.accepted === true || p.accepted === false)
+    );
+    newParticipants = newParticipants.map (p => {
+      return p.user_uid;
+    });
 
     this.setState ({ readyToNavigate: true });
-
-    this.props.createStartRavel ({
-      ravel_title: this.state.ravelName,
-      ravel_category: this.state.category,
-      passage_length: this.state.passageLength,
-      visibility: this.state.visibility == 'public' ? true : false,
-      enable_voting: !this.state.restrictVotingToParticipants,
-      enable_comment: this.state.enablePassageComments,
-      ravel_concept: this.state.concept,
-      m_ravel_participants: participants,
-      ravel_tags: this.state.tagsSelected,
-    });
+    this.props.updateRavelParticipant (ravelID, newParticipants)
+    .then (() => {
+      var screenData = Object.assign ({}, { ravel_uid: ravelID });
+      this.props.setActiveScreen ('Ravel', screenData);
+    })
+    .catch (error => { console.log (error); });
   }
 
   onPressByName () {
@@ -295,16 +316,16 @@ class InviteParticipants extends Component {
         <Divider />
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           <View style={styles.participants}>
-            {this.state.participants.map (user => this.displayParticipant (user))}
+            {this.showParticipants ()}
           </View>
         </ScrollView>
         <Divider />
         <View style={styles.buttons}>
           <TextLink onPress={() => this.onPressStartRavel ()}>{this.state.participants.length == 0 ? 'Skip for now' : ''}</TextLink>
           <Button
-            title={mode =='add' ? 'Start Ravel' : 'Save Changes'}
+            title={'Save Changes'}
             disabled={this.state.participants.length == 0}
-            onPress={() => this.onPressStartRavel ()}
+            onPress={() => this.onPressSaveChanges ()}
           />
         </View>
       </View>
@@ -468,4 +489,4 @@ const mapStateToProps = (state) => {
   };
 }
 
-export default connect (mapStateToProps)(InviteParticipants);
+export default connect (mapStateToProps)(EditParticipants);

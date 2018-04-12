@@ -42,24 +42,25 @@
                                                        - Based on the algorithm defined in the function
                       - Modified getRavelMetaData() to add user_uid to trending_view_list
                       - Modfied createStartRavel() to set view count to 0 in ravel object
-
-                      - Added searchRavelByTrending() - returns a list of ravels in ascending order. 
- - 04/09/2018 - VD Do - Fixed addAllParentPassageToChildPassageOnFork() by setting each uid uniquely 
+                      - Added searchRavelByTrending() - returns a list of ravels in ascending order.
+ - 04/09/2018 - VD Do - Fixed addAllParentPassageToChildPassageOnFork() by setting each uid uniquely
                       - Added addAllChildPassageToParentPassageOnFork() to add new passage to the `child` array of the common parent
-                      - Fixed level_count bug 
- - 04/12/2018 - VD Do 
+                      - Fixed level_count bug
+ - 04/10/2018 - Frank - Fixed potential null reference error on get_curr_tags2 in updateRavelParticipant ().
+
+ - 04/12/2018 - VD Do
                     Added:
                       - getCompletePassageReportList - fetches all passages that are reported
-                      - addReportMessage - helper function, do not call directly 
-                      - reportPassage - adds a passage to report list 
-                      - dismissReportedPassage - dismisses a reported passage 
+                      - addReportMessage - helper function, do not call directly
+                      - reportPassage - adds a passage to report list
+                      - dismissReportedPassage - dismisses a reported passage
 
                     Modified:
                       - addPassage - added enable_comment : ravel enable value, is_banned : false
                       - addInitialPassage- added enable_comment : ravel enable value, is_banned : false
                       - forkPassage- added enable_comment : ravel enable value, is_banned : false
-                      - reportUser - added report_message param 
-                      - reportRavel- added report_message param 
+                      - reportUser - added report_message param
+                      - reportRavel- added report_message param
  */
 
 
@@ -212,7 +213,7 @@ export const signInWithEmail = (email, password) => dispatch => {
     .catch(function(error) {
     var errorCode = error.code;
     var errorMessage = error.message;
- 
+
     if (errorCode === 'auth/wrong-password') {
       alert('Wrong password.');
     } else if (errorCode === 'auth/user-not-found') {
@@ -223,9 +224,9 @@ export const signInWithEmail = (email, password) => dispatch => {
         console.log(error);
     })
     .then (function (user) {
- 
+
       var currentUid = firebase.auth().currentUser.uid;
- 
+
       firebase.database().ref(`/users/${currentUid}/userProfile`)
       .once('value', snapshot => {
           dispatch({ type: 'GET_CURRENT_USER_PROFILE',
@@ -240,11 +241,11 @@ export const signInWithEmail = (email, password) => dispatch => {
 //TODO once a user logs in, check if they are banned
 export const signInWithEmailWrapper = (email, password) => dispatch => {
 
-    var promises = []; 
+    var promises = [];
 
     return new Promise((resolve, reject) => {
 
-        promises.push(signInWithEmail(email,password)) 
+        promises.push(signInWithEmail(email,password))
         promises.push(banReportedUser())
 
         Promise.all(promises).then((results) => {
@@ -614,10 +615,10 @@ export const m_reportUser = (user_uid) => {
 // Helper method, do not directly call
 export const m_reportPassage = (ravel_uid, passage_uid) => {
     return new Promise ((resolve, reject) => {
-      
+
       firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).once('value', (snapshot) => {
         firebase.database().ref(`passage_report_list/${passage_uid}`).set(snapshot.val())
-      })     
+      })
       .then(() => {
           resolve (true);
           //dispatch({type:'REPORT_USER_SUCCESS', payload: true})
@@ -626,11 +627,11 @@ export const m_reportPassage = (ravel_uid, passage_uid) => {
           reject ('Error reporting passage.');
           //dispatch({type:'REPORT_USER_SUCCESS', payload: false})
       })
-  
+
     });
   }
 
-// Helper method,do not directly call 
+// Helper method,do not directly call
 export const addReportMessage = (reported_uid, report_message) => {
     return new Promise ((resolve,reject) => {
         firebase.database().ref(`report_message_list/${reported_uid}`).set(report_message)
@@ -645,20 +646,20 @@ export const addReportMessage = (reported_uid, report_message) => {
 
 
 /**
- * @param: ravel_uid, report_message 
- * @returns: 
- * Actions: Attempts to add a report_message under report_message_list and also add 
+ * @param: ravel_uid, report_message
+ * @returns:
+ * Actions: Attempts to add a report_message under report_message_list and also add
  * the reported ravel to ravel_report_list
- * returns true on success, false on fail. 
+ * returns true on success, false on fail.
  */
 export const reportRavel = (ravel_uid, report_message) => dispatch => {
 
     return new Promise ((resolve, reject) => {
 
-        var promises = [] 
+        var promises = []
 
         promises.push(m_reportRavel(ravel_uid))
-        promises.push(addReportMessage(ravel_uid, report_message)) 
+        promises.push(addReportMessage(ravel_uid, report_message))
 
         Promise.all(promises)
         .then((results) => {
@@ -667,26 +668,26 @@ export const reportRavel = (ravel_uid, report_message) => dispatch => {
         .catch((error) => {
             reject(false)
         })
-      
-  
+
+
     });
 }
 
 /**
- * @param: user_uid, report_message 
- * @returns: 
- * Actions: Attempts to add a report_message under report_message_list and also add 
- * the reported user to user_report_list. 
- * returns true on success, false on fail. 
+ * @param: user_uid, report_message
+ * @returns:
+ * Actions: Attempts to add a report_message under report_message_list and also add
+ * the reported user to user_report_list.
+ * returns true on success, false on fail.
  */
 export const reportUser = (user_uid, report_message) => dispatch => {
 
     return new Promise ((resolve, reject) => {
 
-        var promises = [] 
+        var promises = []
 
         promises.push(m_reportUser(user_uid))
-        promises.push(addReportMessage(user_uid, report_message)) 
+        promises.push(addReportMessage(user_uid, report_message))
 
         Promise.all(promises)
         .then((results) => {
@@ -695,8 +696,8 @@ export const reportUser = (user_uid, report_message) => dispatch => {
         .catch((error) => {
             reject(false)
         })
-      
-  
+
+
     });
 }
 
@@ -704,10 +705,10 @@ export const reportPassage = (ravel_uid, passage_uid, report_message) => dispatc
 
     return new Promise ((resolve, reject) => {
 
-        var promises = [] 
+        var promises = []
 
         promises.push(m_reportPassage(ravel_uid, passage_uid))
-        promises.push(addReportMessage(passage_uid, report_message)) 
+        promises.push(addReportMessage(passage_uid, report_message))
 
         Promise.all(promises)
         .then((results) => {
@@ -716,8 +717,8 @@ export const reportPassage = (ravel_uid, passage_uid, report_message) => dispatc
         .catch((error) => {
             reject(false)
         })
-      
-  
+
+
     });
 }
 
@@ -957,7 +958,7 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
             case 'fiction': {
                 public_cat_fiction = true
             }
-            case 'non_fiction': {
+            case 'nonfiction': {
                 public_cat_nonfiction = true
             }
             case 'other': {
@@ -1225,6 +1226,35 @@ export const loadAllRavel = () => dispatch => {
 
 /*
 /**
+ * @param: ravel_uid
+ * @returns: Existing ravel tags; error on failure.
+ * actions: Attempts to get a ravel's existing tags.
+ */
+export const getRavelTags = (ravel_uid) => dispatch => {
+  return new Promise ((resolve, reject) => {
+
+    firebase.database().ref(`ravels/${ravel_uid}/public_tag_set`).once('value', (snapshot) => {
+      var currentTags = snapshot.val();
+      var tags = Object.keys (currentTags).map (tag => {
+        return tag.replace (/^(public_)/,"");
+      });
+      resolve (tags);
+    })
+    // .then(() => {
+    //     // var tags = Object.keys (get_current_tags).map (tag => {
+    //     //   return tag.replace (/^(public_)/,"");
+    //     // });
+    //     // resolve (tags);
+    // })
+    .catch((error) => {
+        reject ('Error retrieving ravel tags.');
+    })
+
+  });
+}
+
+/*
+/**
  * @param: ravel uid, a new set of ravel_tags[ARRAY]
  * @returns:
  * mapStateToProps = state => ravel_tag_update
@@ -1303,7 +1333,12 @@ export const updateRavelParticipant = (ravel_uid, ravel_tags) => dispatch => {
 
                 firebase.database().ref(`ravels/${ravel_uid}/m_ravel_participants`).once('value', (snapshot) => {
                   get_curr_tags2 = snapshot.val();
-                  var master_set = arrayUnique(get_curr_tags2.concat(ravel_tags));
+                  var master_set = [];
+                  if (get_curr_tags2) {
+                    master_set = arrayUnique(get_curr_tags2.concat(ravel_tags));
+                  } else {
+                    master_set = ravel_tags;
+                  }
                   firebase.database().ref(`ravels/${ravel_uid}`).update({m_ravel_participants : master_set})
                 })
 
@@ -1803,23 +1838,23 @@ export const searchRavelByTitle = (title) => dispatch => {
 export const searchRavelByCategory = (category) => dispatch => {
     return new Promise ((resolve, reject) => {
 
-        switch (ravel_category) {
+        switch (category) {
             case 'fiction': {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_fiction").equalTo(true).once('value', snapshot => {
                     resolve (snapshot.val());
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
                 })
                 .catch((error) => {
-                    reject ('Error searching for ravel.');
+                    reject ('Error searching for ravels.');
                 })
             }
-            case 'non_fiction': {
+            case 'nonfiction': {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_nonfiction").equalTo(true).once('value', snapshot => {
                     resolve (snapshot.val());
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
                 })
                 .catch((error) => {
-                    reject ('Error searching for ravel.');
+                    reject ('Error searching for ravels.');
                 })
             }
             case 'other': {
@@ -1828,7 +1863,7 @@ export const searchRavelByCategory = (category) => dispatch => {
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
                 })
                 .catch((error) => {
-                    reject ('Error searching for ravel.');
+                    reject ('Error searching for ravels.');
                 })
             }
             default: {
@@ -1837,7 +1872,7 @@ export const searchRavelByCategory = (category) => dispatch => {
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
                 })
                 .catch((error) => {
-                    reject ('Error searching for ravel.');
+                    reject ('Error searching for ravels.');
                 })
             }
         }
@@ -1929,8 +1964,8 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => d
     var optimalityScore = 0;
     var currentPassageOptimality = 0;
     var optimalChild = false;
-    var is_banned = false; 
-    var enable_comment = false; 
+    var is_banned = false;
+    var enable_comment = false;
 
     return new Promise ((resolve, reject) => {
 
@@ -1981,7 +2016,7 @@ export const addInitialPassage = ({ravel_uid, passage_title, passage_body}) => d
                                     firebase.database().ref(`/ravels/${ravel_uid}/ravel_title`).once('value', snapshotPhoto => {
                                         ravel_title = snapshotPhoto.val();
                                     })
-                                    
+
                                     .then(() => {
                                         firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({ravel_title : ravel_title})
                                     })
@@ -2134,7 +2169,7 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
     var optimalityScore = 0;
     var currentPassageOptimality = 0;
     var optimalChild = false;
-    var is_banned = false; 
+    var is_banned = false;
     var enable_comment = false;
 
     return new Promise ((resolve, reject) => {
@@ -2199,7 +2234,7 @@ export const addPassage = ({ravel_uid, parent_passage_uid, passage_title, passag
                                             firebase.database().ref(`/passages/${ravel_uid}/${passage_uid}`).update({enable_comment : snapshotPhoto.val()})
                                         })
                                     })
-                                    
+
 
                                 })
                                     .then(() => {
@@ -2665,12 +2700,12 @@ export const updateRavelLevelCountOnAddPassage = (ravel_uid) => {
         var snapShotVal;
         var m_level_count = 0;
 
-        // Check to see if adding passage actually introduces a new level 
-        // we should check the numChildren in ravel_level_passage/m_level_count + 1. 
-        // If exist, that means there are children, therefore, do not update the ravel level. 
+        // Check to see if adding passage actually introduces a new level
+        // we should check the numChildren in ravel_level_passage/m_level_count + 1.
+        // If exist, that means there are children, therefore, do not update the ravel level.
         firebase.database().ref(`ravel_level_passage/${ravel_uid}`).once('value', (snapshot) => {
 
-            var numChildLevel = snapshot.numChildren(); 
+            var numChildLevel = snapshot.numChildren();
 
             firebase.database().ref(`ravels/${ravel_uid}`).update({level_count : numChildLevel})
         })
@@ -2983,8 +3018,8 @@ export const forkPassage = ({ravel_uid, parent_passage_uid, passage_title, passa
     var optimalityScore = 0;
     var currentPassageOptimality = 0;
     var optimalChild = false;
-    var enable_comment = false; 
-    var is_banned = false; 
+    var enable_comment = false;
+    var is_banned = false;
 
     return new Promise ((resolve, reject) => {
 
@@ -3140,7 +3175,7 @@ export const addAllParentPassageToChildPassageOnFork = (ravel_uid, parent_passag
 }
 
 /**
- * // Get the list of `parent` uids in parent_passage_uid and set passage_uid to it. 
+ * // Get the list of `parent` uids in parent_passage_uid and set passage_uid to it.
  * @param {*} ravel_uid, parent_passage_uid, passage_uid
  * @returns {*} promise, true on success, false on fail
  * actions: Attempts to add all parent{} from parent_passage_uid to the child passage uid 'parent{}' field
@@ -3157,7 +3192,7 @@ export const addAllChildPassageToParentPassageOnFork = (ravel_uid, parent_passag
         firebase.database().ref(`passages/${ravel_uid}/${parent_passage_uid}/parent`).once('value', (snapshot) => {
             valueOfKey = true;
             snapshot.forEach((elm) => {
-                firebase.database().ref(`passages/${ravel_uid}/${elm.key}/child/${passage_uid}`).set(true) 
+                firebase.database().ref(`passages/${ravel_uid}/${elm.key}/child/${passage_uid}`).set(true)
 
             })
         })
@@ -3168,11 +3203,9 @@ export const addAllChildPassageToParentPassageOnFork = (ravel_uid, parent_passag
             reject(error)
         })
 
-
-
     })
-}
 
+}
 
 /**
  *
@@ -4623,7 +4656,7 @@ export const getCompleteUserReportList = () => dispatch => {
     })
 }
 
-// returns a list of reported passage_uid and it's metadata 
+// returns a list of reported passage_uid and it's metadata
 export const getCompletePassageReportList = () => dispatch => {
 
     return new Promise((resolve, reject) => {
@@ -4706,7 +4739,7 @@ export const dismissReportedUser = (user_uid) => dispatch => {
 
 /**
  * @param: passage_uid
- * removes a passage_uid from the passage_report_list if admin 'dismisses' it. 
+ * removes a passage_uid from the passage_report_list if admin 'dismisses' it.
  */
 export const dismissReportedPassage = (passage_uid) => dispatch => {
 
@@ -4717,13 +4750,13 @@ export const dismissReportedPassage = (passage_uid) => dispatch => {
                 firebase.database().ref(`passage_report_list/${passage_uid}`).remove()
                 .then(() => {
                     resolve(true)
-                    
+
                 })
             }
         })
         .catch((error) => {
             reject('Cannot dismiss this user at this time...')
-            
+
         })
 
     })
@@ -4807,7 +4840,7 @@ export const deleteRavel = (ravel_uid) => dispatch => {
 
 /**
  * @param: user_uid
- * @returns: 
+ * @returns:
  *
  * Actions: Attempts to flag user as banned (value is true)
  */
@@ -4836,7 +4869,7 @@ export const banReportedUser = ()  => {
 
 console.log('Inside report user function')
 
-var user_uid = firebase.auth().currentUser.uid; 
+var user_uid = firebase.auth().currentUser.uid;
 
 console.log('user_uid = ' + user_uid)
 
@@ -4845,9 +4878,9 @@ console.log('user_uid = ' + user_uid)
                 firebase.database().ref(`user_report_list/${user_uid}`).once('value', (snapshot) => {
                     if(snapshot.exists() === true && snapshot.val() === true && snapshot.key === user_uid) {
 
-                        // Alert user has been deleted, edit message...or create pop-up screen 
+                        // Alert user has been deleted, edit message...or create pop-up screen
                         alert('You have been removed from raveltree due to violation of terms of services.')
-                        resolve(firebase.auth().currentUser.delete()); 
+                        resolve(firebase.auth().currentUser.delete());
 
                     } else {
                         alert('You ARE NOT REPORTED')
@@ -4867,17 +4900,17 @@ export const banReportedPassage = (ravel_uid, passage_uid) => dispatch => {
 
                 firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({
                 passage_body: 'This passage has been removed due to violation.',
-                passage_title: 'This passage has been removed due to violation.', 
+                passage_title: 'This passage has been removed due to violation.',
                 currentPassageOptimality: 0,
                 optimalChild: false,
                 optimalityScore: 0,
                 passage_combined_vote: 0,
-                passage_comment: false, 
+                passage_comment: false,
                 passage_downvote: 0,
                 passage_upvote: 0,
                 user_created_photoURL: false,
                 is_banned: true,
-                enable_comment: false, 
+                enable_comment: false,
 
               })
               .then(() => {
@@ -5092,7 +5125,7 @@ export const searchAllRavelByTitle = (title) => dispatch => {
     });
 }
 
-// params: pass in either a reported: ravel_uid, user_uid or passage_uid 
+// params: pass in either a reported: ravel_uid, user_uid or passage_uid
 export const getReportMessage = (reported_uid) => dispatch => {
     return new Promise ((resolve, reject) => {
         firebase.database().ref(`report_message_list/${reported_uid}`).once('value', (snapshot) => {
@@ -5104,4 +5137,3 @@ export const getReportMessage = (reported_uid) => dispatch => {
         })
     })
 }
-

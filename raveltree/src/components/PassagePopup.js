@@ -1,10 +1,8 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/13/18
-// Modified:  03/30/18
-
-// Standard passage popup component for RavelTree.
+// Modified:  04/09/18
 //
-// TODO: Make ravel, title, and ID touchable and link to respective content.
+// Standard passage popup component for RavelTree.
 
 import React, { Component } from 'react';
 import {
@@ -62,13 +60,11 @@ class PassagePopup extends React.Component {
       passage: this.state.passageMetaData,
       ravel:   this.state.ravelMetaData
     });
-    console.log ('\tPassagePopup -> onPressMerge () -> screenData:');
-    console.log (screenData);
     this.props.onNavigateToMerge ('Merge', screenData);
   }
 
   onPressFork () {
-    // TODO
+    this.props.onSwitchToFork (this.props.passageMetaData);
   }
 
   onPressAdd () {

@@ -1,6 +1,6 @@
-// Author: Alex Aguirre
-// Created: 02/07/18
-// Modified: 03/24/18 by Frank Fusco (fr@nkfus.co)
+// Author:   Alex Aguirre
+// Created:  02/07/18
+// Modified: 04/10/18 by Frank Fusco (fr@nkfus.co)
 //
 // "Explore" screen for RavelTree.
 //
@@ -90,20 +90,33 @@ class Explore extends Component<{}> {
     };
   }
 
-  componentWillReceiveProps (newProps) {
-    if (this.state.active == 'title' && newProps.ravel_title_search) {
-      this.setState ({ results: newProps.ravel_title_search });
-    }
-    if (this.state.active == 'tag' && newProps.ravel_tag_search) {
-      this.setState ({ results: newProps.ravel_tag_search });
-    }
-    if (this.state.active == 'category' && newProps.ravel_category_search) {
-      this.setState ({ results: newProps.ravel_category_search });
-    }
-  }
-
   onPressBack () {
     this.props.navigateBack ();
+  }
+
+  searchRavelByTitle (text) {
+    this.props.searchRavelByTitle (text)
+    .then (results => {
+      this.setState ({ results: results });
+    })
+  }
+
+  searchRavelByTag (tagArray) {
+    this.props.searchRavelByTag (tagArray)
+    .then (results => {
+      this.setState ({ results: results });
+    })
+  }
+
+  searchRavelByCategory (category) {
+    this.props.searchRavelByCategory (category)
+    .then (results => {
+      this.setState ({ results: results });
+    })
+  }
+
+  searchRavelByTrending () {
+
   }
 
   onChangeText (text) {
@@ -111,16 +124,16 @@ class Explore extends Component<{}> {
 
     switch (this.state.active) {
       case 'title':
-        this.props.searchRavelByTitle (text);
+        this.searchRavelByTitle (text);
         break;
       case 'tag':
-        this.props.searchRavelByTag ([text]);
+        this.searchRavelByTag ([text]);
         break;
       case 'category':
-        this.props.searchRavelByCategory (text);
+        this.searchRavelByCategory (text);
         break;
       case 'trending':
-        // TODO
+        this.searchRavelByTrending ();
         break;
       default:
         console.log ('Something\'s wrong.');
@@ -128,6 +141,13 @@ class Explore extends Component<{}> {
   }
 
   onSetFormState (newState) {
+    console.log (newState);
+    if (newState.active == 'category')
+    {
+      newState.search = 'fiction';
+      this.searchRavelByCategory ('fiction');
+    }
+    newState.results = {};
     this.setState (newState);
   }
 
@@ -173,7 +193,14 @@ class Explore extends Component<{}> {
   }
 
   onSelectOption (option) {
-    // TODO: Search / Refine search.
+    // Clear results and populate the serch state with the category name.
+    this.setState ({
+      results: {},
+      search: option,
+    });
+
+    // Execute the search.
+    this.searchRavelByCategory (option);
   }
 
   showTagCloud (show) {
@@ -235,6 +262,9 @@ class Explore extends Component<{}> {
     // Populate the serch bar with the tag name.
     this.setState ({search: tagName});
 
+    // Execute the search.
+    this.searchRavelByTag ([tagName]);
+
     // Stop showing the tag in the tag cloud.
     var tagsShowing = this.state.tagsShowing;
     var index = tagsShowing.findIndex (x => x.name == tagName);
@@ -262,12 +292,13 @@ class Explore extends Component<{}> {
     return (
       <View style={{width: '100%'}}>
         {results.map ((ravel) =>
-          <View key={ravel} style={styles.ravelCard}>
+          <View key={ravel.ravel_uid} style={styles.ravelCard}>
             <RavelCard
-              ravel={ravel.ravel_title}
-              author={ravel.author}
+              title={ravel.ravel_title}
+              ravelID={ravel.ravel_uid}
+              author={ravel.user_created}
               authorImage={ravel.user_created_photoURL}
-              users={ravel.m_ravel_participants.length}
+              users={_.size (ravel.m_ravel_participants) + 1}
               score={ravel.ravel_points}
               concept={ravel.ravel_concept}
               {...this.props}
@@ -287,7 +318,7 @@ class Explore extends Component<{}> {
 
     var scrollContentStyles = [
       styles.scrollContent,
-      this.state.active == 'trending' ? {paddingTop: 0} : undefined
+      this.state.active == 'trending' || this.state.active == 'category' ? {paddingTop: 0} : undefined
     ]
 
     return (
@@ -325,12 +356,12 @@ class Explore extends Component<{}> {
         {/* By Category: OptionSet */}
         {this.showOptionSet (this.state.active == 'category')}
 
-        {this.showDivider (this.state.active != 'trending')}
+        {this.showDivider (this.state.active != 'trending' && this.state.active != 'category')}
 
         {/* User image, profile name, search for a concept, and new ravels */}
-        {this.showInputSearch (this.state.active != 'trending')}
+        {this.showInputSearch (this.state.active != 'trending' && this.state.active != 'category')}
 
-        {this.showDivider (this.state.active != 'trending')}
+        {this.showDivider (this.state.active != 'trending' && this.state.active != 'category')}
 
         <ScrollView style={styles.scroll} contentContainerStyle={scrollContentStyles}>
 
