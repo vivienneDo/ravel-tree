@@ -155,8 +155,6 @@ class PassagePopup extends React.Component {
 
     isActive = passageMetaData.optimal || this.props.isActive;
 
-    console.log (passageMetaData);
-
     var ravel = passageMetaData.ravel_title;
     var passageIndex = passageMetaData.passage_index;
     var title = passageMetaData.passage_title;

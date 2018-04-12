@@ -188,6 +188,7 @@ class Home extends Component<{}> {
         {passages.map ((passage) =>
           <View key={passage.ravel_uid + '_' + passage.passage_uid} style={styles.passageCard}>
             <PassageCard
+              {...this.props}
               ravelID={passage.ravel_uid}
               passageID={passage.passage_uid}
               ravel={passage.ravel_title}
@@ -202,7 +203,6 @@ class Home extends Component<{}> {
               testID={passage.testID}
               parentScreen={this.constructor.name}
               onPressComment={(commentData) => this.onPressComment (commentData)}
-              {...this.props}
             />
           </View>
         )}

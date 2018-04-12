@@ -77,7 +77,8 @@ class PassageCard extends React.Component {
   }
 
   navigateToPassage (ravelID, passageID) {
-    var screenData = Object.assign ({}, {ravel_uid: ravelID, passage_uid: passageID, loadPassage: true});
+    // var screenData = Object.assign ({}, {ravel_uid: ravelID, passage_uid: passageID, loadPassage: true});
+    var screenData = Object.assign ({}, {ravel_uid: ravelID, passage_uid: passageID, loadPassage: passageID});
     this.props.navigateForward ('Ravel', this.props.parentScreen, screenData);
   }
 

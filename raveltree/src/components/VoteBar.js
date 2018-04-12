@@ -52,6 +52,7 @@ class VoteBar extends Component {
           var upvotes = this.state.upvotes + 1;
           this.setState ({
             hasUpvoted: true,
+            hasDownvoted: false,
             upvotes: upvotes,
           });
         }
@@ -78,6 +79,7 @@ class VoteBar extends Component {
           var downvotes = this.state.downvotes + 1;
           this.setState ({
             hasDownvoted: true,
+            hasUpvoted: false,
             downvotes: downvotes,
           });
         }
@@ -108,25 +110,21 @@ class VoteBar extends Component {
     var downVoteStyles = [styles.downVote];
     var numStyles = [styles.num];
 
-    // if (this.state.hasUpvoted) {
-    //   upVoteStyles.push ({ borderBottomColor: '#2E8AF7' });
-    //   numStyles.push ({ color: '#2E8AF7' });
-    // }
-    // else {
-    //   upVoteStyles.push ({ borderBottomColor: '#939393' });
-    // }
-    //
-    // if (this.state.hasDownvoted) {
-    //   downVoteStyles.push ({ borderTopColor: '#2E8AF7' });
-    //   numStyles.push ({ color: '#2E8AF7' });
-    // }
-    // else {
-    //   downVoteStyles.push ({ borderBottomColor: '#939393' });
-    // }
-    //
-    // if (!this.state.hasUpvoted && !this.state.hasUpvoted) {
-    //   numStyles.push ({ color: '#939393' });
-    // }
+    if (this.state.hasUpvoted) {
+      upVoteStyles.push ({ borderBottomColor: '#2E8AF7' });
+      downVoteStyles.push ({ borderBottomColor: '#939393' });
+      numStyles.push ({ color: '#2E8AF7' });
+    }
+    else if (this.state.hasDownvoted) {
+      downVoteStyles.push ({ borderTopColor: '#2E8AF7' });
+      upVoteStyles.push ({ borderBottomColor: '#939393' });
+      numStyles.push ({ color: '#2E8AF7' });
+    }
+    else {
+      upVoteStyles.push ({ borderBottomColor: '#939393' });
+      downVoteStyles.push ({ borderBottomColor: '#939393' });
+      numStyles.push ({ color: '#939393' });
+    }
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
