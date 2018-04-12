@@ -106,7 +106,20 @@ class PassageCard extends React.Component {
 
   onPressConfirmReport () {
     console.log ('Reporting ' + this.props.title + '...');
-    this.props.reportRavel (this.props.ravelID); // TODO: 'Report passage' functionality on backend.
+    var ravelID = this.props.ravelID;
+    var passageID = this.props.passageID;
+    var comment = '';
+    this.props.reportPassage (ravelID, passageID, comment)
+    .then (() => {
+      var title = 'Thank You';
+      var message = 'Thanks for reporting a violation of RavelTree\'s Terms of Use.';
+      var buttons = [
+        {text: 'OK'},
+      ];
+      var options = { cancelable: false };
+      Alert.alert (title, message, buttons, options);
+    })
+    .catch ((error) => { console.error (error); });
   }
 
   onPressShare () {
