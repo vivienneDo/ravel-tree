@@ -1,6 +1,6 @@
 // Author:    Alex Aguirre
 // Created:   01/20/18
-// Modified:  04/10/18 by Frank Fusco (fr@nkfus.co)
+// Modified:  04/11/18 by Frank Fusco (fr@nkfus.co)
 
 // Standard "vote bar" component for RavelTree.
 //

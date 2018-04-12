@@ -126,6 +126,16 @@ class PassageCard extends React.Component {
     console.log ('Opening share menu for ' + this.props.title);
   }
 
+  showCommentButton () {
+    if (this.props.enableComments) {
+      return (
+        <View style={styles.buttonComment}>
+          <ButtonComment onPress={() => this.onPressComment ()}/>
+        </View>
+      );
+    }
+  }
+
   shorten (str, maxLen, separator = ' ') {
     if (!str || str.length <= maxLen) { return str; }
     return str.substr(0, str.lastIndexOf(separator, maxLen));
@@ -143,6 +153,7 @@ class PassageCard extends React.Component {
       passage,
       upvotes,
       downvotes,
+      enableComments,
       parentScreen,
       testID,
     } = this.props;
@@ -193,9 +204,7 @@ class PassageCard extends React.Component {
                 <TextSans size={40} color={'#95989A'}>...</TextSans>
               </View>
             </Touchable>
-            <View style={styles.buttonComment}>
-              <ButtonComment onPress={() => this.onPressComment ()}/>
-            </View>
+            {this.showCommentButton ()}
           </View>
           <View style={styles.voteBar}>
             <VoteBar

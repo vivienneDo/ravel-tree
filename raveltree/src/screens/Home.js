@@ -198,6 +198,7 @@ class Home extends Component<{}> {
               passage={passage.passage_body}
               upvotes={passage.passage_upvote}
               downvotes={passage.passage_downvote}
+              enableComments={passage.enable_comment}
               testID={passage.testID}
               parentScreen={this.constructor.name}
               onPressComment={(commentData) => this.onPressComment (commentData)}
