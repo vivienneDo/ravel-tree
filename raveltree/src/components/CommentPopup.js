@@ -88,43 +88,6 @@ class CommentPopup extends React.Component {
     })
   }
 
-  onPressEllipsis () {
-    var title = this.state.ravelTitle;
-    var message = this.state.passageTitle;
-    var buttons = [
-      {text: 'Report', onPress: () => this.onPressReport ()},
-      {text: 'Share...', onPress: () => this.onPressShare ()},
-      {text: 'Cancel', style: 'cancel'},
-    ];
-    var options = { cancelable: false };
-    Alert.alert (title, message, buttons, options);
-  }
-
-  onPressReport () {
-    // TODO: Adapt to report user.
-    // var passageTitle = this.props.passageMetaData.passage_title;
-    // var title = 'Confirm Report';
-    // var message = 'Are you sure you want to report ' + passageTitle + ' for violating RavelTree\'s Terms of Use? You can\'t undo this.';
-    // var buttons = [
-    //   {text: 'Cancel', style: 'cancel'},
-    //   {text: 'Report', onPress: () => this.onPressConfirmReport ()},
-    // ]
-    // var options = { cancelable: false };
-    // Alert.alert (title, message, buttons, options);
-  }
-
-  onPressConfirmReport () {
-    // TODO: Adapt to report user.
-    // var passageTitle = this.props.passageMetaData.passage_title;
-    // var ravelID = this.props.passageMetaData.ravel_uid;
-    // console.log ('Reporting ' + passageTitle + '...');
-    // this.props.reportRavel (ravelID); // TODO: 'Report passage' functionality on backend.
-  }
-
-  onPressShare () {
-    console.log ('Opening share menu for ' + this.state.passageTitle);
-  }
-
   showComments () {
     if (this.state.loading) {
       return (
@@ -194,13 +157,6 @@ class CommentPopup extends React.Component {
         </View>
         <View style={styles.buttons}>
           <ButtonReverse title={'Leave a Comment'} width={0.50 * width} disabled={!this.checkIfCanComment () || this.state.comment == ''} onPress={() => this.onPressComment ()} />
-        </View>
-        <View style={styles.bottom}>
-          <Touchable onPress={() => this.onPressEllipsis ()}>
-            <View>
-              <TextSans size={40} color={'#95989A'}>...</TextSans>
-            </View>
-          </Touchable>
         </View>
       </ModalContainer>
     )

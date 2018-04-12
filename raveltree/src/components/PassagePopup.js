@@ -114,8 +114,20 @@ class PassagePopup extends React.Component {
   onPressConfirmReport () {
     var passageTitle = this.props.passageMetaData.passage_title;
     var ravelID = this.props.passageMetaData.ravel_uid;
+    var passageID = this.props.passageMetaData.passage_uid;
+    var comment = '';
     console.log ('Reporting ' + passageTitle + '...');
-    this.props.reportRavel (ravelID); // TODO: 'Report passage' functionality on backend.
+    this.props.reportPassage (ravelID, passageID, comment)
+    .then (() => {
+      var title = 'Thank You';
+      var message = 'Thanks for reporting a violation of RavelTree\'s Terms of Use.';
+      var buttons = [
+        {text: 'OK'},
+      ];
+      var options = { cancelable: false };
+      Alert.alert (title, message, buttons, options);
+    })
+    .catch ((error) => { console.error (error); });
   }
 
   onPressShare () {
@@ -142,8 +154,6 @@ class PassagePopup extends React.Component {
     var passageMetaData = this.state.passageMetaData || {};
 
     isActive = passageMetaData.optimal || this.props.isActive;
-
-    console.log (passageMetaData);
 
     var ravel = passageMetaData.ravel_title;
     var passageIndex = passageMetaData.passage_index;
@@ -195,6 +205,7 @@ class PassagePopup extends React.Component {
               passageID={passageMetaData.passage_uid}
               upvotes={passageMetaData.passage_upvote}
               downvotes={passageMetaData.passage_downvote}
+              votes={passageMetaData.passage_combined_vote}
               disabled={!this.checkIfCanEdit ()}
             />
           </View>
