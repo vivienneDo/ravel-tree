@@ -50,11 +50,46 @@ class StartARavel extends Component {
     };
   }
 
-  componentWillReceiveProps (newProps) {
-    // Check to see if the typed ravel name already exists.
-    var ravelExists = false;
-    var ravels = newProps.all_ravel;
-    if (ravels) {
+  // componentWillReceiveProps (newProps) {
+  //   // Check to see if the typed ravel name already exists.
+  //   var ravelExists = false;
+  //   var ravels = newProps.all_ravel;
+  //   if (ravels) {
+  //     for (var key in ravels) {
+  //       if (ravels [key].ravel_title == this.state.ravelName) {
+  //         // If so, check to see if that ravel was created by this user.
+  //         if (ravels [key].user_created == firebase.auth().currentUser.uid) {
+  //           // If so, alert the user to choose another title.
+  //           ravelExists = true;
+  //           Alert.alert (
+  //             'Sorry, you already have a ravel by that name.',
+  //             'Please choose a different name for this ravel.'
+  //           );
+  //         }
+  //       }
+  //     }
+  //     // Otherwise, navigate to the next screen.
+  //     if (!ravelExists) {
+  //       var screenData = Object.assign ({}, this.state, {mode: 'add'});
+  //       this.props.navigateForward ('AddTags', this.constructor.name, screenData);
+  //     }
+  //   }
+  // }
+
+  navigateAddTags () {
+
+  }
+
+
+  onPressBack () {
+    this.props.navigateBack ();
+  }
+
+  onPressContinue () {
+    // Check whether the typed ravel name already exists before continuing.
+    this.props.loadAllRavel ()
+    .then ((ravels) => {
+      var ravelExists = false;
       for (var key in ravels) {
         if (ravels [key].ravel_title == this.state.ravelName) {
           // If so, check to see if that ravel was created by this user.
@@ -73,22 +108,8 @@ class StartARavel extends Component {
         var screenData = Object.assign ({}, this.state, {mode: 'add'});
         this.props.navigateForward ('AddTags', this.constructor.name, screenData);
       }
-    }
-  }
-
-  navigateAddTags () {
-
-  }
-
-
-  onPressBack () {
-    this.props.navigateBack ();
-  }
-
-  onPressContinue () {
-    // Check whether the typed ravel name already exists before continuing (see
-    // componentWillReceiveProps (...)).
-    this.props.loadAllRavel ();
+    })
+    .catch ((error) => { console.error (error); });
   }
 
   onChangeRavelName (data) {
