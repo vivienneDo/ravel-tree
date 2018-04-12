@@ -43,11 +43,13 @@ class ReportPopup extends React.Component {
   }
 
   onPressReport () {
+    var userID = this.state.user.user_uid;
+    var comment = this.state.comment;
     this.setState ({
       comment: '',
       loading: true,
     });
-    this.props.reportUser (this.state.user.user_uid)
+    this.props.reportUser (userID, comment)
     .then (() => {
       this.setState ({
         loading: false,
