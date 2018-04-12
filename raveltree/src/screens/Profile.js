@@ -1,6 +1,6 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/17/18
-// Modified: 03/24/18
+// Modified: 04/11/18
 //
 // Profile screen for RavelTree.
 //
@@ -30,6 +30,7 @@ import InputText from '../components/InputText'
 import Button from '../components/Button'
 import UserImage from '../components/UserImage'
 import IconLeaf from '../components/IconLeaf'
+import ReportPopup from '../components/ReportPopup'
 
 import ImagePicker from 'react-native-image-picker';
 import SelectImage from '../utils/CameraPicker.js';
@@ -56,6 +57,7 @@ class Profile extends Component {
 
     this.state = {
       mode: 'view',
+      showReportModal: false,
       ...this.props.screenData,
     };
 
@@ -114,8 +116,26 @@ class Profile extends Component {
     this.props.setActiveScreen ('Login');
   }
 
-  onPressFollow () {
-    // TODO
+  onPressReport () {
+    this.setState ({ showReportModal: true });
+  }
+
+  showReportModal () {
+    if (this.state.showReportModal) {
+      return (
+        <View style={styles.modal}>
+          <ReportPopup
+            {...this.props}
+            onPressClose={() => this.onCloseReportModal ()}
+            user={this.state.profile}
+          />
+        </View>
+      );
+    }
+  }
+
+  onCloseReportModal () {
+    this.setState ({ showReportModal: false });
   }
 
   onPressMessage () {
@@ -171,6 +191,10 @@ class Profile extends Component {
 
     return (
       <View style={styles.layout}>
+        {this.showReportModal ()}
+
+        <View style={styles.layoutInner}>
+
         <View style={styles.logo}>
           <RTLogoText />
         </View>
@@ -199,9 +223,9 @@ class Profile extends Component {
             ) : (
               <View>
                 <View style={styles.spaceBelow}>
-                  <TextLink onPress={() => this.onPressFollow ()} size={12}>Follow</TextLink>
+                  <TextLink onPress={() => this.onPressMessage ()}size={12}>Message</TextLink>
                 </View>
-                <TextLink onPress={() => this.onPressMessage ()}size={12}>Message</TextLink>
+                <TextLink onPress={() => this.onPressReport ()} size={12}>Report</TextLink>
               </View>
             )}
 
@@ -280,6 +304,8 @@ class Profile extends Component {
             </View>
           </View>
         </ScrollView>
+
+        </View>
       </View>
     );
   }
@@ -287,6 +313,19 @@ class Profile extends Component {
 
 const styles = StyleSheet.create({
   layout: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    width: '100%',
+    height: '100%',
+  },
+  modal: {
+    position: 'absolute',
+    zIndex: 10,
+    top: 25,
+    width: '100%',
+    height: '100%',
+  },
+  layoutInner: {
     flexDirection: 'column',
     alignItems: 'flex-start',
     width: '100%',
