@@ -205,6 +205,7 @@ class PassagePopup extends React.Component {
               passageID={passageMetaData.passage_uid}
               upvotes={passageMetaData.passage_upvote}
               downvotes={passageMetaData.passage_downvote}
+              votes={passageMetaData.passage_combined_vote}
               disabled={!this.checkIfCanEdit ()}
             />
           </View>

@@ -154,6 +154,7 @@ class PassageCard extends React.Component {
       passage,
       upvotes,
       downvotes,
+      votes,
       enableComments,
       parentScreen,
       testID,
@@ -211,8 +212,7 @@ class PassageCard extends React.Component {
             <VoteBar
               ravelID={ravelID}
               passageID={passageID}
-              upvotes={upvotes}
-              downvotes={downvotes}
+              votes={votes}
               {...this.props}
             />
           </View>

@@ -25,8 +25,9 @@ class VoteBar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      upvotes: this.props.upvotes || 0,
-      downvotes: this.props.downvotes || 0,
+      //upvotes: this.props.upvotes || 0,
+      //downvotes: this.props.downvotes || 0,
+      votes: this.props.votes || 0,
       hasUpvoted: false,
       hasDownvoted: false,
       disabled: this.props.disabled || false,
@@ -48,20 +49,19 @@ class VoteBar extends Component {
     .then (success => {
       this.props.checkUserVote (this.props.ravelID, this.props.passageID)
       .then (vote => {
+        var votes = this.state.votes + 1;
         if (vote === true) {
-          var upvotes = this.state.upvotes + 1;
           this.setState ({
             hasUpvoted: true,
             hasDownvoted: false,
-            upvotes: upvotes,
+            votes: votes,
           });
         }
         else {
-          var downvotes = this.state.downvotes - 1;
           this.setState ({
             hasUpvoted:   false,
             hasDownvoted: false,
-            downvotes: downvotes,
+            votes: votes,
           });
         }
       })
@@ -75,20 +75,19 @@ class VoteBar extends Component {
     .then (success => {
       this.props.checkUserVote (this.props.ravelID, this.props.passageID)
       .then (vote => {
+        var votes = this.state.votes - 1;
         if (vote === false) {
-          var downvotes = this.state.downvotes + 1;
           this.setState ({
             hasDownvoted: true,
             hasUpvoted: false,
-            downvotes: downvotes,
+            votes: votes,
           });
         }
         else {
-          var upvotes = this.state.upvotes - 1;
           this.setState ({
             hasUpvoted:   false,
             hasDownvoted: false,
-            upvotes: upvotes,
+            votes: votes,
           });
         }
       })
@@ -101,8 +100,9 @@ class VoteBar extends Component {
     const {
       ravelID,
       passageID,
-      upvotes,
-      downvotes,
+      //upvotes,
+      //downvotes,
+      votes,
       testID,
     } = this.props;
 
@@ -137,7 +137,7 @@ class VoteBar extends Component {
               {/* display the total # of votes next to the upVote button
                   with proper spacing */}
               <Text style={numStyles}>
-                  {this.state.upvotes - this.state.downvotes}
+                  {this.state.votes}
               </Text>
             </View>
           {/* style for the downVote triangle */}

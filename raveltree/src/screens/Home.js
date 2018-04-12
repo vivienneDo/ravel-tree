@@ -199,6 +199,7 @@ class Home extends Component<{}> {
               passage={passage.passage_body}
               upvotes={passage.passage_upvote}
               downvotes={passage.passage_downvote}
+              votes={passage.passage_combined_vote}
               enableComments={passage.enable_comment}
               testID={passage.testID}
               parentScreen={this.constructor.name}
