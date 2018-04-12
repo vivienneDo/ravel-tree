@@ -35,32 +35,13 @@ import Tag from '../components/Tag'
 import TagCloud from '../components/TagCloud'
 import Button from '../components/Button'
 
+import { TAGS } from '../lib/tags'
+
 const ROWS = 2;
 
 const TAG_CLOUD_HEIGHT = (ROWS * Tag.HEIGHT_SMALL)        +
                          (ROWS * 2 * Tag.MARGIN_VERTICAL) +
                          (2 * TagCloud.PADDING_VERTICAL);
-
-const DEFAULT_SUGGESTED_TAGS = [
-  'Unconventional',
-  'Mystery',
-  'Comedy',
-  'Postmodernism',
-  'Epic',
-  'Lorem',
-  'Ipsum',
-  'Dolor',
-  'Sit',
-  'Amet',
-  'Long',
-  'Time',
-  'Ago',
-  'In',
-  'A',
-  'Galaxy',
-  'Far',
-  'Away',
-];
 
 class AddTags extends Component {
   constructor (props) {
@@ -76,6 +57,8 @@ class AddTags extends Component {
       tagCloudHeight: TAG_CLOUD_HEIGHT,
       ...this.props.screenData,
     };
+
+    console.log (TAGS);
   }
 
   onTagCloudLayout = (e) => {
@@ -100,8 +83,8 @@ class AddTags extends Component {
     // Check whether we should get more tags.
     totalTagWidth = tagsShowing.reduce ((prev, elem) => prev + elem.width, 0);
     totalTagHeight = tagsShowing.reduce ((prev, elem) => prev + elem.height, 0);
-    totalWidth = (2 * TagCloud.MARGIN_HORIZONTAL * this.state.tagsShowing.length);
-    totalHeight = (2 * Tag.MARGIN_VERTICAL) * this.state.tagsShowing.length;
+    totalWidth = (2 * TagCloud.MARGIN_HORIZONTAL * _.size (this.state.tagsShowing));
+    totalHeight = (2 * Tag.MARGIN_VERTICAL) * _.size (this.state.tagsShowing);
 
     if (totalWidth < this.state.tagCloudWidth && totalHeight < this.state.tagCloudHeight) {
       this.getTag ();
@@ -112,9 +95,9 @@ class AddTags extends Component {
     // Render a tag, get dimensions, rinse, repeat.
     var tagsToShow = this.state.tagsShowing;
     var nextTagIndex = this.state.nextTagIndex;
-    if (DEFAULT_SUGGESTED_TAGS.length < (nextTagIndex + 1))
+    if (_.size (TAGS) < (nextTagIndex + 1))
       return;
-    tagsToShow.push ({name: DEFAULT_SUGGESTED_TAGS [nextTagIndex], width: undefined, height: undefined});
+    tagsToShow.push ({name: TAGS [nextTagIndex], width: undefined, height: undefined});
     this.setState ({tagsShowing: tagsToShow, nextTagIndex: ++nextTagIndex});
   }
 
@@ -185,7 +168,7 @@ class AddTags extends Component {
         <LinkBack onPress={() => this.onPressBack ()} />
         <LinkContinue
           onPress={() => this.onPressContinue ()}
-          disabled={this.state.tagsSelected.length == 0}
+          disabled={_.size (this.state.tagsSelected) == 0}
         />
         <View style={styles.head}>
           <Divider style={styles.divider}/>

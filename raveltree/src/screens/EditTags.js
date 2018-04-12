@@ -34,32 +34,36 @@ import Tag from '../components/Tag'
 import TagCloud from '../components/TagCloud'
 import Button from '../components/Button'
 
+import TAGS from '../lib/tags'
+
 const ROWS = 2;
 
 const TAG_CLOUD_HEIGHT = (ROWS * Tag.HEIGHT_SMALL)        +
                          (ROWS * 2 * Tag.MARGIN_VERTICAL) +
                          (2 * TagCloud.PADDING_VERTICAL);
 
-var tagQueue = [
-  'Unconventional',
-  'Mystery',
-  'Comedy',
-  'Postmodernism',
-  'Epic',
-  'Lorem',
-  'Ipsum',
-  'Dolor',
-  'Sit',
-  'Amet',
-  'Long',
-  'Time',
-  'Ago',
-  'In',
-  'A',
-  'Galaxy',
-  'Far',
-  'Away',
-];
+// var tagQueue = [
+//   'Unconventional',
+//   'Mystery',
+//   'Comedy',
+//   'Postmodernism',
+//   'Epic',
+//   'Lorem',
+//   'Ipsum',
+//   'Dolor',
+//   'Sit',
+//   'Amet',
+//   'Long',
+//   'Time',
+//   'Ago',
+//   'In',
+//   'A',
+//   'Galaxy',
+//   'Far',
+//   'Away',
+// ];
+
+var tagQueue = TAGS;
 
 class EditTags extends Component {
   constructor (props) {
