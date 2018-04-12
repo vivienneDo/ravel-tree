@@ -206,43 +206,38 @@ export const userResetPassword = (email) => dispatch => {
 *          Attempts to log a registered user into the db.
 *
 */
-export const signInWithEmail = (email, password) => {
+export const signInWithEmail = (email, password) => dispatch => {
 
-    return new Promise((resolve, reject) => {
-        firebase.auth().signInWithEmailAndPassword(email, password)
-        .catch(function(error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-
-        if (errorCode === 'auth/wrong-password') {
-            alert('Wrong password.');
-        } else if (errorCode === 'auth/user-not-found') {
-            alert('There is no user corresponding to the given email address.');
-        } else {
-            alert(errorMessage);
-        }
-            console.log(error);
-        })
-        .then (function (user) {
-
-            var currentUid = firebase.auth().currentUser.uid;
-
-            firebase.database().ref(`/users/${currentUid}/userProfile`)
-            .once('value', snapshot => {
-                console.log('About to resolve signin')
-                resolve(true)
-                // dispatch({ type: 'GET_CURRENT_USER_PROFILE',
-                //             payload: snapshot.val() });
-            })
-            .catch((error) => {
-                reject('Error loading user profile at this time...')
-            })
-        });
-
+    firebase.auth().signInWithEmailAndPassword(email, password)
+    .catch(function(error) {
+    var errorCode = error.code;
+    var errorMessage = error.message;
+ 
+    if (errorCode === 'auth/wrong-password') {
+      alert('Wrong password.');
+    } else if (errorCode === 'auth/user-not-found') {
+      alert('There is no user corresponding to the given email address.');
+    } else {
+      alert(errorMessage);
+    }
+        console.log(error);
     })
-   
-};
+    .then (function (user) {
+ 
+      var currentUid = firebase.auth().currentUser.uid;
+ 
+      firebase.database().ref(`/users/${currentUid}/userProfile`)
+      .once('value', snapshot => {
+          dispatch({ type: 'GET_CURRENT_USER_PROFILE',
+                     payload: snapshot.val() });
+      })
+      .catch((error) => {
+          alert('Error loading user profile at this time...')
+      })
+    });
+ };
 
+//TODO once a user logs in, check if they are banned
 export const signInWithEmailWrapper = (email, password) => dispatch => {
 
     var promises = []; 
@@ -312,36 +307,36 @@ export const createUserWithEmail = (email, password) => dispatch => {
    }
         console.log(error);
    })
-//    .then (function (user) {
-//      firebase.auth().signInWithEmailAndPassword(email, password)
-//      .catch(function(error) {
-//      var errorCode = error.code;
-//      var errorMessage = error.message;
+   .then (function (user) {
+     firebase.auth().signInWithEmailAndPassword(email, password)
+     .catch(function(error) {
+     var errorCode = error.code;
+     var errorMessage = error.message;
 
-//      if (errorCode === 'auth/wrong-password') {
-//        alert('Wrong password.');
-//      } else if (errorCode === 'auth/user-not-found') {
-//        alert('There is no user corresponding to the given email address.');
-//      } else {
-//        alert(errorMessage);
-//      }
-//          console.log(error);
-//      })
-//      .then (function (user) {
-//        console.log ('WHEEE User signed in with email. Getting current user profile...');
+     if (errorCode === 'auth/wrong-password') {
+       alert('Wrong password.');
+     } else if (errorCode === 'auth/user-not-found') {
+       alert('There is no user corresponding to the given email address.');
+     } else {
+       alert(errorMessage);
+     }
+         console.log(error);
+     })
+     .then (function (user) {
+       console.log ('WHEEE User signed in with email. Getting current user profile...');
 
-//        var currentUid = firebase.auth().currentUser.uid;
+       var currentUid = firebase.auth().currentUser.uid;
 
-//        firebase.database().ref(`/users/${currentUid}/userProfile`)
-//        .once('value', snapshot => {
-//            dispatch({ type: 'GET_CURRENT_USER_PROFILE',
-//                       payload: snapshot.val() });
-//        })
-//        .catch((error) => {
-//            alert('Error loading user profile at this time...')
-//        })
-//      });
-//    });
+       firebase.database().ref(`/users/${currentUid}/userProfile`)
+       .once('value', snapshot => {
+           dispatch({ type: 'GET_CURRENT_USER_PROFILE',
+                      payload: snapshot.val() });
+       })
+       .catch((error) => {
+           alert('Error loading user profile at this time...')
+       })
+     });
+   });
 };
 
 /**
