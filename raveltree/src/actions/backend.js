@@ -67,6 +67,7 @@
                       - reportRavel- added report_message param
  - 04/13/2018 - VD Do - Modified: 
                       - banReportedUser - updates the banned user's userprofile to have null values 
+                      - flagReportedUser - ^ comment above is actually for flagReportedUser function 
  */
 
 
