@@ -19,7 +19,15 @@ class GetAllUserRavels extends Component {
 
     componentWillMount() {
         // var first_name = 'Vivienne';
-       var ravel_uid = '-L9fa1jAmx2q59i9WRAu';
+       var ravel_uid = '-L9r94DAgTdrI8lG39we';
+       var report_message = 'Reported Passage Test'
+       var passage_uid = '-L92CM2gsd9xX6anP-6N'
+       //this.props.getCompletePassageReportList();
+       //this.props.reportRavel(ravel_uid, report_message);
+      //this.props.reportUser(user_uid,report_message );
+      //this.props.reportPassage(ravel_uid, passage_uid, report_message);
+      //this.props.banReportedPassage(ravel_uid,passage_uid );
+       //this.props.getReportMessage(passage_uid);
        //this.props.banReportedRavel(ravel_uid);
        //this.props.deleteRavel(ravel_uid);
        //this.props.getRavelMetaData(ravel_uid);
@@ -70,7 +78,7 @@ class GetAllUserRavels extends Component {
         //var child_passage_uid = '-L8if3EcdET2zsHbnmKk';
         //this.props.forkPassage({ravel_uid, parent_passage_uid, passage_title, passage_body});
         //this.props.mergeTwoPassage({ravel_uid, parent_passage_uid, child_passage_uid });
-        this.props.addInitialPassage({ravel_uid, passage_title, passage_body});
+        //this.props.addInitialPassage({ravel_uid, passage_title, passage_body});
         //this.props.addPassage({ravel_uid, parent_passage_uid, passage_title, passage_body});
         
         //this.props.upVotePassage('-L6esHnah1z8XwnTXLfL');
@@ -116,7 +124,7 @@ class GetAllUserRavels extends Component {
         //this.props.getAllRavelParticipantUserProfile(ravel_uid);
         //this.props.getPendingRavelInvite();
 
-        var passage_uid = '-L92CM2gsd9xX6anP-6N';
+        var passage_uid = '-L9pUO9SpATn9Ot6NvXg';
         // var comment_body = 'this is another comment'
         // var comment_key = '-L7pouZstEs1LhyGi3uN'
         //this.props.downVotePassage(ravel_uid, passage_uid);
@@ -148,6 +156,11 @@ class GetAllUserRavels extends Component {
 
         //firebase.auth().signOut()
         //this.props.signInWithEmail ('deleteme@ho.com', 'password123');
+        var email = 'delete@delete.com'
+        var password = 'password123'
+        this.props.signInWithEmail(email,password);
+        //this.props.signInWithEmailWrapper(email,password);
+        //this.props.banReportedUser();
 
     };
 
