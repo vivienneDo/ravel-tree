@@ -13,6 +13,7 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableNativeFeedback,
   TouchableOpacity
 } from 'react-native';
 

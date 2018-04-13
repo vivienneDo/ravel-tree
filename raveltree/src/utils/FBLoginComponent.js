@@ -1,11 +1,11 @@
-/* 
+/*
 Name: FB Login component
 Instructions to use: import FBLoginComponent from '../utils/FBLoginComponent'; into parent
-Then, use the component as any other component 
-ex: <FBLoginComponent/> 
+Then, use the component as any other component
+ex: <FBLoginComponent/>
 
-- 04/07/18 - VD Do - Modified to set initial ravel_created field to false 
-*/ 
+- 04/07/18 - VD Do - Modified to set initial ravel_created field to false
+*/
 
 import React, { Component } from 'react';
 import {
@@ -14,7 +14,8 @@ import {
     View,
     ScrollView,
     Button,
-    TouchableOpacity
+    TouchableOpacity,
+    TouchableNativeFeedback
   } from 'react-native';
 
 import { MKTextField, MKColor, MKButton } from 'react-native-material-kit';
@@ -72,18 +73,18 @@ class FBLoginComponent extends Component {
 
                         else {
                             firebase.database().ref(`/users`).child(user.uid).once('value', function(snapshot) {
-                                
+
                                 // Check null values if first time logging in with FB
-                                // Check first time logging in, set the user profile infomation to null 
-                                // along with FB first name, last name 
+                                // Check first time logging in, set the user profile infomation to null
+                                // along with FB first name, last name
                                 if ((snapshot.val() === null)) {
-                                    console.log('Success fetching data' + result.toString());  
+                                    console.log('Success fetching data' + result.toString());
                                     var m_email = firebase.auth().currentUser.email;
                                     firebase.database().ref(`/users/${firebase.auth().currentUser.uid}/userProfile`)
-                                    updateUserProfile(user, {first_name:results['first_name'],last_name:results['last_name'],bio:'',photoURL:'', stat_ravel_led:0, stat_passage_written:0, stat_ravel_contributed:0, 
+                                    updateUserProfile(user, {first_name:results['first_name'],last_name:results['last_name'],bio:'',photoURL:'', stat_ravel_led:0, stat_passage_written:0, stat_ravel_contributed:0,
                                         upvotes:0, ravel_points:0, email:m_email });
 
-                                        // Do any initial user setup here 
+                                        // Do any initial user setup here
                                         firebase.database().ref(`/master_user_key/${user.uid}`).set({
                                             user_uid: true})
                                             .then(() => {
@@ -91,26 +92,26 @@ class FBLoginComponent extends Component {
                                             })
                                             .then(() => {
                                                 firebase.database().ref(`users/${user.uid}/ravel_created`).set(false)
-                                        
+
                                             })
                                 } else {
-                                    // Check if they have been banned 
+                                    // Check if they have been banned
                                     firebase.database().ref(`user_report_list`).orderByChild(`${user.uid}`).equalTo(true).once('value', (snapshot) => {
                                         if(snapshot.exists === true && snapshot.val() === true) {
-                    
-                                            // Alert user has been deleted, edit message...or create pop-up screen 
-                                            alert('You have been removed from raveltree due to violation of terms of services.')
-                                            firebase.auth().currentUser.delete(); 
 
-                                            //TODO: Update their profile to have null values 
-                    
+                                            // Alert user has been deleted, edit message...or create pop-up screen
+                                            alert('You have been removed from raveltree due to violation of terms of services.')
+                                            firebase.auth().currentUser.delete();
+
+                                            //TODO: Update their profile to have null values
+
                                         } else {
-                                            
+
                                         }
                                     })
                                 }
                             });
-                            
+
                         }
                     }
                     const infoRequest = new GraphRequest(
@@ -124,7 +125,7 @@ class FBLoginComponent extends Component {
                             }
                         },
                         responseInfoCallback
-                        
+
                     );
 
                     new GraphRequestManager().addRequest(infoRequest).start();
@@ -132,7 +133,7 @@ class FBLoginComponent extends Component {
                             .catch(this.onAuthFailed.bind(this));
 
                         console.log('Attempting log in with facebook');
-        
+
                 }, (error) => {
                     console.log(error);
                     }
