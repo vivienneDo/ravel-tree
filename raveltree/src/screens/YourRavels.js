@@ -127,6 +127,7 @@ class YourRavels extends Component {
 
     return (
       Object.values (this.state.userCreatedRavels).map (ravel => {
+        if (!ravel.ravel_uid) { return; }
         return this.renderRavelStub (ravel, this.props.getCurrentLoggedInUserUid ());
       })
     );
