@@ -12,6 +12,7 @@
  * 03/05/18 - Modified by Frank Fusco (fr@nkfus.co)
  * 03/25/18 - VD Do - Changed Facebook button to use FBLoginComponent
  * 004/07/18 - VD Do - Please take this change when resolving conflicts!! Changed Facebook button to use FBLoginComponent
+ * 04/13/18 - VD Do - binded onSuccess and onFail to fb component 
  */
 
 import React, { Component } from 'react';
@@ -64,6 +65,9 @@ class Login extends Component {
       loading: false,
       loggedIn: false,
     };
+
+    this.onFBAuthSuccess = this.onFBAuthSuccess.bind(this);
+    this.onFBAuthFailed = this.onFBAuthFailed.bind(this);
   }
 
   // testLog (num) {
@@ -141,25 +145,25 @@ class Login extends Component {
     this.props.setActiveScreen ('TermsAndPrivacy');
   }
 
-  onFBLogin (error, result) {
-    if (error) {
-      alert("Login error: " + result.error);
-    } else if (result.isCancelled) {
-      alert("Login cancelled.");
-    } else {
-    console.log("Attempting to log into Firebase...");
-    AccessToken.getCurrentAccessToken().then(
-      (data) => {
-        console.log('Attempting log in with Facebook...');
-        const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
-        firebase.auth().signInWithCredential(credential)
-        .then(this.onFBAuthSuccess.bind(this))
-        .catch(this.onFBAuthFailed.bind(this));
-      }, (error) => {
-        console.log(error);
-      }
-    )}
-  }
+  // onFBLogin (error, result) {
+  //   if (error) {
+  //     alert("Login error: " + result.error);
+  //   } else if (result.isCancelled) {
+  //     alert("Login cancelled.");
+  //   } else {
+  //   console.log("Attempting to log into Firebase...");
+  //   AccessToken.getCurrentAccessToken().then(
+  //     (data) => {
+  //       console.log('Attempting log in with Facebook...');
+  //       const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
+  //       firebase.auth().signInWithCredential(credential)
+  //       .then(this.onFBAuthSuccess.bind(this))
+  //       .catch(this.onFBAuthFailed.bind(this));
+  //     }, (error) => {
+  //       console.log(error);
+  //     }
+  //   )}
+  // }
 
   onFBAuthSuccess() {
     this.setState({
@@ -209,7 +213,9 @@ class Login extends Component {
           <View style = {styles.buttons}>
 
             {/* Facebook button */}
-            <FBLoginComponent
+            <FBLoginComponent 
+                onSuccess = {this.onFBAuthSuccess}
+                onFailure = {this.onFBAuthFailed}
             />
             {/* <LoginButton
               style = {styles.facebook}
