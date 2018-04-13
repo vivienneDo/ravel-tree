@@ -113,6 +113,7 @@ class Profile extends Component {
   onPressLogOut () {
     this.props.userLogOff ();
     FBSDK.LoginManager.logOut ();
+    this.props.setShowNavBar (false);
     this.props.setActiveScreen ('Login');
   }
 
