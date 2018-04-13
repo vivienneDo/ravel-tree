@@ -69,6 +69,8 @@
                       - banReportedUser - updates the banned user's userprofile to have null values 
                       - flagReportedUser - ^ comment above is actually for flagReportedUser function 
                       - Fixed unwanted ravel_created/number_participant side effect 
+                    Modified:
+                      - signInWithEmail - Fixed email verification process. Left code uncommented for now. 
  */
 
 
@@ -217,55 +219,48 @@ export const userResetPassword = (email) => dispatch => {
 */
 export const signInWithEmail = (email, password) => dispatch => {
 
-   firebase.auth().signInWithEmailAndPassword(email, password)
-   .catch(function(error) {
-     var errorCode = error.code;
-     var errorMessage = error.message;
+        firebase.auth().signInWithEmailAndPassword(email, password)
+        .catch(function(error) {
+            var errorCode = error.code;
+            var errorMessage = error.message;
 
-     if (errorCode === 'auth/wrong-password') {
-       alert('Wrong password.');
-     } else if (errorCode === 'auth/user-not-found') {
-       alert('There is no user corresponding to the given email address.');
-     } else {
-       alert(errorMessage);
-     }
-     console.log(error);
-   })
-   .then (function (user) {
-     if (!user) { return; }
-
-      var currentUid = firebase.auth().currentUser.uid;
-
-      firebase.database().ref(`/users/${currentUid}/userProfile`)
-      .once('value', snapshot => {
-          dispatch({ type: 'GET_CURRENT_USER_PROFILE',
-                     payload: snapshot.val() });
-      })
-      .catch((error) => {
-          alert('Error loading user profile.')
-      })
-    });
- };
-
-//TODO once a user logs in, check if they are banned
-export const signInWithEmailWrapper = (email, password) => dispatch => {
-
-    var promises = [];
-
-    return new Promise((resolve, reject) => {
-
-        promises.push(signInWithEmail(email,password))
-        promises.push(banReportedUser())
-
-        Promise.all(promises).then((results) => {
-            resolve(true)
+            if (errorCode === 'auth/wrong-password') {
+            alert('Wrong password.');
+            } else if (errorCode === 'auth/user-not-found') {
+            alert('There is no user corresponding to the given email address.');
+            } else {
+            alert(errorMessage);
+            }
+            console.log(error);
         })
-        .catch(() => {
-            reject(false)
-        })
-    })
- };
+        .then (function (user) {
+            if (!user) {               
+            return;           
+            } 
+            /* Uncomment out this else if block below if you want to signin with
+            email verification */     
 
+            // else if (user.emailVerified === false) {
+            //     alert('Please verify your email.')
+            // } 
+            
+            else {
+
+                var currentUid = firebase.auth().currentUser.uid;
+
+                firebase.database().ref(`/users/${currentUid}/userProfile`)
+                .once('value', snapshot => {
+                    dispatch({ type: 'GET_CURRENT_USER_PROFILE',
+                                payload: snapshot.val() });
+                })
+                .catch((error) => {
+                    alert('Error loading user profile.')
+                })
+                
+            }
+        });
+         
+ };
 
 /**
 * @param: an email and password
@@ -293,14 +288,9 @@ export const createUserWithEmail = (email, password) => dispatch => {
    firebase.auth().createUserWithEmailAndPassword(email, password)
    .then((user) => {
        firebase.database().ref(`/master_user_key/${user.uid}`).set({ user_uid: true })
-
-       //updateUserProfile(user, {first_name:'',last_name:'',bio:'',photoURL:'', stat_ravel_led:0, stat_passage_written:0, stat_ravel_contributed:0,
-       //                        upvotes:0, ravel_points:0 });
-
-       // send an email verification to the user
-       if(user && user.emailVerified === false){
+       if (user && user.emailVerified === false){
            user.sendEmailVerification().then(function(){
-             console.log("email verification sent to user");
+             alert("Email verification sent to user. Please check your email.");
            });
          }
    })
@@ -317,36 +307,6 @@ export const createUserWithEmail = (email, password) => dispatch => {
    }
         console.log(error);
    })
-   .then (function (user) {
-     firebase.auth().signInWithEmailAndPassword(email, password)
-     .catch(function(error) {
-     var errorCode = error.code;
-     var errorMessage = error.message;
-
-     if (errorCode === 'auth/wrong-password') {
-       alert('Wrong password.');
-     } else if (errorCode === 'auth/user-not-found') {
-       alert('There is no user corresponding to the given email address.');
-     } else {
-       alert(errorMessage);
-     }
-         console.log(error);
-     })
-     .then (function (user) {
-       console.log ('WHEEE User signed in with email. Getting current user profile...');
-
-       var currentUid = firebase.auth().currentUser.uid;
-
-       firebase.database().ref(`/users/${currentUid}/userProfile`)
-       .once('value', snapshot => {
-           dispatch({ type: 'GET_CURRENT_USER_PROFILE',
-                      payload: snapshot.val() });
-       })
-       .catch((error) => {
-           alert('Error loading user profile at this time...')
-       })
-     });
-   });
 };
 
 /**
