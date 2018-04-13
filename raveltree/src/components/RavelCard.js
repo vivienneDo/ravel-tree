@@ -1,6 +1,6 @@
 // Author:   Alex Aguirre
 // Created:  02/05/18
-// Modified: 03/09/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 04/10/18 by Frank Fusco (fr@nkfus.co)
 //
 // "Ravel Card" component for RavelTree.
 //
@@ -45,12 +45,12 @@ class RavelCard extends Component<{}> {
 
   onPressCard () {
     var screenData = Object.assign ({}, {ravelID: this.props.ravelID});
-    this.props.navigateForward ('Ravel', this.constructor.name, screenData);
+    this.props.navigateForward ('Ravel', 'Home', screenData);
   }
 
   render() {
     const {
-      ravel,
+      title,
       ravelID,
       author,
       authorImage,
@@ -67,9 +67,9 @@ class RavelCard extends Component<{}> {
           <View style={styles.head}>
             <View style={styles.left}>
               <View style={styles.userImage}>
-                <UserImage {...this.props} profile={this.state.profile} /*photoURL={authorImage}*/ size={26} />
+                <UserImage {...this.props} userID={author} size={26} />
               </View>
-              <TextSerif size={16}>{this.props.ravel}</TextSerif>
+              <TextSerif size={16}>{this.props.title}</TextSerif>
             </View>
             <View style={styles.right}>
               <View style={styles.users}>
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
       paddingHorizontal: 17,
     },
     inner: {
-      
+
     },
     head: {
       flexDirection: 'row',
