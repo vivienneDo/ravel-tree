@@ -133,7 +133,10 @@ class VoteBar extends Component {
       <View>
         <View style = {styles.container}>
           {/* style for the upVote triangle */}
-          <Touchable style={upVoteStyles} onPress={() => this.onPressUp ()} />
+          <Touchable style={upVoteStyles} onPress={() => this.onPressUp ()}>
+            <View>
+            </View>
+          </Touchable>
             <View>
               {/* display the total # of votes next to the upVote button
                   with proper spacing */}
@@ -142,7 +145,10 @@ class VoteBar extends Component {
               </Text>
             </View>
           {/* style for the downVote triangle */}
-          <Touchable style={downVoteStyles} onPress={() => this.onPressDown ()} />
+          <Touchable style={downVoteStyles} onPress={() => this.onPressDown ()}>
+            <View>
+            </View>
+          </Touchable>
         </View>
       </View>
     );
