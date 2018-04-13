@@ -68,6 +68,7 @@
  - 04/13/2018 - VD Do - Modified: 
                       - banReportedUser - updates the banned user's userprofile to have null values 
                       - flagReportedUser - ^ comment above is actually for flagReportedUser function 
+                      - Fixed unwanted ravel_created/number_participant side effect 
  */
 
 
@@ -997,8 +998,11 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
                 public_cat_fiction, public_cat_nonfiction, public_cat_other, level_count,  has_child})
             .then(returnKey => {
                 ravel_uid = returnKey.getKey();
-                firebase.database().ref(`/ravels/${ravel_uid}/ravel_uid`).set(ravel_uid);
-                firebase.database().ref(`/users/${currentUser.uid}/ravel_created/${ravel_uid}`).set({ravel_uid, user_created_photoURL, ravel_title, ravel_number_participants, ravel_points});
+                firebase.database().ref(`/ravels/${ravel_uid}/ravel_uid`).set(ravel_uid)
+                .then(() => {
+                    firebase.database().ref(`/users/${currentUser.uid}/ravel_created/${ravel_uid}`).set({ravel_uid, user_created_photoURL, ravel_title, ravel_number_participants, ravel_points});
+                })
+                
             })
             .then(() => {
 
@@ -1419,9 +1423,21 @@ export const acceptRavelInvite = (ravel_uid) => dispatch => {
                         firebase.database().ref(`ravels/${ravel_uid}`).update({
                             ravel_number_participants : m_ravel_number_participants + ravel_counter
                         })
-                        firebase.database().ref(`/users/${currentUid}/ravel_created/${ravel_uid}`).update({
-                            ravel_number_participants: m_ravel_number_participants + ravel_counter
+                        .then(() => {
+
+                            // Get the user who created the ravel and update their ravel_created card for UI 
+                            firebase.database().ref(`ravels/${ravel_uid}/user_created`).once('value', (snapshot) => {
+
+                                firebase.database().ref(`/users/${snapshot.val()}/ravel_created/${ravel_uid}`).update({
+
+                                    ravel_number_participants: m_ravel_number_participants + ravel_counter
+
+                                })
+                            })
+
+
                         })
+
                         .then(() => {
                             userRavelPointCalculationHelper(currentUid);
                         })
