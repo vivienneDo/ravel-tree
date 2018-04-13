@@ -11,6 +11,7 @@ import {
   View,
   ScrollView,
   Button,
+  TouchableNativeFeedback,
   TouchableOpacity
 } from 'react-native';
 

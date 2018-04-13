@@ -1,7 +1,7 @@
 // WARNING!!!!! DO NOT MERGE THIS INTO DEV WHEN MERGING!!!!
 
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Image, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { Text, View, StyleSheet, Image, ScrollView, TouchableNativeFeedback, TouchableOpacity, Linking } from 'react-native';
 import { getTheme } from 'react-native-material-kit';
 import {MKTextField, MKColor, MKButton} from 'react-native-material-kit';
 import * as actions from '../actions/backend';
@@ -24,7 +24,7 @@ class GetAllUserRavels extends Component {
        //this.props.deleteRavel(ravel_uid);
        //this.props.getRavelMetaData(ravel_uid);
        //var passage_uid = '-L8Z4s5Hfy368wkHS08a';
-       var level = 1; 
+       var level = 1;
       //  var user_uid = 'SLnPLeCb1HVRlOg1sRJcpChn3Q22';
         // var ravel_title = "Testing Out initial add passage level"
         // var ravel_category = "game"
@@ -42,12 +42,12 @@ class GetAllUserRavels extends Component {
         //this.props.getPassageUidOnLevel(ravel_uid, level);
         //this.props.getRavelMetaData(ravel_uid);
         //this.props.testerPromiseHelper(ravel_uid,passage_uid,level);
-                              
+
         //this.props.loadInitialUserCreatedRavel(firebase.auth().currentUser);
         //this.props.getUserProfile(getCurrentLoggedInUserUid());
         //this.props.searchUserByName(first_name);
-        
-        // Ask Chris how to map the ravel_uid properly 
+
+        // Ask Chris how to map the ravel_uid properly
         //var m_ravel_uid = '-L5akFEpeXj3Ls-1uQcH';
         //var ravel_uid_t = props.ravel_uid;
         //console.log('Ravel UID in Get All Users..' + this.props.ravel_uid);
@@ -72,7 +72,7 @@ class GetAllUserRavels extends Component {
         //this.props.mergeTwoPassage({ravel_uid, parent_passage_uid, child_passage_uid });
         this.props.addInitialPassage({ravel_uid, passage_title, passage_body});
         //this.props.addPassage({ravel_uid, parent_passage_uid, passage_title, passage_body});
-        
+
         //this.props.upVotePassage('-L6esHnah1z8XwnTXLfL');
         //this.props.downVotePassage('-L6esHnah1z8XwnTXLfL');
 
@@ -90,7 +90,7 @@ class GetAllUserRavels extends Component {
         //this.props.addAdminUser(uid);
 
         //actions.checkCurrentUserIsAdmin();
-        
+
         //var terms_of_service = 'testing'
         //this.props.insertTermsOfService(terms_of_service);
 
@@ -100,9 +100,9 @@ class GetAllUserRavels extends Component {
         //var password = "password123"
 
         // $uid === auth.uid
-        
+
         //createUserWithEmail(element, password);
-        
+
       //this.props.reportRavel(ravel_uid);
       //this.props.reportUser(user_uid);
       //this.props.getCompleteRavelReportList();
@@ -152,11 +152,11 @@ class GetAllUserRavels extends Component {
     };
 
   render() {
-    return (  
-      
+    return (
+
       <View style={styles.container}>
-             
-      </View> 
+
+      </View>
     );
   }
 }
@@ -169,20 +169,20 @@ const mapStateToProps = state => {
     all_child_uid_val };
 
   //   const ravels = _.map(state.all_user_ravels, (val, uid) => {
-  //     return {...val, uid}; 
-  
+  //     return {...val, uid};
+
   //   });
-    
-  
-  //   return { 
+
+
+  //   return {
   //     ravels
 
   //  };
 
-  //  const {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed, 
+  //  const {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed,
   //   stat_passage_written, upvotes, ravel_points} = state.user;
 
-  //   return {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed, 
+  //   return {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed,
   //   stat_passage_written, upvotes, ravel_points };
 
   //   const { users_first_name_search } = state.users_search;
@@ -190,6 +190,5 @@ const mapStateToProps = state => {
 
 
   };
-  
+
   export default connect(mapStateToProps, actions)(GetAllUserRavels);
-  

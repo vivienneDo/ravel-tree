@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Platform, Button } from 'react-native';
+import { Text, View, StyleSheet, Image, ScrollView, TouchableNativeFeedback, TouchableOpacity, Linking, Platform, Button } from 'react-native';
 import { getTheme } from 'react-native-material-kit';
 import {MKTextField, MKColor, MKButton} from 'react-native-material-kit';
 import * as actions from '../actions';
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF', 
+    backgroundColor: '#F5FCFF',
   },
   imageContainer : {
     justifyContent: 'center',
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
       left: 295,
       color: 'rgba(233,166,154,0.8)',
       backgroundColor: 'rgba(255,255,255,0)',
-  },  
+  },
   icon: {
       position: 'absolute',
       top: 15,
@@ -110,8 +110,8 @@ const styles = StyleSheet.create({
   sections: {
       flexDirection: 'row',
       paddingLeft: 10,
-      paddingTop: 10, 
-      width: 100, 
+      paddingTop: 10,
+      width: 100,
   },
 
   deleteIcon: {
@@ -164,11 +164,11 @@ class MainPage extends Component {
     } else {
         console.log('Showing Image');
         return <Image style = {styles.avatarSource} source={{uri:this.props.currentUserProfile.photoURL}}/>;
-    }    
+    }
   }
-    
+
   render() {
-    return (  
+    return (
       <View style={styles.container}>
         <View style ={styles.imageContainer}>
             {this.renderImage()}
@@ -176,7 +176,7 @@ class MainPage extends Component {
         <Text>{this.props.last_name}</Text>
         <Text>{this.props.first_name}</Text>
         <Text>{this.props.bio}</Text>
-        <CameraPickerButton onPress={this.onCameraPickPress}/> 
+        <CameraPickerButton onPress={this.onCameraPickPress}/>
         <LogoutButton onPress = {this.onLogOutButtonPress}/>
       </View>
     );
@@ -186,12 +186,10 @@ class MainPage extends Component {
 const mapStateToProps = state => {
 
     console.log(state);
-    const {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed, 
+    const {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed,
         stat_passage_written, upvotes, ravel_points, currentUserProfile} = state.current_user;
-    return {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed, 
+    return {first_name, last_name, bio, photoURL, stat_ravel_led, stat_ravel_contributed,
         stat_passage_written, upvotes, ravel_points, currentUserProfile };
 };
-  
+
   export default connect(mapStateToProps, actions) (MainPage);
-
-

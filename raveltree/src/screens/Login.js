@@ -21,7 +21,8 @@ import {
   View,
   ScrollView,
   Button,
-  TouchableOpacity
+  TouchableOpacity,
+  TouchableNativeFeedback
 } from 'react-native';
 
 import { MKTextField, MKColor, MKButton } from 'react-native-material-kit';
@@ -208,7 +209,7 @@ class Login extends Component {
           <View style = {styles.buttons}>
 
             {/* Facebook button */}
-            <FBLoginComponent             
+            <FBLoginComponent
             />
             {/* <LoginButton
               style = {styles.facebook}
