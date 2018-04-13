@@ -74,7 +74,7 @@
                     Added: 
                       - calculateRavelOptimalityScore - recalculates all passages scores for a given ravel 
                         do not call directly. 
-                      - getAllGlobalTagScript - gets all global tags in the db 
+                      - getAllGlobalTags - gets all global tags in the db 
                     Modified:
                       - getRavelMetaData - calls calculateRavelOptimalityScore 
  */
@@ -5120,7 +5120,7 @@ export const getReportMessage = (reported_uid) => dispatch => {
 
 // Get's all of the tags in the db in the order in which they appear in the db 
 // If a random list is needed, please message Vivienne 
-export const getAllGlobalTagScript = () => dispatch => {
+export const getAllGlobalTags = () => dispatch => {
 
     return new Promise((resolve,reject) => {
 
