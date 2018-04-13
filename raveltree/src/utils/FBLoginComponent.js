@@ -6,6 +6,7 @@ ex: <FBLoginComponent/>
 
 - 04/07/18 - VD Do - Modified to set initial ravel_created field to false
 - 04/12/18 - VD Do - Uncommented out ban user functions atm, fixed unhandled promise rejection 
+- 04/13/18 - VD Do - binded onSuccess and onFail
 */
 
 import React, { Component } from 'react';
@@ -65,6 +66,7 @@ class FBLoginComponent extends Component {
                     (data) => {
                         const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
                         firebase.auth().signInWithCredential(credential)
+                        
                             .then((user) => {
                             let accessToken = data.accessToken;
                                 const responseInfoCallback = (error, results) => {
@@ -132,7 +134,8 @@ class FBLoginComponent extends Component {
 
                     new GraphRequestManager().addRequest(infoRequest).start();
                             })
-                            .catch(this.onAuthFailed);
+                            .then(this.props.onSuccess)
+                            .catch(this.props.onFailure);
 
                         console.log('Attempting log in with facebook');
 
