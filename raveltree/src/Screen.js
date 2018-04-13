@@ -1,3 +1,6 @@
+/**
+ * - 04/13/18 - VD Do - Added a listener when user if auth() to ban them if they exist in ban list 
+ */
 import React, { Component } from 'react';
 import {
   Platform,
@@ -55,8 +58,17 @@ class Screen extends Component {
 
   componentWillMount() {
     firebase.auth().onAuthStateChanged((user) => {
-      console.log('Authentication state is: ' + (user ? 'True' : 'False'));
-      if (user) {
+      console.log('Authentication state is: ' + (user ? 'True' : 'False'));      
+      if (user) { 
+        firebase.database().ref(`user_report_list/${user.uid}`).on('value', (snapshot) => {
+          if(snapshot.exists() && snapshot.val() === true) {         
+              alert(user.email + ': You have been removed due to a violation of RavelTrees terms of use')               
+                firebase.auth().currentUser.delete().then(() => {
+                  // Tab bar is still showing here though 
+                  this.props.setActiveScreen ('Login'); 
+                })
+          }
+        })
         this.setState ({loggedIn: true})
       } else {
         this.setState ({loggedIn: false})
