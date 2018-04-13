@@ -65,6 +65,8 @@
                       - forkPassage- added enable_comment : ravel enable value, is_banned : false
                       - reportUser - added report_message param
                       - reportRavel- added report_message param
+ - 04/13/2018 - VD Do - Modified: 
+                      - banReportedUser - updates the banned user's userprofile to have null values 
  */
 
 
@@ -4879,41 +4881,27 @@ export const flagReportedUser = (user_uid) => dispatch => {
             if (valueOfKey) {
                 firebase.database().ref(`user_report_list/${user_uid}`).set(true)
                 .then(() => {
-                    dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: true})
+                    // Update the user as being NULL 
+                    firebase.database().ref(`users/${user_uid}/userProfile`).update(
+                        {
+                        bio: 'NULL',
+                        email: 'NULL', 
+                        first_name: 'User banned due to RavelTree violation.',
+                        last_name: 'NULL', 
+                        photoURL: '' 
+                    })
+                    .then(() => {
+                        resolve(true)
+                    })
+                    
                 })
+                
             }
         })
         .catch((error) => {
-            alert('Cannot dismiss this user at this time...')
-            dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: false})
+            reject('Cannot dismiss this user at this time...')
+            //dispatch({type:'DISMISS_REPORT_USER_SUCCESS', payload: false})
         })
-
-    })
-}
-
-// TODO
-export const banReportedUser = ()  => {
-
-console.log('Inside report user function')
-
-var user_uid = firebase.auth().currentUser.uid;
-
-console.log('user_uid = ' + user_uid)
-
-    return new Promise ((resolve, reject) => {
-
-                firebase.database().ref(`user_report_list/${user_uid}`).once('value', (snapshot) => {
-                    if(snapshot.exists() === true && snapshot.val() === true && snapshot.key === user_uid) {
-
-                        // Alert user has been deleted, edit message...or create pop-up screen
-                        alert('You have been removed from raveltree due to violation of terms of services.')
-                        resolve(firebase.auth().currentUser.delete());
-
-                    } else {
-                        alert('You ARE NOT REPORTED')
-                        reject(false)
-                    }
-                })
 
     })
 }
