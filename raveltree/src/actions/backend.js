@@ -71,6 +71,11 @@
                       - Fixed unwanted ravel_created/number_participant side effect 
                     Modified:
                       - signInWithEmail - Fixed email verification process. Left code uncommented for now. 
+                    Added: 
+                      - calculateRavelOptimalityScore - recalculates all passages scores for a given ravel 
+                        do not call directly. 
+                    Modified:
+                      - getRavelMetaData - calls calculateRavelOptimalityScore 
  */
 
 
@@ -1050,6 +1055,9 @@ export const getRavelMetaData = (ravel_uid) => dispatch => {
       .then(() => {
         // Update the view count for unique users
         updateRavelViewCount(ravel_uid)
+      })
+      .then(() => {
+        calculateRavelOptimality(ravel_uid)
       })
       .catch((error) => {
           reject ('Error getting ravel metadata.');
@@ -4169,20 +4177,6 @@ export const getOptimalityChildID = (ravel_uid, passage_uid) => {
                             //m_valueOfKey = elm.key;
                         }
                      })
-                    //  .then(() => {
-                    //     if (valueOfKey === false) {
-                    //         // do nothing and return
-                    //     }
-                    //     else if (valueOfKey > optimalChildScore) {
-                    //         optimalChild = elm.key;
-                    //         //m_valueOfKey = elm.key;
-                    //     } else {
-
-                    //     }
-
-                    //  })
-
-                    //console.log('AFTER in else if function...optimal child id: ' + optimalChild)
 
                 })
 
@@ -4206,6 +4200,32 @@ export const getOptimalityChildID = (ravel_uid, passage_uid) => {
     })
 }
 
+// Use this function to recalculate all the scores on 
+// getRavelMetaData()
+// do not call directly 
+export const calculateRavelOptimality = (ravel_uid) => {
+
+    return new Promise((resolve, reject) => {
+        var promises = []
+        // First, get all the passage_uids for a given ravel 
+        firebase.database().ref(`passages/${ravel_uid}`).once('value', (snapshot) => {
+            snapshot.forEach((elm) => {
+                promises.push(reCalculateOptimalityScore(ravel_uid, elm.key))
+            })
+
+            Promise.all(promises).then((result) => {
+                resolve(true)
+            })
+            .catch((error) => {
+                reject('Failed trying to recalcuate all optimality for a given ravel...')
+            })
+
+        })
+
+    })
+    
+}
+
 export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
 
     return new Promise((resolve,reject) => {
@@ -4217,14 +4237,8 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
      var m_optimalityScore = 0;
      var optimalChild = '';
 
+    reCalculateCurrentPassagesOptimalityScore(ravel_uid, passage_uid).then(valueOfKey => {
 
-
-
-
-     reCalculateCurrentPassagesOptimalityScore(ravel_uid, passage_uid).then(valueOfKey => {
-
-
-        //console.log('value of key after recal = ' + valueOfKey)
         if (valueOfKey) {
 
             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/child`).once('value', (snapshot) => {
@@ -4234,16 +4248,14 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
                         this_passage_score = valueOfKey;
                     })
                     .then(() => {
-                        //console.log('m_optimalityScore AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
                         m_optimalityScore = this_passage_score + 0;
                         firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({optimalityScore : m_optimalityScore})
                     })
                     valueOfKey = false;
 
                 }  else {
-                     //var optimalChild = '';
-                var optimalChildScore = 0;
 
+                var optimalChildScore = 0;
 
                 snapshot.forEach((elm) => {
                     optimalChild = elm.key;
@@ -4251,49 +4263,29 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
                     firebase.database().ref(`passages/${ravel_uid}/${elm.key}/currentPassageOptimality`).once('value', (snapshot) => {
 
                         valueOfKey = snapshot.val()
-                        //console.log('value of key ' + valueOfKey)
+
                         if (valueOfKey === false) {
-                            // do nothing and return
+
                         }
                         else  {
                             if (valueOfKey > optimalChildScore) {
 
                                 optimalChild = elm.key;
                                 optimalChildScore = valueOfKey;
-                                //console.log('in else if function...optimal child id: ' + optimalChild)
 
                             }
-
-                            //m_valueOfKey = elm.key;
                         }
                      })
-                    //  .then(() => {
-                    //     if (valueOfKey === false) {
-                    //         // do nothing and return
-                    //     }
-                    //     else if (valueOfKey > optimalChildScore) {
-                    //         optimalChild = elm.key;
-                    //         //m_valueOfKey = elm.key;
-                    //     } else {
-
-                    //     }
-
-                    //  })
-
-                    //console.log('AFTER in else if function...optimal child id: ' + optimalChild)
 
                 })
-                //console.log('AFTERrrr in else if function...optimal child id: ' + optimalChild)
-
-
 
                 firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({optimalChild:optimalChild })
                 .then(() => {
-                    //console.log('AFTERrrr inside then in else if function...optimal child id: ' + optimalChild)
+
                     getOptimality(ravel_uid, optimalChild).then((valueOfKey) => {
 
                     optimalChildIDScore = valueOfKey;
-                    //console.log('AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
+
 
                     })
                     .then(() => {
@@ -4312,11 +4304,7 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
 
                 })
 
-        //})
-
-
-
-                }
+            }
 
         })
 
@@ -4324,7 +4312,6 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
             valueOfKey = false;
         }
      })
-
 
             .then(() => {
                 return valueOfKey
