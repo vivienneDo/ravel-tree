@@ -68,6 +68,15 @@
  - 04/13/2018 - VD Do - Modified: 
                       - banReportedUser - updates the banned user's userprofile to have null values 
                       - flagReportedUser - ^ comment above is actually for flagReportedUser function 
+                      - Fixed unwanted ravel_created/number_participant side effect 
+                    Modified:
+                      - signInWithEmail - Fixed email verification process. Left code uncommented for now. 
+                    Added: 
+                      - calculateRavelOptimalityScore - recalculates all passages scores for a given ravel 
+                        do not call directly. 
+                      - getAllGlobalTags - gets all global tags in the db 
+                    Modified:
+                      - getRavelMetaData - calls calculateRavelOptimalityScore 
  */
 
 
@@ -216,55 +225,48 @@ export const userResetPassword = (email) => dispatch => {
 */
 export const signInWithEmail = (email, password) => dispatch => {
 
-   firebase.auth().signInWithEmailAndPassword(email, password)
-   .catch(function(error) {
-     var errorCode = error.code;
-     var errorMessage = error.message;
+        firebase.auth().signInWithEmailAndPassword(email, password)
+        .catch(function(error) {
+            var errorCode = error.code;
+            var errorMessage = error.message;
 
-     if (errorCode === 'auth/wrong-password') {
-       alert('Wrong password.');
-     } else if (errorCode === 'auth/user-not-found') {
-       alert('There is no user corresponding to the given email address.');
-     } else {
-       alert(errorMessage);
-     }
-     console.log(error);
-   })
-   .then (function (user) {
-     if (!user) { return; }
-
-      var currentUid = firebase.auth().currentUser.uid;
-
-      firebase.database().ref(`/users/${currentUid}/userProfile`)
-      .once('value', snapshot => {
-          dispatch({ type: 'GET_CURRENT_USER_PROFILE',
-                     payload: snapshot.val() });
-      })
-      .catch((error) => {
-          alert('Error loading user profile.')
-      })
-    });
- };
-
-//TODO once a user logs in, check if they are banned
-export const signInWithEmailWrapper = (email, password) => dispatch => {
-
-    var promises = [];
-
-    return new Promise((resolve, reject) => {
-
-        promises.push(signInWithEmail(email,password))
-        promises.push(banReportedUser())
-
-        Promise.all(promises).then((results) => {
-            resolve(true)
+            if (errorCode === 'auth/wrong-password') {
+            alert('Wrong password.');
+            } else if (errorCode === 'auth/user-not-found') {
+            alert('There is no user corresponding to the given email address.');
+            } else {
+            alert(errorMessage);
+            }
+            console.log(error);
         })
-        .catch(() => {
-            reject(false)
-        })
-    })
- };
+        .then (function (user) {
+            if (!user) {               
+            return;           
+            } 
+            /* Uncomment out this else if block below if you want to signin with
+            email verification */     
 
+            // else if (user.emailVerified === false) {
+            //     alert('Please verify your email.')
+            // } 
+            
+            else {
+
+                var currentUid = firebase.auth().currentUser.uid;
+
+                firebase.database().ref(`/users/${currentUid}/userProfile`)
+                .once('value', snapshot => {
+                    dispatch({ type: 'GET_CURRENT_USER_PROFILE',
+                                payload: snapshot.val() });
+                })
+                .catch((error) => {
+                    alert('Error loading user profile.')
+                })
+                
+            }
+        });
+         
+ };
 
 /**
 * @param: an email and password
@@ -292,14 +294,9 @@ export const createUserWithEmail = (email, password) => dispatch => {
    firebase.auth().createUserWithEmailAndPassword(email, password)
    .then((user) => {
        firebase.database().ref(`/master_user_key/${user.uid}`).set({ user_uid: true })
-
-       //updateUserProfile(user, {first_name:'',last_name:'',bio:'',photoURL:'', stat_ravel_led:0, stat_passage_written:0, stat_ravel_contributed:0,
-       //                        upvotes:0, ravel_points:0 });
-
-       // send an email verification to the user
-       if(user && user.emailVerified === false){
+       if (user && user.emailVerified === false){
            user.sendEmailVerification().then(function(){
-             console.log("email verification sent to user");
+             alert("Email verification sent to user. Please check your email.");
            });
          }
    })
@@ -316,36 +313,6 @@ export const createUserWithEmail = (email, password) => dispatch => {
    }
         console.log(error);
    })
-   .then (function (user) {
-     firebase.auth().signInWithEmailAndPassword(email, password)
-     .catch(function(error) {
-     var errorCode = error.code;
-     var errorMessage = error.message;
-
-     if (errorCode === 'auth/wrong-password') {
-       alert('Wrong password.');
-     } else if (errorCode === 'auth/user-not-found') {
-       alert('There is no user corresponding to the given email address.');
-     } else {
-       alert(errorMessage);
-     }
-         console.log(error);
-     })
-     .then (function (user) {
-       console.log ('WHEEE User signed in with email. Getting current user profile...');
-
-       var currentUid = firebase.auth().currentUser.uid;
-
-       firebase.database().ref(`/users/${currentUid}/userProfile`)
-       .once('value', snapshot => {
-           dispatch({ type: 'GET_CURRENT_USER_PROFILE',
-                      payload: snapshot.val() });
-       })
-       .catch((error) => {
-           alert('Error loading user profile at this time...')
-       })
-     });
-   });
 };
 
 /**
@@ -997,8 +964,11 @@ export const createStartRavel = ({ ravel_title, ravel_category, passage_length, 
                 public_cat_fiction, public_cat_nonfiction, public_cat_other, level_count,  has_child})
             .then(returnKey => {
                 ravel_uid = returnKey.getKey();
-                firebase.database().ref(`/ravels/${ravel_uid}/ravel_uid`).set(ravel_uid);
-                firebase.database().ref(`/users/${currentUser.uid}/ravel_created/${ravel_uid}`).set({ravel_uid, user_created_photoURL, ravel_title, ravel_number_participants, ravel_points});
+                firebase.database().ref(`/ravels/${ravel_uid}/ravel_uid`).set(ravel_uid)
+                .then(() => {
+                    firebase.database().ref(`/users/${currentUser.uid}/ravel_created/${ravel_uid}`).set({ravel_uid, user_created_photoURL, ravel_title, ravel_number_participants, ravel_points});
+                })
+                
             })
             .then(() => {
 
@@ -1086,6 +1056,9 @@ export const getRavelMetaData = (ravel_uid) => dispatch => {
       .then(() => {
         // Update the view count for unique users
         updateRavelViewCount(ravel_uid)
+      })
+      .then(() => {
+        calculateRavelOptimality(ravel_uid)
       })
       .catch((error) => {
           reject ('Error getting ravel metadata.');
@@ -1419,9 +1392,21 @@ export const acceptRavelInvite = (ravel_uid) => dispatch => {
                         firebase.database().ref(`ravels/${ravel_uid}`).update({
                             ravel_number_participants : m_ravel_number_participants + ravel_counter
                         })
-                        firebase.database().ref(`/users/${currentUid}/ravel_created/${ravel_uid}`).update({
-                            ravel_number_participants: m_ravel_number_participants + ravel_counter
+                        .then(() => {
+
+                            // Get the user who created the ravel and update their ravel_created card for UI 
+                            firebase.database().ref(`ravels/${ravel_uid}/user_created`).once('value', (snapshot) => {
+
+                                firebase.database().ref(`/users/${snapshot.val()}/ravel_created/${ravel_uid}`).update({
+
+                                    ravel_number_participants: m_ravel_number_participants + ravel_counter
+
+                                })
+                            })
+
+
                         })
+
                         .then(() => {
                             userRavelPointCalculationHelper(currentUid);
                         })
@@ -4193,20 +4178,6 @@ export const getOptimalityChildID = (ravel_uid, passage_uid) => {
                             //m_valueOfKey = elm.key;
                         }
                      })
-                    //  .then(() => {
-                    //     if (valueOfKey === false) {
-                    //         // do nothing and return
-                    //     }
-                    //     else if (valueOfKey > optimalChildScore) {
-                    //         optimalChild = elm.key;
-                    //         //m_valueOfKey = elm.key;
-                    //     } else {
-
-                    //     }
-
-                    //  })
-
-                    //console.log('AFTER in else if function...optimal child id: ' + optimalChild)
 
                 })
 
@@ -4230,6 +4201,32 @@ export const getOptimalityChildID = (ravel_uid, passage_uid) => {
     })
 }
 
+// Use this function to recalculate all the scores on 
+// getRavelMetaData()
+// do not call directly 
+export const calculateRavelOptimality = (ravel_uid) => {
+
+    return new Promise((resolve, reject) => {
+        var promises = []
+        // First, get all the passage_uids for a given ravel 
+        firebase.database().ref(`passages/${ravel_uid}`).once('value', (snapshot) => {
+            snapshot.forEach((elm) => {
+                promises.push(reCalculateOptimalityScore(ravel_uid, elm.key))
+            })
+
+            Promise.all(promises).then((result) => {
+                resolve(true)
+            })
+            .catch((error) => {
+                reject('Failed trying to recalcuate all optimality for a given ravel...')
+            })
+
+        })
+
+    })
+    
+}
+
 export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
 
     return new Promise((resolve,reject) => {
@@ -4241,14 +4238,8 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
      var m_optimalityScore = 0;
      var optimalChild = '';
 
+    reCalculateCurrentPassagesOptimalityScore(ravel_uid, passage_uid).then(valueOfKey => {
 
-
-
-
-     reCalculateCurrentPassagesOptimalityScore(ravel_uid, passage_uid).then(valueOfKey => {
-
-
-        //console.log('value of key after recal = ' + valueOfKey)
         if (valueOfKey) {
 
             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/child`).once('value', (snapshot) => {
@@ -4258,16 +4249,14 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
                         this_passage_score = valueOfKey;
                     })
                     .then(() => {
-                        //console.log('m_optimalityScore AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
                         m_optimalityScore = this_passage_score + 0;
                         firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({optimalityScore : m_optimalityScore})
                     })
                     valueOfKey = false;
 
                 }  else {
-                     //var optimalChild = '';
-                var optimalChildScore = 0;
 
+                var optimalChildScore = 0;
 
                 snapshot.forEach((elm) => {
                     optimalChild = elm.key;
@@ -4275,49 +4264,29 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
                     firebase.database().ref(`passages/${ravel_uid}/${elm.key}/currentPassageOptimality`).once('value', (snapshot) => {
 
                         valueOfKey = snapshot.val()
-                        //console.log('value of key ' + valueOfKey)
+
                         if (valueOfKey === false) {
-                            // do nothing and return
+
                         }
                         else  {
                             if (valueOfKey > optimalChildScore) {
 
                                 optimalChild = elm.key;
                                 optimalChildScore = valueOfKey;
-                                //console.log('in else if function...optimal child id: ' + optimalChild)
 
                             }
-
-                            //m_valueOfKey = elm.key;
                         }
                      })
-                    //  .then(() => {
-                    //     if (valueOfKey === false) {
-                    //         // do nothing and return
-                    //     }
-                    //     else if (valueOfKey > optimalChildScore) {
-                    //         optimalChild = elm.key;
-                    //         //m_valueOfKey = elm.key;
-                    //     } else {
-
-                    //     }
-
-                    //  })
-
-                    //console.log('AFTER in else if function...optimal child id: ' + optimalChild)
 
                 })
-                //console.log('AFTERrrr in else if function...optimal child id: ' + optimalChild)
-
-
 
                 firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({optimalChild:optimalChild })
                 .then(() => {
-                    //console.log('AFTERrrr inside then in else if function...optimal child id: ' + optimalChild)
+
                     getOptimality(ravel_uid, optimalChild).then((valueOfKey) => {
 
                     optimalChildIDScore = valueOfKey;
-                    //console.log('AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
+
 
                     })
                     .then(() => {
@@ -4336,11 +4305,7 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
 
                 })
 
-        //})
-
-
-
-                }
+            }
 
         })
 
@@ -4348,7 +4313,6 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
             valueOfKey = false;
         }
      })
-
 
             .then(() => {
                 return valueOfKey
@@ -5152,4 +5116,22 @@ export const getReportMessage = (reported_uid) => dispatch => {
             reject('Error fetching report message ')
         })
     })
+}
+
+// Get's all of the tags in the db in the order in which they appear in the db 
+// If a random list is needed, please message Vivienne 
+export const getAllGlobalTags = () => dispatch => {
+
+    return new Promise((resolve,reject) => {
+
+        firebase.database().ref(`global_tag_list`).once('value', (snapshot) => {
+            
+            resolve(snapshot.val())
+        })
+        .catch((error) => {
+            reject('Failed getting all tags')
+        })
+
+    })
+
 }
