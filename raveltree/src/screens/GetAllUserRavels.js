@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet, Image, ScrollView, TouchableNativeFeedback, TouchableOpacity, Linking } from 'react-native';
 import { getTheme } from 'react-native-material-kit';
 import {MKTextField, MKColor, MKButton} from 'react-native-material-kit';
-import * as actions from '../actions/backend';
+import * as actions from '../actions';
 //import {checkParticipantExistRavel, calculatePassageIndexField} from '../actions/backend';
 //import {userLogOff, createUserWithEmail, checkCurrentUserIsAdmin} from '../actions';
 //import { getAllRavelUser, getRavelMetaData, searchUserByName, loadInitialUserCreatedRavel, updateUserProfile, getUserProfile, getCurrentLoggedInUserUid, createStartRavel, userLogOff, getAllUserCreatedRavel} from '../actions';
@@ -19,7 +19,9 @@ class GetAllUserRavels extends Component {
 
     componentWillMount() {
         // var first_name = 'Vivienne';
-       var ravel_uid = '-L9fa1jAmx2q59i9WRAu';
+       var ravel_uid = '-L9v8lkORLyQ2XQq-7iI';
+       //this.props.getRavelMetaData(ravel_uid);
+       this.props.getAllGlobalTagScript();
        //this.props.banReportedRavel(ravel_uid);
        //this.props.deleteRavel(ravel_uid);
        //this.props.getRavelMetaData(ravel_uid);
@@ -70,7 +72,7 @@ class GetAllUserRavels extends Component {
         //var child_passage_uid = '-L8if3EcdET2zsHbnmKk';
         //this.props.forkPassage({ravel_uid, parent_passage_uid, passage_title, passage_body});
         //this.props.mergeTwoPassage({ravel_uid, parent_passage_uid, child_passage_uid });
-        this.props.addInitialPassage({ravel_uid, passage_title, passage_body});
+        //this.props.addInitialPassage({ravel_uid, passage_title, passage_body});
         //this.props.addPassage({ravel_uid, parent_passage_uid, passage_title, passage_body});
 
         //this.props.upVotePassage('-L6esHnah1z8XwnTXLfL');

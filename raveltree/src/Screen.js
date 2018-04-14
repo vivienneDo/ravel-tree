@@ -44,6 +44,7 @@ import Explore from './screens/Explore'
 import Ravel from './screens/Ravel'
 import Merge from './screens/Merge'
 import Refresh from './screens/Refresh'
+import GetAllUserRavels from './screens/GetAllUserRavels'
 
 import GraphicsTest from './screens/GraphicsTest';
 
@@ -66,8 +67,10 @@ class Screen extends Component {
                 firebase.auth().currentUser.delete().then(() => {
                   // Tab bar is still showing here though 
                   this.props.setActiveScreen ('Login'); 
+                  off() 
                 })
           }
+
         })
         this.setState ({loggedIn: true})
       } else {
@@ -120,6 +123,8 @@ class Screen extends Component {
         return <Merge {...this.props} />;
       case ('Refresh'):
         return <Refresh {...this.props} />;
+      case ('GetAllUserRavels'):
+        return <GetAllUserRavels {...this.props}/>
       default:
         return <Login {...this.props} />;
     }

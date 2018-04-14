@@ -111,6 +111,8 @@ class Login extends Component {
     // If the user has a profile, just send them to the Home screen. Otherwise,
     // send them to the CreateProfile screen.
     if (nextProps.currentUserProfile) {
+      //this.props.setActiveScreen('GetAllUserRavels')
+      // DO NOT PROMOTE CHANGES TO DEV 
       this.props.setActiveScreen ('Home');
     } else {
       this.props.setActiveScreen ('CreateProfile');
@@ -174,7 +176,8 @@ class Login extends Component {
       loggedIn: true,
     });
 
-    this.props.getCurrentUserProfile ();
+    
+    this.props.getCurrentUserProfile();
   }
 
   onFBAuthFailed() {
