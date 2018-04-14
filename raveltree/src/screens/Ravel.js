@@ -1,6 +1,6 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/27/18
-// Modified: 04/10/18
+// Modified: 04/14/18
 //
 // "Ravel" screen for RavelTree.
 //
@@ -10,7 +10,8 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  View, ScrollView
+  View, ScrollView,
+  Alert,
 } from 'react-native';
 
 import firebase from 'firebase';
@@ -209,6 +210,36 @@ class Ravel extends Component {
   // ---------------------------------------------------------------------------
   onPressConcept () {
     this.setState ({ showModal: 'concept' });
+  }
+
+  onPressReport () {
+    var ravelTitle = this.state.title;
+    var title = 'Confirm Report';
+    var message = 'Are you sure you want to report ' + ravelTitle + ' for violating RavelTree\'s Terms of Use? You can\'t undo this.';
+    var buttons = [
+      {text: 'Cancel', style: 'cancel'},
+      {text: 'Report', onPress: () => this.onPressConfirmReport ()},
+    ]
+    var options = { cancelable: false };
+    Alert.alert (title, message, buttons, options);
+  }
+
+  onPressConfirmReport () {
+    var ravelTitle = this.state.title;
+    var ravelID = this.state.ravelID;
+    var comment = '';
+    console.log ('Reporting ' + ravelTitle + '...');
+    this.props.reportRavel (ravelID, comment)
+    .then (() => {
+      var title = 'Thank You';
+      var message = 'Thanks for reporting a violation of RavelTree\'s Terms of Use.';
+      var buttons = [
+        {text: 'OK'},
+      ];
+      var options = { cancelable: false };
+      Alert.alert (title, message, buttons, options);
+    })
+    .catch ((error) => { console.error (error); });
   }
 
   onPressShare () {
@@ -516,7 +547,7 @@ class Ravel extends Component {
           </View>
           <View style={styles.links1}>
             <TextLink size={14} onPress={() => this.onPressConcept ()}>Concept</TextLink>
-            <TextLink size={14} onPress={() => this.onPressShare ()}>Share...</TextLink>
+            <TextLink size={14} onPress={() => this.onPressReport ()}>Report</TextLink>
           </View>
           <Divider />
           {this.showAdminLinks (this.state.mode == 'owned')}
