@@ -20,6 +20,7 @@ class GetAllUserRavels extends Component {
     componentWillMount() {
         // var first_name = 'Vivienne';
        var ravel_uid = '-L9fa1jAmx2q59i9WRAu';
+       
        //this.props.banReportedRavel(ravel_uid);
        //this.props.deleteRavel(ravel_uid);
        //this.props.getRavelMetaData(ravel_uid);
