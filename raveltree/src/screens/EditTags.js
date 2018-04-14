@@ -1,6 +1,6 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  04/09/18
-// Modified: 04/09/18
+// Modified: 04/14/18
 //
 // "Edit Tags" screen for RavelTree.
 //
@@ -10,7 +10,6 @@
 //   for each tag, which are used to determine how many tags will fit.
 //
 // TODO: Validate text input.
-// TODO: onChangeSearch (): Search existing tags.
 
 
 import React, { Component } from 'react';
@@ -42,28 +41,7 @@ const TAG_CLOUD_HEIGHT = (ROWS * Tag.HEIGHT_SMALL)        +
                          (ROWS * 2 * Tag.MARGIN_VERTICAL) +
                          (2 * TagCloud.PADDING_VERTICAL);
 
-// var tagQueue = [
-//   'Unconventional',
-//   'Mystery',
-//   'Comedy',
-//   'Postmodernism',
-//   'Epic',
-//   'Lorem',
-//   'Ipsum',
-//   'Dolor',
-//   'Sit',
-//   'Amet',
-//   'Long',
-//   'Time',
-//   'Ago',
-//   'In',
-//   'A',
-//   'Galaxy',
-//   'Far',
-//   'Away',
-// ];
-
-var tagQueue = TAGS;
+const TAG_PAD = 12;
 
 class EditTags extends Component {
   constructor (props) {
@@ -76,10 +54,14 @@ class EditTags extends Component {
       ravel: this.props.screenData.ravel,
       loading: true,
       search: '',
+      result: '',
+      loadingTags: false,
+      tags: [],
       tagsShowing: [],
       nextTagIndex: 0,
       tagsSelected: [],
       existingTags: [],
+      showTagCloud: false,
       tagCloudWidth: 0,
       tagCloudHeight: TAG_CLOUD_HEIGHT,
       //...this.props.screenData,
@@ -87,22 +69,47 @@ class EditTags extends Component {
   }
 
   componentDidMount () {
-      this.props.getRavelTags (this.props.screenData.ravel.ravel_uid)
-      .then (tags => {
-        // Set the existing tags as selected.
+    // Load the global tag list.
+    this.setState ({ loadingTags: true });
+    this.props.getAllGlobalTags ()
+    .then ((tags) => {
+
+      return new Promise ((resolve, reject) => {
+        var tagQueue = this.shuffle (Object.keys (tags));
         this.setState ({
-          existingTags: tags.slice (),
-          tagsSelected: tags.slice (),
-          loading: false,
+          tags: tagQueue,
+          showTagCloud: true,
+          loadingTags: false,
         });
+        //this.getTag ();
+        resolve ();
+      });
 
-        // Remove any existing tags from the tag queue.
-        tagQueue = tagQueue.filter (tag => !tags.includes (tag));
+    })
+    // Get the existing tags for this ravel.
+    .then (() => {
+      return this.props.getRavelTags (this.props.screenData.ravel.ravel_uid);
+    })
+    .then (tags => {
+      // Set the existing tags as selected.
+      this.setState ({
+        existingTags: tags.slice (),
+        tagsSelected: tags.slice (),
+        loadingTags: false,
+      });
 
-        // Start getting tags from the queue to show.
-        this.getTag ();
-      })
-      .catch (error => { console.log (error); });
+      // Remove any existing tags from the tag queue.
+      var tagQueue = this.state.tags;
+      tagQueue = tagQueue.filter (tag => !tags.includes (tag));
+      this.setState ({ tags: tagQueue });
+
+      // Start getting tags from the queue to show.
+      this.getTag ();
+    })
+    .catch ((error) => {
+      console.error (error);
+      this.setState ({ loadingTags: false });
+    });
   }
 
   onTagCloudLayout = (e) => {
@@ -115,9 +122,7 @@ class EditTags extends Component {
       tagCloudHeight: e.nativeEvent.layout.height,
     });
 
-    if (!this.state.loading) {
-      this.getTag ();
-    }
+    this.getTag ();
   }
 
   onTagLayout (width, height, name) {
@@ -132,7 +137,8 @@ class EditTags extends Component {
     totalWidth = (2 * TagCloud.MARGIN_HORIZONTAL * this.state.tagsShowing.length);
     totalHeight = (2 * Tag.MARGIN_VERTICAL) * this.state.tagsShowing.length;
 
-    if (totalWidth < this.state.tagCloudWidth && totalHeight < this.state.tagCloudHeight) {
+    //if (totalWidth < this.state.tagCloudWidth && totalHeight < this.state.tagCloudHeight) {
+    if (totalWidth < (this.state.tagCloudWidth - TAG_PAD) && (totalHeight < this.state.tagCloudHeight - TAG_PAD)) {
       this.getTag ();
     }
   }
@@ -141,9 +147,9 @@ class EditTags extends Component {
     // Render a tag, get dimensions, rinse, repeat.
     var tagsToShow = this.state.tagsShowing;
     var nextTagIndex = this.state.nextTagIndex;
-    if (tagQueue.length < (nextTagIndex + 1))
+    if (this.state.tags.length < (nextTagIndex + 1))
       return;
-    tagsToShow.push ({name: tagQueue [nextTagIndex], width: undefined, height: undefined});
+    tagsToShow.push ({name: this.state.tags [nextTagIndex], width: undefined, height: undefined});
     this.setState ({tagsShowing: tagsToShow, nextTagIndex: ++nextTagIndex});
   }
 
@@ -166,6 +172,88 @@ class EditTags extends Component {
     );
   }
 
+  showTagCloud () {
+    if (!this.state.showTagCloud) {
+      return this.showSearchResult ();
+    }
+
+    return (
+      <View style={styles.tagCloud} onLayout={this.onTagCloudLayout}>
+        <TagCloud
+          tags={this.state.tagsShowing.map (tag => tag.name)}
+          mode='add'
+          onTagLayout={(width, height, name) => this.onTagLayout (width, height, name)}
+          onSelectTag={tag => this.onSelectTag (tag)}
+        />
+      </View>
+    );
+  }
+
+  onSelectSearchResult () {
+    var tagName = this.state.result;
+    // When the search result is selected, mark it as selected.
+    var tagsSelected = this.state.tagsSelected;
+    tagsSelected.push (tagName);
+    this.setState ({tagsSelected: tagsSelected});
+
+    // Remove it from either the showing tags or the tag queue.
+    var tagsShowing = this.state.tagsShowing;
+    var index = tagsShowing.findIndex (x => x.name == tagName);
+    // If
+    if (index != -1) {
+      tagsShowing.splice (index, 1);
+      this.setState ({tagsShowing: tagsShowing});
+    }
+    else {
+      var tags = this.state.tags;
+      var index = tags.findIndex (x => x.name == tagName);
+      tags.splice (index, 1);
+      this.setState ({tags: tags});
+    }
+
+    // Stop showing the search results and resume showing the tag cloud.
+    this.setState ({
+      showTagCloud: true,
+      search: '',
+      result: '',
+    })
+  }
+
+  showSearchResult () {
+    console.log ('Showing search result...');
+    console.log (this.state.result);
+
+    if (!this.state.result.length) { return; }
+
+    return (
+      <View style={styles.searchResult}>
+        <Tag name={this.state.result}
+          toggleFormState={newState => this.onSelectSearchResult ()}
+          size={'small'}
+        >
+          {this.state.result}
+        </Tag>
+      </View>
+    );
+  }
+
+  shuffle (array) {
+    var i = array.length, temp, iRand;
+
+    // While there remain elements to shuffle...
+    while (0 !== i) {
+      // Pick a remaining element...
+      iRand = Math.floor(Math.random() * i);
+      i -= 1;
+
+      // And swap it with the current element.
+      temp = array[i];
+      array[i] = array[iRand];
+      array[iRand] = temp;
+    }
+    return array;
+  }
+
   onSelectTag (tagName) {
     // When a tag is selected, mark it as selected...
     var tagsSelected = this.state.tagsSelected;
@@ -177,6 +265,9 @@ class EditTags extends Component {
     var index = tagsShowing.findIndex (x => x.name == tagName);
     tagsShowing.splice (index, 1);
     this.setState ({tagsShowing: tagsShowing});
+
+    // Try to get another tag.
+    this.getTag ();
   }
 
   onRemoveTag (tagName) {
@@ -184,6 +275,11 @@ class EditTags extends Component {
     var tagsSelected = this.state.tagsSelected;
     tagsSelected.splice (tagsSelected.indexOf(tagName), 1);
     this.setState ({tagsSelected: tagsSelected});
+
+    // Re-add the tag to the tagQueue.
+    var tagQueue = this.state.tags;
+    tagQueue.push (tagName);
+    this.setState ({ tags: tagQueue });
   }
 
   // debugTagDimensions () {
@@ -195,11 +291,22 @@ class EditTags extends Component {
   // }
 
   onChangeSearch (query) {
+    this.setState ({ search: query });
+    if (query != '') {
+      this.setState ({ showTagCloud: false });
+    }
+    else {
+      this.setState ({ showTagCloud: true });
+    }
 
-    // TODO: Search existing tags
-
-    this.setState ({search: query});
+    // Search the tag queue.
+    var tags = this.state.tags;
+    var result = tags.includes (query) ? query : '';
+    console.log (result);
+    this.setState ({ result: result });
   }
+
+
 
   onPressBack () {
     this.props.navigateBack ();
@@ -261,14 +368,7 @@ class EditTags extends Component {
           </View>
           <Divider style={styles.divider}/>
         </View>
-        <View style={styles.tagCloud} onLayout={this.onTagCloudLayout}>
-          <TagCloud
-            tags={this.state.tagsShowing.map (tag => tag.name)}
-            mode='add'
-            onTagLayout={(width, height, name) => this.onTagLayout (width, height, name)}
-            onSelectTag={tag => this.onSelectTag (tag)}
-          />
-        </View>
+        {this.showTagCloud ()}
         <Divider />
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           <View style={styles.selectedTags}>
@@ -311,6 +411,13 @@ const styles = StyleSheet.create({
   tagCloud :{
     marginVertical: 11,
     height: TAG_CLOUD_HEIGHT,
+  },
+  searchResult :{
+    marginVertical: 11,
+    //height: TAG_CLOUD_HEIGHT,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
   scroll: {
     width: '100%',

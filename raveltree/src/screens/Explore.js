@@ -43,7 +43,7 @@ const TAG_CLOUD_HEIGHT = (ROWS * Tag.HEIGHT_SMALL)        +
                          (ROWS * 2 * Tag.MARGIN_VERTICAL) +
                          (2 * TagCloud.PADDING_VERTICAL);
 
-const TAG_PAD = 10;
+const TAG_PAD = 12;
 
 // const DEFAULT_SUGGESTED_TAGS = [
 //   'Unconventional',
@@ -177,7 +177,6 @@ class Explore extends Component<{}> {
             loading: false,
           });
           this.getTag ();
-          console.log (tags);
         })
         .catch ((error) => {
           console.error (error);
@@ -269,9 +268,6 @@ class Explore extends Component<{}> {
       tagCloudHeight: e.nativeEvent.layout.height,
     });
 
-    console.log ('Tag Cloud Width: ' + e.nativeEvent.layout.width);
-    console.log ('Tag Cloud Height: ' + e.nativeEvent.layout.height);
-
     this.getTag ();
   }
 
@@ -293,17 +289,12 @@ class Explore extends Component<{}> {
   }
 
   getTag () {
-
-    console.log ('Getting a tag...');
-    console.log ('This tag index: ' + this.state.nextTagIndex);
-
     // Render a tag, get dimensions, rinse, repeat.
     var tagsToShow = this.state.tagsShowing;
     var nextTagIndex = this.state.nextTagIndex;
     if (_.size (this.state.tags) < (nextTagIndex + 1)) { return; }
     tagsToShow.push ({name: this.state.tags [nextTagIndex], width: undefined, height: undefined});
     this.setState ({tagsShowing: tagsToShow, nextTagIndex: ++nextTagIndex});
-    console.log ('Next tag index: ' + (nextTagIndex + 1));
   }
 
   onSelectTag (tagName) {
@@ -319,7 +310,7 @@ class Explore extends Component<{}> {
     tagsShowing.splice (index, 1);
     this.setState ({tagsShowing: tagsShowing});
 
-    // Get another tag.
+    // Try to get another tag.
     this.getTag ();
   }
 
