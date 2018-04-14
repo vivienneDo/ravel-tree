@@ -114,9 +114,12 @@ class Explore extends Component<{}> {
   }
 
   searchRavelByCategory (category) {
+    console.log ("Searching ravels by category: " + category + "...");
     this.setState ({ loading: true });
     this.props.searchRavelByCategory (category)
     .then (results => {
+      console.log ("Results: ")
+      console.log (results);
       this.setState ({
         results: results,
         loading: false,
