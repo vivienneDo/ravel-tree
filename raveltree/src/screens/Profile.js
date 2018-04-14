@@ -1,6 +1,6 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/17/18
-// Modified: 04/11/18
+// Modified: 04/14/18
 //
 // Profile screen for RavelTree.
 //
@@ -30,6 +30,7 @@ import InputText from '../components/InputText'
 import Button from '../components/Button'
 import UserImage from '../components/UserImage'
 import IconLeaf from '../components/IconLeaf'
+import Loader from '../components/Loader'
 import ReportPopup from '../components/ReportPopup'
 
 import ImagePicker from 'react-native-image-picker';
@@ -57,11 +58,14 @@ class Profile extends Component {
 
     this.state = {
       mode: 'view',
+      loading: true,
       showReportModal: false,
       ...this.props.screenData,
     };
+  }
 
-    this.getUserProfile (userID);
+  componentDidMount () {
+    this.getUserProfile (this.props.screenData.userID);
   }
 
   componentWillReceiveProps (newProps) {
@@ -69,6 +73,7 @@ class Profile extends Component {
     var newID = newProps.screenData.userID;
     var oldID = this.props.screenData.userID;
     if (newID && newID != oldID) {
+      this.setState ({ loading: true });
       this.getUserProfile (newID);
     }
   }
@@ -94,6 +99,7 @@ class Profile extends Component {
         upvotesReceived: profile.upvotes,
       });
       this.props.setProfileIsOwned (isOwned);
+      this.setState ({ loading: false });
     })
     .catch (error => { console.log (error); });
   }
@@ -189,6 +195,14 @@ class Profile extends Component {
     } = this.props;
 
     console.log (this.state.userID);
+
+    if (this.state.loading) {
+      return (
+        <View style={styles.loader}>
+          <Loader size={'large'} />
+        </View>
+      )
+    }
 
     return (
       <View style={styles.layout}>
@@ -316,6 +330,12 @@ const styles = StyleSheet.create({
   layout: {
     flexDirection: 'column',
     alignItems: 'flex-start',
+    width: '100%',
+    height: '100%',
+  },
+  loader: {
+    alignItems: 'center',
+    justifyContent: 'center',
     width: '100%',
     height: '100%',
   },
