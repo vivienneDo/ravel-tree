@@ -1,6 +1,6 @@
 // Author:   Alex Aguirre
 // Created:  02/07/18
-// Modified: 04/10/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 04/14/18 by Frank Fusco (fr@nkfus.co)
 //
 // "Explore" screen for RavelTree.
 //
@@ -43,38 +43,32 @@ const TAG_CLOUD_HEIGHT = (ROWS * Tag.HEIGHT_SMALL)        +
                          (ROWS * 2 * Tag.MARGIN_VERTICAL) +
                          (2 * TagCloud.PADDING_VERTICAL);
 
-const TAG_PAD = 4;
+const TAG_PAD = 10;
 
-const DEFAULT_SUGGESTED_TAGS = [
-  'Unconventional',
-  'Mystery',
-  'Comedy',
-  'Postmodernism',
-  'Epic',
-  'YA',
-  'Encyclopedic',
-  'Experimental',
-  'Irony',
-  'Lorem',
-  'Ipsum',
-  'Dolor',
-  'Sit',
-  'Amet',
-  'Long',
-  'Time',
-  'Ago',
-  'In',
-  'A',
-  'Galaxy',
-  'Far',
-  'Away',
-];
-
-TEST_RAVELS = [
-  {ravel: 'The Tycoon', author: 'Malcolm Masters', users: 6, score: 311, concept: 'A tale of travel, deceit, and unannounced visitors. W.K. Smithson, young heir to a burgeoning furniture import/export empire, must decide between prosperity and his heart when he encounters Millie J., a waitress at an Indonesian beach bar.'},
-  {ravel: 'Lonely Conclusions', author: 'Anne Jensen', users: 2, score: 128, concept: 'A visitor to a yellow-cake uranium refinery finds that the international regulatory framework for nuclear development is sorely lacking in specificity.'},
-  {ravel: 'The End of the Road', author: 'Anne Jensen', users: 9, score: 90, concept: 'When the Joneses receive an unexpected visitor, they decide to take matters into their own hands.'},
-];
+// const DEFAULT_SUGGESTED_TAGS = [
+//   'Unconventional',
+//   'Mystery',
+//   'Comedy',
+//   'Postmodernism',
+//   'Epic',
+//   'YA',
+//   'Encyclopedic',
+//   'Experimental',
+//   'Irony',
+//   'Lorem',
+//   'Ipsum',
+//   'Dolor',
+//   'Sit',
+//   'Amet',
+//   'Long',
+//   'Time',
+//   'Ago',
+//   'In',
+//   'A',
+//   'Galaxy',
+//   'Far',
+//   'Away',
+// ];
 
 class Explore extends Component<{}> {
 
@@ -83,6 +77,7 @@ class Explore extends Component<{}> {
     this.state = {
       loading: false,
       active: DEFAULT_ACTIVE,
+      tags: [],
       tagsShowing: [],
       nextTagIndex: 0,
       tagCloudWidth: 0,
@@ -163,18 +158,36 @@ class Explore extends Component<{}> {
   }
 
   onSetFormState (newState) {
-    if (newState.active == 'category')
-    {
-      newState.search = 'fiction';
-      this.searchRavelByCategory ('fiction');
+    switch (newState.active) {
+      case 'category':
+        newState.search = 'fiction';
+        this.searchRavelByCategory ('fiction');
+        break;
+      case 'trending':
+        newState.search = undefined;
+        this.searchRavelByTrending ();
+        break;
+      case 'tag':
+        this.setState ({ loading: true });
+        this.props.getAllGlobalTags ()
+        .then ((tags) => {
+          var tags = this.shuffle (Object.keys (tags));
+          this.setState ({
+            tags: tags,
+            loading: false,
+          });
+          this.getTag ();
+          console.log (tags);
+        })
+        .catch ((error) => {
+          console.error (error);
+          this.setState ({ loading: false });
+        });
+        break;
+      default:
+        newState.search = undefined;
     }
-    if (newState.active == 'trending') {
-      newState.search = undefined;
-      this.searchRavelByTrending ();
-    }
-    else {
-      newState.search = undefined;
-    }
+
     newState.results = {};
     this.setState (newState);
   }
@@ -221,7 +234,7 @@ class Explore extends Component<{}> {
   }
 
   onSelectOption (option) {
-    // Clear results and populate the serch state with the category name.
+    // Clear results and populate the search state with the category name.
     this.setState ({
       results: {},
       search: option,
@@ -237,7 +250,7 @@ class Explore extends Component<{}> {
       <View style={styles.tagCloud} onLayout={this.onTagCloudLayout}>
         <TagCloud
           tags={this.state.tagsShowing.map (tag => tag.name)}
-          active={DEFAULT_SUGGESTED_TAGS}
+          active={this.state.tags}
           mode={'add'}
           onSelectTag={(tag) => this.onSelectTag (tag)}
           onTagLayout={(width, height, name) => this.onTagLayout (width, height, name)}
@@ -255,6 +268,9 @@ class Explore extends Component<{}> {
       tagCloudWidth: e.nativeEvent.layout.width,
       tagCloudHeight: e.nativeEvent.layout.height,
     });
+
+    console.log ('Tag Cloud Width: ' + e.nativeEvent.layout.width);
+    console.log ('Tag Cloud Height: ' + e.nativeEvent.layout.height);
 
     this.getTag ();
   }
@@ -277,13 +293,17 @@ class Explore extends Component<{}> {
   }
 
   getTag () {
+
+    console.log ('Getting a tag...');
+    console.log ('This tag index: ' + this.state.nextTagIndex);
+
     // Render a tag, get dimensions, rinse, repeat.
     var tagsToShow = this.state.tagsShowing;
     var nextTagIndex = this.state.nextTagIndex;
-    if (DEFAULT_SUGGESTED_TAGS.length < (nextTagIndex + 1))
-      return;
-    tagsToShow.push ({name: DEFAULT_SUGGESTED_TAGS [nextTagIndex], width: undefined, height: undefined});
+    if (_.size (this.state.tags) < (nextTagIndex + 1)) { return; }
+    tagsToShow.push ({name: this.state.tags [nextTagIndex], width: undefined, height: undefined});
     this.setState ({tagsShowing: tagsToShow, nextTagIndex: ++nextTagIndex});
+    console.log ('Next tag index: ' + (nextTagIndex + 1));
   }
 
   onSelectTag (tagName) {
@@ -298,6 +318,26 @@ class Explore extends Component<{}> {
     var index = tagsShowing.findIndex (x => x.name == tagName);
     tagsShowing.splice (index, 1);
     this.setState ({tagsShowing: tagsShowing});
+
+    // Get another tag.
+    this.getTag ();
+  }
+
+  shuffle (array) {
+    var i = array.length, temp, iRand;
+
+    // While there remain elements to shuffle...
+    while (0 !== i) {
+      // Pick a remaining element...
+      iRand = Math.floor(Math.random() * i);
+      i -= 1;
+
+      // And swap it with the current element.
+      temp = array[i];
+      array[i] = array[iRand];
+      array[iRand] = temp;
+    }
+    return array;
   }
 
   getPlaceholder () {
