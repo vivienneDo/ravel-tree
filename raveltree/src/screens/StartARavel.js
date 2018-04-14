@@ -1,6 +1,6 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/19/18
-// Modified: 03/27/18
+// Modified: 04/14/18
 //
 // "Start a Ravel" screen for RavelTree.
 
@@ -42,7 +42,7 @@ class StartARavel extends Component {
         category: DEFAULT_CATEGORY,
         passageLength: DEFAULT_PASSAGE_LENGTH,
         visibility: DEFAULT_VISIBILITY,
-        enableEmbeddedMultimedia: DEFAULT_ENABLE_EMBEDDED_MEDIA,
+        //enableEmbeddedMultimedia: DEFAULT_ENABLE_EMBEDDED_MEDIA,
         enablePassageComments: DEFAULT_ENABLE_PASSAGE_COMMENTS,
         restrictVotingToParticipants: DEFAULT_RESTRICT_VOTING_TO_PARTICIPANTS,
         concept: '',
@@ -128,9 +128,9 @@ class StartARavel extends Component {
     this.setState ({visibility: data});
   }
 
-  onChangeEnableEmbeddedMultimedia (data) {
-    this.setState ({enableEmbeddedMultimedia: data})
-  }
+  // onChangeEnableEmbeddedMultimedia (data) {
+  //   this.setState ({enableEmbeddedMultimedia: data})
+  // }
 
   onChangeEnablePassageComments (data) {
     this.setState ({enablePassageComments: data})
@@ -181,7 +181,7 @@ class StartARavel extends Component {
               options={[
                 {name: 'fiction', title: 'Fiction'},
                 {name: 'nonfiction', title: 'Nonfiction'},
-                {name: 'multimedia', title: 'Multimedia'},
+                /*{name: 'multimedia', title: 'Multimedia'},*/
                 {name: 'other', title: 'Other'},
               ]}
               active={this.state.category == '' ? DEFAULT_CATEGORY : this.state.category}
@@ -213,9 +213,9 @@ class StartARavel extends Component {
           </View>
           <View style={styles.toggles}>
             <View style={styles.toggleLabels}>
-              <View style={styles.toggleLabel}>
+              {/*<View style={styles.toggleLabel}>
                 <TextSans color={'#7F7F7F'}>Enable embedded multimedia</TextSans>
-              </View>
+              </View>*/}
               <View style={styles.toggleLabel}>
                 <TextSans color={'#7F7F7F'}>Enable passage comments</TextSans>
               </View>
@@ -224,13 +224,13 @@ class StartARavel extends Component {
               </View>
             </View>
             <View style={styles.toggleSwitches}>
-              <View style={styles.toggleSwitch}>
+              {/*<View style={styles.toggleSwitch}>
                 <Toggle
                   name="enableEmbeddedMultimedia"
                   active={this.state.enableEmbeddedMultimedia}
                   onChange={value => this.onChangeEnableEmbeddedMultimedia (value)}
                 />
-              </View>
+              </View>*/}
               <View style={styles.toggleSwitch}>
                 <Toggle
                   name="enablePassageComments"

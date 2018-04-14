@@ -225,7 +225,7 @@ class Explore extends Component<{}> {
           options={[
             {name: 'fiction', title: 'Fiction'},
             {name: 'nonfiction', title: 'Nonfiction'},
-            {name: 'multimedia', title: 'Multimedia'},
+            /*{name: 'multimedia', title: 'Multimedia'},*/
             {name: 'other', title: 'Other'},
           ]}
           active={'fiction'}
