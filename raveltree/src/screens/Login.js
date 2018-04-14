@@ -12,7 +12,7 @@
  * 03/05/18 - Modified by Frank Fusco (fr@nkfus.co)
  * 03/25/18 - VD Do - Changed Facebook button to use FBLoginComponent
  * 004/07/18 - VD Do - Please take this change when resolving conflicts!! Changed Facebook button to use FBLoginComponent
- * 04/13/18 - VD Do - binded onSuccess and onFail to fb component 
+ * 04/13/18 - VD Do - binded onSuccess and onFail to fb component
  */
 
 import React, { Component } from 'react';
@@ -170,7 +170,7 @@ class Login extends Component {
       email :  '',
       password: '',
       error: '',
-      loading: false,
+      loading: true,
       loggedIn: true,
     });
 
@@ -213,7 +213,7 @@ class Login extends Component {
           <View style = {styles.buttons}>
 
             {/* Facebook button */}
-            <FBLoginComponent 
+            <FBLoginComponent
                 onSuccess = {this.onFBAuthSuccess}
                 onFailure = {this.onFBAuthFailed}
             />

@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/07/18
-// Modified:  03/31/18
+// Modified:  04/13/18
 
 // Navigation bar component for RavelTree.
 //
@@ -136,7 +136,7 @@ class NavBar extends React.Component {
               </Text>
             </View>
           </Touchable>
-          <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Messages')}>
+          {/*<Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Messages')}>
             <View style={styles.menuItemInner}>
               <View>
                 <View style={styles.notification}>
@@ -151,8 +151,8 @@ class NavBar extends React.Component {
                 Messages
               </Text>
             </View>
-          </Touchable>
-          <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Notifications')}>
+          </Touchable>*/}
+          {/*<Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Notifications')}>
             <View style={styles.menuItemInner}>
               <View>
                 <View style={styles.notification}>
@@ -167,7 +167,7 @@ class NavBar extends React.Component {
                 Notifications
               </Text>
             </View>
-          </Touchable>
+          </Touchable>*/}
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Profile')}>
             <View style={styles.menuItemInner}>
               <UserImage {...this.props} userID={(this.props.currentUserProfile || {}).user_uid} size={30} active={this.props.activeTab === 'Profile'} disabled />
@@ -187,12 +187,13 @@ const styles = StyleSheet.create ({
     width: '100%',
     height: 50,
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     paddingTop: 3,
   },
   menuItem: {
-    width: '20%',
+    // width: '25%',
+    width: '33.33333333%',
     //height: '100%',
     flexDirection: 'column',
     justifyContent: 'center',

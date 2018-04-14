@@ -29,6 +29,9 @@ import TextSans from './TextSans'
 import IconUser from './IconUser'
 import IconLeaf from './IconLeaf'
 
+// Number of characters of ravel title to display on the card.
+TITLE_TRUNCATION = 36;
+
 class RavelCard extends Component<{}> {
   constructor (props, context) {
     super (props, context);
@@ -49,6 +52,11 @@ class RavelCard extends Component<{}> {
     this.props.navigateForward ('Ravel', 'Home', screenData);
   }
 
+  shorten (str, maxLen, separator = ' ') {
+    if (!str || str.length <= maxLen) { return str; }
+    return str.substr(0, str.lastIndexOf(separator, maxLen));
+  }
+
   render() {
     const {
       title,
@@ -62,6 +70,12 @@ class RavelCard extends Component<{}> {
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
+    var truncatedTitle = (title.length >= TITLE_TRUNCATION) ? (
+      this.shorten (title, TITLE_TRUNCATION) + '...'
+    ) : (
+      title
+    );
+
     return (
       <Touchable onPress={() => this.onPressCard ()} style = {styles.container}>
         <View style={styles.inner}>
@@ -70,7 +84,7 @@ class RavelCard extends Component<{}> {
               <View style={styles.userImage}>
                 <UserImage {...this.props} userID={author} size={26} />
               </View>
-              <TextSerif size={16}>{this.props.title}</TextSerif>
+              <TextSerif size={16}>{truncatedTitle}</TextSerif>
             </View>
             <View style={styles.right}>
               <View style={styles.users}>
