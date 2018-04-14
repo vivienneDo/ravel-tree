@@ -1858,28 +1858,34 @@ export const searchRavelByCategory = (category) => dispatch => {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_fiction").equalTo(true).once('value', snapshot => {
                     resolve (snapshot.val());
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
+                    
                 })
                 .catch((error) => {
                     reject ('Error searching for ravels.');
                 })
+                break;
             }
             case 'nonfiction': {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_nonfiction").equalTo(true).once('value', snapshot => {
                     resolve (snapshot.val());
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
+                    
                 })
                 .catch((error) => {
                     reject ('Error searching for ravels.');
                 })
+                break;
             }
             case 'other': {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_other").equalTo(true).once('value', snapshot => {
                     resolve (snapshot.val());
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
+                    
                 })
                 .catch((error) => {
                     reject ('Error searching for ravels.');
                 })
+                break;
             }
             default: {
                 firebase.database().ref(`/ravels/`).orderByChild("public_cat_other").equalTo(true).once('value', snapshot => {
