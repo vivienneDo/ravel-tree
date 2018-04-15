@@ -92,7 +92,7 @@ class PassagePopup extends React.Component {
     var message = 'Choose an action:';
     var buttons = [
       {text: 'Report', onPress: () => this.onPressReport ()},
-      {text: 'Share...', onPress: () => this.onPressShare ()},
+      /*{text: 'Share...', onPress: () => this.onPressShare ()},*/
       {text: 'Cancel', style: 'cancel'},
     ];
     var options = { cancelable: false };
