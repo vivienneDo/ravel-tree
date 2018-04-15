@@ -21,6 +21,7 @@ import {
   Text,
   View,
   ScrollView,
+  KeyboardAvoidingView,
   Button,
   TouchableOpacity,
   TouchableNativeFeedback
@@ -173,8 +174,10 @@ class Login extends Component {
       logoStyle
     } = styles;
 
+    //KAViewBehavior = Platform.OS === 'android' ? ____ : 'padding';
+
     return (
-      <View style={styles.layout}>
+      <KeyboardAvoidingView style={styles.layout} behavior={'padding'}>
         <Text style={styles.debug}>{this.state.error}</Text>
         <View style={styles.logo}>
           <RTLogoText size={60} />
@@ -203,7 +206,7 @@ class Login extends Component {
 
             {/* Google button */}
             <View style = {styles.google}>
-              <GLoginButton onPress = {this.onGButtonPress.bind(this)} />
+              {/*<GLoginButton onPress = {this.onGButtonPress.bind(this)} />*/}
             </View>
 
           </View>
@@ -219,7 +222,8 @@ class Login extends Component {
             Terms and Privacy
           </TextLink>
         </View>
-      </View>
+        <View style={{ height: 60 }} />
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -267,7 +271,8 @@ const styles = StyleSheet.create({
     width: 300,
   },
   google: {
-    paddingVertical: 15,
+    //paddingVertical: 15,
+    paddingVertical: 7,
     paddingHorizontal: 15,
     width: 330,
   },
