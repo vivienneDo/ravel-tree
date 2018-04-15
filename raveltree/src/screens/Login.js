@@ -21,6 +21,7 @@ import {
   Text,
   View,
   ScrollView,
+  KeyboardAvoidingView,
   Button,
   TouchableOpacity,
   TouchableNativeFeedback
@@ -173,8 +174,10 @@ class Login extends Component {
       logoStyle
     } = styles;
 
+    //KAViewBehavior = Platform.OS === 'android' ? ____ : 'padding';
+
     return (
-      <View style={styles.layout}>
+      <KeyboardAvoidingView style={styles.layout} behavior={'padding'}>
         <Text style={styles.debug}>{this.state.error}</Text>
         <View style={styles.logo}>
           <RTLogoText size={60} />
@@ -219,7 +222,8 @@ class Login extends Component {
             Terms and Privacy
           </TextLink>
         </View>
-      </View>
+        <View style={{ height: 60 }} />
+      </KeyboardAvoidingView>
     );
   }
 }

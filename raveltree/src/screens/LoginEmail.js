@@ -13,6 +13,7 @@ import {
   Text,
   View,
   ScrollView,
+  KeyboardAvoidingView,
   TextInput,
   TouchableOpacity,
   TouchableNativeFeedback,
@@ -90,8 +91,10 @@ class LoginEmail extends Component {
       fieldStyles
     } = styles;
 
+    //KAViewBehavior = Platform.OS === 'android' ? ____ : 'padding';
+
     return (
-      <View style={styles.layout}>
+      <KeyboardAvoidingView style={styles.layout} behavior={'padding'}>
 
         <LinkBack onPress={() => this.onPressBack ()}/>
 
@@ -100,6 +103,8 @@ class LoginEmail extends Component {
         </View>
 
         <View style={styles.content}>
+
+
 
           <View style={styles.inputs}>
             <View style={styles.input}>
@@ -150,7 +155,8 @@ class LoginEmail extends Component {
 
         </View>
 
-      </View>
+        <View style={{ height: 60 }} />
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -161,14 +167,15 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   logo: {
-    zIndex: 1,
-    position: 'absolute',
-    top: 0,
-    left: 0,
+    // zIndex: 0,
+    // position: 'absolute',
+    // top: 0,
+    // left: 0,
     width: '100%',
-    height: '100%',
+    //height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: 60,
   },
   content: {
     zIndex: 2,
