@@ -1,10 +1,8 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/13/18
-// Modified:  03/30/18
-
-// Standard passage popup component for RavelTree.
+// Modified:  04/09/18
 //
-// TODO: Make ravel, title, and ID touchable and link to respective content.
+// Standard passage popup component for RavelTree.
 
 import React, { Component } from 'react';
 import {
@@ -29,6 +27,7 @@ import ButtonReverse from './ButtonReverse'
 import Button from './Button'
 import ButtonPlus from './ButtonPlus'
 import VoteBar from './VoteBar'
+import ButtonComment from './ButtonComment'
 
 class PassagePopup extends React.Component {
   constructor (props, context) {
@@ -36,6 +35,8 @@ class PassagePopup extends React.Component {
     this.state = {
       loading: !this.props.passageMetaData,
       passageMetaData: this.props.passageMetaData || {},
+      ravelMetaData: this.props.ravelMetaData || {},
+      mode: this.props.mode || '',
     };
   }
 
@@ -49,18 +50,41 @@ class PassagePopup extends React.Component {
     }
   }
 
+  checkIfOnLastLevel () {
+    var levels = this.state.ravelMetaData.level_count;
+    var level = this.state.passageMetaData.level;
+    return level >= levels;
+  }
+
   onPressMerge () {
     // We have to navigate from the parent 'Ravel' screen.
-    var screenData = Object.assign({}, this.props.passageMetaData);
-    this.props.onNavigate ('Merge', screenData);
+    var screenData = Object.assign({}, {
+      passage: this.state.passageMetaData,
+      ravel:   this.state.ravelMetaData
+    });
+    this.props.onNavigateToMerge ('Merge', screenData);
   }
 
   onPressFork () {
-    // TODO
+    this.props.onSwitchToFork (this.props.passageMetaData);
   }
 
   onPressAdd () {
     this.props.onSwitchToAdd (this.props.passageMetaData);
+  }
+
+  onPressComment () {
+    var ravel = this.state.ravelMetaData;
+    var passage = this.state.passageMetaData;
+    var commentData = {
+      ravelID: ravel.ravel_uid,
+      ravelTitle: ravel.ravel_title,
+      passageID: passage.passage_uid,
+      passageIndex: passage.passage_index,
+      passageTitle: passage.passage_title,
+      author: passage.user_created,
+    }
+    this.props.onPressComment (commentData);
   }
 
   onPressEllipsis () {
@@ -68,7 +92,7 @@ class PassagePopup extends React.Component {
     var message = 'Choose an action:';
     var buttons = [
       {text: 'Report', onPress: () => this.onPressReport ()},
-      {text: 'Share...', onPress: () => this.onPressShare ()},
+      /*{text: 'Share...', onPress: () => this.onPressShare ()},*/
       {text: 'Cancel', style: 'cancel'},
     ];
     var options = { cancelable: false };
@@ -90,8 +114,20 @@ class PassagePopup extends React.Component {
   onPressConfirmReport () {
     var passageTitle = this.props.passageMetaData.passage_title;
     var ravelID = this.props.passageMetaData.ravel_uid;
+    var passageID = this.props.passageMetaData.passage_uid;
+    var comment = '';
     console.log ('Reporting ' + passageTitle + '...');
-    this.props.reportRavel (ravelID); // TODO: 'Report passage' functionality on backend.
+    this.props.reportPassage (ravelID, passageID, comment)
+    .then (() => {
+      var title = 'Thank You';
+      var message = 'Thanks for reporting a violation of RavelTree\'s Terms of Use.';
+      var buttons = [
+        {text: 'OK'},
+      ];
+      var options = { cancelable: false };
+      Alert.alert (title, message, buttons, options);
+    })
+    .catch ((error) => { console.error (error); });
   }
 
   onPressShare () {
@@ -99,12 +135,25 @@ class PassagePopup extends React.Component {
     console.log ('Opening share menu for ' + passageTitle);
   }
 
+  checkIfCanEdit () {
+    const mode = this.state.mode;
+    return (mode == 'participant') || (mode == 'owned')
+  }
+
+  showCommentButton () {
+    if (this.state.ravelMetaData.enable_comment) {
+      return (
+        <View style={styles.buttonComment}>
+          <ButtonComment onPress={() => this.onPressComment ()}/>
+        </View>
+      );
+    }
+  }
+
   render () {
     var passageMetaData = this.state.passageMetaData || {};
 
-    isActive = passageMetaData.isOptimal || this.props.isActive;
-
-    console.log (passageMetaData);
+    isActive = passageMetaData.optimal || this.props.isActive;
 
     var ravel = passageMetaData.ravel_title;
     var passageIndex = passageMetaData.passage_index;
@@ -136,20 +185,28 @@ class PassagePopup extends React.Component {
           </View>
         </ScrollView>
         <View style={styles.buttons}>
-          <ButtonReverse title={'Merge...'} width={0.30 * width} onPress={() => this.onPressMerge ()} />
-          <ButtonPlus size={36} onPress={() => this.onPressAdd ()} />
-          <Button title={'Fork'} width={0.30 * width} onPress={() => this.onPressFork ()} />
+          <ButtonReverse title={'Merge...'} width={0.30 * width} disabled={this.checkIfOnLastLevel () || !this.checkIfCanEdit ()} onPress={() => this.onPressMerge ()} />
+          <ButtonPlus size={36} disabled={!this.checkIfCanEdit ()} onPress={() => this.onPressAdd ()} />
+          <Button title={'Fork'} width={0.30 * width} disabled={!this.checkIfCanEdit ()} onPress={() => this.onPressFork ()} />
         </View>
         <View style={styles.bottom}>
-          <Touchable onPress={() => this.onPressEllipsis ()}>
-            <TextSans size={40} color={'#95989A'}>...</TextSans>
-          </Touchable>
+          <View style={styles.bottomLeft}>
+            <Touchable onPress={() => this.onPressEllipsis ()}>
+              <View>
+                <TextSans size={40} color={'#95989A'}>...</TextSans>
+              </View>
+            </Touchable>
+            {this.showCommentButton ()}
+          </View>
           <View style={styles.voteBar}>
             <VoteBar
-              upvotes={passageMetaData.passage_upvote}
-              downvotes={passageMetaData.passage_downvote}
+              {...this.props}
               ravelID={passageMetaData.ravel_uid}
               passageID={passageMetaData.passage_uid}
+              upvotes={passageMetaData.passage_upvote}
+              downvotes={passageMetaData.passage_downvote}
+              votes={passageMetaData.passage_combined_vote}
+              disabled={!this.checkIfCanEdit ()}
             />
           </View>
         </View>
@@ -201,6 +258,13 @@ const styles = StyleSheet.create ({
     alignItems: 'center',
     paddingHorizontal: 17,
   },
+  bottomLeft: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
+  buttonComment: {
+    marginLeft: 10,
+  },
   voteBar: {
     top: 10,
   },
@@ -208,19 +272,10 @@ const styles = StyleSheet.create ({
 
 const mapStateToProps = (state) => {
   const {
-    activeScreen,
-    previousScreens,
-    screenData,
-  } = state.navigation;
-
-  const {
     currentUserProfile,
   } = state.current_user;
 
   return {
-    activeScreen,
-    previousScreens,
-    screenData,
     currentUserProfile
   };
 }

@@ -1,3 +1,6 @@
+/**
+ * - 04/13/18 - VD Do - Added a listener when user if auth() to ban them if they exist in ban list 
+ */
 import React, { Component } from 'react';
 import {
   Platform,
@@ -32,26 +35,40 @@ import Profile from './screens/Profile';
 import CreateProfile from './screens/CreateProfile';
 import StartARavel from './screens/StartARavel'
 import AddTags from './screens/AddTags'
+import EditTags from './screens/EditTags'
 import InviteParticipants from './screens/InviteParticipants'
+import EditParticipants from './screens/EditParticipants'
 import Splash from './screens/Splash'
 import Home from './screens/Home'
 import Explore from './screens/Explore'
 import Ravel from './screens/Ravel'
 import Merge from './screens/Merge'
+import Refresh from './screens/Refresh'
 
 import GraphicsTest from './screens/GraphicsTest';
 
 class Screen extends Component {
   constructor (props: any, context: any) {
     super (props, context);
-    this.state = {loggedIn: null};
+    this.state = {
+      loggedIn: null,
+    };
     this.props.setShowNavBar (false);
   }
 
   componentWillMount() {
     firebase.auth().onAuthStateChanged((user) => {
-      console.log('Authentication state is: ' + (user ? 'True' : 'False'));
-      if (user) {
+      console.log('Authentication state is: ' + (user ? 'True' : 'False'));      
+      if (user) { 
+        firebase.database().ref(`user_report_list/${user.uid}`).on('value', (snapshot) => {
+          if(snapshot.exists() && snapshot.val() === true) {         
+              alert(user.email + ': You have been removed due to a violation of RavelTrees terms of use')               
+                firebase.auth().currentUser.delete().then(() => {
+                  // Tab bar is still showing here though 
+                  this.props.setActiveScreen ('Login'); 
+                })
+          }
+        })
         this.setState ({loggedIn: true})
       } else {
         this.setState ({loggedIn: false})
@@ -60,9 +77,6 @@ class Screen extends Component {
   }
 
   showScreen () {
-    //return <InviteParticipants {...this.props} />;
-    //return <Merge {...this.props} />;
-    //return <Ravel {...this.props} />;
     switch (this.props.activeScreen) {
       case ('Splash'):
         return <Splash {...this.props} />;
@@ -94,12 +108,18 @@ class Screen extends Component {
         return <StartARavel {...this.props} />;
       case ('AddTags'):
         return <AddTags {...this.props} />;
+      case ('EditTags'):
+        return <EditTags {...this.props} />;
       case ('InviteParticipants'):
         return <InviteParticipants {...this.props} />;
+      case ('EditParticipants'):
+        return <EditParticipants {...this.props} />;
       case ('Ravel'):
         return <Ravel {...this.props} />;
       case ('Merge'):
         return <Merge {...this.props} />;
+      case ('Refresh'):
+        return <Refresh {...this.props} />;
       default:
         return <Login {...this.props} />;
     }
@@ -109,7 +129,7 @@ class Screen extends Component {
     if (this.props.showNavBar) {
       return (
         <View style={styles.navBar}>
-          <NavBar {...this.props} />
+          <NavBar {...this.props} /*profileIsOwned={this.state.profileIsOwned}*/ />
         </View>
       );
     }

@@ -1,6 +1,6 @@
-// Author: Alex Aguirre
-// Created: 02/07/18
-// Modified: 03/24/18 by Frank Fusco (fr@nkfus.co)
+// Author:   Alex Aguirre
+// Created:  02/07/18
+// Modified: 04/14/18 by Frank Fusco (fr@nkfus.co)
 //
 // "Explore" screen for RavelTree.
 //
@@ -33,6 +33,7 @@ import TagCloud from '../components/TagCloud';
 import Tag from '../components/Tag';
 import OptionSet from '../components/OptionSet';
 import LinkBack from '../components/LinkBack'
+import Loader from '../components/Loader'
 
 const DEFAULT_ACTIVE = 'title';
 
@@ -42,45 +43,41 @@ const TAG_CLOUD_HEIGHT = (ROWS * Tag.HEIGHT_SMALL)        +
                          (ROWS * 2 * Tag.MARGIN_VERTICAL) +
                          (2 * TagCloud.PADDING_VERTICAL);
 
-const TAG_PAD = 4;
+const TAG_PAD = 12;
 
-const DEFAULT_SUGGESTED_TAGS = [
-  'Unconventional',
-  'Mystery',
-  'Comedy',
-  'Postmodernism',
-  'Epic',
-  'YA',
-  'Encyclopedic',
-  'Experimental',
-  'Irony',
-  'Lorem',
-  'Ipsum',
-  'Dolor',
-  'Sit',
-  'Amet',
-  'Long',
-  'Time',
-  'Ago',
-  'In',
-  'A',
-  'Galaxy',
-  'Far',
-  'Away',
-];
-
-TEST_RAVELS = [
-  {ravel: 'The Tycoon', author: 'Malcolm Masters', users: 6, score: 311, concept: 'A tale of travel, deceit, and unannounced visitors. W.K. Smithson, young heir to a burgeoning furniture import/export empire, must decide between prosperity and his heart when he encounters Millie J., a waitress at an Indonesian beach bar.'},
-  {ravel: 'Lonely Conclusions', author: 'Anne Jensen', users: 2, score: 128, concept: 'A visitor to a yellow-cake uranium refinery finds that the international regulatory framework for nuclear development is sorely lacking in specificity.'},
-  {ravel: 'The End of the Road', author: 'Anne Jensen', users: 9, score: 90, concept: 'When the Joneses receive an unexpected visitor, they decide to take matters into their own hands.'},
-];
+// const DEFAULT_SUGGESTED_TAGS = [
+//   'Unconventional',
+//   'Mystery',
+//   'Comedy',
+//   'Postmodernism',
+//   'Epic',
+//   'YA',
+//   'Encyclopedic',
+//   'Experimental',
+//   'Irony',
+//   'Lorem',
+//   'Ipsum',
+//   'Dolor',
+//   'Sit',
+//   'Amet',
+//   'Long',
+//   'Time',
+//   'Ago',
+//   'In',
+//   'A',
+//   'Galaxy',
+//   'Far',
+//   'Away',
+// ];
 
 class Explore extends Component<{}> {
 
   constructor (props) {
     super (props);
     this.state = {
+      loading: false,
       active: DEFAULT_ACTIVE,
+      tags: [],
       tagsShowing: [],
       nextTagIndex: 0,
       tagCloudWidth: 0,
@@ -90,20 +87,56 @@ class Explore extends Component<{}> {
     };
   }
 
-  componentWillReceiveProps (newProps) {
-    if (this.state.active == 'title' && newProps.ravel_title_search) {
-      this.setState ({ results: newProps.ravel_title_search });
-    }
-    if (this.state.active == 'tag' && newProps.ravel_tag_search) {
-      this.setState ({ results: newProps.ravel_tag_search });
-    }
-    if (this.state.active == 'category' && newProps.ravel_category_search) {
-      this.setState ({ results: newProps.ravel_category_search });
-    }
-  }
-
   onPressBack () {
     this.props.navigateBack ();
+  }
+
+  searchRavelByTitle (text) {
+    this.setState ({ loading: true });
+    this.props.searchRavelByTitle (text)
+    .then (results => {
+      this.setState ({
+        results: results,
+        loading: false,
+      });
+    })
+  }
+
+  searchRavelByTag (tagArray) {
+    this.setState ({ loading: true });
+    this.props.searchRavelByTag (tagArray)
+    .then (results => {
+      this.setState ({
+        results: results,
+        loading: false,
+      });
+    })
+  }
+
+  searchRavelByCategory (category) {
+    console.log ("Searching ravels by category: " + category + "...");
+    this.setState ({ loading: true });
+    this.props.searchRavelByCategory (category)
+    .then (results => {
+      console.log ("Results: ")
+      console.log (results);
+      this.setState ({
+        results: results,
+        loading: false,
+      });
+    })
+  }
+
+  searchRavelByTrending () {
+    this.setState ({ loading: true });
+    this.props.searchRavelByTrending ().
+    then (results => {
+      console.log (results);
+      this.setState ({
+        results: results,
+        loading: false,
+      });
+    })
   }
 
   onChangeText (text) {
@@ -111,16 +144,16 @@ class Explore extends Component<{}> {
 
     switch (this.state.active) {
       case 'title':
-        this.props.searchRavelByTitle (text);
+        this.searchRavelByTitle (text);
         break;
       case 'tag':
-        this.props.searchRavelByTag ([text]);
+        this.searchRavelByTag ([text]);
         break;
       case 'category':
-        this.props.searchRavelByCategory (text);
+        this.searchRavelByCategory (text);
         break;
       case 'trending':
-        // TODO
+        this.searchRavelByTrending ();
         break;
       default:
         console.log ('Something\'s wrong.');
@@ -128,6 +161,36 @@ class Explore extends Component<{}> {
   }
 
   onSetFormState (newState) {
+    switch (newState.active) {
+      case 'category':
+        newState.search = 'fiction';
+        this.searchRavelByCategory ('fiction');
+        break;
+      case 'trending':
+        newState.search = undefined;
+        this.searchRavelByTrending ();
+        break;
+      case 'tag':
+        this.setState ({ loading: true });
+        this.props.getAllGlobalTags ()
+        .then ((tags) => {
+          var tags = this.shuffle (Object.keys (tags));
+          this.setState ({
+            tags: tags,
+            loading: false,
+          });
+          this.getTag ();
+        })
+        .catch ((error) => {
+          console.error (error);
+          this.setState ({ loading: false });
+        });
+        break;
+      default:
+        newState.search = undefined;
+    }
+
+    newState.results = {};
     this.setState (newState);
   }
 
@@ -162,7 +225,7 @@ class Explore extends Component<{}> {
           options={[
             {name: 'fiction', title: 'Fiction'},
             {name: 'nonfiction', title: 'Nonfiction'},
-            {name: 'multimedia', title: 'Multimedia'},
+            /*{name: 'multimedia', title: 'Multimedia'},*/
             {name: 'other', title: 'Other'},
           ]}
           active={'fiction'}
@@ -173,7 +236,14 @@ class Explore extends Component<{}> {
   }
 
   onSelectOption (option) {
-    // TODO: Search / Refine search.
+    // Clear results and populate the search state with the category name.
+    this.setState ({
+      results: {},
+      search: option,
+    });
+
+    // Execute the search.
+    this.searchRavelByCategory (option);
   }
 
   showTagCloud (show) {
@@ -182,7 +252,7 @@ class Explore extends Component<{}> {
       <View style={styles.tagCloud} onLayout={this.onTagCloudLayout}>
         <TagCloud
           tags={this.state.tagsShowing.map (tag => tag.name)}
-          active={DEFAULT_SUGGESTED_TAGS}
+          active={this.state.tags}
           mode={'add'}
           onSelectTag={(tag) => this.onSelectTag (tag)}
           onTagLayout={(width, height, name) => this.onTagLayout (width, height, name)}
@@ -225,9 +295,8 @@ class Explore extends Component<{}> {
     // Render a tag, get dimensions, rinse, repeat.
     var tagsToShow = this.state.tagsShowing;
     var nextTagIndex = this.state.nextTagIndex;
-    if (DEFAULT_SUGGESTED_TAGS.length < (nextTagIndex + 1))
-      return;
-    tagsToShow.push ({name: DEFAULT_SUGGESTED_TAGS [nextTagIndex], width: undefined, height: undefined});
+    if (_.size (this.state.tags) < (nextTagIndex + 1)) { return; }
+    tagsToShow.push ({name: this.state.tags [nextTagIndex], width: undefined, height: undefined});
     this.setState ({tagsShowing: tagsToShow, nextTagIndex: ++nextTagIndex});
   }
 
@@ -235,11 +304,34 @@ class Explore extends Component<{}> {
     // Populate the serch bar with the tag name.
     this.setState ({search: tagName});
 
+    // Execute the search.
+    this.searchRavelByTag ([tagName]);
+
     // Stop showing the tag in the tag cloud.
     var tagsShowing = this.state.tagsShowing;
     var index = tagsShowing.findIndex (x => x.name == tagName);
     tagsShowing.splice (index, 1);
     this.setState ({tagsShowing: tagsShowing});
+
+    // Try to get another tag.
+    this.getTag ();
+  }
+
+  shuffle (array) {
+    var i = array.length, temp, iRand;
+
+    // While there remain elements to shuffle...
+    while (0 !== i) {
+      // Pick a remaining element...
+      iRand = Math.floor(Math.random() * i);
+      i -= 1;
+
+      // And swap it with the current element.
+      temp = array[i];
+      array[i] = array[iRand];
+      array[iRand] = temp;
+    }
+    return array;
   }
 
   getPlaceholder () {
@@ -255,19 +347,29 @@ class Explore extends Component<{}> {
     }
   }
 
-  getRavels () {
+  showLoader () {
+    return (
+      <View style={styles.loader}>
+        <Loader />
+      </View>
+    );
+  }
+
+  showRavels () {
     if (!this.state.results) { return; }
     var results = Object.values (this.state.results);
 
     return (
       <View style={{width: '100%'}}>
         {results.map ((ravel) =>
-          <View key={ravel} style={styles.ravelCard}>
+          <View key={ravel.ravel_uid} style={styles.ravelCard}>
             <RavelCard
-              ravel={ravel.ravel_title}
-              author={ravel.author}
+              key={ravel.ravel_uid}
+              title={ravel.ravel_title}
+              ravelID={ravel.ravel_uid}
+              author={ravel.user_created}
               authorImage={ravel.user_created_photoURL}
-              users={ravel.m_ravel_participants.length}
+              users={_.size (ravel.m_ravel_participants) + 1}
               score={ravel.ravel_points}
               concept={ravel.ravel_concept}
               {...this.props}
@@ -287,7 +389,7 @@ class Explore extends Component<{}> {
 
     var scrollContentStyles = [
       styles.scrollContent,
-      this.state.active == 'trending' ? {paddingTop: 0} : undefined
+      this.state.active == 'trending' || this.state.active == 'category' ? {paddingTop: 0} : undefined
     ]
 
     return (
@@ -325,17 +427,17 @@ class Explore extends Component<{}> {
         {/* By Category: OptionSet */}
         {this.showOptionSet (this.state.active == 'category')}
 
-        {this.showDivider (this.state.active != 'trending')}
+        {this.showDivider (this.state.active != 'trending' && this.state.active != 'category')}
 
         {/* User image, profile name, search for a concept, and new ravels */}
-        {this.showInputSearch (this.state.active != 'trending')}
+        {this.showInputSearch (this.state.active != 'trending' && this.state.active != 'category')}
 
-        {this.showDivider (this.state.active != 'trending')}
+        {this.showDivider (this.state.active != 'trending' && this.state.active != 'category')}
 
         <ScrollView style={styles.scroll} contentContainerStyle={scrollContentStyles}>
 
           {/* Related ravel cards will pop up here */}
-          {this.getRavels ()}
+          {this.state.loading ? this.showLoader () : this.showRavels ()}
 
         </ScrollView>
 
@@ -384,6 +486,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingHorizontal: 17,
     paddingVertical: 17,
+  },
+  loader: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   ravelCard: {
     marginBottom: 20,

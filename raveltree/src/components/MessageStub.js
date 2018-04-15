@@ -63,21 +63,25 @@ export default class MessageStub extends React.Component {
 
     return (
       <Touchable onPress={() => this.onPressStub ()} style={layoutStyles}>
-        <View style={dotStyles} />
-        <View style={styles.content}>
-          <View style={styles.head}>
-            <View style={styles.userImage}>
-              <UserImage {...this.props} size={26} />
+        <View style={styles.inner}>
+          <View style={dotStyles} />
+          <View style={styles.content}>
+            <View style={styles.head}>
+              <View style={styles.userImage}>
+                <UserImage {...this.props} size={26} />
+              </View>
+              <Touchable onPress={() => this.onPressUser ()}>
+                <View>
+                  <TextSans bold size={14}>{this.props.user}</TextSans>
+                </View>
+              </Touchable>
+              <TextSans size={14}> says:</TextSans>
             </View>
-            <Touchable onPress={() => this.onPressUser ()}>
-              <TextSans bold size={14}>{this.props.user}</TextSans>
-            </Touchable>
-            <TextSans size={14}> says:</TextSans>
-          </View>
-          <View style={styles.message}>
-            <Text numberOfLines={2} style={styles.messageText}>
-              {this.props.message}
-            </Text>
+            <View style={styles.message}>
+              <Text numberOfLines={2} style={styles.messageText}>
+                {this.props.message}
+              </Text>
+            </View>
           </View>
         </View>
       </Touchable>
@@ -93,6 +97,11 @@ const styles = StyleSheet.create ({
     height: 80,
     borderRadius: 20,
     borderWidth: 2,
+  },
+  inner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
   },
   active: {
     borderColor: '#2E8AF7',

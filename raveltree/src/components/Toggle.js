@@ -71,7 +71,8 @@ export default class Toggle extends React.Component {
         testID={testID}
         disabled={disabled}
         onPress={this.handleToggle}
-        style={styles.layout}>
+        style={styles.layout}
+      >
         <View style={backgroundStyles}>
           <View style={switchStyles} />
         </View>

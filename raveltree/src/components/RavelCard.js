@@ -1,6 +1,6 @@
 // Author:   Alex Aguirre
 // Created:  02/05/18
-// Modified: 03/09/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 04/10/18 by Frank Fusco (fr@nkfus.co)
 //
 // "Ravel Card" component for RavelTree.
 //
@@ -15,7 +15,8 @@ import {
   Text,
   View,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  TouchableNativeFeedback
 } from 'react-native';
 
 import { connect } from 'react-redux'
@@ -27,6 +28,9 @@ import TextSerif from './TextSerif'
 import TextSans from './TextSans'
 import IconUser from './IconUser'
 import IconLeaf from './IconLeaf'
+
+// Number of characters of ravel title to display on the card.
+TITLE_TRUNCATION = 36;
 
 class RavelCard extends Component<{}> {
   constructor (props, context) {
@@ -45,12 +49,17 @@ class RavelCard extends Component<{}> {
 
   onPressCard () {
     var screenData = Object.assign ({}, {ravelID: this.props.ravelID});
-    this.props.navigateForward ('Ravel', this.constructor.name, screenData);
+    this.props.navigateForward ('Ravel', 'Home', screenData);
+  }
+
+  shorten (str, maxLen, separator = ' ') {
+    if (!str || str.length <= maxLen) { return str; }
+    return str.substr(0, str.lastIndexOf(separator, maxLen));
   }
 
   render() {
     const {
-      ravel,
+      title,
       ravelID,
       author,
       authorImage,
@@ -61,36 +70,44 @@ class RavelCard extends Component<{}> {
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
+    var truncatedTitle = (title.length >= TITLE_TRUNCATION) ? (
+      this.shorten (title, TITLE_TRUNCATION) + '...'
+    ) : (
+      title
+    );
+
     return (
       <Touchable onPress={() => this.onPressCard ()} style = {styles.container}>
-        <View style={styles.head}>
-          <View style={styles.left}>
-            <View style={styles.userImage}>
-              <UserImage {...this.props} profile={this.state.profile} /*photoURL={authorImage}*/ size={26} />
+        <View style={styles.inner}>
+          <View style={styles.head}>
+            <View style={styles.left}>
+              <View style={styles.userImage}>
+                <UserImage {...this.props} userID={author} size={26} />
+              </View>
+              <TextSerif size={16}>{truncatedTitle}</TextSerif>
             </View>
-            <TextSerif size={16}>{this.props.ravel}</TextSerif>
+            <View style={styles.right}>
+              <View style={styles.users}>
+                <View style={styles.hpad}>
+                  <IconUser size={20} />
+                </View>
+                <View style={styles.hpad}>
+                  <TextSerif size={16}>{this.props.users}</TextSerif>
+                </View>
+              </View>
+              <View style={styles.score}>
+                <View style={styles.hpad}>
+                  <IconLeaf size={20} />
+                </View>
+                <View style={styles.hpad}>
+                  <TextSerif size={16}>{this.props.score}</TextSerif>
+                </View>
+              </View>
+            </View>
           </View>
-          <View style={styles.right}>
-            <View style={styles.users}>
-              <View style={styles.hpad}>
-                <IconUser size={20} />
-              </View>
-              <View style={styles.hpad}>
-                <TextSerif size={16}>{this.props.users}</TextSerif>
-              </View>
-            </View>
-            <View style={styles.score}>
-              <View style={styles.hpad}>
-                <IconLeaf size={20} />
-              </View>
-              <View style={styles.hpad}>
-                <TextSerif size={16}>{this.props.score}</TextSerif>
-              </View>
-            </View>
+          <View style={styles.concept}>
+            <TextSans size={16} color={'#7F7F7F'}>{this.props.concept}</TextSans>
           </View>
-        </View>
-        <View style={styles.concept}>
-          <TextSans size={16} color={'#7F7F7F'}>{this.props.concept}</TextSans>
         </View>
       </Touchable>
     );
@@ -106,6 +123,9 @@ const styles = StyleSheet.create({
       paddingTop: 5,
       paddingBottom: 10,
       paddingHorizontal: 17,
+    },
+    inner: {
+
     },
     head: {
       flexDirection: 'row',

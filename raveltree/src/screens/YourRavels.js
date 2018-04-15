@@ -127,6 +127,7 @@ class YourRavels extends Component {
 
     return (
       Object.values (this.state.userCreatedRavels).map (ravel => {
+        if (!ravel.ravel_uid) { return; }
         return this.renderRavelStub (ravel, this.props.getCurrentLoggedInUserUid ());
       })
     );
@@ -147,7 +148,7 @@ class YourRavels extends Component {
 
     return (
       Object.values (this.state.ravelsIn).map (ravel => {
-        return this.renderRavelStub (ravel);
+        return this.renderRavelStub (ravel, ravel.user_created);
       })
     );
   }
@@ -167,7 +168,7 @@ class YourRavels extends Component {
 
     return (
       Object.values (this.state.ravelsInvited).map (ravel => {
-        return this.renderRavelStub (ravel);
+        return this.renderRavelStub (ravel, ravel.user_created);
       })
     );
   }

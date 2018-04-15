@@ -1,27 +1,13 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/23/18
-// Modified: 03/27/18
+// Modified: 04/09/18
 //
 // "Invite Participants" screen for RavelTree.
 //
 // - 'mode' prop denotes whether this is part of the ravel creation process or
 //   later editing.
 //
-// TODO: onPressByName (): Invite by name functionality
 // TODO: onPressByLink (): Invite by link functionality (Would like to have)
-// TODO: onPressStartRavel (): Save ravel to database.
-
-const TEST_PARTICIPANTS = [
-  // {name: 'Adam Jesper', score: 9821},
-  // {name: 'Brad Hooper', score: 3219},
-  // {name: 'Anne Jensen', score: undefined},
-
-  // {0: "Vi0AKa9k5kMoRngvbMs3K4fFw373"},
-  // {1: "EG4lyDlPz4QyM1Ezi89ICY5V4Ok1"},
-  "Vi0AKa9k5kMoRngvbMs3K4fFw373",
-  "EG4lyDlPz4QyM1Ezi89ICY5V4Ok1",
-];
-
 
 import React, { Component } from 'react';
 import {
@@ -250,7 +236,6 @@ class InviteParticipants extends Component {
     // Get the array of participants, convert it to an array of userIDs only,
     // and push the current user's ID to it.
     var participants = this.state.participants.map (participant => participant.user_uid);
-    //participants.push (firebase.auth ().currentUser.uid);
 
     this.setState ({ readyToNavigate: true });
 
@@ -258,7 +243,7 @@ class InviteParticipants extends Component {
       ravel_title: this.state.ravelName,
       ravel_category: this.state.category,
       passage_length: this.state.passageLength,
-      visibility: this.state.visibility,
+      visibility: this.state.visibility == 'public' ? true : false,
       enable_voting: !this.state.restrictVotingToParticipants,
       enable_comment: this.state.enablePassageComments,
       ravel_concept: this.state.concept,

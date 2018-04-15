@@ -69,6 +69,23 @@ export const setPreviousScreen = (screen) => {
 }
 
 /**
+ * @param: nothing
+ * @returns:
+ *  mapStateToProps:
+ *    state.previousScreens
+ * actions: Resets the array of previous screens to its initial state.
+ *
+ */
+export const resetPreviousScreens = () => {
+ return (dispatch) => {
+   console.log ("Resetting previous screens.");
+   dispatch ({
+     type: types.RESET_PREVIOUS_SCREENS,
+   });
+ };
+}
+
+/**
  * @param: Next screen, Current screen, Screen-related data to pass
  * @returns:
  *  mapStateToProps:
@@ -171,6 +188,58 @@ export const navigateBack = () => {
 
 
 /**
+ * @param: Current screen, Screen-related data to pass
+ * @returns:
+ *  mapStateToProps:
+ * actions: "Refreshes" the specified screen by navigating away and back.
+ *
+ */
+export const refresh = (current, screenData = {}) => {
+  return (dispatch) => {
+    console.log ("Refreshing screen...");
+    const screen = 'Refresh';
+    screenData._targetScreen = current;
+    console.log ('Target screen: ' + screenData._targetScreen);
+    dispatch ({
+      type: types.SET_ACTIVE_SCREEN,
+      screen,
+      screenData,
+    });
+    dispatch ({
+      type: types.RESET_STATE_PASSAGE,
+    });
+    dispatch ({
+      type: types.RESET_STATE_CURRENT_USER_RAVEL_FETCH,
+    });
+    dispatch ({
+      type: types.RESET_STATE_REPORT,
+    });
+    dispatch ({
+      type: types.RESET_STATE_ADMIN,
+    });
+    dispatch ({
+      type: types.RESET_STATE_USER,
+    });
+    dispatch ({
+      type: types.RESET_STATE_SEARCH,
+    });
+    dispatch ({
+      type: types.RESET_STATE_RAVEL,
+    });
+    dispatch ({
+      type: types.RESET_STATE_NOTIFICATION,
+    });
+    dispatch ({
+      type: types.RESET_STATE_MASTER_USER_FETCH,
+    });
+    dispatch ({
+      type: types.RESET_STATE_MASTER_RAVEL,
+    });
+  }
+}
+
+
+/**
  * @param: Whether to show the NavBar
  * @returns:
  *  mapStateToProps:
@@ -202,6 +271,24 @@ export const setNavBarTab = (tab) => {
     dispatch ({
       type: types.SET_NAVBAR_TAB,
       tab
+    });
+  };
+}
+
+/**
+ * @param: Whether the Profile screen being viewed is owned by the user.
+ * @returns:
+ *  mapStateToProps:
+ *    state.profileIsOwned
+ * actions: Sets whether the Profile screen being viewed is owned by the user.
+ *
+ */
+export const setProfileIsOwned = (isOwned) => {
+  return (dispatch) => {
+    console.log ("Profile Is Owned: " + isOwned);
+    dispatch ({
+      type: types.SET_PROFILE_IS_OWNED,
+      isOwned
     });
   };
 }

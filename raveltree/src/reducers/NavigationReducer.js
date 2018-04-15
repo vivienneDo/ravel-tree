@@ -6,6 +6,7 @@ const initialState = {
   previousScreens: ['Home'],
   showNavBar: false,
   activeTab: 'home',
+  profileIsOwned: false,
 }
 
 export default (state = initialState, action) => {
@@ -24,6 +25,14 @@ export default (state = initialState, action) => {
       return {
         ...state,
         previousScreens: previousScreens,
+      };
+
+    case types.RESET_PREVIOUS_SCREENS:
+      console.log ("Trying to reset previous screens...");
+      var previousScreens = state.previousScreens;
+      return {
+        ...state,
+        previousScreens: ['Home'],
       };
 
     case types.NAVIGATE_FORWARD:
@@ -45,6 +54,14 @@ export default (state = initialState, action) => {
         activeScreen: previousScreen,
       }
 
+    // case types.REFRESH:
+    //   return {
+    //     ...state,
+    //     previousScreens: previousScreens,
+    //     activeScreen: action.current,
+    //     screenData: action.screenData,
+    //   }
+
     case types.SET_SHOW_NAVBAR:
       return {
         ...state,
@@ -55,6 +72,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         activeTab: action.tab,
+      };
+
+    case types.SET_PROFILE_IS_OWNED:
+      return {
+        ...state,
+        profileIsOwned: action.isOwned,
       };
 
     default:
