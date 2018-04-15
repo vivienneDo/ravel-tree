@@ -1,6 +1,6 @@
 // Author:    Alex Aguirre
 // Created:   02/5/18
-// Modified:  04/10/18 by Frank Fusco (fr@nkfus.co)
+// Modified:  04/14/18 by Frank Fusco (fr@nkfus.co)
 
 // Standard passage card component for RavelTree.
 //
@@ -87,7 +87,7 @@ class PassageCard extends React.Component {
     var message = 'Choose an action:';
     var buttons = [
       {text: 'Report', onPress: () => this.onPressReport ()},
-      {text: 'Share...', onPress: () => this.onPressShare ()},
+      /*{text: 'Share...', onPress: () => this.onPressShare ()},*/
       {text: 'Cancel', style: 'cancel'},
     ];
     var options = { cancelable: false };
