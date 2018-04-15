@@ -1,13 +1,15 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/27/18
-// Modified: 03/28/18
+// Modified: 04/14/18
 //
 // "Passage Stub" component for RavelTree.
 //
-// TODO: Truncate text at reasonable character count.
 // TODO: Make a PassageDot component to represent the collapsed version.
 
 NODE_WIDTH = 250;
+
+// Number of characters of passage title to display on the card.
+TITLE_TRUNCATION = 24;
 
 import React, {Component} from 'react';
 import {
@@ -48,6 +50,11 @@ class PassageStub extends Component<{}> {
     );
   }
 
+  shorten (str, maxLen, separator = ' ') {
+    if (!str || str.length <= maxLen) { return str; }
+    return str.substr(0, str.lastIndexOf(separator, maxLen));
+  }
+
   render() {
     const {
       name,
@@ -71,6 +78,12 @@ class PassageStub extends Component<{}> {
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
+    var truncatedTitle = (name.length >= TITLE_TRUNCATION) ? (
+      this.shorten (name, TITLE_TRUNCATION) + '...'
+    ) : (
+      name
+    );
+
     return (
       <View style={styles.wrapper}>
         <Touchable disabled={disabled} onPress={() => this.onPressStub ()} style={containerStyles}>
@@ -79,7 +92,7 @@ class PassageStub extends Component<{}> {
               <View style={styles.userImage}>
                 <UserImage {...this.props} userID={author} size={26} />
               </View>
-              <TextSans size={12} color={disabled ? '#95989A' : '#282828'}>{this.props.name}</TextSans>
+              <TextSans size={12} color={disabled ? '#95989A' : '#282828'}>{truncatedTitle}</TextSans>
             </View>
             <View style={styles.right}>
               <View style={styles.passageIndex}>

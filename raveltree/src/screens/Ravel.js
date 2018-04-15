@@ -137,7 +137,9 @@ class Ravel extends Component {
       else {
         // Reload the tree.
         this.props.setShouldReloadTree (true);
-        this.setState ({ loading: false });
+        this.setState ({
+          loading: false,
+        });
         resolve ();
       }
     });
@@ -409,7 +411,7 @@ class Ravel extends Component {
   // Elements to Show
   // ---------------------------------------------------------------------------
   showLoader () {
-    return <Loader />;
+    return <Loader size={'large'} />;
   }
 
   showUsers () {
@@ -525,6 +527,17 @@ class Ravel extends Component {
       testID,
     } = this.props;
 
+    if (this.state.loading) {
+      return (
+        <View style={styles.layout}>
+          <LinkBack onPress={() => this.onPressBack ()} />
+          <View style={styles.loader}>
+            {this.showLoader ()}
+          </View>
+        </View>
+      );
+    }
+
     return (
       <View style={styles.layout}>
       {this.showCommentModal ()}
@@ -565,6 +578,12 @@ const styles = StyleSheet.create({
   layout: {
     flexDirection: 'column',
     alignItems: 'flex-start',
+    width: '100%',
+    height: '100%',
+  },
+  loader: {
+    alignItems: 'center',
+    justifyContent: 'center',
     width: '100%',
     height: '100%',
   },
