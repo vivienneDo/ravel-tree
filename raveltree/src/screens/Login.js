@@ -203,7 +203,7 @@ class Login extends Component {
 
             {/* Google button */}
             <View style = {styles.google}>
-              <GLoginButton onPress = {this.onGButtonPress.bind(this)} />
+              {/*<GLoginButton onPress = {this.onGButtonPress.bind(this)} />*/}
             </View>
 
           </View>
@@ -267,7 +267,8 @@ const styles = StyleSheet.create({
     width: 300,
   },
   google: {
-    paddingVertical: 15,
+    //paddingVertical: 15,
+    paddingVertical: 7,
     paddingHorizontal: 15,
     width: 330,
   },
