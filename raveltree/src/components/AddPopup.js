@@ -1,10 +1,8 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/13/18
-// Modified:  03/28/18
-
-// Standard "Add passge" popup component for RavelTree.
+// Modified:  04/16/18
 //
-// TODO: onPressAdd ()
+// "Add passge" popup component for RavelTree.
 
 import React, { Component } from 'react';
 import {
@@ -13,6 +11,7 @@ import {
   Dimensions,
   Text,
   View, ScrollView,
+  KeyboardAvoidingView,
   TouchableNativeFeedback,
   TouchableOpacity,
 } from 'react-native';
