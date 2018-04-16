@@ -150,7 +150,7 @@ class StartARavel extends Component {
           <Divider style={styles.divider}/>
         </View>
 
-        <KeyboardAvoidingView behavior={'padding'} style={styles.kaView}>
+        <KeyboardAvoidingView keyboardVerticalOffset={15} behavior={'padding'} style={styles.kaView}>
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           <View style={styles.optionRow}>
             <TextSans color={'#7F7F7F'}>Category</TextSans>
@@ -229,6 +229,7 @@ class StartARavel extends Component {
             <View style={styles.conceptLabel}>
               <TextSans color={'#7F7F7F'}>Concept</TextSans>
             </View>
+
             <InputText
               multiline
               height={150}
@@ -240,6 +241,7 @@ class StartARavel extends Component {
 
 
           {/*<Button title={'Continue'} />*/}
+          
         </ScrollView>
         </KeyboardAvoidingView>
 
