@@ -1,6 +1,6 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/04/18
-// Modified:  03/19/18
+// Modified:  04/16/18
 
 // Standard modal container component for RavelTree.
 
@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Text,
   View, ScrollView,
+  KeyboardAvoidingView,
   TouchableNativeFeedback,
   TouchableOpacity,
 } from 'react-native';

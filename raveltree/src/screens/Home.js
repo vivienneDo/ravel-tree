@@ -1,6 +1,6 @@
 // Author:   Alex Aguirre
 // Created:  02/07/18
-// Modified: 04/10/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 04/16/18 by Frank Fusco (fr@nkfus.co)
 //
 // Home screen for RavelTree.
 //
@@ -12,7 +12,10 @@ import {
     StyleSheet,
     Text,
     View,
-    ScrollView
+    ScrollView,
+    KeyboardAvoidingView,
+    Keyboard,
+    TouchableWithoutFeedback,
 } from 'react-native';
 
 import { connect } from 'react-redux'
@@ -220,59 +223,59 @@ class Home extends Component<{}> {
     } = this.props;
     return (
       <View style={styles.layout}>
+        <KeyboardAvoidingView style={styles.layout} behavior={'padding'}>
+          {/*<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>*/}
 
-        {this.showCommentModal ()}
+            <View style={styles.layout}>
 
-        {/* RavelTree logo at the top in the center */}
-        <View style = {styles.logo}>
-          <RTLogoText/>
-        </View>
+              {this.showCommentModal ()}
 
-        {/* Explore and Start a Ravel Buttons */}
-        <View style = {styles.buttons}>
-          <ButtonReverse
-            title={'Explore'}
-            onPress={() => this.onPressExplore ()}
-          />
-          <Button
-            title={'Start a Ravel'}
-            onPress={() => this.onPressStartARavel ()}
-          />
-        </View>
+              <View style = {styles.logo}>
+                <RTLogoText/>
+              </View>
 
-        <Divider />
+              <View style = {styles.buttons}>
+                <ButtonReverse
+                  title={'Explore'}
+                  onPress={() => this.onPressExplore ()}
+                />
+                <Button
+                  title={'Start a Ravel'}
+                  onPress={() => this.onPressStartARavel ()}
+                />
+              </View>
 
-        {/* User image, profile name, search for a concept, and new ravels */}
-        <View style={styles.searchBox}>
-          <View style={styles.user}>
-            <View style={styles.userImage}>
-              <UserImage {...this.props} size={20} />
+              <Divider />
+
+              <View style={styles.searchBox}>
+                <View style={styles.user}>
+                  <View style={styles.userImage}>
+                    <UserImage {...this.props} size={20} />
+                  </View>
+                  <TextSerif size={12}>
+                    {currentUserProfile.first_name + ' ' + currentUserProfile.last_name}
+                  </TextSerif>
+                </View>
+                <View style={styles.input}>
+                  <InputSearch
+                    placeholder={'Type a concept. "In a world..."'}
+                    onChangeText={(text) => this.onChangeText (text)}
+                  />
+                </View>
+              </View>
+
+              <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+                <View style = {styles.textHeader}>
+                  <TextHeader>New for You</TextHeader>
+                </View>
+                {this.renderPassages ()}
+              </ScrollView>
+
             </View>
-            <TextSerif size={12}>
-              {currentUserProfile.first_name + ' ' + currentUserProfile.last_name}
-            </TextSerif>
-          </View>
-          <View style={styles.input}>
-            <InputSearch
-              placeholder={'Type a concept. "In a world..."'}
-              onChangeText={(text) => this.onChangeText (text)}
-            />
-          </View>
-        </View>
 
-        {/*<Divider />*/}
-
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-
-          {/* Show the new and latest ravels for the user */}
-          <View style = {styles.textHeader}>
-            <TextHeader>New for You</TextHeader>
-          </View>
-
-          {this.renderPassages ()}
-
-        </ScrollView>
-
+          {/*</TouchableWithoutFeedback>*/}
+        </KeyboardAvoidingView>
+        <View style={{height: 160}} />
       </View>
     );
   }
