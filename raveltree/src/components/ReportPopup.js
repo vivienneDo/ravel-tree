@@ -13,6 +13,8 @@ import {
   View, ScrollView,
   TouchableNativeFeedback,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 
 import firebase from 'firebase';
@@ -73,7 +75,9 @@ class ReportPopup extends React.Component {
     if (!this.state.complete) {
 
       return (
-          <ModalContainer name='ReportPopup' isActive={this.props.isActive} style={{flex: 1, flexDirection: 'column', backgroundColor: '#000000'}} onPressClose={() => this.props.onPressClose ()}>
+        <ModalContainer name='ReportPopup' isActive={this.props.isActive} style={{flex: 1, flexDirection: 'column', backgroundColor: '#000000'}} onPressClose={() => this.props.onPressClose ()}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+
             <View style={styles.container}>
               <View style={styles.head}>
                 <View style={styles.row1}>
@@ -99,7 +103,9 @@ class ReportPopup extends React.Component {
                 />
               </View>
             </View>
-          </ModalContainer>
+
+          </TouchableWithoutFeedback>
+        </ModalContainer>
       );
     }
 
