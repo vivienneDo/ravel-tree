@@ -1,6 +1,6 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/17/18
-// Modified: 03/23/18
+// Modified: 04/16/18
 //
 // "Terms and Privacy" screen for RavelTree.
 
@@ -26,17 +26,22 @@ class TermsAndPrivacy extends Component {
       terms: '',
       privacy: '',
     }
-    this.props.readTermsOfService ();
-    this.props.readPrivacyPolicy ();
   }
 
-  componentWillReceiveProps (newProps) {
-    if (newProps.terms_of_service) {
-      this.setState ({ terms: newProps.terms_of_service });
-    }
-    if (newProps.privacy_policy) {
-      this.setState ({ privacy: newProps.privacy_policy });
-    }
+  componentDidMount () {
+    // Retrieve Terms of Service
+    this.props.readTermsOfService ()
+    .then ((terms) => {
+      this.setState ({ terms: terms });
+    })
+    .catch ((error) => { console.error (error); });
+
+    // Retrieve Privacy Policy
+    this.props.readPrivacyPolicy ()
+    .then ((privacy) => {
+      ({ privacy: privacy });
+    })
+    .catch ((error) => { console.error (error); });
   }
 
   onPressBack () {
