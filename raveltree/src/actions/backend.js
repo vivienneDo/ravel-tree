@@ -82,6 +82,10 @@
                       - createStateRavel - default `enable_voting` to be true if ravel is marked as `private`
                       - upVotePassage && downVotePassage - checks if current user is a valid participant of a given
                       ravel, if so, allow them to vote when ravel is public && enable_voting is false. 
+ - 04/15/2018 - VD Do - 
+                    Modified:
+                      - upVotePassage/downVotePassage - checks if user attempting to vote is the ravel creator 
+                      if so, allow vote, else, check if participant. 
  */
 
 
@@ -2524,6 +2528,7 @@ export const checkParticipantExistRavel = (ravel_uid) => {
             //console.log('ravel uid = ' + ravel_uid);
             //console.log('Current uid = ' + currentUid);
             if (snapshot.val() === true) {
+                //console.log('Value of key: ' + valueOfKey)
                 valueOfKey = true
             }
         })
@@ -3313,17 +3318,26 @@ export const upVotePassage = (ravel_uid, passage_uid) => dispatch => {
     var passage_creator_uid;
     var downvote;
     var participantCheck;
+    var user_creator_value; 
 
     return new Promise ((resolve, reject) => {
 
-        checkParticipantExistRavel(ravel_uid).then(result => {
-            participantCheck = result;
+        checkUserCreatedPassage(ravel_uid).then(user_results => {
+            user_creator_value = user_results;
+        }) 
+        .then(() => {
+
+            checkParticipantExistRavel(ravel_uid).then(result => {
+                participantCheck = result;
+            })
+
         })
         .then(() => {
 
         checkRavelEnabledVoting(ravel_uid, passage_uid).then(valueOfKey => {
 
-            if ( participantCheck || valueOfKey) {
+
+            if ( user_creator_value || participantCheck || valueOfKey) {
 
                 checkUserVoteTrackerHelper(ravel_uid, passage_uid).then(valueOfKey => {
 
@@ -3505,17 +3519,25 @@ export const downVotePassage = (ravel_uid, passage_uid) => dispatch => {
     var upvotes;
     var downvote;
     var participantCheck;
+    var user_creator_value;
 
     return new Promise ((resolve, reject) => {
 
-        checkParticipantExistRavel(ravel_uid).then(result => {
-            participantCheck = result;
+        checkUserCreatedPassage(ravel_uid).then(user_results => {
+            user_creator_value = user_results;
+        }) 
+        .then(() => {
+
+            checkParticipantExistRavel(ravel_uid).then(result => {
+                participantCheck = result;
+            })
+
         })
         .then(() => {
 
             checkRavelEnabledVoting(ravel_uid, passage_uid).then(valueOfKey => {
 
-                if (participantCheck || valueOfKey) {
+                if (user_creator_value || participantCheck || valueOfKey) {
     
                     checkUserVoteTrackerHelper(ravel_uid, passage_uid).then(valueOfKey => {
     
