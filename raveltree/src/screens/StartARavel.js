@@ -241,7 +241,7 @@ class StartARavel extends Component {
 
 
           {/*<Button title={'Continue'} />*/}
-          
+
         </ScrollView>
         </KeyboardAvoidingView>
 
@@ -262,6 +262,7 @@ const styles = StyleSheet.create({
     //paddingHorizontal: 17,
   },
   kaView: {
+    width: '100%',
     //flex: 1,
   },
   divider : {

@@ -14,6 +14,8 @@ import {
   KeyboardAvoidingView,
   TouchableNativeFeedback,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 
 import firebase from 'firebase';
@@ -134,33 +136,35 @@ class AddPopup extends React.Component {
 
     return (
         <ModalContainer name='AddPopup' isActive={isActive} style={{flex: 1, flexDirection: 'column', backgroundColor: '#000000'}} onPressClose={() => this.props.onPressClose ()}>
-          <View style={styles.container}>
-            <View style={styles.head}>
-              <View style={styles.row1}>
-                <TextSerif size={16}>{ravelTitle}</TextSerif>
-                <TextSans size={13} color={'#95989A'}>{passageIndex}</TextSans>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <View style={styles.container}>
+              <View style={styles.head}>
+                <View style={styles.row1}>
+                  <TextSerif size={16}>{ravelTitle}</TextSerif>
+                  <TextSans size={13} color={'#95989A'}>{passageIndex}</TextSans>
+                </View>
+                <View style={styles.row2}>
+                  <InputText width={'auto'} placeholder={'Type a passage name (e.g., "The Reckoning").'} onChangeText={(text) => this.onChangeTitle (text)} />
+                  <UserImage {...this.props} userID={firebase.auth ().currentUser.uid} size={26}/>
+                </View>
               </View>
-              <View style={styles.row2}>
-                <InputText width={'auto'} placeholder={'Type a passage name (e.g., "The Reckoning").'} onChangeText={(text) => this.onChangeTitle (text)} />
-                <UserImage {...this.props} userID={firebase.auth ().currentUser.uid} size={26}/>
+              <View style={styles.passage}>
+                <InputText height={'100%'} multiline placeholder={'Type your passage (e.g., "It was a dark and stormy night...").'} onChangeText={(text) => this.onChangePassage (text)}/>
+              </View>
+              <View style={styles.foot}>
+                <View style={styles.footText}>
+                  <TextSans size={12} color={'#808080'}>This will be passage {passageIndex}</TextSans>
+                  <TextSans size={12} color={'#808080'}>(Number {passageIndex.split ('-') [0]}, Version {passageIndex.split ('-') [1]}).</TextSans>
+                </View>
+                <Button
+                  title={'Add'}
+                  width={0.30 * width}
+                  disabled={!this.state.title || !this.state.passage}
+                  onPress={() => this.onPressAdd ()}
+                />
               </View>
             </View>
-            <View style={styles.passage}>
-              <InputText height={'100%'} multiline placeholder={'Type your passage (e.g., "It was a dark and stormy night...").'} onChangeText={(text) => this.onChangePassage (text)}/>
-            </View>
-            <View style={styles.foot}>
-              <View style={styles.footText}>
-                <TextSans size={12} color={'#808080'}>This will be passage {passageIndex}</TextSans>
-                <TextSans size={12} color={'#808080'}>(Number {passageIndex.split ('-') [0]}, Version {passageIndex.split ('-') [1]}).</TextSans>
-              </View>
-              <Button
-                title={'Add'}
-                width={0.30 * width}
-                disabled={!this.state.title || !this.state.passage}
-                onPress={() => this.onPressAdd ()}
-              />
-            </View>
-          </View>
+          </TouchableWithoutFeedback>
         </ModalContainer>
     )
   }

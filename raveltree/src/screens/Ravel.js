@@ -542,7 +542,6 @@ class Ravel extends Component {
     return (
       <View style={styles.layout}>
         <KeyboardAvoidingView style={styles.layout} behavior={'padding'}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 
             <View style={styles.layout}>
               {this.showCommentModal ()}
@@ -576,7 +575,6 @@ class Ravel extends Component {
               </ScrollView>
             </View>
             
-          </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
         <View style={{height: 160}} />
       </View>
