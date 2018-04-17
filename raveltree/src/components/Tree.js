@@ -730,7 +730,7 @@ class Tree extends Component {
 
   render () {
     return (
-      <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, zIndex: 1,}}>
+      <View style={{width: TREE_WIDTH, minHeight: '100%', justifyContent: 'center', alignItems: 'center',/*height: TREE_HEIGHT,*/ zIndex: 1}}>
         {this.renderTree (this.state.tree)}
         {this.renderLoader ()}
       </View>

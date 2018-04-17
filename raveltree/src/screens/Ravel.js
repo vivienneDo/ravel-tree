@@ -42,7 +42,7 @@ import * as Test from '../test/Test'
 
 TREE_HORIZONTAL_PADDING = 20;
 
-var initialScroll = false;
+//var initialScroll = false;
 var scrollView = undefined;
 var scrollParams = undefined;
 var TREE_HEIGHT = undefined;
@@ -532,27 +532,40 @@ class Ravel extends Component {
   setScrollParams (params, treeHeight) {
     scrollParams = params;
     TREE_HEIGHT = treeHeight;
+    console.log ('\t' + TREE_HEIGHT);
   }
 
   _onScrollViewLayout (ev) {
     var height = ev.nativeEvent.layout.height;
     SCROLLVIEW_HEIGHT = height;
     scrollView = this._scrollView;
+    console.log ('\t\t' + SCROLLVIEW_HEIGHT);
 
-    if (!initialScroll && TREE_HEIGHT && SCROLLVIEW_HEIGHT) {
-      scrollParams.y = (TREE_HEIGHT - SCROLLVIEW_HEIGHT);
+    if (/*!initialScroll && */TREE_HEIGHT && SCROLLVIEW_HEIGHT) {
+      if (TREE_HEIGHT > SCROLLVIEW_HEIGHT) {
+        scrollParams.y = (TREE_HEIGHT - SCROLLVIEW_HEIGHT);
+      }
+      else {
+        scrollParams.y = (TREE_HEIGHT / 2);
+      }
       scrollView.scrollTo (scrollParams);
-      initialScroll = true;
+      //initialScroll = true;
     }
   }
 
   _onScrollViewContentSizeChange = () => {
     scrollView = this._scrollView;
+    console.log ('\t\tContent size change.');
 
-    if (!initialScroll && TREE_HEIGHT && SCROLLVIEW_HEIGHT) {
-      scrollParams.y = (TREE_HEIGHT - SCROLLVIEW_HEIGHT);
+    if (/*!initialScroll && */TREE_HEIGHT && SCROLLVIEW_HEIGHT) {
+      if (TREE_HEIGHT > SCROLLVIEW_HEIGHT) {
+        scrollParams.y = (TREE_HEIGHT - SCROLLVIEW_HEIGHT);
+      }
+      else {
+        scrollParams.y = (TREE_HEIGHT / 2);
+      }
       scrollView.scrollTo (scrollParams);
-      initialScroll = true;
+      // initialScroll = true;
     }
   }
 
@@ -712,6 +725,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     //height: '100%',
+    //minHeight: '100%',
+    //flex: 1,
     paddingVertical: 20,
     paddingHorizontal: 20,
   },
