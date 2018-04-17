@@ -1,6 +1,6 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/17/18
-// Modified: 04/14/18
+// Modified: 04/16/18
 //
 // Profile screen for RavelTree.
 //
@@ -14,7 +14,10 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  View, ScrollView
+  View, ScrollView,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 import { connect } from 'react-redux'
@@ -205,7 +208,8 @@ class Profile extends Component {
     }
 
     return (
-      <View style={styles.layout}>
+      <KeyboardAvoidingView style={styles.layout} behavior={'padding'}>
+
         {this.showReportModal ()}
 
         <View style={styles.layoutInner}>
@@ -273,7 +277,7 @@ class Profile extends Component {
                   placeholder={'Add your autobiography (e.g., "I was born in a log cabin in Illinois...").'}
                   onChangeText={(bioEdit) => this.onChangeBioEdit (bioEdit)}
                   multiline
-                  height={200}
+                  height={100}
                 />
                 <View style={styles.spaceBelow} />
                 <Button title={'Save Changes'} onPress={() => this.onPressSaveChanges ()} />
@@ -321,7 +325,8 @@ class Profile extends Component {
         </ScrollView>
 
         </View>
-      </View>
+
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -332,6 +337,20 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     width: '100%',
     height: '100%',
+  },
+  layout2: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#cccccc',
+  },
+  layout3: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#aaaaaa',
   },
   loader: {
     alignItems: 'center',

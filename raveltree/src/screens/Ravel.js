@@ -1,16 +1,17 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/27/18
-// Modified: 04/14/18
+// Modified: 04/16/18
 //
 // "Ravel" screen for RavelTree.
-//
-// TODO: Invitation mode.
 
 import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
   View, ScrollView,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback,
   Alert,
 } from 'react-native';
 
@@ -566,35 +567,42 @@ class Ravel extends Component {
 
     return (
       <View style={styles.layout}>
-      {this.showCommentModal ()}
-      {this.showModal (this.state.showModal)}
-        <LinkBack onPress={() => this.onPressBack ()} />
-        <View style={styles.head}>
-          <Divider />
-          <View style={styles.title}>
-            <TextSerif size={30}>{this.state.title}</TextSerif>
-          </View>
-          <View style={styles.by}>
-            <TextHeader size={12} color={'#6A6A6A'}>By</TextHeader>
-          </View>
-          {this.showUsers ()}
-          <View style={styles.score}>
-            <IconLeaf size={37} />
-            <View style={styles.scoreText}>
-              <TextSerif size={28}>{this.state.score}</TextSerif>
+        <KeyboardAvoidingView style={styles.layout} behavior={'padding'}>
+
+            <View style={styles.layout}>
+              {this.showCommentModal ()}
+              {this.showModal (this.state.showModal)}
+              <LinkBack onPress={() => this.onPressBack ()} />
+              <View style={styles.head}>
+                <Divider />
+                <View style={styles.title}>
+                  <TextSerif size={30}>{this.state.title}</TextSerif>
+                </View>
+                <View style={styles.by}>
+                  <TextHeader size={12} color={'#6A6A6A'}>By</TextHeader>
+                </View>
+                {this.showUsers ()}
+                <View style={styles.score}>
+                  <IconLeaf size={37} />
+                  <View style={styles.scoreText}>
+                    <TextSerif size={28}>{this.state.score}</TextSerif>
+                  </View>
+                </View>
+                <View style={styles.links1}>
+                  <TextLink size={14} onPress={() => this.onPressConcept ()}>Concept</TextLink>
+                  <TextLink size={14} onPress={() => this.onPressReport ()}>Report</TextLink>
+                </View>
+                <Divider />
+                {this.showAdminLinks (this.state.mode == 'owned')}
+                {this.showInvitationButton (this.state.mode == 'invited')}
+              </View>
+              <ScrollView ref={(c) => (this._scrollView = c)} {...this.props} onContentSizeChange={this._onScrollViewContentSizeChange} style={styles.scroll} onLayout={(ev) => this._onScrollViewLayout (ev)} contentContainerStyle={styles.scrollContent}>
+                {this.showTree ()}
+              </ScrollView>
             </View>
-          </View>
-          <View style={styles.links1}>
-            <TextLink size={14} onPress={() => this.onPressConcept ()}>Concept</TextLink>
-            <TextLink size={14} onPress={() => this.onPressReport ()}>Report</TextLink>
-          </View>
-          <Divider />
-          {this.showAdminLinks (this.state.mode == 'owned')}
-          {this.showInvitationButton (this.state.mode == 'invited')}
-        </View>
-        <ScrollView ref={(c) => (this._scrollView = c)} {...this.props} onContentSizeChange={this._onScrollViewContentSizeChange} style={styles.scroll} onLayout={(ev) => this._onScrollViewLayout (ev)} contentContainerStyle={styles.scrollContent}>
-          {this.showTree ()}
-        </ScrollView>
+
+        </KeyboardAvoidingView>
+        <View style={{height: 160}} />
       </View>
     );
   }
