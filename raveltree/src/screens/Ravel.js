@@ -42,6 +42,7 @@ import * as Test from '../test/Test'
 
 TREE_HORIZONTAL_PADDING = 20;
 
+var initialScroll = false;
 var scrollView = undefined;
 var scrollParams = undefined;
 var TREE_HEIGHT = undefined;
@@ -536,16 +537,23 @@ class Ravel extends Component {
   _onScrollViewLayout (ev) {
     var height = ev.nativeEvent.layout.height;
     SCROLLVIEW_HEIGHT = height;
-    console.log ('\t\tScrollView layout.');
-    console.log (height);
+    scrollView = this._scrollView;
+
+    if (!initialScroll && TREE_HEIGHT && SCROLLVIEW_HEIGHT) {
+      scrollParams.y = (TREE_HEIGHT - SCROLLVIEW_HEIGHT);
+      scrollView.scrollTo (scrollParams);
+      initialScroll = true;
+    }
   }
 
   _onScrollViewContentSizeChange = () => {
     scrollView = this._scrollView;
-    // scrollParams.y = (TREE_HEIGHT - SCROLLVIEW_HEIGHT) / 2;
-    scrollParams.y = (TREE_HEIGHT - SCROLLVIEW_HEIGHT);
-    console.log (scrollParams);
-    scrollView.scrollTo (scrollParams);
+
+    if (!initialScroll && TREE_HEIGHT && SCROLLVIEW_HEIGHT) {
+      scrollParams.y = (TREE_HEIGHT - SCROLLVIEW_HEIGHT);
+      scrollView.scrollTo (scrollParams);
+      initialScroll = true;
+    }
   }
 
   render (){
