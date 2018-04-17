@@ -42,6 +42,11 @@ import * as Test from '../test/Test'
 
 TREE_HORIZONTAL_PADDING = 20;
 
+var scrollView = undefined;
+var scrollParams = undefined;
+var TREE_HEIGHT = undefined;
+var SCROLLVIEW_HEIGHT = undefined;
+
 class Ravel extends Component {
   constructor (props) {
     super (props);
@@ -514,12 +519,33 @@ class Ravel extends Component {
         mode={this.state.mode}
         ravelID={this.state.ravelID}
         onAnalyzeTree={(analyzedTree) => this.setState ({ analyzedTree: analyzedTree })}
+        setScrollParams={(scrollParams, treeHeight) => this.setScrollParams (scrollParams, treeHeight)}
         onPressPassage={(passageMetaData) => this.switchToPassage (passageMetaData)}
         onPressAdd={(passageMetaData) => this.switchToAdd (passageMetaData)}
         onPressInitialAddButton={(passageMetaData) => this.switchToAdd (passageMetaData)}
         horizontalPadding={TREE_HORIZONTAL_PADDING}
       />
     );
+  }
+
+  setScrollParams (params, treeHeight) {
+    scrollParams = params;
+    TREE_HEIGHT = treeHeight;
+  }
+
+  _onScrollViewLayout (ev) {
+    var height = ev.nativeEvent.layout.height;
+    SCROLLVIEW_HEIGHT = height;
+    console.log ('\t\tScrollView layout.');
+    console.log (height);
+  }
+
+  _onScrollViewContentSizeChange = () => {
+    scrollView = this._scrollView;
+    // scrollParams.y = (TREE_HEIGHT - SCROLLVIEW_HEIGHT) / 2;
+    scrollParams.y = (TREE_HEIGHT - SCROLLVIEW_HEIGHT);
+    console.log (scrollParams);
+    scrollView.scrollTo (scrollParams);
   }
 
   render (){
@@ -570,11 +596,11 @@ class Ravel extends Component {
                 {this.showAdminLinks (this.state.mode == 'owned')}
                 {this.showInvitationButton (this.state.mode == 'invited')}
               </View>
-              <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+              <ScrollView ref={(c) => (this._scrollView = c)} {...this.props} onContentSizeChange={this._onScrollViewContentSizeChange} style={styles.scroll} onLayout={(ev) => this._onScrollViewLayout (ev)} contentContainerStyle={styles.scrollContent}>
                 {this.showTree ()}
               </ScrollView>
             </View>
-            
+
         </KeyboardAvoidingView>
         <View style={{height: 160}} />
       </View>
@@ -677,7 +703,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100%',
+    //height: '100%',
+    paddingVertical: 20,
     paddingHorizontal: 20,
   },
   tree: {
