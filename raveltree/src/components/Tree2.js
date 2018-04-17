@@ -1,9 +1,10 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   03/14/18
-// Modified:  04/17/18
+// Modified:  04/05/18
 
 // Tree component for RavelTree.
 //
+// TODO: Handle multiple parents and children.
 // TODO: Adjust spacing and positioning for when an arrow spans more than one level.
 // TODO: Animations. All the animations.
 
@@ -294,37 +295,13 @@ class Tree extends Component {
     }
 
     return (
-      <Group key={'arrowContainer-' + startPosition.x + ',' + startPosition.y + '-' + endPosition.x + ',' + endPosition.y}>
-        <Shape
-          key={'outline-' + startPosition.x + ',' + startPosition.y + '-' + endPosition.x + ',' + endPosition.y}
-          d={arrow}
-          //fill={'#bbbbbb'}
-          stroke={'#FFFFFF'}
-          //stroke={'#53350A'}
-          strokeWidth={10}
-          strokeCap={'square'}
-        />
-        <Shape
-          key={'arrow-' + startPosition.x + ',' + startPosition.y + '-' + endPosition.x + ',' + endPosition.y}
-          d={arrow}
-          //fill={'#bbbbbb'}
-          stroke={color}
-          //stroke={'#53350A'}
-          strokeWidth={5}
-          strokeCap={'square'}
-        />
-      </Group>
-    );
-  }
-
-  renderArrowOutline (startPosition, endPosition, arrow) {
-    return (
       <Shape
         key={startPosition.x + ',' + startPosition.y + '-' + endPosition.x + ',' + endPosition.y}
         d={arrow}
         //fill={'#bbbbbb'}
-        stroke={'#000000'}
-        strokeWidth={10}
+        stroke={color}
+        //stroke={'#53350A'}
+        strokeWidth={5}
         strokeCap={'square'}
       />
     );
@@ -519,11 +496,6 @@ class Tree extends Component {
             passage.disabled = true;
           }
 
-          // We also want to exclude all levels > the specified index + 1.
-          if (level > mergeFromLevel + 1) {
-            passage.disabled = true;
-          }
-
           // We also want to exclude any of the node's existing children.
           var disabled = this.state.disabled.slice ();
           if (passage.passage_index == this.props.mergeFrom) {
@@ -697,12 +669,7 @@ class Tree extends Component {
       var {height, width} = Dimensions.get ('window');
       var centeringFactor = ((width - NODE_WIDTH) / 2);
       var x = TREE_HORIZONTAL_PADDING + mergeFromLevel * (NODE_WIDTH + SPACING_HORIZONTAL) - centeringFactor;
-
-      this.props.setScrollParams ({x: x, y: 0, animated: true}, TREE_HEIGHT);
-    }
-    // Otherwise, just pass the data necessary to center the tree in the ScrollView.
-    else {
-      this.props.setScrollParams ({x: 0, y: 0, animated: true}, TREE_HEIGHT);
+      this.props.setScrollParams ({x: x, y:0, animated: true});
     }
 
     return (

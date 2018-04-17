@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
+    //paddingVertical: TREE_HORIZONTAL_PADDING,
     paddingHorizontal: TREE_HORIZONTAL_PADDING,
   },
   tree: {
