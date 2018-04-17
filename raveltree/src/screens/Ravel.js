@@ -531,7 +531,12 @@ class Ravel extends Component {
 
   setScrollParams (params, treeHeight) {
     scrollParams = params;
-    TREE_HEIGHT = treeHeight;
+    if (treeHeight < 0) {
+      TREE_HEIGHT = 0;
+    }
+    else {
+      TREE_HEIGHT = treeHeight;
+    }
     console.log ('\t' + TREE_HEIGHT);
   }
 
@@ -548,8 +553,9 @@ class Ravel extends Component {
       else {
         scrollParams.y = (TREE_HEIGHT / 2);
       }
-      scrollView.scrollTo (scrollParams);
-      //initialScroll = true;
+      if (scrollParams) {
+        scrollView.scrollTo (scrollParams);
+      }
     }
   }
 
@@ -564,8 +570,9 @@ class Ravel extends Component {
       else {
         scrollParams.y = (TREE_HEIGHT / 2);
       }
-      scrollView.scrollTo (scrollParams);
-      // initialScroll = true;
+      if (scrollParams) {
+        scrollView.scrollTo (scrollParams);
+      }
     }
   }
 
