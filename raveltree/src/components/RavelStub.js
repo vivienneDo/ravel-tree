@@ -30,7 +30,7 @@ import IconLeaf from './IconLeaf'
 // Number of characters of ravel title to display on the stub.
 TITLE_TRUNCATION = 32;
 
-class RavelStub extends Component<{}> {
+class RavelStub extends Component {
   constructor (props) {
     super (props);
     this.state = {

@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 
 
-export default class InputSearch extends Component<{}> {
+export default class InputSearch extends Component {
 
   constructor (props) {
     super (props);

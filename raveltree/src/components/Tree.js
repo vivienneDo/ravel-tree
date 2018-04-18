@@ -74,7 +74,7 @@ var initialState = {
   shouldLoadLevel: false,
   showInitialAddButton: false,
   selectedNodeIndex: undefined,
-  connectingArrow: {},
+  connectingArrow: new Object (),
 }
 
 class Tree extends Component {
@@ -86,7 +86,7 @@ class Tree extends Component {
     var tree = {
       data: ravel.roots,
       nodeCounts: ravel.nodeCount,
-      nodesProcessed: {},
+      nodesProcessed: new Object (),
       depth: ravel.level_count,
       breadth: Math.max (...Object.values (ravel.nodeCount)),
       height: 0,
@@ -96,7 +96,7 @@ class Tree extends Component {
 
     this.state = {
       tree: tree,
-      ravel: ravel || {},
+      ravel: ravel || new Object (),
       ...initialState,
     };
 
@@ -251,7 +251,7 @@ class Tree extends Component {
 
   showConnectingArrow () {
     var positions = this.state.connectingArrow;
-    if (!(positions || {}).from || !(positions.to || {})) { return; }
+    if (!(positions || new Object ()).from || !(positions.to || new Object ())) { return; }
 
     from = positions.from;
     to   = positions.to;
@@ -365,7 +365,7 @@ class Tree extends Component {
     //console.log (content);
 
     // Position
-    if (!content.position) { content.position = {}; }
+    if (!content.position) { content.position = new Object (); }
     content.position.x = this.getXPosition (content);
     content.position.y = this.getYPosition (content);
 
@@ -544,7 +544,7 @@ class Tree extends Component {
         // Update the nodesProcessed array with the passage metadata.
         var tree = this.state.tree;
         var passageID = passage.passage_uid;
-        if (!tree.nodesProcessed [passage.level]) { tree.nodesProcessed [passage.level] = {}; }
+        if (!tree.nodesProcessed [passage.level]) { tree.nodesProcessed [passage.level] = new Object (); }
         tree.nodesProcessed [passage.level] [passageID] = passage;
 
         // Find the passageID in the data tree and replace the entry.
@@ -749,11 +749,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   const {
-    //shouldReloadTree,
+    shouldReloadTree,
   } = state.tree;
 
   return {
-    //shouldReloadTree,
+    shouldReloadTree,
   };
 }
 

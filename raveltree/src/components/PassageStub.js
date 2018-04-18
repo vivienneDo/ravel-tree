@@ -31,7 +31,7 @@ import ButtonPlus from './ButtonPlus'
 import TextSans from './TextSans'
 import IconLeaf from './IconLeaf'
 
-class PassageStub extends Component<{}> {
+class PassageStub extends Component {
   constructor (props, context) {
     super (props, context);
   }

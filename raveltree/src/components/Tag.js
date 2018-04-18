@@ -20,7 +20,7 @@ const HEIGHT = 25;
 const HEIGHT_SMALL = 20;
 const MARGIN_VERTICAL = 3;
 
-export default class Tag extends Component<{}> {
+export default class Tag extends Component {
 
   static get HEIGHT () {
     return HEIGHT;

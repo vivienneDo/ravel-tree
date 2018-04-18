@@ -36,7 +36,7 @@ import Loader from '../components/Loader';
 
 const PASSAGE_LOAD_COUNT = 10;
 
-class Home extends Component<{}> {
+class Home extends Component {
   constructor (props: any, context: any) {
     super (props, context);
     this.state = {

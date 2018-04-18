@@ -1556,7 +1556,7 @@ export const fetchUserCreatedRavelExploreHelper = () => {
 
     firebase.database().ref(`/users/${currentUserUid}/ravel_created`).once('value', function(snapshotRavels) {
         if (snapshotRavels.val() === false) {
-            resolve({})
+            resolve(new Object ())
         } else {
             resolve (snapshotRavels.val());
         }
@@ -1578,7 +1578,7 @@ export const fetchUserParticipantRavelExploreHelper = () => {
         firebase.database().ref(`ravels`).orderByChild(`ravel_participants/${currentUserUid}`).equalTo(true).once('value', (snapshot) => {
 
             if(snapshot.exists() === false) {
-                resolve({})
+                resolve(new Object ())
             } else {
                 resolve (snapshot.val());
 
@@ -1602,7 +1602,7 @@ export const fetchUserPublicRavelExploreHelper = (countToQueryPublic) =>  {
 
         firebase.database().ref(`/ravels/`).orderByChild("visibility").equalTo(true).limitToLast(countToQueryPublic).once('value', snapshot => {
             if (snapshot.exists() === false) {
-                resolve({})
+                resolve(new Object ())
             } else {
                 resolve (snapshot.val());
 
@@ -1680,7 +1680,7 @@ export const fetchPassageExploreViewFromEachRavelHelper = (ravel_uid) =>  {
             if (snapshot.exists() === false) {
 
                 // Empty
-                resolve({})
+                resolve(new Object ())
             } else {
 
                 resolve (snapshot.val());

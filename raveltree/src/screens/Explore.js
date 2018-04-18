@@ -70,7 +70,7 @@ const TAG_PAD = 12;
 //   'Away',
 // ];
 
-class Explore extends Component<{}> {
+class Explore extends Component {
 
   constructor (props) {
     super (props);
