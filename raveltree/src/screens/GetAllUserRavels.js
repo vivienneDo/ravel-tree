@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet, Image, ScrollView, TouchableNativeFeedback, TouchableOpacity, Linking } from 'react-native';
 import { getTheme } from 'react-native-material-kit';
 import {MKTextField, MKColor, MKButton} from 'react-native-material-kit';
-import * as actions from '../actions/backend';
+import * as actions from '../actions';
 //import {checkParticipantExistRavel, calculatePassageIndexField} from '../actions/backend';
 //import {userLogOff, createUserWithEmail, checkCurrentUserIsAdmin} from '../actions';
 //import { getAllRavelUser, getRavelMetaData, searchUserByName, loadInitialUserCreatedRavel, updateUserProfile, getUserProfile, getCurrentLoggedInUserUid, createStartRavel, userLogOff, getAllUserCreatedRavel} from '../actions';
@@ -70,7 +70,7 @@ class GetAllUserRavels extends Component {
         //var child_passage_uid = '-L8if3EcdET2zsHbnmKk';
         //this.props.forkPassage({ravel_uid, parent_passage_uid, passage_title, passage_body});
         //this.props.mergeTwoPassage({ravel_uid, parent_passage_uid, child_passage_uid });
-        this.props.addInitialPassage({ravel_uid, passage_title, passage_body});
+        //this.props.addInitialPassage({ravel_uid, passage_title, passage_body});
         //this.props.addPassage({ravel_uid, parent_passage_uid, passage_title, passage_body});
 
         //this.props.upVotePassage('-L6esHnah1z8XwnTXLfL');
@@ -148,6 +148,9 @@ class GetAllUserRavels extends Component {
 
         //firebase.auth().signOut()
         //this.props.signInWithEmail ('deleteme@ho.com', 'password123');
+
+        var ravel_uid = '-LAOncxAffZdUU2i_5-H'
+        this.props.analyzeRavelOptimalityScore(ravel_uid);
 
     };
 

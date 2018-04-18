@@ -1072,7 +1072,7 @@ export const getRavelMetaData = (ravel_uid) => dispatch => {
         updateRavelViewCount(ravel_uid)
       })
       .then(() => {
-        calculateRavelOptimality(ravel_uid)
+        analyzeRavelOptimalityScore(ravel_uid)
       })
       .catch((error) => {
           reject ('Error getting ravel metadata.');
@@ -3385,7 +3385,7 @@ export const upVotePassage = (ravel_uid, passage_uid) => dispatch => {
                                 userNoVoteTrackerHelper(ravel_uid, passage_uid);
                             })
                             .then(() => {
-                                reCalculateOptimalityScore(ravel_uid, passage_uid);
+                                //reCalculateOptimalityScore(ravel_uid, passage_uid);
                             })
                             .then(() => {
                                 //console.log('Done in VOTINGGG')
@@ -3427,7 +3427,7 @@ export const upVotePassage = (ravel_uid, passage_uid) => dispatch => {
                                 userUpVoteTrackerHelper(ravel_uid, passage_uid);
                             })
                             .then(() => {
-                                reCalculateOptimalityScore(ravel_uid, passage_uid);
+                                //reCalculateOptimalityScore(ravel_uid, passage_uid);
                             })
                             .then(() => {
                                 //console.log('Done in VOTINGGG')
@@ -3471,7 +3471,7 @@ export const upVotePassage = (ravel_uid, passage_uid) => dispatch => {
                                     userUpVoteTrackerHelper(ravel_uid, passage_uid);
                                 })
                                 .then(() => {
-                                    reCalculateOptimalityScore(ravel_uid, passage_uid);
+                                    //reCalculateOptimalityScore(ravel_uid, passage_uid);
                                 })
                                 .then(() => {
 
@@ -3588,7 +3588,7 @@ export const downVotePassage = (ravel_uid, passage_uid) => dispatch => {
                                     userNoVoteTrackerHelper(ravel_uid, passage_uid);
                                 })
                                 .then(() => {
-                                    reCalculateOptimalityScore(ravel_uid, passage_uid);
+                                    //reCalculateOptimalityScore(ravel_uid, passage_uid);
                                 })
                                 .then(() => {
                                     resolve (true);
@@ -3635,7 +3635,7 @@ export const downVotePassage = (ravel_uid, passage_uid) => dispatch => {
                                     userDownVoteTrackerHelper(ravel_uid, passage_uid);
                                 })
                                 .then(() => {
-                                    reCalculateOptimalityScore(ravel_uid, passage_uid);
+                                    //reCalculateOptimalityScore(ravel_uid, passage_uid);
                                 })
                                 .then(() => {
                                     resolve (true);
@@ -3681,7 +3681,7 @@ export const downVotePassage = (ravel_uid, passage_uid) => dispatch => {
                                     userDownVoteTrackerHelper(ravel_uid, passage_uid);
                                 })
                                 .then(() => {
-                                    reCalculateOptimalityScore(ravel_uid, passage_uid);
+                                    //reCalculateOptimalityScore(ravel_uid, passage_uid);
                                 })
                                 .then(() => {
                                     resolve (true);
@@ -4299,11 +4299,15 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
 
     reCalculateCurrentPassagesOptimalityScore(ravel_uid, passage_uid).then(valueOfKey => {
 
+        console.log('Inside calculate optimality score ' + 'ravel: ' + ravel_uid + 'passage: ' + passage_uid)
+
         if (valueOfKey) {
 
             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}/child`).once('value', (snapshot) => {
 
                 if (snapshot.val() === false) {
+                    console.log('Snapshot of child inside passageID' + passage_uid + 'snapshpt = ' + snapshot.val())
+                    console.log('Inside calculate optimality score ' + 'ravel: ' + ravel_uid + 'passage: ' + passage_uid)
                     getOptimality(ravel_uid, passage_uid).then((valueOfKey) => {
                         this_passage_score = valueOfKey;
                     })
@@ -4315,14 +4319,19 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
 
                 }  else {
 
+                console.log('Snapshot of child inside passageID' + passage_uid + 'snapshpt = ' + snapshot.val())
+
                 var optimalChildScore = 0;
+                
 
                 snapshot.forEach((elm) => {
-                    optimalChild = elm.key;
+                    console.log('Child optimal ID:' + elm.key)
+                    //optimalChild = elm.key;
 
                     firebase.database().ref(`passages/${ravel_uid}/${elm.key}/currentPassageOptimality`).once('value', (snapshot) => {
 
                         valueOfKey = snapshot.val()
+                        console.log('Elm.key = '+ elm.key + 'currentPassageOptimallity = ' + snapshot.val())
 
                         if (valueOfKey === false) {
 
@@ -4330,8 +4339,12 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
                         else  {
                             if (valueOfKey > optimalChildScore) {
 
+                                console.log('Optimal Child at the end = ' + valueOfKey + 'elm.key' + optimalChild + 'optimal score= ' + optimalChildScore)
+
                                 optimalChild = elm.key;
                                 optimalChildScore = valueOfKey;
+
+                                console.log('Optimal Child at the end = ' + valueOfKey + 'elm.key' + optimalChild + 'optimal score= ' + optimalChildScore)
 
                             }
                         }
@@ -4339,8 +4352,12 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
 
                 })
 
+                console.log('Optimal Child at the end = ' + optimalChild)
+
                 firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({optimalChild:optimalChild })
                 .then(() => {
+
+                    console.log('After updting optimal child ' + optimalChild)
 
                     getOptimality(ravel_uid, optimalChild).then((valueOfKey) => {
 
@@ -4353,7 +4370,8 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
                             this_passage_score = valueOfKey;
                         })
                         .then(() => {
-                            //console.log('m_optimalityScore AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
+                            console.log('m_optimalityScore AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChildIDScore)
+                            console.log('m_optimalityScore AFTERrrr inside then optimalChildIDScore in else if function...optimal child id: ' + optimalChild)
                             m_optimalityScore = this_passage_score + optimalChildIDScore;
                             firebase.database().ref(`passages/${ravel_uid}/${passage_uid}`).update({optimalityScore : m_optimalityScore})
                         })
@@ -4366,6 +4384,9 @@ export const reCalculateOptimalityScore = (ravel_uid, passage_uid) => {
 
             }
 
+        })
+        .then(() => {
+            console.log('THENNN Optimal Child at the end = ' + optimalChild)
         })
 
         } else {
@@ -5193,4 +5214,72 @@ export const getAllGlobalTags = () => dispatch => {
 
     })
 
+}
+
+/* Calculate optimality score level by level 
+    Algorithm:  1. Get ravel level_count  
+                2. Create a for i = level_count; i--, then go to ravel_level_passage/${ravel_uid}/i
+                3. Take a snapshot - this is the list of nodes in that level 
+                4. snapshot.forEach(recalcOptimalityScore()) - do a promise.all 
+                5. i--            
+*/
+
+export const analyzeRavelOptimalityScore = (ravel_uid) => dispatch => {
+
+    const promiseSerial = promises =>
+    promises.reduce((promise, func) =>
+    promise.then(result => func().then(Array.prototype.concat.bind(result))),
+    Promise.resolve([]))
+
+
+    return new Promise((resolve, reject) => {
+        firebase.database().ref(`ravels/${ravel_uid}/level_count`).once('value', (level_snapshot) => {
+
+            console.log('I am here')
+            var promises = []; 
+
+            for (var i = level_snapshot.val(); i > 0; i--) {
+
+                console.log('I am here level_count = ' + level_snapshot.val())
+                console.log('I am here i = ' + i)
+
+                firebase.database().ref(`ravel_level_passage/${ravel_uid}/${i}`).once('value', (snapshot) => {
+
+                    snapshot.forEach((elm) => {
+                        console.log('foreach elm = ' + elm.key)
+                        promises.push(reCalculateOptimalityScore(ravel_uid, elm.key));
+                    })
+
+                    Promise.all(promises)
+                    .then((results) => {
+                        console.log('Resolve')
+                        resolve(true)
+                    })
+                    .catch((error) => {
+                        console.log('Error ' + error)
+                        reject(false)
+                    })
+                    
+                })
+                // .then(() => {
+
+                //     Promise.all(promises)
+                //     .then((results) => {
+                //         console.log('Resolve')
+                //         //resolve(true)
+                //     })
+                //     .catch((error) => {
+                //         console.log('Error ' + error)
+                //         //reject(false)
+                //     })
+                // })
+
+            }
+
+           
+
+
+
+        })
+    })
 }
