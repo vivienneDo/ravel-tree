@@ -11,7 +11,7 @@ import {
 // 1-18-18
 // Text Header
 
-export default class TextHeader extends Component<{}> {
+export default class TextHeader extends Component {
   render() {
     return (
       <View>

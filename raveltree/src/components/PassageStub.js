@@ -31,7 +31,7 @@ import ButtonPlus from './ButtonPlus'
 import TextSans from './TextSans'
 import IconLeaf from './IconLeaf'
 
-class PassageStub extends Component<{}> {
+class PassageStub extends Component {
   constructor (props, context) {
     super (props, context);
   }
@@ -86,7 +86,7 @@ class PassageStub extends Component<{}> {
 
     return (
       <View style={styles.wrapper}>
-        <Touchable disabled={disabled} onPress={() => this.onPressStub ()} style={containerStyles}>
+        <Touchable activeOpacity={1} disabled={disabled} onPress={() => this.onPressStub ()} style={containerStyles}>
           <View style={styles.inner}>
             <View style={styles.left}>
               <View style={styles.userImage}>

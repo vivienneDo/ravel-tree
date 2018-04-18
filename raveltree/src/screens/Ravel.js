@@ -1,16 +1,17 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/27/18
-// Modified: 04/14/18
+// Modified: 04/16/18
 //
 // "Ravel" screen for RavelTree.
-//
-// TODO: Invitation mode.
 
 import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
   View, ScrollView,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback,
   Alert,
 } from 'react-native';
 
@@ -40,6 +41,12 @@ import Loader from '../components/Loader'
 import * as Test from '../test/Test'
 
 TREE_HORIZONTAL_PADDING = 20;
+
+//var initialScroll = false;
+var scrollView = undefined;
+var scrollParams = undefined;
+var TREE_HEIGHT = undefined;
+var SCROLLVIEW_HEIGHT = undefined;
 
 class Ravel extends Component {
   constructor (props) {
@@ -513,12 +520,60 @@ class Ravel extends Component {
         mode={this.state.mode}
         ravelID={this.state.ravelID}
         onAnalyzeTree={(analyzedTree) => this.setState ({ analyzedTree: analyzedTree })}
+        setScrollParams={(scrollParams, treeHeight) => this.setScrollParams (scrollParams, treeHeight)}
         onPressPassage={(passageMetaData) => this.switchToPassage (passageMetaData)}
         onPressAdd={(passageMetaData) => this.switchToAdd (passageMetaData)}
         onPressInitialAddButton={(passageMetaData) => this.switchToAdd (passageMetaData)}
         horizontalPadding={TREE_HORIZONTAL_PADDING}
       />
     );
+  }
+
+  setScrollParams (params, treeHeight) {
+    scrollParams = params;
+    if (treeHeight < 0) {
+      TREE_HEIGHT = 0;
+    }
+    else {
+      TREE_HEIGHT = treeHeight;
+    }
+    console.log ('\t' + TREE_HEIGHT);
+  }
+
+  _onScrollViewLayout (ev) {
+    var height = ev.nativeEvent.layout.height;
+    SCROLLVIEW_HEIGHT = height;
+    scrollView = this._scrollView;
+    console.log ('\t\t' + SCROLLVIEW_HEIGHT);
+
+    if (/*!initialScroll && */TREE_HEIGHT && SCROLLVIEW_HEIGHT) {
+      if (TREE_HEIGHT > SCROLLVIEW_HEIGHT) {
+        scrollParams.y = (TREE_HEIGHT - SCROLLVIEW_HEIGHT);
+      }
+      else {
+        scrollParams.y = (TREE_HEIGHT / 2);
+      }
+      if (scrollParams) {
+        scrollView.scrollTo (scrollParams);
+      }
+    }
+  }
+
+  _onScrollViewContentSizeChange = () => {
+    scrollView = this._scrollView;
+    console.log ('\t\tContent size change.');
+
+    if (/*!initialScroll && */TREE_HEIGHT && SCROLLVIEW_HEIGHT) {
+      if (TREE_HEIGHT > SCROLLVIEW_HEIGHT) {
+        scrollParams.y = (TREE_HEIGHT - SCROLLVIEW_HEIGHT);
+      }
+      else {
+        scrollParams.y = (TREE_HEIGHT / 2);
+      }
+      if (scrollParams) {
+        scrollView.scrollTo (scrollParams);
+      }
+    }
   }
 
   render (){
@@ -540,35 +595,42 @@ class Ravel extends Component {
 
     return (
       <View style={styles.layout}>
-      {this.showCommentModal ()}
-      {this.showModal (this.state.showModal)}
-        <LinkBack onPress={() => this.onPressBack ()} />
-        <View style={styles.head}>
-          <Divider />
-          <View style={styles.title}>
-            <TextSerif size={30}>{this.state.title}</TextSerif>
-          </View>
-          <View style={styles.by}>
-            <TextHeader size={12} color={'#6A6A6A'}>By</TextHeader>
-          </View>
-          {this.showUsers ()}
-          <View style={styles.score}>
-            <IconLeaf size={37} />
-            <View style={styles.scoreText}>
-              <TextSerif size={28}>{this.state.score}</TextSerif>
+        <KeyboardAvoidingView style={styles.layout} behavior={'padding'}>
+
+            <View style={styles.layout}>
+              {this.showCommentModal ()}
+              {this.showModal (this.state.showModal)}
+              <LinkBack onPress={() => this.onPressBack ()} />
+              <View style={styles.head}>
+                <Divider />
+                <View style={styles.title}>
+                  <TextSerif size={30}>{this.state.title}</TextSerif>
+                </View>
+                <View style={styles.by}>
+                  <TextHeader size={12} color={'#6A6A6A'}>By</TextHeader>
+                </View>
+                {this.showUsers ()}
+                <View style={styles.score}>
+                  <IconLeaf size={37} />
+                  <View style={styles.scoreText}>
+                    <TextSerif size={28}>{this.state.score}</TextSerif>
+                  </View>
+                </View>
+                <View style={styles.links1}>
+                  <TextLink size={14} onPress={() => this.onPressConcept ()}>Concept</TextLink>
+                  <TextLink size={14} onPress={() => this.onPressReport ()}>Report</TextLink>
+                </View>
+                <Divider />
+                {this.showAdminLinks (this.state.mode == 'owned')}
+                {this.showInvitationButton (this.state.mode == 'invited')}
+              </View>
+              <ScrollView ref={(c) => (this._scrollView = c)} {...this.props} onContentSizeChange={this._onScrollViewContentSizeChange} style={styles.scroll} onLayout={(ev) => this._onScrollViewLayout (ev)} contentContainerStyle={styles.scrollContent}>
+                {this.showTree ()}
+              </ScrollView>
             </View>
-          </View>
-          <View style={styles.links1}>
-            <TextLink size={14} onPress={() => this.onPressConcept ()}>Concept</TextLink>
-            <TextLink size={14} onPress={() => this.onPressReport ()}>Report</TextLink>
-          </View>
-          <Divider />
-          {this.showAdminLinks (this.state.mode == 'owned')}
-          {this.showInvitationButton (this.state.mode == 'invited')}
-        </View>
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-          {this.showTree ()}
-        </ScrollView>
+
+        </KeyboardAvoidingView>
+        <View style={{height: 160}} />
       </View>
     );
   }
@@ -669,7 +731,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100%',
+    //height: '100%',
+    //minHeight: '100%',
+    //flex: 1,
+    paddingVertical: 20,
     paddingHorizontal: 20,
   },
   tree: {
