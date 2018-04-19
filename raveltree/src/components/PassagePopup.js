@@ -37,6 +37,7 @@ class PassagePopup extends React.Component {
       passageMetaData: this.props.passageMetaData || {},
       ravelMetaData: this.props.ravelMetaData || {},
       mode: this.props.mode || '',
+      shouldRefresh: false,
     };
   }
 
@@ -166,7 +167,7 @@ class PassagePopup extends React.Component {
     var {height, width} = Dimensions.get ('window');
 
     return (
-      <ModalContainer name='PassagePopup' isActive={isActive} onPressClose={() => this.props.onPressClose ()}>
+      <ModalContainer name='PassagePopup' isActive={isActive} onPressClose={() => this.props.onPressClose (this.state.shouldRefresh)}>
         <View style={styles.head}>
           <View style={styles.row1}>
             <TextSerif size={16}>{ravel}</TextSerif>
@@ -207,6 +208,7 @@ class PassagePopup extends React.Component {
               downvotes={passageMetaData.passage_downvote}
               votes={passageMetaData.passage_combined_vote}
               disabled={!this.checkIfCanEdit ()}
+              onVoteSuccess={() => this.setState ({ shouldRefresh: true })}
             />
           </View>
         </View>

@@ -85,6 +85,7 @@ class Ravel extends Component {
       numberParticipants: undefined,
       score:        undefined,
       concept:      undefined,
+      shouldRefresh: false,
     };
 
     // Make sure navigating back doesn't bring us back to the creation process.
@@ -100,6 +101,17 @@ class Ravel extends Component {
     this.props.getRavelMetaData (this.state.ravelID)
     // Load the ravel locally.
     .then (ravel => { this.loadRavel (ravel); })
+    .catch (error => { console.error (error); });
+  }
+
+  refresh () {
+    this.props.getRavelMetaData (this.props.screenData.ravel_uid)
+    .then (ravel => {
+      var screenData = {
+        ravel_uid: this.state.ravelID,
+      }
+      this.props.refresh ('Ravel', screenData);
+    })
     .catch (error => { console.error (error); });
   }
 
@@ -184,7 +196,15 @@ class Ravel extends Component {
           <View style={styles.modal}>
             <PassagePopup
               {...this.props}
-              onPressClose={() => this.setState ({ showModal: '' })}
+              onPressClose={(shouldRefresh) => {
+                if (shouldRefresh) {
+                  this.setState ({ showModal: '', });
+                  this.refresh ();
+                }
+                else {
+                  this.setState ({ showModal: '' });
+                }
+              }}
               onSwitchToAdd={(passage) => this.switchToAdd (passage)}
               onSwitchToFork={(passage) => this.switchToFork (passage)}
               onNavigateToMerge={(screen, screenData) => this.navigateToMerge (screen, screenData)}
