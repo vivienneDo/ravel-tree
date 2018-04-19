@@ -25,6 +25,11 @@ export default class ModalContainer extends React.Component {
 
   }
 
+  onPressClose () {
+    console.log ('Trying to close modal...');
+    this.props.onPressClose ();
+  }
+
   render () {
     const {
       name,
@@ -54,9 +59,9 @@ export default class ModalContainer extends React.Component {
             name={name}
             testID={testID}
             style={styles.xButton}
-            onPress={() => this.props.onPressClose ()}
+            onPress={() => this.onPressClose ()}
           >
-            <View>
+            <View style={{height: 36, width: 36,}}>
               <Text style={styles.x}>&#215;</Text>
             </View>
           </Touchable>
@@ -90,9 +95,10 @@ const styles = StyleSheet.create ({
     paddingRight: 17,
   },
   bottomButtons: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
+    alignSelf: 'center',
+    // position: 'absolute',
+    marginBottom: -36,
+    //width: '100%',
   },
   xButton: {
     alignSelf: 'center',
@@ -103,7 +109,7 @@ const styles = StyleSheet.create ({
     bottom: 0,
     fontFamily: 'Roboto-Thin',
     fontWeight: '100',
-    fontSize: 36,
+    fontSize: 50,
     color: '#2E8AF7',
   },
 });
