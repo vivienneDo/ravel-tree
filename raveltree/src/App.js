@@ -9,7 +9,8 @@ import {
   Platform,
   StyleSheet,
   Text,
-  View
+  View,
+  YellowBox
 } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 
@@ -40,7 +41,14 @@ export default class App extends Component {
       'Warning: Cannot update during',
       'FIREBASE WARNING: Using',
       'Remote debugger',
+      'Warning:,',
     ];
+    YellowBox.ignoreWarnings = ([
+      'Warning: Cannot update during',
+      'FIREBASE WARNING: Using',
+      'Remote debugger',
+      'Warning:,',
+    ]);
 
     return (
       <Provider store={store}>
