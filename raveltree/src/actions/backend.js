@@ -4943,6 +4943,48 @@ export const banReportedPassage = (ravel_uid, passage_uid) => dispatch => {
     })
 }
 
+export const getAllNotificationsForUid = (user_uid) => dispatch => {
+    return new Promise ((resolve, reject) => {
+        firebase.database().ref(`notifications/${user_uid}`).once('value')
+        .then((snapshot) => {
+            resolve(snapshot.val())
+        })
+        .catch((error) => {
+            reject('Error fetching notifications')
+        })
+    })
+}
+
+export const getUnreadNotificationsForUid = (user_uid) => dispatch => {
+    return new Promise ((resolve, reject) => {
+        firebase.database().ref(`notifications/${user_uid}`).orderByChild('is_read').equalTo(false).once('value')
+        .then((snapshot) => {
+            dispatch({type: 'RETRIEVED_UNREAD_NOTIFICATIONS', payload: Objects.keys(snapshot.val().length)})
+            resolve(snapshot.val())
+        })
+        .catch((error) => {
+            reject('Error fetching notifications')
+        })
+    })
+}
+
+export const markNotificationsForUidRead = (user_uid) => dispatch => {
+    return new Promise ((resolve, reject) => {
+        firebase.database().ref(`notifications/${user_uid}`).once('value')
+        .then ((snapshot) => {
+            var notifs = snapshot.val();
+            notifs.foreach((child_snap) => {
+                firebase.database().ref(`notifications/${user_uid}/${child_snap}/is_read`).update(true);
+            })
+
+            resolve(true);
+        })
+        .catch((error) => {
+            reject(error);
+        })
+    })
+}
+
 /**
  * Gets the admin stat page
  * // Number of Ravels

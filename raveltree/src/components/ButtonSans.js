@@ -16,7 +16,9 @@ const StyleSheet = require('StyleSheet');
 const Text = require('Text');
 const TouchableNativeFeedback = require('TouchableNativeFeedback');
 const TouchableOpacity = require('TouchableOpacity');
+const TouchableWithoutFeedback = require('TouchableWithoutFeedback');
 const View = require('View');
+import Touchable from '../components/Touchable'
 
 export default class ButtonSans extends React.Component {
 
@@ -37,8 +39,7 @@ export default class ButtonSans extends React.Component {
     const textStyles = [styles.text];
     const layoutStyles = [styles.layout];
     const accessibilityTraits = ['button'];
-    const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
-
+    
     if (radius)
       buttonStyles.push ({borderRadius: radius});
     if (color)
@@ -65,7 +66,6 @@ export default class ButtonSans extends React.Component {
       textStyles.push ({lineHeight: height});
     }
 
-
     return (
       <Touchable
         accessibilityComponentType="button"
@@ -74,7 +74,8 @@ export default class ButtonSans extends React.Component {
         testID={testID}
         disabled={disabled}
         onPress={onPress}
-        style={layoutStyles}>
+        style={layoutStyles}
+        >
         <View style={buttonStyles}>
           <Text style={textStyles} disabled={disabled}>{title}</Text>
         </View>

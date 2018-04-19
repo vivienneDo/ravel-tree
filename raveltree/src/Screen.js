@@ -69,6 +69,9 @@ class Screen extends Component {
                 })
           }
         })
+
+        this.props.getUnreadNotificationsForUid(user.uid);
+  
         this.setState ({loggedIn: true})
       } else {
         this.setState ({loggedIn: false})

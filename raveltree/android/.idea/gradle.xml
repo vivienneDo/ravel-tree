@@ -10,7 +10,12 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/../node_modules/react-native-fbsdk/android" />
+            <option value="$PROJECT_DIR$/../node_modules/react-native-fetch-blob/android" />
+            <option value="$PROJECT_DIR$/../node_modules/react-native-image-picker/android" />
+            <option value="$PROJECT_DIR$/../node_modules/react-native-linear-gradient/android" />
             <option value="$PROJECT_DIR$/../node_modules/react-native-material-kit/android" />
+            <option value="$PROJECT_DIR$/../node_modules/react-native-photo-view/android" />
+            <option value="$PROJECT_DIR$/../node_modules/react-native-splash-screen/android" />
             <option value="$PROJECT_DIR$/../node_modules/react-native-vector-icons/android" />
           </set>
         </option>

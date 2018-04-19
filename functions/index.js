@@ -25,10 +25,11 @@ exports.upVoted = functions.database.ref('/passages/{ravelId}/{passageId}/passag
                     var passage_title = passage['passage_title'];
                     var passage_uid = passage['passage_uid'];
                     var upvotes = passage['passage_combined_vote'];    
+                    var is_read = false;
                     
                     return admin.database().ref('/users/' + user_uid + '/userProfile/first_name').once('value')
                     .then((snapshot) => {
-                        return admin.database().ref('/notifications/' + authorOfPassage + '/').push({type, user_uid, first_name: snapshot.val(), ravel_uid, passage_uid, passage_title, upvotes});
+                        return admin.database().ref('/notifications/' + authorOfPassage + '/').push({type, user_uid, first_name: snapshot.val(), ravel_uid, passage_uid, passage_title, upvotes, is_read});
                     });
                 });
 
@@ -62,6 +63,7 @@ exports.invitation = functions.database.ref('/ravels/{ravelId}/ravel_participant
             var ravel_uid = ravel['ravel_uid'];
             var passage_title = ravel['ravel_title'];
             var passage_uid = ravel_uid;
+            var is_read = false;
         
             var newNotifs = [];
 
@@ -71,12 +73,12 @@ exports.invitation = functions.database.ref('/ravels/{ravelId}/ravel_participant
                 if (before !== null && before.hasOwnProperty(key) && before[key] !== after[key]) {
                     type = 'invitationAccepted';
                     console.log('Creating invitation accepted notification');
-                    var invitationAcceptedNotification = createNotification(key, userCreated, type, ravel_uid, passage_uid, passage_title);
+                    var invitationAcceptedNotification = createNotification(key, userCreated, type, ravel_uid, passage_uid, passage_title, is_read);
                     newNotifs.push(invitationAcceptedNotification);
                 } else if (before === null || !before.hasOwnProperty(key)){
                     type = 'invitation';
                     console.log('Creating invitation notification');
-                    var invitationNotification = createNotification(userCreated, key, type, ravel_uid, passage_uid, passage_title);
+                    var invitationNotification = createNotification(userCreated, key, type, ravel_uid, passage_uid, passage_title, is_read);
                     newNotifs.push(invitationNotification);
                 }
             });

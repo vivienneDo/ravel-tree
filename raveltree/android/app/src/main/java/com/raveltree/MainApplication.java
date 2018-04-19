@@ -5,7 +5,6 @@ import android.app.Application;
 import com.facebook.CallbackManager;
 import com.facebook.react.ReactApplication;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
-import com.horcrux.svg.SvgPackage;
 import com.reactnative.photoview.PhotoViewPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.imagepicker.ImagePickerPackage;
@@ -40,9 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
             new SplashScreenReactPackage(),
-            new SvgPackage(),
-            new PhotoViewPackage(),
-            new LinearGradientPackage(),
+              new LinearGradientPackage(),
             new ImagePickerPackage(),
             new RNFetchBlobPackage(),
             new FBSDKPackage(mCallbackManager),

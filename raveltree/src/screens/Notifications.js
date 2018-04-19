@@ -48,6 +48,7 @@ class Notifications extends Component {
   getNotifications () {
 
     // TODO: Firebase retrieval.
+    
 
     return (
       <View>
@@ -116,9 +117,9 @@ const mapStateToProps = (state) => {
   const {
     screenData,
   } = state.navigation;
-
+a
   return {
-    screenData,
+    screenData, numOfNotifs,
   };
 }
 

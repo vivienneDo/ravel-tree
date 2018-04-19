@@ -203,7 +203,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    width: '100%',
   },
   buttonSpacer: {
     width: 40,

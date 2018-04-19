@@ -37,6 +37,7 @@ const Text = require('Text');
 const Image = require('Image');
 const TouchableNativeFeedback = require('TouchableNativeFeedback');
 const TouchableOpacity = require('TouchableOpacity');
+import Touchable from '../components/Touchable'
 
 import { connect } from 'react-redux'
 import _ from 'lodash';
@@ -86,9 +87,6 @@ class NavBar extends React.Component {
     } = this.props;
 
     const layoutStyles = [styles.layout];
-
-    const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
-
     console.log (this.props.activeScreen);
 
     const tabs = ['Home', 'YourRavels', 'Messages', 'Notifications', 'Profile'];
@@ -108,8 +106,6 @@ class NavBar extends React.Component {
     }
 
     var messageCount = 3;       // TODO: Retrieve from Firebase.
-    var notificationCount = 7;  // TODO: Retrieve from Firebase.
-
     return (
       <View>
         <Divider />
@@ -152,11 +148,11 @@ class NavBar extends React.Component {
               </Text>
             </View>
           </Touchable>*/}
-          {/*<Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Notifications')}>
+          {/* <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Notifications')}>
             <View style={styles.menuItemInner}>
               <View>
                 <View style={styles.notification}>
-                  <Text style={styles.notificationText}>{notificationCount}</Text>
+                  <Text style={styles.notificationText}>{this.props.notificationCount}</Text>
                 </View>
                 <Image
                   source = {this.props.activeTab == 'Notifications' ? require('./img/bell-active.png') : require('./img/bell.png')}
@@ -167,7 +163,7 @@ class NavBar extends React.Component {
                 Notifications
               </Text>
             </View>
-          </Touchable>*/}
+          </Touchable> */}
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Profile')}>
             <View style={styles.menuItemInner}>
               <UserImage {...this.props} userID={(this.props.currentUserProfile || {}).user_uid} size={30} active={this.props.activeTab === 'Profile'} disabled />
@@ -193,7 +189,7 @@ const styles = StyleSheet.create ({
   },
   menuItem: {
     // width: '25%',
-    width: '33.33333333%',
+    flex:1,
     //height: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -253,6 +249,10 @@ const mapStateToProps = (state) => {
   const {
     currentUserProfile,
   } = state.current_user;
+
+  const {
+    notificationCount,
+  } = state.notification;
 
   return {
     activeTab,
