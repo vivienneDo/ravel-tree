@@ -5304,3 +5304,55 @@ export const analyzeRavelOptimalityScore = (ravel_uid) => {
         })
     })
 }
+
+
+// Do all of the notification calls here 
+
+export const getAllNotificationsForUid = (user_uid) => dispatch => {
+
+    return new Promise ((resolve, reject) => {
+        firebase.database().ref(`notifications/${user_uid}`).once('value')
+        .then((snapshot) => {
+            resolve(snapshot.val())
+        })
+        .catch((error) => {
+            reject('Error fetching notifications')
+        })
+    })
+
+}
+
+export const getUnreadNotificationsForUid = (user_uid) => dispatch => {
+     
+    console.log('Inside notif USER UID' + user_uid)
+
+    return new Promise ((resolve, reject) => {
+        firebase.database().ref(`notifications/${user_uid}`).orderByChild('is_read').equalTo(false).on('value', (snapshot) => {
+
+                console.log('number: ' + snapshot.numChildren())
+                dispatch({type: 'RETRIEVED_UNREAD_NOTIFICATIONS', payload: snapshot.numChildren() })
+                resolve(snapshot.val())
+            
+        })
+        .catch((error) => {
+            reject('Error fetching notifications')
+        })
+    })
+}
+
+export const markNotificationsForUidRead = (user_uid) => dispatch => {
+    return new Promise ((resolve, reject) => {
+        firebase.database().ref(`notifications/${user_uid}`).once('value')
+        .then ((snapshot) => {
+            var notifs = snapshot.val();
+            notifs.foreach((child_snap) => {
+                firebase.database().ref(`notifications/${user_uid}/${child_snap}`).update({is_read: true});
+            })
+
+            resolve(true);
+        })
+        .catch((error) => {
+            reject(error);
+        })
+    })
+}

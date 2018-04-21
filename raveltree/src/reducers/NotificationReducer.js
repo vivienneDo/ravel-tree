@@ -1,9 +1,16 @@
 const initialState = {
-    ravel_participant_response: false
+    ravel_participant_response: false,
+    notificationCount : 0
 };
 
 export default (state = initialState, action) => {
     switch (action.type) {
+
+        case 'RETRIEVED_UNREAD_NOTIFICATIONS':
+            return {
+                ...state,
+                notificationCount: action.payload
+            };
 
         case 'NOTIFICATION_RAVEL_PARTICIPANT_RESPONSE':
             return {
