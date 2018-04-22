@@ -13,6 +13,7 @@ export default class Touchable extends React.Component {
             if (Platform.OS === 'android') {
                 return (
                 <TouchableNativeFeedback
+                    activeOpacity={this.props.activeOpacity}
                     accessibilityComponentType={this.props.accessibilityComponentType}
                     accessibilityLabel={this.props.accessibilityLabel}
                     accessibilityTraits={this.props.accessibilityTraits}
@@ -25,6 +26,7 @@ export default class Touchable extends React.Component {
             } else {
                 return (
                 <TouchableOpacity
+                    activeOpacity={this.props.activeOpacity}
                     accessibilityComponentType={this.props.accessibilityComponentType}
                     accessibilityLabel={this.props.accessibilityLabel}
                     accessibilityTraits={this.props.accessibilityTraits}

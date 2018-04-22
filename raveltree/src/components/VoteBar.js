@@ -13,9 +13,9 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableNativeFeedback,
-  TouchableOpacity
 } from 'react-native';
+
+import Touchable from '../components/Touchable';
 
 import { connect } from 'react-redux'
 import _ from 'lodash';
@@ -132,8 +132,6 @@ class VoteBar extends Component {
       downVoteStyles.push ({ borderBottomColor: '#939393' });
       numStyles.push ({ color: '#939393' });
     }
-
-    const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     return (
       <View>

@@ -29,10 +29,9 @@ const AppRegistry = require('AppRegistry');
 const PropTypes = require('prop-types');
 const StyleSheet = require('StyleSheet');
 const Text = require('Text');
-const TouchableNativeFeedback = require('TouchableNativeFeedback');
-const TouchableOpacity = require('TouchableOpacity');
 const View = require('View');
 const ScrollView = require('ScrollView');
+import Touchable from '../components/Touchable';
 
 import { connect } from 'react-redux'
 import _ from 'lodash';
@@ -157,7 +156,6 @@ class NotificationCard extends React.Component {
     const layoutStyles = [styles.layout];
     const dotStyles = [styles.dot];
 
-    const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     if (this.props.active) {
       layoutStyles.push (styles.active);

@@ -18,9 +18,8 @@ import {
   Text,
   View,
   Image,
-  TouchableOpacity,
-  TouchableNativeFeedback,
 } from 'react-native';
+import Touchable from '../components/Touchable';
 
 import { connect } from 'react-redux'
 import _ from 'lodash';
@@ -75,8 +74,6 @@ class PassageStub extends Component {
       active ? {borderColor: '#2E8AF7'} : undefined,
       highlighted ? {backgroundColor: '#dddddd'} : undefined,
     ];
-
-    const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     var truncatedTitle = (name.length >= TITLE_TRUNCATION) ? (
       this.shorten (name, TITLE_TRUNCATION) + '...'

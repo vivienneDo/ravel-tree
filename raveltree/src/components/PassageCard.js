@@ -15,10 +15,10 @@ import {
   Text,
   View,
   Image,
-  TouchableOpacity,
-  TouchableNativeFeedback,
   Alert,
 } from 'react-native';
+
+import Touchable from '../components/Touchable';
 
 import { connect } from 'react-redux'
 import _ from 'lodash';
@@ -159,8 +159,6 @@ class PassageCard extends React.Component {
       parentScreen,
       testID,
     } = this.props;
-
-    const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     var truncatedPassage = (passage.length >= PASSAGE_TRUNCATION) ? (
       this.shorten (passage, PASSAGE_TRUNCATION) + '...'

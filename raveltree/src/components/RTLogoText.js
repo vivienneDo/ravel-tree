@@ -46,10 +46,10 @@ const styles = StyleSheet.create ({
   },
   ravel: {
     color: '#2E8AF7',
-    fontFamily: 'EB Garamond',
+    fontFamily: Platform.OS === 'android' ? 'EBGaramond-Regular' : 'EB Garamond',
   },
   tree: {
     color: '#3BB54A',
-    fontFamily: 'EB Garamond',
+    fontFamily: Platform.OS === 'android' ? 'EBGaramond-Regular' : 'EB Garamond',
   },
 });

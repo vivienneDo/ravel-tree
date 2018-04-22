@@ -117,9 +117,9 @@ const mapStateToProps = (state) => {
   const {
     screenData,
   } = state.navigation;
-a
+
   return {
-    screenData, numOfNotifs,
+    screenData
   };
 }
 

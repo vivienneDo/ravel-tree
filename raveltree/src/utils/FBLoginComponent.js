@@ -144,6 +144,7 @@ class FBLoginComponent extends Component {
                     }
                 )
                 .catch((error) => {
+                    console.log(error);
                 (this.onAuthFailed)
                 })
                 }

@@ -14,9 +14,8 @@ const AppRegistry = require('AppRegistry');
 const PropTypes = require('prop-types');
 const StyleSheet = require('StyleSheet');
 const Text = require('Text');
-const TouchableNativeFeedback = require('TouchableNativeFeedback');
-const TouchableOpacity = require('TouchableOpacity');
 const View = require('View');
+import Touchable from '../components/Touchable';
 
 export default class ButtonReverse extends React.Component <{
   title: string,
@@ -76,7 +75,6 @@ export default class ButtonReverse extends React.Component <{
     const textStyles = [styles.text];
     const layoutStyles = [styles.layout];
     const accessibilityTraits = ['button'];
-    const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     if (radius)
       buttonStyles.push ({borderRadius: radius});
