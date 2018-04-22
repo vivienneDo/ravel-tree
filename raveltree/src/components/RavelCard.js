@@ -1,11 +1,10 @@
 // Author:   Alex Aguirre
 // Created:  02/05/18
-// Modified: 04/10/18 by Frank Fusco (fr@nkfus.co)
+// Modified: 04/18/18 by Frank Fusco (fr@nkfus.co)
 //
 // "Ravel Card" component for RavelTree.
 //
 // TODO: Make entire card link to content.
-// TODO: Truncate concept text?
 
 import React, {Component} from 'react';
 import {
@@ -32,7 +31,7 @@ import IconLeaf from './IconLeaf'
 // Number of characters of ravel title to display on the card.
 TITLE_TRUNCATION = 36;
 
-class RavelCard extends Component<{}> {
+class RavelCard extends Component {
   constructor (props, context) {
     super (props, context);
     this.state = {
@@ -58,7 +57,7 @@ class RavelCard extends Component<{}> {
   }
 
   render() {
-    const {
+    var {
       title,
       ravelID,
       author,
@@ -69,6 +68,8 @@ class RavelCard extends Component<{}> {
     } = this.props;
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
+
+    if (!title) { title = '' }
 
     var truncatedTitle = (title.length >= TITLE_TRUNCATION) ? (
       this.shorten (title, TITLE_TRUNCATION) + '...'

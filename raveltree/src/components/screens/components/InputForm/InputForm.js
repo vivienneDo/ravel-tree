@@ -11,7 +11,7 @@ import {
 // 1-18-18
 // Input Text
 
-export default class InputForm extends Component<{}> {
+export default class InputForm extends Component {
   render() {
     return (
       <View>

@@ -194,10 +194,11 @@ export const navigateBack = () => {
  * actions: "Refreshes" the specified screen by navigating away and back.
  *
  */
-export const refresh = (current, screenData = {}) => {
+export const refresh = (current, screenData) => {
   return (dispatch) => {
     console.log ("Refreshing screen...");
     const screen = 'Refresh';
+    if (!screenData) { screenData = new Object; }
     screenData._targetScreen = current;
     console.log ('Target screen: ' + screenData._targetScreen);
     dispatch ({

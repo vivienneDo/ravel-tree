@@ -44,6 +44,7 @@ import Explore from './screens/Explore'
 import Ravel from './screens/Ravel'
 import Merge from './screens/Merge'
 import Refresh from './screens/Refresh'
+import GetAllUserRavels from './screens/GetAllUserRavels'
 
 import GraphicsTest from './screens/GraphicsTest';
 
@@ -60,6 +61,7 @@ class Screen extends Component {
     firebase.auth().onAuthStateChanged((user) => {
       console.log('Authentication state is: ' + (user ? 'True' : 'False'));      
       if (user) { 
+        
         firebase.database().ref(`user_report_list/${user.uid}`).on('value', (snapshot) => {
           if(snapshot.exists() && snapshot.val() === true) {         
               alert(user.email + ': You have been removed due to a violation of RavelTrees terms of use')               
@@ -123,6 +125,8 @@ class Screen extends Component {
         return <Merge {...this.props} />;
       case ('Refresh'):
         return <Refresh {...this.props} />;
+      case ('GetAllUserRavels'):
+        return <GetAllUserRavels {...this.props} />;
       default:
         return <Login {...this.props} />;
     }

@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 
 
-export default class TextHeader extends Component<{}> {
+export default class TextHeader extends Component {
   render() {
     const {
       color,

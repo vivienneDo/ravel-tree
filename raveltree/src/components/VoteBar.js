@@ -65,6 +65,9 @@ class VoteBar extends Component {
             votes: votes,
           });
         }
+        if (this.props.onVoteSuccess) {
+          this.props.onVoteSuccess ();
+        }
       })
       .catch (error => { console.log (error) });
     })
@@ -90,6 +93,9 @@ class VoteBar extends Component {
             hasDownvoted: false,
             votes: votes,
           });
+        }
+        if (this.props.onVoteSuccess) {
+          this.props.onVoteSuccess ();
         }
       })
       .catch (error => { console.log (error) });

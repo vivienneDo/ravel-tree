@@ -1,6 +1,6 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  03/10/18
-// Modified: 03/12/18
+// Modified: 04/19/18
 //
 // "Create Profile" screen for RavelTree.
 
@@ -8,7 +8,10 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  View, ScrollView
+  View, ScrollView,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
 
 import firebase from 'firebase';
@@ -83,44 +86,50 @@ class Profile extends Component {
     } = this.props;
 
     return (
-      <View style={styles.layout}>
-        <View style={styles.logo}>
-          <RTLogoText />
-        </View>
-        <TextHeader>Create your Profile</TextHeader>
-        <View style={styles.top}>
-          <View style={styles.topLeft}>
-            {/* <UserImage {...this.props} size={100} /> */}
-            <TextLink onPress={() => this.onPressAddImage ()} size={12}>Add Image</TextLink>
+      <KeyboardAvoidingView style={styles.layout} behavior={'padding'}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <View style={styles.layout}>
+
+            <View style={styles.logo}>
+              <RTLogoText />
+            </View>
+            <TextHeader>Create your Profile</TextHeader>
+            <View style={styles.top}>
+              <View style={styles.topLeft}>
+                {/* <UserImage {...this.props} size={100} /> */}
+                <TextLink onPress={() => this.onPressAddImage ()} size={12}>Add Image</TextLink>
+              </View>
+              <View style={styles.topRight}>
+                <InputText
+                  placeholder={'First name'}
+                  onChangeText={(firstName) => this.onChangeFirstName (firstName)}
+                />
+                <View style={styles.formSpacer} />
+                <InputText
+                  placeholder={'Last name'}
+                  onChangeText={(lastName) => this.onChangeLastName (lastName)}
+                />
+              </View>
+            </View>
+            <View style={styles.bottom}>
+              <View style={styles.bio}>
+                <InputText
+                  placeholder={'Add your autobiography (e.g., "I was born in a log cabin in Illinois...").'}
+                  onChangeText={(bio) => this.onChangeBio (bio)}
+                  multiline
+                  height={200}
+                />
+              </View>
+              <Button
+                disabled={this.state.firstName == '' || this.state.lastName == '' || this.state.bio == ''}
+                onPress={() => this.onPressCreateProfile ()}
+                title={'Create Profile'}
+              />
+            </View>
+
           </View>
-          <View style={styles.topRight}>
-            <InputText
-              placeholder={'First name'}
-              onChangeText={(firstName) => this.onChangeFirstName (firstName)}
-            />
-            <View style={styles.formSpacer} />
-            <InputText
-              placeholder={'Last name'}
-              onChangeText={(lastName) => this.onChangeLastName (lastName)}
-            />
-          </View>
-        </View>
-        <View style={styles.bottom}>
-          <View style={styles.bio}>
-            <InputText
-              placeholder={'Add your autobiography (e.g., "I was born in a log cabin in Illinois...").'}
-              onChangeText={(bio) => this.onChangeBio (bio)}
-              multiline
-              height={200}
-            />
-          </View>
-          <Button
-            disabled={this.state.firstName == '' || this.state.lastName == '' || this.state.bio == ''}
-            onPress={() => this.onPressCreateProfile ()}
-            title={'Create Profile'}
-          />
-        </View>
-      </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     );
   }
 }

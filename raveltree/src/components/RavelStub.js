@@ -27,7 +27,10 @@ import TextSerif from './TextSerif'
 import IconUser from './IconUser'
 import IconLeaf from './IconLeaf'
 
-class RavelStub extends Component<{}> {
+// Number of characters of ravel title to display on the stub.
+TITLE_TRUNCATION = 32;
+
+class RavelStub extends Component {
   constructor (props) {
     super (props);
     this.state = {
@@ -64,6 +67,11 @@ class RavelStub extends Component<{}> {
     this.props.navigateForward ('Ravel', this.props.parentScreen, screenData);
   }
 
+  shorten (str, maxLen, separator = ' ') {
+    if (!str || str.length <= maxLen) { return str; }
+    return str.substr(0, str.lastIndexOf(separator, maxLen));
+  }
+
   render() {
     const {
       ravel,
@@ -73,6 +81,14 @@ class RavelStub extends Component<{}> {
 
     const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
+    var name = ravel.ravel_title;
+
+    var truncatedTitle = (name.length >= TITLE_TRUNCATION) ? (
+      this.shorten (name, TITLE_TRUNCATION) + '...'
+    ) : (
+      name
+    );
+
     return (
       <Touchable onPress={() => this.onPressStub ()} style={styles.container}>
         <View style={styles.inner}>
@@ -80,7 +96,7 @@ class RavelStub extends Component<{}> {
             <View style={styles.userImage}>
               <UserImage {...this.props} userID={ravel.user_created} photoURL={ravel.user_created_photoURL} size={26} />
             </View>
-            <TextSerif size={16}>{ravel.ravel_title}</TextSerif>
+            <TextSerif size={16}>{truncatedTitle}</TextSerif>
           </View>
           <View style={styles.right}>
             <View style={styles.users}>

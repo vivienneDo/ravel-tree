@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 
 
-export default class InputText extends Component<{}> {
+export default class InputText extends Component {
   constructor (props) {
     super (props);
     this.state = {text: this.props.text};

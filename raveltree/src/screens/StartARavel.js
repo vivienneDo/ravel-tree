@@ -1,6 +1,6 @@
 // Author: Frank Fusco (fr@nkfus.co)
 // Created: 02/19/18
-// Modified: 04/14/18
+// Modified: 04/16/18
 //
 // "Start a Ravel" screen for RavelTree.
 
@@ -9,6 +9,9 @@ import {
   StyleSheet,
   Text,
   View, ScrollView,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback,
   Alert,
 } from 'react-native';
 
@@ -49,37 +52,6 @@ class StartARavel extends Component {
         ...this.props.screenData,
     };
   }
-
-  // componentWillReceiveProps (newProps) {
-  //   // Check to see if the typed ravel name already exists.
-  //   var ravelExists = false;
-  //   var ravels = newProps.all_ravel;
-  //   if (ravels) {
-  //     for (var key in ravels) {
-  //       if (ravels [key].ravel_title == this.state.ravelName) {
-  //         // If so, check to see if that ravel was created by this user.
-  //         if (ravels [key].user_created == firebase.auth().currentUser.uid) {
-  //           // If so, alert the user to choose another title.
-  //           ravelExists = true;
-  //           Alert.alert (
-  //             'Sorry, you already have a ravel by that name.',
-  //             'Please choose a different name for this ravel.'
-  //           );
-  //         }
-  //       }
-  //     }
-  //     // Otherwise, navigate to the next screen.
-  //     if (!ravelExists) {
-  //       var screenData = Object.assign ({}, this.state, {mode: 'add'});
-  //       this.props.navigateForward ('AddTags', this.constructor.name, screenData);
-  //     }
-  //   }
-  // }
-
-  navigateAddTags () {
-
-  }
-
 
   onPressBack () {
     this.props.navigateBack ();
@@ -151,6 +123,9 @@ class StartARavel extends Component {
 
     return (
       <View style={styles.layout}>
+
+          {/*<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>*/}
+
         <LinkBack onPress={() => this.onPressBack ()} />
         <LinkContinue
           disabled={
@@ -174,6 +149,8 @@ class StartARavel extends Component {
           </View>
           <Divider style={styles.divider}/>
         </View>
+
+        <KeyboardAvoidingView keyboardVerticalOffset={15} behavior={'padding'} style={styles.kaView}>
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           <View style={styles.optionRow}>
             <TextSans color={'#7F7F7F'}>Category</TextSans>
@@ -247,10 +224,12 @@ class StartARavel extends Component {
               </View>
             </View>
           </View>
+
           <View style={styles.concept}>
             <View style={styles.conceptLabel}>
               <TextSans color={'#7F7F7F'}>Concept</TextSans>
             </View>
+
             <InputText
               multiline
               height={150}
@@ -259,8 +238,15 @@ class StartARavel extends Component {
               onChangeText={newText => this.onChangeConcept (newText)}
             />
           </View>
+
+
           {/*<Button title={'Continue'} />*/}
+
         </ScrollView>
+        </KeyboardAvoidingView>
+
+          {/*</TouchableWithoutFeedback>*/}
+
       </View>
     );
   }
@@ -272,7 +258,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     width: '100%',
     height: '100%',
+    //flex: 1,
     //paddingHorizontal: 17,
+  },
+  kaView: {
+    width: '100%',
+    //flex: 1,
   },
   divider : {
     width: '100%',

@@ -11,7 +11,7 @@ import {
 // 1-18-18
 // Input Text
 
-export default class InputSearch extends Component<{}> {
+export default class InputSearch extends Component {
   render() {
     return (
       <View>
