@@ -1,7 +1,7 @@
 // Author:   Frank Fusco (fr@nkfus.co)
 // Created:  02/17/18
 // Modified: 03/09/18
-//
+// 4/21/18 - VD Do - Mapped notifications to notification cards 
 // Notifications screen for RavelTree.
 //
 // Pass in a "notifications" array prop like so:
@@ -15,8 +15,9 @@
 //      {type: 'invitation', user: 'Brad Hooper', passage: 'Endless Smirk'}
 //    ]}
 // />
-//
-// TODO: getNotifications (): Firebase retrieval.
+
+
+// 
 
 import React, { Component } from 'react';
 import {
@@ -31,6 +32,7 @@ import _ from 'lodash';
 import RTLogoText from '../components/RTLogoText'
 import TextHeader from '../components/TextHeader'
 import NotificationCard from '../components/NotificationCard'
+import Loader from '../components/Loader'
 
 const TEST_NOTIFICATIONS = [
   {type: 'upvoted', passage: 'Something Frozen This Way Comes', upvotes: 37},
@@ -43,15 +45,83 @@ const TEST_NOTIFICATIONS = [
 class Notifications extends Component {
   constructor (props) {
     super (props);
+
+    this.state = {
+      notificationList:   {},
+      loading: {
+        notificationList: true,
+      },
+    };
+
   }
+
+  showLoader () {
+    return (
+      <View style={styles.loader}>
+        <Loader />
+      </View>
+    );
+  }
+
+  componentWillMount(){
+    this.props.getAllNotificationsForUid(this.props.getCurrentLoggedInUserUid())
+    .then ((notifications) => {
+
+      var reverseSet = {};
+      
+      Object.keys(notifications).reverse().forEach((key) => {
+          reverseSet[key] = notifications[key];
+      });
+
+      return reverseSet;
+      // return new Set(Array.from(notifications).reverse());
+    })
+    .then (notifications => {
+      var loading = this.state.loading;
+      loading.notificationList = false;
+      this.setState ({
+        notificationList: notifications,
+        loading: loading,
+      });
+    })
+    .catch (error => { console.error (error) });
+  }
+
+  componentWillUnmount() {
+    this.props.markNotificationsForUidRead(this.props.getCurrentLoggedInUserUid())
+  }
+
 
   getNotifications () {
 
     // TODO: Firebase retrieval.
 
+    // this.props.getAllNotificationsForUid(this.props.getCurrentLoggedInUserUid())
+    // .then (notifications => {
+    //   var loading = this.state.loading;
+    //   loading.notificationList = false;
+    //   this.setState ({
+    //     notificationList: notifications,
+    //     loading: loading,
+    //   });
+    // })
+    // .catch (error => { console.error (error) });
+
+    if (this.state.loading.notificationList) {
+      return (this.showLoader ());
+    }
+
+    if (_.size (this.state.notificationList) == 0) {
+      return (
+        <View style={styles.text}>
+          <TextSans size={14}>You have no notifications at this time.</TextSans>
+        </View>
+      );
+    }
+
     return (
       <View>
-        {TEST_NOTIFICATIONS.map ((notification) =>
+        {Object.values (this.state.notificationList).map ((notification) =>
           <View key={Object.values (notification)} style={styles.notification}>
             <NotificationCard
                notification={notification}

@@ -1,7 +1,7 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/07/18
 // Modified:  04/13/18
-
+// - 04/21/18 - VD Do - changed width percentage, enabled notificatin tab 
 // Navigation bar component for RavelTree.
 //
 // Relies on assets:
@@ -197,8 +197,8 @@ const styles = StyleSheet.create ({
     paddingTop: 3,
   },
   menuItem: {
-    // width: '25%',
-    width: '33.33333333%',
+    width: '25%',
+    // width: '33.33333333%',
     //height: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -263,6 +263,8 @@ const mapStateToProps = (state) => {
     currentUserProfile,
   } = state.current_user;
 
+  console.log(state)
+
   return {
     activeTab,
     activeScreen,
@@ -272,6 +274,9 @@ const mapStateToProps = (state) => {
     currentUserProfile,
     notificationCount,
   };
+
+
 }
+
 
 export default connect (mapStateToProps)(NavBar);

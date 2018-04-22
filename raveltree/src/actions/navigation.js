@@ -1,3 +1,6 @@
+/**
+ * 04/21/18 - VD Do - Commented out reset state for notification state
+ */
 import * as types from './types'
 
 /**
@@ -38,9 +41,9 @@ export const setActiveScreen = (screen, screenData) => {
     dispatch ({
       type: types.RESET_STATE_RAVEL,
     });
-    dispatch ({
-      type: types.RESET_STATE_NOTIFICATION,
-    });
+    // dispatch ({
+    //   type: types.RESET_STATE_NOTIFICATION,
+    // });
     dispatch ({
       type: types.RESET_STATE_MASTER_USER_FETCH,
     });
@@ -126,9 +129,9 @@ export const navigateForward = (next, current, screenData) => {
     dispatch ({
       type: types.RESET_STATE_RAVEL,
     });
-    dispatch ({
-      type: types.RESET_STATE_NOTIFICATION,
-    });
+    // dispatch ({
+    //   type: types.RESET_STATE_NOTIFICATION,
+    // });
     dispatch ({
       type: types.RESET_STATE_MASTER_USER_FETCH,
     });
@@ -174,9 +177,9 @@ export const navigateBack = () => {
     dispatch ({
       type: types.RESET_STATE_RAVEL,
     });
-    dispatch ({
-      type: types.RESET_STATE_NOTIFICATION,
-    });
+    // dispatch ({
+    //   type: types.RESET_STATE_NOTIFICATION,
+    // });
     dispatch ({
       type: types.RESET_STATE_MASTER_USER_FETCH,
     });
@@ -227,9 +230,9 @@ export const refresh = (current, screenData) => {
     dispatch ({
       type: types.RESET_STATE_RAVEL,
     });
-    dispatch ({
-      type: types.RESET_STATE_NOTIFICATION,
-    });
+    // dispatch ({
+    //   type: types.RESET_STATE_NOTIFICATION,
+    // });
     dispatch ({
       type: types.RESET_STATE_MASTER_USER_FETCH,
     });
