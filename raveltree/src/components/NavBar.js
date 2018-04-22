@@ -1,7 +1,7 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/07/18
 // Modified:  04/13/18
-
+// - 04/21/18 - VD Do - changed width percentage, enabled notificatin tab 
 // Navigation bar component for RavelTree.
 //
 // Relies on assets:
@@ -47,6 +47,7 @@ import UserImage from './UserImage'
 const HEIGHT = 50;
 
 var windowHeight;
+var notifications = 0;
 
 class NavBar extends React.Component {
 
@@ -54,6 +55,10 @@ class NavBar extends React.Component {
     super (props);
   }
 
+  componentWillMount () {
+
+    this.props.getUnreadNotificationsForUid(this.props.getCurrentLoggedInUserUid());
+  }
   componentWillReceiveProps (newProps) {
     // if (newProps.currentUserProfile) {
     //
@@ -108,7 +113,7 @@ class NavBar extends React.Component {
     }
 
     var messageCount = 3;       // TODO: Retrieve from Firebase.
-    var notificationCount = 7;  // TODO: Retrieve from Firebase.
+    //var notificationCount = 7;  // TODO: Retrieve from Firebase.
 
     return (
       <View>
@@ -152,11 +157,11 @@ class NavBar extends React.Component {
               </Text>
             </View>
           </Touchable>*/}
-          {/*<Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Notifications')}>
+          <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Notifications')}>
             <View style={styles.menuItemInner}>
               <View>
                 <View style={styles.notification}>
-                  <Text style={styles.notificationText}>{notificationCount}</Text>
+                  <Text style={styles.notificationText}>{this.props.notificationCount}</Text>
                 </View>
                 <Image
                   source = {this.props.activeTab == 'Notifications' ? require('./img/bell-active.png') : require('./img/bell.png')}
@@ -167,7 +172,7 @@ class NavBar extends React.Component {
                 Notifications
               </Text>
             </View>
-          </Touchable>*/}
+          </Touchable>
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Profile')}>
             <View style={styles.menuItemInner}>
               <UserImage {...this.props} userID={(this.props.currentUserProfile || {}).user_uid} size={30} active={this.props.activeTab === 'Profile'} disabled />
@@ -192,8 +197,8 @@ const styles = StyleSheet.create ({
     paddingTop: 3,
   },
   menuItem: {
-    // width: '25%',
-    width: '33.33333333%',
+    width: '25%',
+    // width: '33.33333333%',
     //height: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -251,8 +256,14 @@ const mapStateToProps = (state) => {
   } = state.navigation;
 
   const {
+    notificationCount
+  } = state.notification; 
+
+  const {
     currentUserProfile,
   } = state.current_user;
+
+  console.log(state)
 
   return {
     activeTab,
@@ -261,7 +272,11 @@ const mapStateToProps = (state) => {
     showNavBar,
     profileIsOwned,
     currentUserProfile,
+    notificationCount,
   };
+
+
 }
+
 
 export default connect (mapStateToProps)(NavBar);
