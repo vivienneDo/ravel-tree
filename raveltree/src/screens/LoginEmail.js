@@ -17,7 +17,8 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableNativeFeedback,
-  Button
+  Button,
+  BackHandler
 } from 'react-native';
 
 import { MKTextField, MKColor, MKButton } from 'react-native-material-kit';
@@ -44,15 +45,30 @@ class LoginEmail extends Component {
       error: '',
       loading: false,
     };
+
+    this.onPressBack = this.onPressBack.bind(this);
+  }
+
+  componentWillMount() {
+    console.log('Adding back handler.')
+    BackHandler.addEventListener('hardwareBackPress', this.onPressBack);
+  }
+
+  componentWillUnmount() {
+    console.log('Unmounting LoginEmail...')
+    BackHandler.removeEventListener('hardwareBackPress', this.onPressBack);
   }
 
   componentWillReceiveProps (newProps) {
     // If the user has a profile, just send them to the Home screen. Otherwise,
     // send them to the CreateProfile screen.
     if (newProps.currentUserProfile) {
+      console.log('Active screen set to home')
       this.props.setActiveScreen ('Home');
+      BackHandler.removeEventListener('hardwareBackPress');
     } else {
       this.props.setActiveScreen ('CreateProfile');
+      BackHandler.removeEventListener('hardwareBackPress');
     }
   }
 
@@ -75,6 +91,7 @@ class LoginEmail extends Component {
 
   onPressBack () {
     this.props.navigateBack ();
+    return true;
   }
 
   onPressTermsAndPrivacy () {
@@ -203,6 +220,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
+    width: '100%',
   },
   buttonSpacer: {
     width: 40,

@@ -37,6 +37,8 @@ const Text = require('Text');
 const Image = require('Image');
 const TouchableNativeFeedback = require('TouchableNativeFeedback');
 const TouchableOpacity = require('TouchableOpacity');
+const BackHandler = require('BackHandler');
+const ToastAndroid = require('ToastAndroid');
 import Touchable from '../components/Touchable'
 
 import { connect } from 'react-redux'
@@ -49,10 +51,45 @@ const HEIGHT = 50;
 
 var windowHeight;
 
+// Serves as a countdown timer before the back button can be executed.
+var timer;
+
 class NavBar extends React.Component {
 
   constructor (props) {
     super (props);
+    timer = -1;
+    this.onPressBack = this.onPressBack.bind(this);
+  }
+
+  componentWillMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.onPressBack)
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.onPressBack);
+  }
+
+  onPressBack() {
+    const {activeTab} = this.props;
+    
+    if (this.props.previousScreens.length > 2) {
+      console.log(this.props.previousScreens); 
+      console.log('Handling back press from nav bar.');   
+      this.props.navigateBack();
+      return true;
+    } else {
+
+      // Get the recent time.
+      var time = (new Date()).getTime();
+      if (timer === -1 || time - timer > 3000) {
+        timer = time;
+        ToastAndroid.show('Click again to exit', ToastAndroid.SHORT);
+        return true;
+      } else {
+        return false;  
+      }
+    }
   }
 
   componentWillReceiveProps (newProps) {
@@ -132,7 +169,7 @@ class NavBar extends React.Component {
               </Text>
             </View>
           </Touchable>
-          {/*<Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Messages')}>
+          {/* <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Messages')}>
             <View style={styles.menuItemInner}>
               <View>
                 <View style={styles.notification}>
@@ -147,12 +184,12 @@ class NavBar extends React.Component {
                 Messages
               </Text>
             </View>
-          </Touchable>*/}
-          {/* <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Notifications')}>
+          </Touchable> */}
+          <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Notifications')}>
             <View style={styles.menuItemInner}>
               <View>
                 <View style={styles.notification}>
-                  <Text style={styles.notificationText}>{this.props.notificationCount}</Text>
+                  <Text style={styles.notificationText}>0</Text>
                 </View>
                 <Image
                   source = {this.props.activeTab == 'Notifications' ? require('./img/bell-active.png') : require('./img/bell.png')}
@@ -163,7 +200,7 @@ class NavBar extends React.Component {
                 Notifications
               </Text>
             </View>
-          </Touchable> */}
+          </Touchable>
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Profile')}>
             <View style={styles.menuItemInner}>
               <UserImage {...this.props} userID={(this.props.currentUserProfile || {}).user_uid} size={30} active={this.props.activeTab === 'Profile'} disabled />
@@ -188,8 +225,7 @@ const styles = StyleSheet.create ({
     paddingTop: 3,
   },
   menuItem: {
-    // width: '25%',
-    flex:1,
+    width: '25%',
     //height: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -241,7 +277,7 @@ const mapStateToProps = (state) => {
   const {
     activeTab,
     activeScreen,
-    previousScreen,
+    previousScreens,
     showNavBar,
     profileIsOwned,
   } = state.navigation;
@@ -250,14 +286,10 @@ const mapStateToProps = (state) => {
     currentUserProfile,
   } = state.current_user;
 
-  const {
-    notificationCount,
-  } = state.notification;
-
   return {
     activeTab,
     activeScreen,
-    previousScreen,
+    previousScreens,
     showNavBar,
     profileIsOwned,
     currentUserProfile,
