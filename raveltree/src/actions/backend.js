@@ -1805,7 +1805,7 @@ export const searchRavelByTag = (tag) => dispatch => {
     return new Promise ((resolve, reject) => {
 
         tag.forEach((tag) => {
-            firebase.database().ref(`/ravels/`).orderByChild(`public_tag_set/${'public_' + tag}`).equalTo(true).once('value', function(snapshot) {
+            firebase.database().ref(`/ravels/`).orderByChild(`public_tag_set/${'public_' + tag}`).limitToLast(10).equalTo(true).once('value', function(snapshot) {
                 resolve (snapshot.val());
                 dispatch({type : 'SEARCH_RAVEL_BY_TAG', payload: snapshot.val()});
             })
@@ -1845,7 +1845,7 @@ export const searchRavelByTitle = (title) => dispatch => {
     var public_title = 'public_' + title;
 
     return new Promise ((resolve, reject) => {
-        firebase.database().ref(`/ravels/`).orderByChild("public_ravel_title").equalTo(public_title).once('value', snapshot => {
+        firebase.database().ref(`/ravels/`).orderByChild("public_ravel_title").limitToLast(10).equalTo(public_title).once('value', snapshot => {
             resolve (snapshot.val());
             dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: snapshot.val()})
         })
@@ -1883,7 +1883,7 @@ export const searchRavelByCategory = (category) => dispatch => {
 
         switch (category) {
             case 'fiction': {
-                firebase.database().ref(`/ravels/`).orderByChild("public_cat_fiction").equalTo(true).once('value', snapshot => {
+                firebase.database().ref(`/ravels/`).orderByChild("public_cat_fiction").limitToLast(10).equalTo(true).once('value', snapshot => {
                     resolve (snapshot.val());
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
 
@@ -1894,7 +1894,7 @@ export const searchRavelByCategory = (category) => dispatch => {
                 break;
             }
             case 'nonfiction': {
-                firebase.database().ref(`/ravels/`).orderByChild("public_cat_nonfiction").equalTo(true).once('value', snapshot => {
+                firebase.database().ref(`/ravels/`).orderByChild("public_cat_nonfiction").limitToLast(10).equalTo(true).once('value', snapshot => {
                     resolve (snapshot.val());
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
 
@@ -1905,7 +1905,7 @@ export const searchRavelByCategory = (category) => dispatch => {
                 break;
             }
             case 'other': {
-                firebase.database().ref(`/ravels/`).orderByChild("public_cat_other").equalTo(true).once('value', snapshot => {
+                firebase.database().ref(`/ravels/`).orderByChild("public_cat_other").limitToLast(10).equalTo(true).once('value', snapshot => {
                     resolve (snapshot.val());
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
 
@@ -1916,7 +1916,7 @@ export const searchRavelByCategory = (category) => dispatch => {
                 break;
             }
             default: {
-                firebase.database().ref(`/ravels/`).orderByChild("public_cat_other").equalTo(true).once('value', snapshot => {
+                firebase.database().ref(`/ravels/`).orderByChild("public_cat_other").limitToLast(10).equalTo(true).once('value', snapshot => {
                     resolve (snapshot.val());
                     dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val()})
                 })
@@ -5331,7 +5331,7 @@ export const analyzeRavelOptimalityScore = (ravel_uid) => {
 
 export const getAllNotificationsForUid = (user_uid) => dispatch => {
     return new Promise ((resolve, reject) => {
-        firebase.database().ref(`notifications/${user_uid}`).once('value', (snapshot) => {
+        firebase.database().ref(`notifications/${user_uid}`).limitToLast(15).once('value', (snapshot) => {
             dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: snapshot.val()})
             resolve(snapshot.val())
         })
@@ -5349,6 +5349,9 @@ export const getUnreadNotificationsForUid = (user_uid) => dispatch => {
         firebase.database().ref(`notifications/${user_uid}`).orderByChild('is_read').equalTo(false).on('value', (snapshot) => {
 
                 //console.log('number: ' + snapshot.numChildren())
+                if (snapshot.exists() === false) {
+                    reject('User is not subscribed to receive notifications')
+                }
                 dispatch({type: 'RETRIEVED_UNREAD_NOTIFICATIONS', payload: snapshot.numChildren() })
                 resolve(snapshot.val())
             
