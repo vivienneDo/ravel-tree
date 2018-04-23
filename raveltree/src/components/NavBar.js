@@ -1,7 +1,7 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/07/18
 // Modified:  04/13/18
-
+// - 04/21/18 - VD Do - changed width percentage, enabled notificatin tab 
 // Navigation bar component for RavelTree.
 //
 // Relies on assets:
@@ -50,6 +50,7 @@ import UserImage from './UserImage'
 const HEIGHT = 50;
 
 var windowHeight;
+var notifications = 0;
 
 // Serves as a countdown timer before the back button can be executed.
 var timer;
@@ -92,6 +93,10 @@ class NavBar extends React.Component {
     }
   }
 
+  componentWillMount () {
+
+    this.props.getUnreadNotificationsForUid(this.props.getCurrentLoggedInUserUid());
+  }
   componentWillReceiveProps (newProps) {
     // if (newProps.currentUserProfile) {
     //
@@ -143,6 +148,8 @@ class NavBar extends React.Component {
     }
 
     var messageCount = 3;       // TODO: Retrieve from Firebase.
+    //var notificationCount = 7;  // TODO: Retrieve from Firebase.
+
     return (
       <View>
         <Divider />
@@ -189,7 +196,7 @@ class NavBar extends React.Component {
             <View style={styles.menuItemInner}>
               <View>
                 <View style={styles.notification}>
-                  <Text style={styles.notificationText}>0</Text>
+                  <Text style={styles.notificationText}>{this.props.notificationCount}</Text>
                 </View>
                 <Image
                   source = {this.props.activeTab == 'Notifications' ? require('./img/bell-active.png') : require('./img/bell.png')}
@@ -226,6 +233,7 @@ const styles = StyleSheet.create ({
   },
   menuItem: {
     width: '25%',
+    // width: '33.33333333%',
     //height: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -283,8 +291,14 @@ const mapStateToProps = (state) => {
   } = state.navigation;
 
   const {
+    notificationCount
+  } = state.notification; 
+
+  const {
     currentUserProfile,
   } = state.current_user;
+
+  console.log(state)
 
   return {
     activeTab,
@@ -293,7 +307,11 @@ const mapStateToProps = (state) => {
     showNavBar,
     profileIsOwned,
     currentUserProfile,
+    notificationCount,
   };
+
+
 }
+
 
 export default connect (mapStateToProps)(NavBar);

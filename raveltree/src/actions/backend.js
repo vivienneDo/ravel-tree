@@ -89,6 +89,10 @@
  - 04/18/2018 - VD Do -
                     Added: analyzeRavelOptimalityScore - updates a ravel's optimal scores 
                     This is called on getRavelMetaData, upVotePassage and downVotePassage 
+ - 04/21/2018 - VD Do - 
+                    Added: calculateRavelPoint - updates ravel point field 
+                    This is called on getRavelMetaData 
+                    Added: notification functions 
 
  */
 
@@ -1080,6 +1084,9 @@ export const getRavelMetaData = (ravel_uid) => dispatch => {
       .then(() => {
         //console.log('INSIDE RAVEL METADATA ABOUT TO GO INSIDE FUNCTION+ ' + ravel_uid)
         analyzeRavelOptimalityScore(ravel_uid)
+      })
+      .then(() => {
+        calculateRavelPoint(ravel_uid);
       })
       .catch((error) => {
           reject ('Error getting ravel metadata.');
@@ -5005,48 +5012,6 @@ export const banReportedPassage = (ravel_uid, passage_uid) => dispatch => {
     })
 }
 
-export const getAllNotificationsForUid = (user_uid) => dispatch => {
-    return new Promise ((resolve, reject) => {
-        firebase.database().ref(`notifications/${user_uid}`).once('value')
-        .then((snapshot) => {
-            resolve(snapshot.val())
-        })
-        .catch((error) => {
-            reject('Error fetching notifications')
-        })
-    })
-}
-
-export const getUnreadNotificationsForUid = (user_uid) => dispatch => {
-    return new Promise ((resolve, reject) => {
-        firebase.database().ref(`notifications/${user_uid}`).orderByChild('is_read').equalTo(false).once('value')
-        .then((snapshot) => {
-            dispatch({type: 'RETRIEVED_UNREAD_NOTIFICATIONS', payload: Objects.keys(snapshot.val().length)})
-            resolve(snapshot.val())
-        })
-        .catch((error) => {
-            reject('Error fetching notifications')
-        })
-    })
-}
-
-export const markNotificationsForUidRead = (user_uid) => dispatch => {
-    return new Promise ((resolve, reject) => {
-        firebase.database().ref(`notifications/${user_uid}`).once('value')
-        .then ((snapshot) => {
-            var notifs = snapshot.val();
-            notifs.foreach((child_snap) => {
-                firebase.database().ref(`notifications/${user_uid}/${child_snap}/is_read`).update(true);
-            })
-
-            resolve(true);
-        })
-        .catch((error) => {
-            reject(error);
-        })
-    })
-}
-
 /**
  * Gets the admin stat page
  * // Number of Ravels
@@ -5346,3 +5311,163 @@ export const analyzeRavelOptimalityScore = (ravel_uid) => {
         })
     })
 }
+
+
+// Do all of the notification calls here 
+
+// export const getAllNotificationsForUid = (user_uid) => dispatch => {
+
+//     return new Promise ((resolve, reject) => {
+//         firebase.database().ref(`notifications/${user_uid}`).once('value')
+//         .then((snapshot) => {
+//             resolve(snapshot.val())
+//         })
+//         .catch((error) => {
+//             reject('Error fetching notifications')
+//         })
+//     })
+
+// }
+
+export const getAllNotificationsForUid = (user_uid) => dispatch => {
+    return new Promise ((resolve, reject) => {
+        firebase.database().ref(`notifications/${user_uid}`).once('value', (snapshot) => {
+            dispatch({type: 'SEARCH_RAVEL_BY_TITLE', payload: snapshot.val()})
+            resolve(snapshot.val())
+        })
+        .catch((error) => {
+            reject('Error fetching notifications')
+        })
+    })
+}
+
+export const getUnreadNotificationsForUid = (user_uid) => dispatch => {
+     
+    //console.log('Inside notif USER UID' + user_uid)
+
+    return new Promise ((resolve, reject) => {
+        firebase.database().ref(`notifications/${user_uid}`).orderByChild('is_read').equalTo(false).on('value', (snapshot) => {
+
+                //console.log('number: ' + snapshot.numChildren())
+                dispatch({type: 'RETRIEVED_UNREAD_NOTIFICATIONS', payload: snapshot.numChildren() })
+                resolve(snapshot.val())
+            
+        })
+        .catch((error) => {
+            reject('Error fetching notifications')
+        })
+    })
+}
+
+// export const markNotificationsForUidRead = (user_uid) => dispatch => {
+
+//     console.log('I am here')
+//     return new Promise ((resolve, reject) => {
+//         firebase.database().ref(`notifications/${user_uid}`).once('value')
+//         .then ((snapshot) => {
+//             var notifs = snapshot.val();
+//             notifs.foreach((child_snap) => {
+//                 firebase.database().ref(`notifications/${user_uid}/${child_snap}`).update({is_read: true});
+//             })
+
+//             console.log('snapshot value: ' + snapshot.val())
+
+//             resolve(true);
+//         })
+//         .catch((error) => {
+//             reject(error);
+//         })
+//     })
+// }
+
+export const markNotificationsForUidRead = (user_uid) => dispatch => {
+
+    //console.log('I am here')
+    return new Promise ((resolve, reject) => {
+        firebase.database().ref(`notifications/${user_uid}`).once('value', (snapshot) => {
+
+            //var notifs = snapshot.val();
+            snapshot.forEach((child_snap) => {
+                firebase.database().ref(`notifications/${user_uid}/${child_snap.key}`).update({is_read: true});
+            })
+
+            //console.log('snapshot value: ' + snapshot.val())
+
+            resolve(true);
+
+        })
+        //.then ((snapshot) => {
+            
+        //})
+        .catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+export const calculateRavelPoint = (ravel_uid) => {
+    //console.log('Inside calculate....')
+
+
+    return new Promise ((resolve, reject) => {
+        firebase.database().ref(`passages/${ravel_uid}`).once('value', (snapshot) => {
+            var sumUpvote = 0; 
+
+            calcHelperRP(snapshot, ravel_uid).then(results => {
+
+                //console.log('Sumvalue END = ' + results)
+                firebase.database().ref(`ravels/${ravel_uid}`).update({ravel_points : results})
+                .then(() => {
+                    firebase.database().ref(`ravels/${ravel_uid}/user_created`).once('value', (snapshot) => {
+                        firebase.database().ref(`users/${snapshot.val()}/ravel_created/${ravel_uid}`).update({ravel_points : results})
+                    })
+                })
+    
+                resolve(true)
+
+            })
+            
+
+
+        })
+
+        .catch((error) => {
+            reject(false)
+        })
+    })
+}
+
+export const calcHelperRP = (snapshotView, ravel_uid) => {
+
+    console.log('snapshot in calcHelperRP = ' + snapshotView.val())
+    var sumUpvote = 0; 
+    var i = 0; 
+
+    return new Promise ((resolve, reject) => {
+
+        snapshotView.forEach((elm) => {
+
+            firebase.database().ref(`passages/${ravel_uid}/${elm.key}/passage_combined_vote`).once('value', (snapshot) => {
+                // Only add if positive val
+                if (snapshot.val() > 0 ) {
+
+                    sumUpvote += snapshot.val(); 
+                }             
+
+                if (i === snapshotView.numChildren() - 1) {
+                    resolve(sumUpvote)
+                }
+    
+                i++
+           
+            })
+
+
+            
+        })
+
+
+
+    })
+}
+

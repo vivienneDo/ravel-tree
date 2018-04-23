@@ -1,7 +1,7 @@
 // Author:    Frank Fusco (fr@nkfus.co)
 // Created:   02/15/18
 // Modified:  03/09/18
-
+// 04/21/18 - VD Do - Commented out and did reverse notification list for correct order
 // Standard "Notification Card" component for RavelTree.
 //
 // Pass in a "notification" object as a prop like so:
@@ -48,29 +48,29 @@ class NotificationCard extends React.Component {
     switch (notification.type) {
 
       case ('upvoted'):
-        var screenData = Object.assign ({}, {ravelID: notification.ravelID, passageID: notification.passageID, showModal: 'PassagePopup'});
+        var screenData = Object.assign ({}, {ravelID: notification.ravel_uid, passageID: notification.passage_uid, showModal: 'PassagePopup'});
         this.props.navigateForward ('Ravel', this.constructor.name, screenData);
         return;
 
       case ('invitation'):
-        var screenData = Object.assign ({}, {ravelID: notification.ravelID, mode: 'invitation'});
+        var screenData = Object.assign ({}, {ravelID: notification.ravel_uid, mode: 'invitation'});
         this.props.navigateForward ('Ravel', this.constructor.name, screenData);
         return;
 
       case ('invitationAccepted'):
-        var screenData = Object.assign ({}, {ravelID: notification.ravelID});
+        var screenData = Object.assign ({}, {ravelID: notification.ravel_uid});
         this.props.navigateForward ('Ravel', this.constructor.name, screenData);
         return;
 
-      case ('newParticipant'):
-        var screenData = Object.assign ({}, {ravelID: notification.ravelID});
-        this.props.navigateForward ('Ravel', this.constructor.name, screenData);
-        return;
+      // case ('newParticipant'):
+      //   var screenData = Object.assign ({}, {ravelID: notification.ravel_uid});
+      //   this.props.navigateForward ('Ravel', this.constructor.name, screenData);
+      //   return;
 
-      case ('message'):
-        screenData = Object.assign ({}, {messageThreadID: notification.messageThreadID});
-        this.props.setActiveScreen ('MessageThread', screenData);
-        return;
+      // case ('message'):
+      //   screenData = Object.assign ({}, {messageThreadID: notification.messageThreadID});
+      //   this.props.setActiveScreen ('MessageThread', screenData);
+      //   return;
     }
   }
 
@@ -81,7 +81,7 @@ class NotificationCard extends React.Component {
           <TextSans size={14}>
             Your passage&nbsp;
             <TextSans size={14} bold>
-              {notification.passage}&nbsp;
+              {notification.passage_title}&nbsp;
             </TextSans>
             was upvoted&nbsp;
             <TextSans size={14} bold>
@@ -94,11 +94,11 @@ class NotificationCard extends React.Component {
         return (
           <TextSans size={14}>
             <TextSans size={14} bold>
-              {notification.user}&nbsp;
+              {notification.first_name}&nbsp;
             </TextSans>
             invited you to participate in&nbsp;
             <TextSans size={14} bold>
-              {notification.passage}
+              {notification.passage_title}
             </TextSans>
             .
           </TextSans>
@@ -107,37 +107,37 @@ class NotificationCard extends React.Component {
         return (
           <TextSans size={14}>
             <TextSans size={14} bold>
-              {notification.user}&nbsp;
+              {notification.first_name}&nbsp;
             </TextSans>
             accepted your invitation to participate in&nbsp;
             <TextSans size={14} bold>
-              {notification.passage}
+              {notification.passage_title}
             </TextSans>
             .
           </TextSans>
         );
-      case ('newParticipant'):
-        return (
-          <TextSans size={14}>
-            <TextSans size={14} bold>
-              {notification.user}&nbsp;
-            </TextSans>
-            started participating in&nbsp;
-            <TextSans size={14} bold>
-              {notification.passage}
-            </TextSans>
-            .
-          </TextSans>
-        );
-      case ('message'):
-        return (
-          <TextSans size={14}>
-            <TextSans size={14} bold>
-              {notification.user}&nbsp;
-            </TextSans>
-            sent you a message.
-          </TextSans>
-        );
+      // case ('newParticipant'):
+      //   return (
+      //     <TextSans size={14}>
+      //       <TextSans size={14} bold>
+      //         {notification.user}&nbsp;
+      //       </TextSans>
+      //       started participating in&nbsp;
+      //       <TextSans size={14} bold>
+      //         {notification.passage}
+      //       </TextSans>
+      //       .
+      //     </TextSans>
+      //   );
+      // case ('message'):
+      //   return (
+      //     <TextSans size={14}>
+      //       <TextSans size={14} bold>
+      //         {notification.user}&nbsp;
+      //       </TextSans>
+      //       sent you a message.
+      //     </TextSans>
+      //   );
       default:
         return (
           <TextSans />
@@ -157,7 +157,7 @@ class NotificationCard extends React.Component {
     const dotStyles = [styles.dot];
 
 
-    if (this.props.active) {
+    if (this.props.notification.is_read === false) {
       layoutStyles.push (styles.active);
       dotStyles.push (styles.dot);
     }
