@@ -14,6 +14,7 @@ import {
   View, ScrollView,
   Dimensions,
   ART,
+  Platform,
 } from 'react-native';
 
 import firebase from 'firebase';
@@ -43,16 +44,16 @@ ARROW_MODES = {
 }
 ARROW_MODE = ARROW_MODES.sineCurve;
 
-const NODE_HEIGHT = 20;                       // Original: 20
+const NODE_HEIGHT = Platform.OS === 'android' ? 35 : 20;                       // Original: 20
 const NODE_WIDTH = 250;                       // Original: 100
 const SPACING_VERTICAL = NODE_WIDTH / 4;      // Original: 30
 const SPACING_HORIZONTAL = NODE_HEIGHT * 4;   // Original: 40
 
 const ARROW_WIDTH = NODE_WIDTH;
-const ARROW_HEIGHT = NODE_HEIGHT;
+const ARROW_HEIGHT = Platform.OS === 'android' ? 5 : NODE_HEIGHT;
 
-TREE_HEIGHT = undefined;
-TREE_WIDTH  = undefined;
+TREE_HEIGHT = 0;
+TREE_WIDTH  = 0;
 
 // MAGIC_NUMBER:
 // MaxNodes   Height    Magic Number
@@ -633,11 +634,22 @@ class Tree extends Component {
   analyzeTree (tree) {
     var nodes = Object.values (tree.nodeCounts);
 
-    tree.height =   (Math.max (...nodes) * NODE_HEIGHT) +
+    if (nodes.length === 0) {
+      tree.height = NODE_HEIGHT + SPACING_VERTICAL;
+      tree.width = NODE_WIDTH + SPACING_HORIZONTAL;
+    } else {
+      tree.height =   (Math.max (...nodes) * NODE_HEIGHT) +
                     ((Math.max (...nodes) - 1) * SPACING_VERTICAL);
-    tree.width =    (nodes.length * NODE_WIDTH) +
+      tree.width =    (nodes.length * NODE_WIDTH) +
                     ((nodes.length - 1) * SPACING_HORIZONTAL);
+    }
+
     tree.analyzed = true;
+
+    if (DEBUG) {
+      console.log('Tree Height:' + tree.height);
+      console.log('Tree Width:' + tree.width);
+    }
 
     TREE_HEIGHT = tree.height;
     TREE_WIDTH  = tree.width;

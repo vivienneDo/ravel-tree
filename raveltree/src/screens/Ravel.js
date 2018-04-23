@@ -13,6 +13,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
+  Platform
 } from 'react-native';
 
 import firebase from 'firebase';
@@ -165,6 +166,7 @@ class Ravel extends Component {
   }
 
   showModal (modalToShow) {
+    console.log('Showing Modal:' + modalToShow);
     switch (modalToShow) {
       case 'concept':
         return (
@@ -532,8 +534,10 @@ class Ravel extends Component {
 
     if (!this.state.ravel || _.size (this.state.ravel) == 0) { return; }
 
-    return (
-      <Tree
+    if (Platform.OS === 'android') {
+      return (
+      <ScrollView ref={(c) => (this._scrollView = c)} {...this.props} onContentSizeChange={this._onScrollViewContentSizeChange} style={styles.scroll} onLayout={(ev) => this._onScrollViewLayout (ev)} contentContainerStyle={styles.scrollContent} horizontal={true}>
+        <Tree
         {...this.props}
         //tree={this.state.tree}
         ravel={this.state.ravel}
@@ -545,8 +549,27 @@ class Ravel extends Component {
         onPressAdd={(passageMetaData) => this.switchToAdd (passageMetaData)}
         onPressInitialAddButton={(passageMetaData) => this.switchToAdd (passageMetaData)}
         horizontalPadding={TREE_HORIZONTAL_PADDING}
-      />
-    );
+        />
+      </ScrollView>
+      );
+    } else {
+      return (
+        <Tree
+          {...this.props}
+          //tree={this.state.tree}
+          ravel={this.state.ravel}
+          mode={this.state.mode}
+          ravelID={this.state.ravelID}
+          onAnalyzeTree={(analyzedTree) => this.setState ({ analyzedTree: analyzedTree })}
+          setScrollParams={(scrollParams, treeHeight) => this.setScrollParams (scrollParams, treeHeight)}
+          onPressPassage={(passageMetaData) => this.switchToPassage (passageMetaData)}
+          onPressAdd={(passageMetaData) => this.switchToAdd (passageMetaData)}
+          onPressInitialAddButton={(passageMetaData) => this.switchToAdd (passageMetaData)}
+          horizontalPadding={TREE_HORIZONTAL_PADDING}
+        />
+      );
+    }
+
   }
 
   setScrollParams (params, treeHeight) {
@@ -645,7 +668,9 @@ class Ravel extends Component {
                 {this.showInvitationButton (this.state.mode == 'invited')}
               </View>
               <ScrollView ref={(c) => (this._scrollView = c)} {...this.props} onContentSizeChange={this._onScrollViewContentSizeChange} style={styles.scroll} onLayout={(ev) => this._onScrollViewLayout (ev)} contentContainerStyle={styles.scrollContent}>
-                {this.showTree ()}
+                {
+                  this.showTree ()
+                }
               </ScrollView>
             </View>
 

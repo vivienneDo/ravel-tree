@@ -14,9 +14,9 @@ const AppRegistry = require('AppRegistry');
 const PropTypes = require('prop-types');
 const StyleSheet = require('StyleSheet');
 const Text = require('Text');
-const TouchableNativeFeedback = require('TouchableNativeFeedback');
-const TouchableOpacity = require('TouchableOpacity');
 const View = require('View');
+
+import Touchable from '../components/Touchable';
 
 export default class ButtonPlus extends React.Component <{
   onPress: () => any,
@@ -63,7 +63,6 @@ export default class ButtonPlus extends React.Component <{
     const buttonStyles = [styles.button];
     const layoutStyles = [styles.layout];
     const accessibilityTraits = ['button'];
-    const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     if (radius)
       buttonStyles.push ({borderRadius: radius});
@@ -115,7 +114,7 @@ const styles = StyleSheet.create ({
     textAlign: 'center',
     alignSelf: 'center',
     fontSize: 23,
-    fontFamily: 'EB Garamond',
+    fontFamily: Platform.OS === 'android' ? 'EBGaramond-Regular' : 'EB Garamond',
     fontWeight: 'bold',
     lineHeight: 23,
   },

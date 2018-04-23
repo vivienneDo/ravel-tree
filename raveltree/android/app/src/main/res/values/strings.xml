@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">raveltree</string>
     <string name="facebook_app_id">1513136905467741</string>
+    <string name="fb_login_protocol_scheme">fb1513136905467741</string>
 </resources>

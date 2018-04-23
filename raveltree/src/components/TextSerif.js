@@ -40,6 +40,6 @@ export default class TextSerif extends React.Component {
 
 const styles = StyleSheet.create ({
   serif: {
-    fontFamily: 'EB Garamond',
+    fontFamily: Platform.OS === 'android' ? 'EBGaramond-Regular' : 'EB Garamond',
   },
 });
