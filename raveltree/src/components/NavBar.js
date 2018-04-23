@@ -64,11 +64,11 @@ class NavBar extends React.Component {
   }
 
   componentWillMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.onPressBack)
+    //BackHandler.addEventListener('hardwareBackPress', this.onPressBack)
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.onPressBack);
+    //BackHandler.removeEventListener('hardwareBackPress', this.onPressBack);
   }
 
   onPressBack() {
@@ -123,6 +123,18 @@ class NavBar extends React.Component {
     }
   }
 
+  renderNotificationCount() {
+    if (this.props.notificationCount !== 0) {
+      return (
+        <View style={styles.notification}>
+          <Text style={styles.notificationText}>{this.props.notificationCount}</Text>
+        </View>
+      );
+    } else {
+      return null;
+    }
+  }
+
   render () {
     const {
       activeTab,
@@ -151,7 +163,7 @@ class NavBar extends React.Component {
     //var notificationCount = 7;  // TODO: Retrieve from Firebase.
 
     return (
-      <View>
+      <View style={styles.navBar}>
         <Divider />
         <View style={layoutStyles}>
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Home')}>
@@ -195,9 +207,9 @@ class NavBar extends React.Component {
           <Touchable style={styles.menuItem} onPress={() => this.handleSelect ('Notifications')}>
             <View style={styles.menuItemInner}>
               <View>
-                <View style={styles.notification}>
-                  <Text style={styles.notificationText}>{this.props.notificationCount}</Text>
-                </View>
+                {
+                  this.renderNotificationCount()
+                }
                 <Image
                   source = {this.props.activeTab == 'Notifications' ? require('./img/bell-active.png') : require('./img/bell.png')}
                   style = {styles.image}
@@ -223,6 +235,9 @@ class NavBar extends React.Component {
 }
 
 const styles = StyleSheet.create ({
+  navBar: {
+    backgroundColor: 'white',
+  },
   layout: {
     width: '100%',
     height: 50,
@@ -263,7 +278,7 @@ const styles = StyleSheet.create ({
   notification: {
     zIndex: 10,
     position: 'absolute',
-    top: -4,
+    top: Platform.OS === 'android' ? 0:-4,
     right: -10,
     width: 20,
     height: 20,

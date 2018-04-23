@@ -49,26 +49,14 @@ class LoginEmail extends Component {
     this.onPressBack = this.onPressBack.bind(this);
   }
 
-  componentWillMount() {
-    console.log('Adding back handler.')
-    BackHandler.addEventListener('hardwareBackPress', this.onPressBack);
-  }
-
-  componentWillUnmount() {
-    console.log('Unmounting LoginEmail...')
-    BackHandler.removeEventListener('hardwareBackPress', this.onPressBack);
-  }
-
   componentWillReceiveProps (newProps) {
     // If the user has a profile, just send them to the Home screen. Otherwise,
     // send them to the CreateProfile screen.
     if (newProps.currentUserProfile) {
       console.log('Active screen set to home')
       this.props.setActiveScreen ('Home');
-      BackHandler.removeEventListener('hardwareBackPress');
     } else {
       this.props.setActiveScreen ('CreateProfile');
-      BackHandler.removeEventListener('hardwareBackPress');
     }
   }
 

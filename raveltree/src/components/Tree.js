@@ -109,7 +109,10 @@ class Tree extends Component {
   showInitialAddButton () {
     if (this.state.showInitialAddButton) {
       return (
-        <ButtonPlus size={40} onPress={() => this.props.onPressInitialAddButton ()} />
+        <ButtonPlus size={40} onPress={() => {
+          console.log('Add button pressed');
+          this.props.onPressInitialAddButton();
+        }} />
       );
     }
   }
@@ -717,28 +720,40 @@ class Tree extends Component {
       this.props.setScrollParams ({x: 0, y: 0, animated: true}, TREE_HEIGHT);
     }
 
-    return (
-      <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, top: MAGIC_NUMBER,}}>
-        {this.showInitialAddButton ()}
-        {this.state.nodesToRender}
-        <Surface
-          width={TREE_WIDTH}
-          height={TREE_HEIGHT}
-          style={{
-            position: 'absolute',
-            zIndex: 1,
-            left: 0,
-            top: -MAGIC_NUMBER,
-            backgroundColor:'#cccccc',
-            backgroundColor:'transparent',
-          }}
-        >
-          {this.state.arrowsToRender}
-          {this.showConnectingArrow ()}
-        </Surface>
-      </View>
-    );
-  }
+    var nodeCount = Object.values (tree.nodeCounts);
+
+    if (nodeCount === null || nodeCount.length === 0) {
+      return (
+        <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, top: MAGIC_NUMBER,}}>
+          {this.showInitialAddButton ()}
+        </View>
+      );
+    } else {
+      return (
+        <View style={{width: TREE_WIDTH, height: TREE_HEIGHT, top: MAGIC_NUMBER,}}>
+          {this.showInitialAddButton ()}
+  
+          {this.state.nodesToRender}
+            <Surface
+              width={TREE_WIDTH}
+              height={TREE_HEIGHT}
+              style={{
+                position: 'absolute',
+                zIndex: 1,
+                left: 0,
+                top: -MAGIC_NUMBER,
+                backgroundColor:'#cccccc',
+                backgroundColor:'transparent',
+              }}
+            >
+  
+            {this.state.arrowsToRender}
+            {this.showConnectingArrow ()}
+          </Surface>
+        </View>
+      );
+    }
+  }  
 
   render () {
     return (

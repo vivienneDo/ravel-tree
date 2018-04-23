@@ -49,17 +49,17 @@ class NotificationCard extends React.Component {
 
       case ('upvoted'):
         var screenData = Object.assign ({}, {ravelID: notification.ravel_uid, passageID: notification.passage_uid, showModal: 'PassagePopup'});
-        this.props.navigateForward ('Ravel', this.constructor.name, screenData);
+        this.props.navigateForward ('Ravel', 'Notifications', screenData);
         return;
 
       case ('invitation'):
         var screenData = Object.assign ({}, {ravelID: notification.ravel_uid, mode: 'invitation'});
-        this.props.navigateForward ('Ravel', this.constructor.name, screenData);
+        this.props.navigateForward ('Ravel', 'Notifications', screenData);
         return;
 
       case ('invitationAccepted'):
         var screenData = Object.assign ({}, {ravelID: notification.ravel_uid});
-        this.props.navigateForward ('Ravel', this.constructor.name, screenData);
+        this.props.navigateForward ('Ravel', 'Notifications', screenData);
         return;
 
       // case ('newParticipant'):

@@ -1940,7 +1940,7 @@ export const searchRavelByCategory = (category) => dispatch => {
 export const searchRavelByTrending = () => dispatch => {
 
     return new Promise ((resolve, reject) => {
-        firebase.database().ref(`ravels`).orderByChild('views').once('value', snapshot => {
+        firebase.database().ref(`ravels`).orderByChild('views').limitToLast(10).once('value', snapshot => {
 
             resolve(snapshot.val())
             //dispatch({type: 'SEARCH_RAVEL_BY_CATEGORY', payload: snapshot.val().reverse()})

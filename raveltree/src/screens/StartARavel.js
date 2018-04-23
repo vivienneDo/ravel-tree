@@ -13,6 +13,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
+  Platform
 } from 'react-native';
 
 import firebase from 'firebase';

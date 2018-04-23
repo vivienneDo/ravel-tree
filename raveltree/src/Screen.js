@@ -7,7 +7,9 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableHighlight
+  TouchableHighlight,
+  BackHandler,
+  ToastAndroid,
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -55,6 +57,7 @@ class Screen extends Component {
       loggedIn: null,
     };
     this.props.setShowNavBar (false);
+    this.onPressBack = this.onPressBack.bind(this);
   }
 
   componentWillMount() {
@@ -79,6 +82,65 @@ class Screen extends Component {
         this.setState ({loggedIn: false})
       }
     });
+
+    BackHandler.addEventListener('hardwareBackPress', this.onPressBack)
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.onPressBack);
+  }
+
+  // Android: For managing back press...
+  onPressBack() {
+    const {activeTab} = this.props;
+
+    var previousScreens = this.props.previousScreens;
+    var activeScreen = this.props.activeScreen;
+
+    if (previousScreens === null || previousScreens.length === 0) {
+      return false;
+    }
+
+    // Get the previous screen at the top of the stack.
+    var previousScreen = previousScreens[previousScreens.length - 1];
+
+    if ((previousScreen === 'Login' && activeScreen === 'TermsAndPrivacy') ||
+        (previousScreens.includes("Login") && activeScreen === 'LoginEmail')) {
+          this.props.navigateBack();
+          return true;
+    }
+
+    // Handle case where Login is at the top of the stack.
+    if (previousScreen === 'Login') {
+      if (activeScreen === 'TermsAndPrivacy' || activeScreen === 'LoginEmail') {
+        this.props.navigateBack();
+        return true;
+      } else {
+        return true;
+      }
+    }
+
+    // Handle login email case.
+    if (previousScreen === 'LoginEmail' && activeScreen === 'TermsAndPrivacy') {
+      this.props.navigateBack();
+      return true;
+    }
+
+    // Check if back press should be handled
+    switch (activeScreen) {
+      case ('Explore'):
+      case ('StartARavel'):
+      case ('Ravel'):
+      this.props.navigateBack();
+      return true;
+    }
+
+    if (activeScreen !== 'Home') {
+      this.props.setActiveScreen('Home');
+      return true;
+    } else {
+      return true;
+    }
   }
 
   showScreen () {
@@ -173,13 +235,13 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   const {
     activeScreen,
-    previousScreen,
+    previousScreens,
     showNavBar,
   } = state.navigation;
 
   return {
     activeScreen,
-    previousScreen,
+    previousScreens,
     showNavBar,
   };
 }

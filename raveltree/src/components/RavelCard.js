@@ -14,9 +14,9 @@ import {
   Text,
   View,
   Image,
-  TouchableOpacity,
-  TouchableNativeFeedback
 } from 'react-native';
+
+import Touchable from '../components/Touchable';
 
 import { connect } from 'react-redux'
 import _ from 'lodash';
@@ -66,8 +66,6 @@ class RavelCard extends Component {
       score,
       concept,
     } = this.props;
-
-    const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     if (!title) { title = '' }
 
