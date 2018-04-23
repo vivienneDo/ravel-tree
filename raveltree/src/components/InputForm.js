@@ -39,6 +39,7 @@ export default class InputForm extends Component {
           placeholderTextColor = '#939393'
           autoCapitalize = 'none'
           secureTextEntry = {password}
+          underlineColorAndroid='transparent'
           onChangeText={(text) => {this.props.onChangeText (text)}}
           //value = {text}
         />

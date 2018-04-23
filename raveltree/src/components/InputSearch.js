@@ -44,6 +44,7 @@ export default class InputSearch extends Component {
             placeholderTextColor = '#95989A'
             autoCapitalize={autoCapitalize}
             value = {text}
+            underlineColorAndroid='transparent'
             onChangeText={(text) => {this.props.onChangeText (text)}}
          />
       </View>

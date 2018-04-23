@@ -16,7 +16,7 @@ export default class InputForm extends Component {
     return (
       <View>
           <Text></Text>
-         <TextInput style = {styles.inputStyle} placeholder = {inputTxt} placeholderTextColor = '#939393'/> 
+         <TextInput style = {styles.inputStyle} placeholder = {inputTxt} placeholderTextColor = '#939393' underlineColorAndroid='transparent'/> 
       </View>
     );
   }

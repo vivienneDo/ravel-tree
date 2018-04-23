@@ -123,6 +123,7 @@ class Profile extends Component {
     this.props.userLogOff ();
     FBSDK.LoginManager.logOut ();
     this.props.setShowNavBar (false);
+    this.props.resetPreviousScreens();
     this.props.setActiveScreen ('Login');
   }
 

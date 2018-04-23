@@ -16,7 +16,7 @@ export default class InputSearch extends Component {
     return (
       <View>
           <Text></Text>
-         <TextInput style = {styles.inputStyle} placeholder = {inputTxt} placeholderTextColor = '#95989A'/> 
+         <TextInput style = {styles.inputStyle} placeholder = {inputTxt} placeholderTextColor = '#95989A' underlineColorAndroid='transparent'/> 
       </View>
     );
   }

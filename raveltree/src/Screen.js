@@ -98,7 +98,8 @@ class Screen extends Component {
     var activeScreen = this.props.activeScreen;
 
     if (previousScreens === null || previousScreens.length === 0) {
-      return false;
+      BackHandler.exitApp();
+      return true;
     }
 
     // Get the previous screen at the top of the stack.
@@ -135,11 +136,13 @@ class Screen extends Component {
       return true;
     }
 
-    if (activeScreen !== 'Home') {
+    if (activeScreen !== 'Login' && activeScreen !== 'Home') {
       this.props.setActiveScreen('Home');
       return true;
-    } else {
+    } else if (activeScreen !== 'Login'){
       return true;
+    } else {
+      return false;
     }
   }
 

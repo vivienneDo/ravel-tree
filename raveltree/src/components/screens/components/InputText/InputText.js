@@ -16,7 +16,7 @@ export default class InputText extends Component {
     return (
       <View>
           <Text></Text>
-         <TextInput style = {styles.inputStyle} placeholder = {inputTxt} placeholderTextColor = '#B7B7B7'/> 
+         <TextInput style = {styles.inputStyle} placeholder = {inputTxt} placeholderTextColor = '#B7B7B7' underlineColorAndroid='transparent'/> 
       </View>
     );
   }
@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
       borderWidth: 1,
       paddingTop: 8,
       paddingBottom: 8
+
       
       /*fontFamily: 'Roboto',*/
     }

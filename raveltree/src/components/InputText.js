@@ -52,6 +52,7 @@ export default class InputText extends Component {
            placeholder = {placeholder}
            value = {this.state.text}
            placeholderTextColor = '#B7B7B7'
+           underlineColorAndroid='transparent'
            onChangeText={(text) => {this.props.onChangeText (text)}}
          />
       </View>

@@ -166,9 +166,11 @@ const styles = StyleSheet.create({
     height: 10,
   },
   bottom: {
+    width: '100%',
     alignItems: 'center',
   },
   bio: {
+    width: '100%',
     marginBottom: 20,
   },
   leftItem: {
