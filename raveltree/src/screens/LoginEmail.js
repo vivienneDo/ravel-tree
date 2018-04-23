@@ -83,12 +83,12 @@ class LoginEmail extends Component {
   }
 
   onPressTermsAndPrivacy () {
-    this.props.setPreviousScreen (this.constructor.name);
+    this.props.setPreviousScreen ('LoginEmail');
     this.props.setActiveScreen ('TermsAndPrivacy');
   }
 
   onPressResetPassword () {
-    this.props.navigateForward ('PasswordReset', this.constructor.name);
+    this.props.navigateForward ('PasswordReset', 'LoginEmail');
   }
 
   render() {

@@ -433,7 +433,7 @@ class Ravel extends Component {
 
   navigateToMerge (screen, screenData) {
     // TODO: What do we need to navigate back properly?
-    this.props.navigateForward ('Merge', this.constructor.name, screenData);
+    this.props.navigateForward ('Merge', 'Ravel', screenData);
   }
 
   // ---------------------------------------------------------------------------

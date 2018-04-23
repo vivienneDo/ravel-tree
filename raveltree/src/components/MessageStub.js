@@ -29,12 +29,12 @@ export default class MessageStub extends React.Component {
 
   onPressStub () {
     var screenData = Object.assign ({}, {messageThreadID: this.props.messageThreadID});
-    this.props.navigateForward ('MessageThread', this.constructor.name, screenData);
+    this.props.navigateForward ('MessageThread', 'MessageStub', screenData);
   }
 
   onPressUser () {
     var screenData = Object.assign ({}, {userID: this.props.userID});
-    navigateForward ('Profile', this.constructor.name, screenData);
+    navigateForward ('Profile', 'MessageStub', screenData);
   }
 
   render () {

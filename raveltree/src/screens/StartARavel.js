@@ -79,7 +79,7 @@ class StartARavel extends Component {
       // Otherwise, navigate to the next screen.
       if (!ravelExists) {
         var screenData = Object.assign ({}, this.state, {mode: 'add'});
-        this.props.navigateForward ('AddTags', this.constructor.name, screenData);
+        this.props.navigateForward ('AddTags', 'StartARavel', screenData);
       }
     })
     .catch ((error) => { console.error (error); });

@@ -314,7 +314,7 @@ class EditTags extends Component {
 
   onPressContinue () {
     var screenData = Object.assign ({}, this.state, {mode: 'add'});
-    this.props.navigateForward ('InviteParticipants', this.constructor.name, screenData);
+    this.props.navigateForward ('InviteParticipants', 'EditTags', screenData);
   }
 
   onPressSave () {

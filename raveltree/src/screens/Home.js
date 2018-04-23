@@ -61,11 +61,11 @@ class Home extends Component {
   }
 
   onPressExplore () {
-    this.props.navigateForward ('Explore', this.constructor.name);
+    this.props.navigateForward ('Explore', 'Home');
   }
 
   onPressStartARavel () {
-    this.props.navigateForward ('StartARavel', this.constructor.name);
+    this.props.navigateForward ('StartARavel', 'Home');
   }
 
   onPressComment (commentData) {
@@ -205,7 +205,7 @@ class Home extends Component {
               votes={passage.passage_combined_vote}
               enableComments={passage.enable_comment}
               testID={passage.testID}
-              parentScreen={this.constructor.name}
+              parentScreen={'Home'}
               onPressComment={(commentData) => this.onPressComment (commentData)}
             />
           </View>

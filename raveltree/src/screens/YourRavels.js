@@ -97,7 +97,7 @@ class YourRavels extends Component {
       <View key={ravel.ravel_uid} style={styles.ravel}>
         <RavelStub
           ravel={ravel}
-          parentScreen={this.constructor.name}
+          parentScreen={'YourRavels'}
           {...this.props}
         />
       </View>
@@ -174,11 +174,11 @@ class YourRavels extends Component {
   }
 
   onPressStartARavel () {
-    this.props.navigateForward ('StartARavel', this.constructor.name);
+    this.props.navigateForward ('StartARavel', 'YourRavels');
   }
 
   onPressExplore () {
-    this.props.navigateForward ('Explore', this.constructor.name);
+    this.props.navigateForward ('Explore', 'YourRavels');
   }
 
   render (){

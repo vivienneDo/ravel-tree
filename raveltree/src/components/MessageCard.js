@@ -35,7 +35,7 @@ class MessageCard extends React.Component {
 
   onPressUser () {
     var screenData = Object.assign ({}, {userID: this.props.userID});
-    navigateForward ('Profile', this.constructor.name, screenData);
+    navigateForward ('Profile', 'MessageCard', screenData);
   }
 
   onPressReply () {

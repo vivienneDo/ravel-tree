@@ -107,12 +107,12 @@ class Login extends Component {
   }
 
   onPressSignInWithAnEmailAddress () {
-    this.props.setPreviousScreen (this.constructor.name);
+    this.props.setPreviousScreen ('Login');
     this.props.setActiveScreen ('LoginEmail');
   }
 
   onPressTermsAndPrivacy () {
-    this.props.setPreviousScreen (this.constructor.name);
+    this.props.setPreviousScreen ('Login');
     this.props.setActiveScreen ('TermsAndPrivacy');
   }
 
