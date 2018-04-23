@@ -11,9 +11,9 @@ import {
   Text,
   View, ScrollView,
   KeyboardAvoidingView,
-  TouchableNativeFeedback,
-  TouchableOpacity,
 } from 'react-native';
+
+import Touchable from '../components/Touchable';
 
 
 export default class ModalContainer extends React.Component {
@@ -39,7 +39,6 @@ export default class ModalContainer extends React.Component {
     } = this.props;
 
     const containerStyles = [styles.container];
-    const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     if (this.props.isActive) {
       containerStyles.push (styles.active);

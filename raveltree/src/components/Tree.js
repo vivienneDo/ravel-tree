@@ -49,8 +49,13 @@ const NODE_WIDTH = 250;                       // Original: 100
 const SPACING_VERTICAL = NODE_WIDTH / 4;      // Original: 30
 const SPACING_HORIZONTAL = NODE_HEIGHT * 4;   // Original: 40
 
+const MAGIC_NUMBER_HEIGHT = 20;
+
+// Needed this magic number to fix the connecting arrows for Android Nodes as they are larger. 
+const ANDROID_MAGIC_NUMBER = Platform.OS === 'android' ? 10 : 0;
+
 const ARROW_WIDTH = NODE_WIDTH;
-const ARROW_HEIGHT = Platform.OS === 'android' ? 5 : NODE_HEIGHT;
+const ARROW_HEIGHT = NODE_HEIGHT;
 
 TREE_HEIGHT = 0;
 TREE_WIDTH  = 0;
@@ -268,8 +273,8 @@ class Tree extends Component {
   renderArrow (startPosition, endPosition, optimal, connecting) {
     var arrow;
 
-    startPosition.y += MAGIC_NUMBER;
-    endPosition.y += MAGIC_NUMBER;
+    startPosition.y += MAGIC_NUMBER + ANDROID_MAGIC_NUMBER;
+    endPosition.y += MAGIC_NUMBER + ANDROID_MAGIC_NUMBER;
 
     var color = optimal ? '#2E8AF7' : connecting ? '#3BB54A' : '#555555';
 
@@ -658,7 +663,7 @@ class Tree extends Component {
     TREE_WIDTH  = tree.width;
 
     // For the love of god, don't change this. It keeps everything centered.
-    MAGIC_NUMBER = ((NODE_HEIGHT + SPACING_VERTICAL) / 2) * (tree.breadth - 1);
+    MAGIC_NUMBER = ((MAGIC_NUMBER_HEIGHT + SPACING_VERTICAL) / 2) * (tree.breadth - 1);
 
     return tree;
   }

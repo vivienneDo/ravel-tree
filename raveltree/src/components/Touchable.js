@@ -19,7 +19,8 @@ export default class Touchable extends React.Component {
                     accessibilityTraits={this.props.accessibilityTraits}
                     testID={this.props.testID}
                     disabled={this.props.disabled}
-                    onPress={this.props.onPress}>
+                    onPress={this.props.onPress}
+                    name={this.props.name}>
                     <View style={this.props.style}>{this.props.children}</View>
                 </TouchableNativeFeedback>
                 )
@@ -33,6 +34,7 @@ export default class Touchable extends React.Component {
                     testID={this.props.testID}
                     disabled={this.props.disabled}
                     onPress={this.props.onPress}
+                    name={this.props.name}
                     style={this.props.style}>
                     {this.props.children}
                 </TouchableOpacity>

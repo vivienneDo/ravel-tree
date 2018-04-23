@@ -121,7 +121,7 @@ class ForkPopup extends React.Component {
                 <TextSans size={13} color={'#95989A'}>{newPassageIndex}</TextSans>
               </View>
               <View style={styles.row2}>
-                <InputText width={'auto'} placeholder={'Type a passage name (e.g., "The Reckoning").'} onChangeText={(text) => this.onChangeTitle (text)} />
+                <InputText width={Platform.OS === 'android' ? 260 : 'auto'} placeholder={'Type a passage name (e.g., "The Reckoning").'} onChangeText={(text) => this.onChangeTitle (text)} />
                 <UserImage {...this.props} userID={firebase.auth ().currentUser.uid} size={26}/>
               </View>
             </View>

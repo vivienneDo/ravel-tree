@@ -85,7 +85,7 @@ class InviteParticipants extends Component {
   }
 
   showModal (modalToShow) {
-    if (modalToShow == 'name') {
+    if (modalToShow === 'name') {
       return (
         <View style={styles.modal}>
           <ModalContainer
@@ -119,6 +119,8 @@ class InviteParticipants extends Component {
           </ModalContainer>
         </View>
       );
+    } else {
+      return null;
     }
   }
 
@@ -168,6 +170,58 @@ class InviteParticipants extends Component {
         {userResultsToShow}
       </View>
     );
+  }
+
+  showInviteParticipantScreen(modalToShow) {
+    if (modalToShow === '') {
+      const {
+        participants,
+        testID,
+      } = this.props;
+  
+      const mode = this.state.mode;
+
+      return (
+        <View style={styles.layoutContainer}>
+          <View style={styles.head}>
+            <View style={styles.headText}>
+              <TextHeader>Invite Participants</TextHeader>
+            </View>
+            <View style={styles.options}>
+              <View style={styles.option}>
+                <View style={styles.buttonPlus}>
+                  <ButtonPlus onPress={() => this.onPressByName ()} size={21} />
+                </View>
+                <TextLink onPress={() => this.onPressByName ()} size={21}>By Name</TextLink>
+              </View>
+              {/*<View style={styles.option}>
+                <View style={styles.buttonPlus}>
+                  <ButtonPlus onPress={() => this.onPressByLink ()} size={21} />
+                </View>
+                <TextLink onPress={() => this.onPressByLink ()} size={21}>By Link</TextLink>
+              </View>*/}
+            </View>
+          </View>
+          <Divider />
+          <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+            <View style={styles.participants}>
+              {this.state.participants.map (user => this.displayParticipant (user))}
+            </View>
+          </ScrollView>
+          <Divider />
+          <View style={styles.buttons}>
+            <TextLink onPress={() => this.onPressStartRavel ()}>{this.state.participants.length == 0 ? 'Skip for now' : ''}</TextLink>
+            <Button
+              title={mode =='add' ? 'Start Ravel' : 'Save Changes'}
+              disabled={this.state.participants.length == 0}
+              onPress={() => this.onPressStartRavel ()}
+            />
+          </View>
+      </View>
+      );
+    } else {
+      return null;
+    }
   }
 
   onPressUserResult (user) {
@@ -262,51 +316,11 @@ class InviteParticipants extends Component {
   }
 
   render (){
-    const {
-      participants,
-      testID,
-    } = this.props;
-
-    const mode = this.state.mode;
-
     return (
       <View style={styles.layout}>
         {this.showModal (this.state.showModal)}
         <LinkBack onPress={() => this.onPressBack ()}/>
-        <View style={styles.head}>
-          <View style={styles.headText}>
-            <TextHeader>Invite Participants</TextHeader>
-          </View>
-          <View style={styles.options}>
-            <View style={styles.option}>
-              <View style={styles.buttonPlus}>
-                <ButtonPlus onPress={() => this.onPressByName ()} size={21} />
-              </View>
-              <TextLink onPress={() => this.onPressByName ()} size={21}>By Name</TextLink>
-            </View>
-            {/*<View style={styles.option}>
-              <View style={styles.buttonPlus}>
-                <ButtonPlus onPress={() => this.onPressByLink ()} size={21} />
-              </View>
-              <TextLink onPress={() => this.onPressByLink ()} size={21}>By Link</TextLink>
-            </View>*/}
-          </View>
-        </View>
-        <Divider />
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-          <View style={styles.participants}>
-            {this.state.participants.map (user => this.displayParticipant (user))}
-          </View>
-        </ScrollView>
-        <Divider />
-        <View style={styles.buttons}>
-          <TextLink onPress={() => this.onPressStartRavel ()}>{this.state.participants.length == 0 ? 'Skip for now' : ''}</TextLink>
-          <Button
-            title={mode =='add' ? 'Start Ravel' : 'Save Changes'}
-            disabled={this.state.participants.length == 0}
-            onPress={() => this.onPressStartRavel ()}
-          />
-        </View>
+        {this.showInviteParticipantScreen(this.state.showModal)}
       </View>
     );
   }
@@ -314,6 +328,10 @@ class InviteParticipants extends Component {
 
 const styles = StyleSheet.create({
   layout: {
+    width: '100%',
+    height: '100%',
+  },
+  layoutContainer: {
     flexDirection: 'column',
     alignItems: 'flex-start',
     width: '100%',

@@ -80,7 +80,7 @@ class EditParticipants extends Component {
   }
 
   showModal (modalToShow) {
-    if (modalToShow == 'name') {
+    if (modalToShow === 'name') {
       return (
         <View style={styles.modal}>
           <ModalContainer
@@ -114,6 +114,59 @@ class EditParticipants extends Component {
           </ModalContainer>
         </View>
       );
+    } else {
+      return null;
+    }
+  }
+
+  showEditParticipantScreen(modalToShow) {
+    if (modalToShow === '') {
+      const {
+        participants,
+        testID,
+      } = this.props;
+  
+      const mode = this.state.mode;
+
+      return (
+      <View style={styles.layoutContainer}>
+      <View style={styles.head}>
+        <View style={styles.headText}>
+          <TextHeader>Invite Participants</TextHeader>
+        </View>
+        <View style={styles.options}>
+          <View style={styles.option}>
+            <View style={styles.buttonPlus}>
+              <ButtonPlus onPress={() => this.onPressByName ()} size={21} />
+            </View>
+            <TextLink onPress={() => this.onPressByName ()} size={21}>By Name</TextLink>
+          </View>
+          {/*<View style={styles.option}>
+            <View style={styles.buttonPlus}>
+              <ButtonPlus onPress={() => this.onPressByLink ()} size={21} />
+            </View>
+            <TextLink onPress={() => this.onPressByLink ()} size={21}>By Link</TextLink>
+          </View>*/}
+        </View>
+      </View>
+      <Divider />
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+        <View style={styles.participants}>
+          {this.showParticipants ()}
+        </View>
+      </ScrollView>
+      <Divider />
+      <View style={styles.buttons}>
+        <TextLink onPress={() => this.onPressStartRavel ()}>{this.state.participants.length == 0 ? 'Skip for now' : ''}</TextLink>
+        <Button
+          title={'Save Changes'}
+          disabled={this.state.participants.length == 0}
+          onPress={() => this.onPressSaveChanges ()}
+        />
+      </View>
+    </View>);
+    } else {
+      return null;
     }
   }
 
@@ -283,51 +336,11 @@ class EditParticipants extends Component {
   }
 
   render (){
-    const {
-      participants,
-      testID,
-    } = this.props;
-
-    const mode = this.state.mode;
-
     return (
       <View style={styles.layout}>
         {this.showModal (this.state.showModal)}
         <LinkBack onPress={() => this.onPressBack ()}/>
-        <View style={styles.head}>
-          <View style={styles.headText}>
-            <TextHeader>Invite Participants</TextHeader>
-          </View>
-          <View style={styles.options}>
-            <View style={styles.option}>
-              <View style={styles.buttonPlus}>
-                <ButtonPlus onPress={() => this.onPressByName ()} size={21} />
-              </View>
-              <TextLink onPress={() => this.onPressByName ()} size={21}>By Name</TextLink>
-            </View>
-            {/*<View style={styles.option}>
-              <View style={styles.buttonPlus}>
-                <ButtonPlus onPress={() => this.onPressByLink ()} size={21} />
-              </View>
-              <TextLink onPress={() => this.onPressByLink ()} size={21}>By Link</TextLink>
-            </View>*/}
-          </View>
-        </View>
-        <Divider />
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-          <View style={styles.participants}>
-            {this.showParticipants ()}
-          </View>
-        </ScrollView>
-        <Divider />
-        <View style={styles.buttons}>
-          <TextLink onPress={() => this.onPressStartRavel ()}>{this.state.participants.length == 0 ? 'Skip for now' : ''}</TextLink>
-          <Button
-            title={'Save Changes'}
-            disabled={this.state.participants.length == 0}
-            onPress={() => this.onPressSaveChanges ()}
-          />
-        </View>
+        {this.showEditParticipantScreen(this.state.showModal)}
       </View>
     );
   }
@@ -335,6 +348,10 @@ class EditParticipants extends Component {
 
 const styles = StyleSheet.create({
   layout: {
+    width: '100%',
+    height: '100%',
+  },
+  layoutContainer: {
     flexDirection: 'column',
     alignItems: 'flex-start',
     width: '100%',
